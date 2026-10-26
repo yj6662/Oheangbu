@@ -58,16 +58,20 @@ namespace Oheangbu.App
                 var model = p != null ? p.Model : null;
                 if (model == null || _done.Contains(model)) continue;
                 _done.Add(model);
-                Wrap(model, Vol2Recipe.PathOneHit, '나', () => new Vol2FsNa(), p.transform);
-                Wrap(model, Vol2Recipe.FanOnce, '고', () => new Vol2FsGo(), p.transform);
-                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Leave).Kind, '각', () => new Vol2FsGak(), p.transform);
+                // batch 0 (a61dce39): 나 고 각; batch 1 (2026-10-26): P0 가 마 사 아 · F0 노 모 소 오 - each glyph its own class
+                Wrap(model, Vol2Recipe.PathOneHit, p.transform, ('나', () => new Vol2FsNa()), ('가', () => new Vol2FsGa()), ('마', () => new Vol2FsMa()), ('사', () => new Vol2FsSa()), ('아', () => new Vol2FsA()));
+                Wrap(model, Vol2Recipe.FanOnce, p.transform, ('고', () => new Vol2FsGo()), ('노', () => new Vol2FsNo()), ('모', () => new Vol2FsMo()), ('소', () => new Vol2FsSo()), ('오', () => new Vol2FsO()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Leave).Kind, p.transform, ('각', () => new Vol2FsGak()));
             }
         }
 
-        void Wrap(Vol2VfxModel model, Vol2Recipe kind, char glyph, System.Func<Vol2FsRun> make, Transform parent)
+        void Wrap(Vol2VfxModel model, Vol2Recipe kind, Transform parent, params (char Glyph, System.Func<Vol2FsRun> Make)[] glyphs)
         {
             if (!model.Recipes.TryGet(kind, out var inner) || inner is Vol2FreeShowcaseRecipe) return;
-            var r = new Vol2FreeShowcaseRecipe(inner, glyph, make, () => _kit, () => On, parent);
+            var makers = new Dictionary<char, System.Func<Vol2FsRun>>();
+            var order = new System.Text.StringBuilder();
+            foreach (var g in glyphs) { makers[g.Glyph] = g.Make; order.Append(g.Glyph); }
+            var r = new Vol2FreeShowcaseRecipe(inner, makers, order.ToString(), () => _kit, () => On, parent);
             model.Recipes.Set(r);
             _recipes.Add(r);
         }

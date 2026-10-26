@@ -111,10 +111,34 @@ namespace Oheangbu.App
             return mat;
         }
 
+        /// <summary>batch 1: any other material, made once per key and owned (destroyed) by the kit.</summary>
+        public Material Custom(string key, System.Func<Material> make)
+        {
+            if (_mats.TryGetValue("custom|" + key, out var mat) && mat != null) return mat;
+            mat = make();
+            if (mat != null) mat.hideFlags = HideFlags.DontSave;
+            _mats["custom|" + key] = mat;
+            return mat;
+        }
+
+        /// <summary>batch 1: meshes made once per key (rock, slab, blade, shard), owned by the kit.</summary>
+        public Mesh SharedMesh(string key, System.Func<Mesh> make)
+        {
+            if (_meshes.TryGetValue(key, out var m) && m != null) return m;
+            m = make(); if (m != null) m.hideFlags = HideFlags.DontSave;
+            _meshes[key] = m;
+            return m;
+        }
+        readonly Dictionary<string, Mesh> _meshes = new Dictionary<string, Mesh>();
+        /// <summary>Is this one of the kit's shared meshes (a cast's Dispose must not destroy it)?</summary>
+        public bool Owns(Mesh m) { foreach (var x in _meshes.Values) if (x == m) return true; return false; }
+
         public void Dispose()
         {
             foreach (var m in _mats.Values) if (m != null) Object.Destroy(m);
             _mats.Clear();
+            foreach (var m in _meshes.Values) if (m != null) Object.Destroy(m);
+            _meshes.Clear();
         }
     }
 
@@ -141,11 +165,14 @@ namespace Oheangbu.App
         public int Max = 600;
         public float Inherit;
         public int SortFudge;
+        /// <summary>batch 1: mesh particles (rock chunks, steel shards) - tumbling in 3D, lit when <see cref="Mat"/> is a lit material.</summary>
+        public Mesh Mesh;
     }
 
     public static class Vol2Fs
     {
         static readonly List<ParticleSystemVertexStream> Streams = new List<ParticleSystemVertexStream> { ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV, ParticleSystemVertexStream.StableRandomX };
+        static readonly List<ParticleSystemVertexStream> MeshStreams = new List<ParticleSystemVertexStream> { ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Normal, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV };
 
         public static ParticleSystem Build(Vol2FsPs d, Transform parent, string name)
         {
@@ -203,6 +230,21 @@ namespace Oheangbu.App
             r.sortingFudge = d.SortFudge;
             r.maxParticleSize = 3f;
             r.SetActiveVertexStreams(Streams);
+            if (d.Mesh != null)
+            {
+                r.renderMode = ParticleSystemRenderMode.Mesh; r.mesh = d.Mesh; r.alignment = ParticleSystemRenderSpace.World;
+                r.SetActiveVertexStreams(MeshStreams);
+                main.startRotation3D = true;
+                float rr = d.RandRot * Mathf.Deg2Rad;
+                main.startRotationX = new ParticleSystem.MinMaxCurve(0f, rr); main.startRotationY = new ParticleSystem.MinMaxCurve(0f, rr); main.startRotationZ = new ParticleSystem.MinMaxCurve(0f, rr);
+                if (d.Spin != 0f)
+                {
+                    var rot = ps.rotationOverLifetime; rot.enabled = true; rot.separateAxes = true;
+                    float s = d.Spin * Mathf.Deg2Rad;
+                    rot.x = new ParticleSystem.MinMaxCurve(-s, s); rot.y = new ParticleSystem.MinMaxCurve(-s, s); rot.z = new ParticleSystem.MinMaxCurve(-s, s);
+                }
+                r.receiveShadows = true;
+            }
             return ps;
         }
 

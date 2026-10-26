@@ -52,7 +52,61 @@ VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 1 (2026-10-26, D308-150 V12, the user: "쇼케이스 방향이 낫다. 이 방식으로 다른 술식도 만들어 가자."): P0 가 마 사 아 + F0 노 모 소 오.
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b1 [--run] [ids]
+# Picture 1 = the REAL pitch-0 gameplay camera frame of the template's own capture (r6 frame 0: bears where the engine puts them), so concept and
+# engine share the camera. Each glyph's verb + end clause (vol2_table120_v11.csv) is baked into its variants so the five bodies never read as recolours.
+B1_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch1/concepts'
+B1_GAME = {'P0': REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/r6/frames/P0_bridge_Fire_red/f_00000.jpg',
+           'F0': REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/r6/frames/F0_bridge_Wood_red/f_00000.jpg'}
+B1_REF = {
+    'P0': """--- THE ATTACHED PICTURES ---
+Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, the great brush raised), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, and two real enemies (dark matted bears with crusted crystal growths on their backs) standing in a line straight ahead, the first about 4.6 metres away (just right of the caster's head), the second about 8 metres away behind it. Paint the concept ON THIS VIEW: keep this exact camera height, angle and framing, the same ground, sky and bears at the same places. Ignore the small orange flame on the caster's back in picture 1 (a capture artefact, not part of the scene). The scene keeps its muted Korean ink-wash painted look.""",
+    'F0': """--- THE ATTACHED PICTURES ---
+Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, the great brush raised over the right shoulder), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, and two real enemies (dark matted bears with crusted crystal growths on their backs) close ahead: one about 3.4 metres ahead, partly hidden behind the caster's left side, the other about 4.3 metres ahead and a little to the right. Paint the concept ON THIS VIEW: keep this exact camera height, angle and framing, the same ground, sky and bears at the same places. Ignore the small green dot on the right bear in picture 1 (a capture artefact). The scene keeps its muted Korean ink-wash painted look.""",
+}
+B1_REF_TAIL = """Picture 2 is the player character: a scholar-mage in a worn grey-brown hanbok-like coat, messy dark curly hair, holding a great calligraphy brush (black lacquered staff about 1.25 m, pale bone ferrule, black bristle head, small red tassel). Keep that character and that brush.
+Picture 3 is a reference the director likes: HUGE bold black ink strokes exploding outward, many times bigger than the characters. Use its boldness and scale where it fits, not its cartoon style."""
+B1_SPELLS = {
+    'ga': ('P0', "THE SPELL 가 (WOOD, one shot along a narrow path): the caster swings the great brush and shoots a living VINE along a narrow straight path to the FIRST bear; it hits once and BINDS that bear (holds it, slowing it to half speed for 2 seconds). When the bind ends it unravels into fine rootlets reaching forward. Nothing stays behind. It must NOT look like fire, stone, metal or water, and NOT like a cage of branches or a forest of bamboo shoots (other spells own those)."),
+    'ma': ('P0', "THE SPELL 마 (EARTH, one shot along a narrow path): the caster swings the great brush and shoots a mass of EARTH and stone along a narrow straight path at the FIRST bear; it hits once, very hard, and SHOVES the bear backwards (heavy damage + knockback). Where it hits, the ground around lifts up as broken plates of earth. Nothing stays behind. Heavy, weighty, slow-feeling power; NOT fire, NOT wood, NOT a glowing magic beam."),
+    'sa': ('P0', "THE SPELL 사 (METAL, one shot along a narrow path): the caster swings the great brush and shoots a STEEL BLADE along a narrow straight path at the FIRST bear; it hits once and CUTS it (a fast, sharp slash). At the end it snaps with a bright ringing flash and metal shards fly out SIDEWAYS. Nothing stays behind. Cold, fast, razor-sharp: polished steel, white-silver and pale gold light, thin sharp lines; NOT fire, NOT a rock, NOT a vine."),
+    'a': ('P0', "THE SPELL 아 (WATER, one shot along a narrow path): the caster swings the great brush and shoots WATER along a narrow straight path at the FIRST bear; it hits once and SOAKS the bear (it stays drenched for 4 seconds, water running down its fur). Nothing stays behind. Clear, heavy, liquid water with ink swirling inside it; deep blue-green and white foam; NOT fire, NOT ice crystals, NOT a glowing laser."),
+    'no': ('F0', "THE SPELL 노 (FIRE, one sweep over an area): with one swing of the great brush, FIRE sweeps INSTANTLY across a fan-shaped area in front of the caster (5 m deep, about 4 m wide at its far edge) and sets every enemy inside it burning (they keep burning for 2 seconds). It burns out from the edges into ash rising upward. Nothing stays behind. NOT a single projectile and NOT bamboo or vines."),
+    'mo': ('F0', "THE SPELL 모 (EARTH, one sweep over an area): with one swing of the great brush, the EARTH of a fan-shaped area in front of the caster (5 m deep, about 4 m wide at its far edge) heaves up INSTANTLY and SHOVES every enemy inside it backwards (heavy damage + knockback). Afterwards the earth sinks and the ground around lifts as plates. Nothing stays behind. Heavy, weighty rock and soil; NOT fire, NOT wood, NOT glowing."),
+    'so': ('F0', "THE SPELL 소 (METAL, one sweep over an area): with one swing of the great brush, STEEL BLADES sweep INSTANTLY across a fan-shaped area in front of the caster (5 m deep, about 4 m wide at its far edge) and CUT every enemy inside once (fast, sharp). At the end the blades snap with a bright ringing flash and shards fly out sideways. Nothing stays behind. Polished steel, white-silver and pale gold light, razor-thin lines; NOT fire, NOT rock, NOT wood."),
+    'o': ('F0', "THE SPELL 오 (WATER, one sweep over an area): with one swing of the great brush, WATER sweeps INSTANTLY across a fan-shaped area in front of the caster (5 m deep, about 4 m wide at its far edge) and SOAKS every enemy inside (drenched for 4 seconds, water running down). Nothing stays behind. Clear heavy water with ink swirling in it, deep blue-green and white foam; NOT fire, NOT ice, NOT glowing beams."),
+}
+B1_VARIANTS = {
+    'ga_a': ('ga', "VARIANT A - vine harpoon: show the moment the vine has just struck. A thick living vine, dark green-black bark with sharp thorns and a few fresh leaves, has shot out of the brush tip like a harpoon and its barbed tip has speared into the first bear; the vine is still taut in the air from the brush to the bear like a tether, and its front part has whipped into tight coils around the bear's body and legs, binding it; leaves, splinters and ink droplets burst from the impact, a faint jade light pulses along the vine."),
+    'ga_b': ('ga', "VARIANT B - seed bolt that blooms into a snare: show the hit. A glowing jade seed wrapped in black ink has flown along the path (its wake still visible as a streak of leaves and ink from the brush) and burst on the first bear into a NET of whipping vines and tendrils that wrap and knot around the bear, pinning its limbs; leaves and green sparks spray outward; at the net's loose ends fine rootlets already reach forward along the ground."),
+    'ma_a': ('ma', "VARIANT A - boulder ram: show the impact. A huge rough boulder (about 1.2 m), dark stone cracked with black ink seams glowing faintly orange from friction, has been hurled from the brush along a low straight line, ploughing a shallow furrow and kicking up dust behind it, and has just SLAMMED into the first bear: the bear is being thrown backwards, a shock of dust and soil chunks explodes outward, and the ground around the hit lifts up in broken tilted slabs of earth."),
+    'ma_b': ('ma', "VARIANT B - earth lance from the ground: show the hit. Along the narrow path from the caster's feet to the first bear, the ground ruptures in a running line of jagged stone spikes and flying clods, ending in one massive angled stone pillar that has burst out of the ground and rammed the bear, flinging it backwards; slabs of earth around the pillar tilt up, dust and black ink spray off the rock."),
+    'sa_a': ('sa', "VARIANT A - flying crescent blade: show the cut. A long thin crescent blade of polished steel with a black ink edge, spinning flat, has flown from the brush tip leaving a razor-thin bright silver line hanging in the air along the whole path; it has just sliced clean through the first bear: a brilliant white slash line crosses the bear, sparks fan out, and the blade is snapping into bright metal shards that fly out sideways with a ringing flash."),
+    'sa_b': ('sa', "VARIANT B - thrown sword: show the moment of the hit. A narrow straight double-edged steel sword (like a Korean jian, about 1.5 m) made of steel and ink has been thrown from the brush like a javelin, leaving a long thin white-gold streak from the brush to the bear; it has pierced the first bear, a sharp X-shaped slash flare of white light opens on the bear, and the sword shatters into glittering shards that spray sideways, with fine ink lines like cut threads."),
+    'a_a': ('a', "VARIANT A - water lance: show the hit. A spiralling pressurised jet of clear blue-green water threaded with black ink swirls has shot from the brush tip in a straight lance to the first bear, the whole column still visible; on the bear it explodes into a huge splash crown and sheets of spray, the bear is drenched, water pouring down its fur and pooling on the red ground; droplets catch the light."),
+    'a_b': ('a', "VARIANT B - water orb: show the moment of the burst. A wobbling sphere of heavy water (about 1 m) with black ink curling inside it has flown along the path (a trail of droplets and mist behind it) and has just burst over the first bear into a heavy dome of water that collapses and pours down over it; the bear is soaked and streaming; a wide wet dark splash stain spreads on the ground with white foam."),
+    'no_a': ('no', "VARIANT A - fire breath fan: show the sweep at its peak. From the brush a wide fan of roaring orange-vermilion flame and black ink smoke blasts forward like a dragon's breath, filling the whole fan-shaped area in front of the caster, engulfing both bears; the flames curl at the fan's outer edge into rising ash and embers; the ground under the fan glows with heat."),
+    'no_b': ('no', "VARIANT B - burning ink scythe: show the sweep at its peak. A giant horizontal crescent of black ink whose whole edge is on fire sweeps across the fan in front of the caster from left to right; behind its path a carpet of low flames fills the fan-shaped ground; both bears inside catch fire, flames climbing their fur; ash and embers rise from the fan's edges."),
+    'mo_a': ('mo', "VARIANT A - earth wave: show the sweep at its peak. The ground of the whole fan in front of the caster heaves up into a breaking WAVE of soil, rocks and earth slabs rolling outward from the caster's feet, like a tsunami of earth; both bears are being lifted and shoved backwards by the wave; dust and black ink spray off its crest; heavy, weighty."),
+    'mo_b': ('mo', "VARIANT B - slab eruption: show the sweep at its peak. Across the fan in front of the caster, dozens of big flat slabs of rock and packed earth burst up out of the ground in a sweeping sequence, tilted outward like opening fan ribs, ramming both bears backwards; soil clods and dust explode between them; deep cracks radiate on the ground."),
+    'so_a': ('so', "VARIANT A - fan of blades: show the sweep at its peak. A spread of dozens of long thin steel blades (like a thrown fan of knives) sprays out from the brush across the whole fan in front of the caster, each blade leaving a razor-thin bright silver streak, slicing through both bears with sparks and bright cut lines; the blades' tips snap into shards at the fan's edge."),
+    'so_b': ('so', "VARIANT B - giant steel crescent slash: show the instant of the cut. One huge horizontal crescent slash of polished steel and white light sweeps across the fan in front of the caster, leaving a thin brilliant cut line hanging in the air and both bears with bright slash marks; a ring of steel shards and sparks bursts sideways along the arc; fine black ink threads trail behind the edge."),
+    'o_a': ('o', "VARIANT A - tidal fan: show the sweep at its peak. A curling WAVE of clear blue-green water with ink swirling inside rises from the brush and sweeps out across the fan in front of the caster, its white foamy crest crashing over both bears, drenching them; spray and mist hang in the air; the red ground under the fan is dark and glistening wet."),
+    'o_b': ('o', "VARIANT B - water fan spray: show the sweep at its peak. A wide flat fan of high-pressure water jets bursts from the brush like a fan-shaped sheet of water, thin streams and heavy droplets, sweeping across both bears; water splashes off them in crowns, they are drenched and streaming, puddles form on the ground."),
+}
+
+
+def prompt_b1(vid):
+    spell, var = B1_VARIANTS[vid]
+    tmpl, text = B1_SPELLS[spell]
+    return '\n\n'.join([HEAD, B1_REF[tmpl] + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B1_OUT / f'{vid}.png')])
+
+
 def prompt(vid):
+    if vid in B1_VARIANTS:
+        return prompt_b1(vid)
     spell, var = VARIANTS[vid]
     return '\n\n'.join([HEAD, REF, STYLE, '--- THE PICTURE ---\n' + SPELLS[spell] + '\n' + var, TAIL % (OUT / f'{vid}.png')])
 
@@ -60,11 +114,20 @@ def prompt(vid):
 PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.png)', re.I)
 
 
+def out_of(vid):
+    return B1_OUT if vid in B1_VARIANTS else OUT
+
+
+def game_of(vid):
+    return B1_GAME[B1_SPELLS[B1_VARIANTS[vid][0]][0]] if vid in B1_VARIANTS else GAME
+
+
 def recover(vid, started):
-    dst = OUT / f'{vid}.png'
+    od = out_of(vid)
+    dst = od / f'{vid}.png'
     if dst.exists() and dst.stat().st_size > 10000:
         return True
-    log = OUT / f'{vid}.log.txt'
+    log = od / f'{vid}.log.txt'
     cand = []
     if log.exists():
         for m in PNG_RE.finditer(log.read_text(encoding='utf-8', errors='replace')):
@@ -83,32 +146,37 @@ def recover(vid, started):
 
 
 def main():
-    OUT.mkdir(parents=True, exist_ok=True)
-    only = [a for a in sys.argv[1:] if not a.startswith('--')]
-    vids = [v for v in VARIANTS if not only or v in only]
+    batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
+    args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
+    pool = B1_VARIANTS if batch == 'b1' else VARIANTS
+    vids = [v for v in pool if not args or v in args]
     for v in vids:
-        (OUT / f'{v}.prompt.txt').write_text(prompt(v), encoding='utf-8')
+        out_of(v).mkdir(parents=True, exist_ok=True)
+        (out_of(v) / f'{v}.prompt.txt').write_text(prompt(v), encoding='utf-8')
     if '--run' not in sys.argv:
         print('prompts written', vids)
         return
-    pending = vids
+    wave = int(sys.argv[sys.argv.index('--wave') + 1]) if '--wave' in sys.argv else 8      # at most this many codex processes at once (memory)
+    pending = [v for v in vids if not recover(v, time.time() + 1e9)]
     for attempt in range(1, 3):
-        procs = []
-        for v in pending:
-            cmd = ['codex', 'exec', '--skip-git-repo-check', '-s', 'workspace-write', '-C', str(OUT), '-i', str(GAME), '-i', str(BRUSH), '-i', str(BURST)]
-            log = open(OUT / f'{v}.log.txt', 'w', encoding='utf-8')
-            procs.append((v, time.time(), subprocess.Popen(cmd, stdin=open(OUT / f'{v}.prompt.txt', 'rb'), stdout=log, stderr=subprocess.STDOUT, shell=True)))
-            time.sleep(2)
         failed = []
-        for v, t0, p in procs:
-            try:
-                p.wait(timeout=1500)
-            except subprocess.TimeoutExpired:
-                p.kill()
-            ok = recover(v, t0)
-            print('DONE', v, 'try', attempt, p.returncode, ok, flush=True)
-            if not ok:
-                failed.append(v)
+        for w in range(0, len(pending), wave):
+            procs = []
+            for v in pending[w:w + wave]:
+                od = out_of(v)
+                cmd = ['codex', 'exec', '--skip-git-repo-check', '-s', 'workspace-write', '-C', str(od), '-i', str(game_of(v)), '-i', str(BRUSH), '-i', str(BURST)]
+                log = open(od / f'{v}.log.txt', 'w', encoding='utf-8')
+                procs.append((v, time.time(), subprocess.Popen(cmd, stdin=open(od / f'{v}.prompt.txt', 'rb'), stdout=log, stderr=subprocess.STDOUT, shell=True)))
+                time.sleep(2)
+            for v, t0, p in procs:
+                try:
+                    p.wait(timeout=1500)
+                except subprocess.TimeoutExpired:
+                    p.kill()
+                ok = recover(v, t0)
+                print('DONE', v, 'try', attempt, p.returncode, ok, flush=True)
+                if not ok:
+                    failed.append(v)
         pending = failed
         if not pending:
             break

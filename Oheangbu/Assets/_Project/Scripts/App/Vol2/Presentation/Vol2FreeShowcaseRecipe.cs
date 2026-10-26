@@ -85,7 +85,8 @@ namespace Oheangbu.App
             if (Root != null)
             {
                 // the per-cast meshes (Vol2Fs.MeshObject) are not owned by the GameObject: free them with it
-                foreach (var f in Root.GetComponentsInChildren<MeshFilter>(true)) if (f.sharedMesh != null) Object.Destroy(f.sharedMesh);
+                // batch 1: the kit's shared meshes (rock / slab / sword / blade props) stay - the kit owns and frees them
+                foreach (var f in Root.GetComponentsInChildren<MeshFilter>(true)) if (f.sharedMesh != null && (Kit == null || !Kit.Owns(f.sharedMesh))) Object.Destroy(f.sharedMesh);
                 Object.Destroy(Root);
             }
             Root = null;
@@ -100,22 +101,26 @@ namespace Oheangbu.App
         }
     }
 
-    /// <summary>The routing recipe: <see cref="Glyph"/> plays the showcase look, every other glyph goes to <see cref="Inner"/>.</summary>
+    /// <summary>The routing recipe: the glyphs in <see cref="Glyphs"/> play their own showcase look (batch 1, 2026-10-26: one template entry dispatches by
+    /// the cast's glyph - P0 나 가 마 사 아, F0 고 노 모 소 오), every other glyph goes to <see cref="Inner"/>.</summary>
     public sealed class Vol2FreeShowcaseRecipe : Vol2VfxRecipe
     {
         public readonly Vol2VfxRecipe Inner;
-        public readonly char Glyph;
-        readonly Func<Vol2FsRun> _make;
+        readonly IReadOnlyDictionary<char, Func<Vol2FsRun>> _makers;
         readonly Func<Vol2FsKit> _kit;
         readonly Func<bool> _on;
         readonly Transform _parent;
         readonly Dictionary<Vol2VfxInstance, Vol2FsRun> _runs = new Dictionary<Vol2VfxInstance, Vol2FsRun>();
+        readonly Dictionary<char, int> _shownBy = new Dictionary<char, int>();
+        /// <summary>The glyphs this entry shows (in registration order).</summary>
+        public readonly string Glyphs;
         /// <summary>Casts the showcase took (bookkeeping, read by the command / ledger).</summary>
         public int Shown { get; private set; }
+        public int ShownOf(char glyph) => _shownBy.TryGetValue(glyph, out var n) ? n : 0;
         public string LastNote = "";
 
-        public Vol2FreeShowcaseRecipe(Vol2VfxRecipe inner, char glyph, Func<Vol2FsRun> make, Func<Vol2FsKit> kit, Func<bool> on, Transform parent)
-        { Inner = inner; Glyph = glyph; _make = make; _kit = kit; _on = on; _parent = parent; }
+        public Vol2FreeShowcaseRecipe(Vol2VfxRecipe inner, IReadOnlyDictionary<char, Func<Vol2FsRun>> makers, string order, Func<Vol2FsKit> kit, Func<bool> on, Transform parent)
+        { Inner = inner; _makers = makers; Glyphs = order; _kit = kit; _on = on; _parent = parent; }
 
         public override Vol2Recipe Kind => Inner.Kind;
 
@@ -124,8 +129,10 @@ namespace Oheangbu.App
         public override void OnBegan(Vol2VfxInstance inst)
         {
             var kit = _kit();
-            if (!Application.isPlaying || inst.Log.Glyph.Letter != Glyph || !_on() || kit == null || !kit.Ok) { Inner.OnBegan(inst); return; }
-            var run = _make();
+            char letter = inst.Log.Glyph.Letter;
+            if (!Application.isPlaying || !_makers.TryGetValue(letter, out var make) || !_on() || kit == null || !kit.Ok) { Inner.OnBegan(inst); return; }
+            var run = make();
+            _shownBy[letter] = ShownOf(letter) + 1;
             run.Bind(inst, kit, _parent);
             _runs[inst] = run;
             Shown++;
@@ -160,7 +167,7 @@ namespace Oheangbu.App
 
         public override void Update(Vol2VfxInstance inst, long nowUs)
         {
-            if (_runs.TryGetValue(inst, out var r)) { inst.Dirty = false; try { r.Tick(nowUs); LastNote = r.Note; } catch (Exception e) { Debug.LogException(e); } }
+            if (_runs.TryGetValue(inst, out var r)) { inst.Dirty = false; try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; } catch (Exception e) { Debug.LogException(e); } }
             else Inner.Update(inst, nowUs);
         }
 

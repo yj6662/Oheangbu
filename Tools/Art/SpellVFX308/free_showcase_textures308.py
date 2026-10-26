@@ -53,6 +53,73 @@ def sheet(cells):
     return np.concatenate([top, bot], axis=0)
 
 
+def b1():
+    """batch 1 (2026-10-26: 가 마 사 아 노 모 소 오): stone, steel, water, light-streak and splash sheets. Only these are written (--b1)."""
+    # ---- rock albedo (tileable): grey-brown stone, darker ink-filled cracks ----
+    R = 512
+    base = fbm(R, 6, 5, 2001); det = fbm(R, 24, 3, 2002)
+    cr = 1 - np.abs(fbm(R, 5, 4, 2003) * 2 - 1); cr = np.clip((cr - 0.88) * 12, 0, 1)
+    tone = (0.30 + 0.28 * base + 0.12 * det) * (1 - 0.8 * cr)
+    save('fs_rock.png', np.dstack([tone * 1.0, tone * 0.86, tone * 0.72]))
+    save('fs_rock_crack.png', np.dstack([cr, cr, cr]))
+    # ---- brushed steel (u along the blade): fine lengthwise streaks ----
+    S = 256
+    lanes = value_noise(S, 128, 2011)[:, :1].repeat(S, 1) * 0.6 + fbm(S, 4, 3, 2012) * 0.4
+    st = 0.62 + 0.3 * lanes
+    save('fs_steel.png', np.dstack([st * 0.95, st * 0.97, st * 1.0]))
+    # ---- light streak (u along, v across): a razor core with a soft halo, tapered both ends ----
+    W, H = 512, 64
+    u = np.linspace(0, 1, W)[None, :].repeat(H, 0); v = np.linspace(-1, 1, H)[:, None].repeat(W, 1)
+    taper = np.clip(np.sin(np.clip(u, 0, 1) * np.pi) ** 0.5, 0, 1)
+    core = np.exp(-(v / 0.06) ** 2); halo = np.exp(-(v / 0.35) ** 2) * 0.35
+    save('fs_streak.png', rgba(np.clip((core + halo) * taper, 0, 1)))
+    # ---- water body (u along the flow, v across): flowing streaks, foamy broken edges, denser core ----
+    W, H = 1024, 256
+    u = np.linspace(0, 1, W)[None, :].repeat(H, 0); v = np.linspace(-1, 1, H)[:, None].repeat(W, 1)
+    flow = value_noise(W, 64, 2021)[:H, :] * 0.5 + value_noise(W, 16, 2022)[:H, :] * 0.5
+    lanes = value_noise(W, 32, 2023)[:H, :1].repeat(W, 1)
+    edge = 0.85 + 0.25 * (value_noise(W, 24, 2024)[:H, :] - 0.5)
+    body = np.clip((edge - np.abs(v)) * 6, 0, 1)
+    streak = 0.6 + 0.4 * np.sin((v * 4 + flow * 2 + lanes * 1.5) * 3.1) ** 2      # r2: calmer (r1 zig-zag read graphic)
+    save('fs_water.png', rgba(np.clip(body * streak, 0, 1)))
+    # ---- splash 2x2 (crowns / spray blobs: lumpy rim, holes, satellite drops) ----
+    C = 256
+    cells = []
+    for k in range(4):
+        x, y = grid(C); r = np.sqrt(x * x + y * y); ang = np.arctan2(y, x)
+        nz = fbm(C, 4, 5, 2030 + k)
+        rim = 0.55 + 0.25 * (nz - 0.5) + 0.12 * np.maximum(0, np.sin(ang * (7 + k) + k)) ** 3
+        m = np.clip((rim - r) * 10, 0, 1) * (0.45 + 0.55 * np.clip(r / rim, 0, 1) ** 2)      # thin middle, dense rim (a sheet of water seen through)
+        holes = np.clip((fbm(C, 10, 3, 2040 + k) - 0.38) * 5, 0, 1)
+        m *= holes
+        rr = np.random.default_rng(2050 + k); drops = np.zeros_like(r)
+        for _ in range(14):
+            a = rr.random() * 6.283; d = 0.6 + rr.random() * 0.35; s = 0.02 + rr.random() * 0.04
+            drops = np.maximum(drops, np.clip((s - np.sqrt((x - np.cos(a) * d) ** 2 + (y - np.sin(a) * d) ** 2)) * 50, 0, 1))
+        cells.append(rgba(np.clip(np.maximum(m, drops), 0, 1)))
+    save('fs_splash.png', sheet(cells))
+    # ---- water ramp (u: 0 = thin edge .. 1 = thick body): white foam -> pale aqua -> deep blue-green ----
+    # r2: less cyan (r1 read as ice): foam -> pale grey-green water -> deep ink-blue-green
+    stops = [(0.0, (0.92, 0.95, 0.94)), (0.22, (0.62, 0.74, 0.74)), (0.5, (0.22, 0.38, 0.40)), (0.8, (0.07, 0.15, 0.18)), (1.0, (0.03, 0.07, 0.09))]
+    uu = np.linspace(0, 1, 256)
+    ramp = np.stack([np.interp(uu, [s[0] for s in stops], [s[1][c] for s in stops]) for c in range(3)], -1)
+    save('fs_ramp_water.png', np.dstack([np.repeat(ramp[None], 4, 0), np.ones((4, 256))]))
+    # ---- ground wet stain (dark, soft, lobed) ----
+    G = 512
+    x, y = grid(G); r = np.sqrt(x * x + y * y); ang = np.arctan2(y, x)
+    edge = 0.7 + 0.18 * (fbm(G, 4, 5, 2060) - 0.5) + 0.05 * np.sin(ang * 5)
+    save('fs_wet.png', rgba(np.clip((edge - r) * 4, 0, 1) * (0.75 + 0.25 * fbm(G, 12, 3, 2061))))
+    # ---- thorn vine skin (dark green-black bark with lengthwise ridges) ----
+    V = 256
+    rid = value_noise(V, 32, 2071)[0][None, :].repeat(V, 0)
+    tone = 0.16 + 0.16 * rid + 0.08 * fbm(V, 6, 3, 2072)
+    save('fs_vine.png', np.dstack([tone * 0.62, tone * 0.85, tone * 0.45]))
+
+
+if '--b1' in __import__('sys').argv:
+    b1()
+    raise SystemExit(0)
+
 # ---- noise (R: fbm low, G: fbm high, B: ridged) ----
 N = 256
 n1 = fbm(N, 4, 5, 1); n2 = fbm(N, 8, 4, 50); rid = 1 - np.abs(fbm(N, 6, 4, 90) * 2 - 1)

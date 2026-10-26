@@ -17,6 +17,21 @@ SPELLS = [  # key, template prefix of the job folder, concept(s), label
     ('go', 'F0_', ['go_b.png'], '고 · 목 · ㅗ 면 · 한 번 — 앞 부채꼴(5 m)을 덩굴·죽순이 한 번 쓸고 안의 적을 붙든다'),
     ('gak', 'P1_', ['gak_a.png', 'gak_c.png'], '각 · 목 · ㅏ 경로 · 남긴다 — 맞은 적의 다리를 가지 새장이 1.5초 붙들고, 풀린 자리에 덤불이 남는다'),
 ]
+# batch 1 (2026-10-26, D308-150 V12): --batch b1 -> free_showcase/batch1/<round>/, the concepts in batch1/concepts, keys by the job folder's template + body
+B1_SPELLS = [
+    ('ga', 'P0_bridge_Wood_', ['ga_a.png'], '가 · 목 · ㅏ 경로 · 한 번 — 가시 덩굴 작살이 첫 적을 꿰어 감고 2초 붙든다, 끝에 잔뿌리로 풀림'),
+    ('ma', 'P0_bridge_Earth_', ['ma_a.png'], '마 · 토 · ㅏ 경로 · 한 번 — 바위덩이가 첫 적을 들이받아 민다, 둘레 땅이 판으로 들린다'),
+    ('sa', 'P0_bridge_Metal_', ['sa_b.png'], '사 · 금 · ㅏ 경로 · 한 번 — 던진 검이 첫 적을 꿰어 베고 쨍 하고 파편이 옆으로 튄다'),
+    ('a', 'P0_bridge_Water_', ['a_b.png'], '아 · 수 · ㅏ 경로 · 한 번 — 물 구슬이 첫 적 위에서 터져 덮어 적신다(4초), 물이 흘러내린다'),
+    ('no', 'F0_bridge_Fire_', ['no_a.png'], '노 · 화 · ㅗ 면 · 한 번 — 앞 부채꼴에 불길이 바깥으로 번져 안의 적을 태운다(2초), 가장자리부터 재로 날림'),
+    ('mo', 'F0_bridge_Earth_', ['mo_b.png', 'mo_a.png'], '모 · 토 · ㅗ 면 · 한 번 — 부채꼴 땅이 줄줄이 판으로 솟아 안의 적을 민다, 가라앉으며 둘레가 들린다'),
+    ('so', 'F0_bridge_Metal_', ['so_a.png'], '소 · 금 · ㅗ 면 · 한 번 — 부챗살 칼날 다발이 부채꼴을 훑어 안의 적을 벤다, 끝에서 쨍 하고 부서진다'),
+    ('o', 'F0_bridge_Water_', ['o_a.png'], '오 · 수 · ㅗ 면 · 한 번 — 말려 오르는 물결이 부채꼴을 덮쳐 안의 적을 적신다(4초), 땅이 젖는다'),
+]
+if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b1':
+    BASE = BASE / 'batch1'
+    CONCEPTS = BASE / 'concepts'
+    SPELLS = B1_SPELLS
 W, H = 1280, 720
 FONT = 'C:/Windows/Fonts/malgunbd.ttf'
 
@@ -130,6 +145,8 @@ def main():
     ages = {}
     if '--video' in sys.argv:
         for a in sys.argv[sys.argv.index('--video') + 1:]:
+            if a.startswith('--'):
+                break
             k, v = a.split('='); ages[k] = [float(x) for x in v.split('/')]
     combined = []
     for key, prefix, concepts, text in SPELLS:
@@ -144,7 +161,7 @@ def main():
         write_mp4(BASE / rnd / f'{key}_1x_then_half.mp4', one + half)
         combined += title(concepts[0], text) + one + half
     if combined:
-        write_mp4(BASE / rnd / 'free_showcase_all.mp4', combined)
+        write_mp4(BASE / rnd / ('free_showcase_batch1_all.mp4' if SPELLS is B1_SPELLS else 'free_showcase_all.mp4'), combined)
 
 
 if __name__ == '__main__':

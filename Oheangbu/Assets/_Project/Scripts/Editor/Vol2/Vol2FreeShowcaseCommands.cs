@@ -55,7 +55,7 @@ namespace Oheangbu.EditorTools.Vol2
             string s = "mode=" + Vol2FreeShowcaseInstaller.Mode + " playing=" + EditorApplication.isPlaying + " lab=" + Vol2FreeShowcaseInstaller.LabLoaded();
             if (inst == null) return s + " installer=none";
             s += " installer on=" + inst.On + " views=" + inst.Installed + " kit=" + (inst.Kit != null && inst.Kit.Ok ? "ok" : inst.Kit != null ? inst.Kit.Problem : "null");
-            s += " recipes=[" + string.Join(", ", inst.Recipes.Select(r => r.Glyph + ":" + r.Kind + " shown " + r.Shown + (r.LastNote != "" ? " (" + r.LastNote + ")" : ""))) + "]";
+            s += " recipes=[" + string.Join(", ", inst.Recipes.Select(r => r.Kind + "{" + string.Join(" ", r.Glyphs.Select(g => g + ":" + r.ShownOf(g))) + "} shown " + r.Shown + (r.LastNote != "" ? " (" + r.LastNote + ")" : ""))) + "]";
             return s;
         }
     }
