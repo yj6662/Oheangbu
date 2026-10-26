@@ -25,9 +25,10 @@ namespace Oheangbu.EditorTools.Vol2
     ///   python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.Vol2VfxCommands Run "vfx9a:run:P0"              capture P0 (also: P0,P1 | all)   [:bodies=Wood,Fire] [:back=red] [:video=0]
     ///   python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.Vol2VfxCommands Run "vfx9a:status"
     ///   python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.Vol2VfxCommands Run "vfx9a:stop"                abort the queue (Play stays)
-    /// Frames go to Art/SpellVFX308/Vol2Vfx/9a/frames/&lt;job&gt;/ (f_NNNNN.jpg 1280x720 every game frame for a video job, key_*.png 1920x1080 near 0.08 s and 0.30 s, index.csv with the SCOPE clock age of each
-    /// frame); Tools/Art/SpellVFX308/vol2vfx9a.py turns them into the still sheets and the mp4s. Time.captureFramerate = 60 for the capture: one game frame is exactly 1/60 s.
-    /// LAB-SIMULATED and marked in index.csv: the clock jumps over the long waits (10 s residue, 3 s marks / strip, 8 s seed), the follow-up direct hit that works a seed, the forced end reasons.</summary>
+    /// Frames go to Art/SpellVFX308/Vol2Vfx/&lt;out&gt;/frames/&lt;job&gt;/ (out= option, default capture; f_NNNNN.jpg 1280x720 every game frame for a video job, key_*.png 1920x1080 near 0.08 s and 0.30 s,
+    /// index.csv with the SCOPE clock age of each frame); the media tools (free_showcase_media308.py, cast_camera_media308.py, legacy_bridge/*) turn them into mp4s. Time.captureFramerate = 60
+    /// for the capture: one game frame is exactly 1/60 s. LAB-SIMULATED and marked in index.csv: the clock jumps over the long waits, the swing's touch, the rapid casts of burst=.
+    /// (The command prefix vfx9a: is kept for the callers; the slice 9a recipes themselves were removed on 2026-10-26.)</summary>
     public static class Vol2VfxCommands
     {
         public static string Run(string command)
@@ -48,7 +49,7 @@ namespace Oheangbu.EditorTools.Vol2
             catch (Exception e) { return "REFUSED vfx9a:" + c + ": " + e.GetType().Name + " " + e.Message; }
         }
 
-        /// <summary>stroke20 comparison: the lab in Play WITHOUT a vol.2 request = the Legacy308 route the main game plays (SpellResolver -> the old 120 effects). Capture with legacy=1.</summary>
+        /// <summary>The legacy bridge comparison: the lab in Play WITHOUT a vol.2 request = the Legacy308 route the main game plays (SpellResolver -> the old 120 effects). Capture with legacy=1.</summary>
         static string PlayLegacy()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return "REFUSED vfx9a:play-legacy: Play is running or starting";
@@ -90,16 +91,15 @@ namespace Oheangbu.EditorTools.Vol2
         static readonly Body[] Bodies = { Body.Wood, Body.Fire, Body.Earth, Body.Metal, Body.Water };
         static readonly (float L, float a, float b) RedEarth = (35f, 30f, 25f), GreenForest = (25f, -22f, 15f);
 
-        /// <summary>The output folder under Art/SpellVFX308/Vol2Vfx: 9a_r2 (slice 9a) or the NB20 rounds (run option out=nb20/r1 ...).</summary>
-        static string _out = "9a_r2";
-        // NB20 calibration (coordinator 2026-10-25): look=main puts the main world's look profile on the lab's LookDriver308 for the run (runtime only, restored at the end);
+        /// <summary>The output folder under Art/SpellVFX308/Vol2Vfx (run option out=free_showcase/batch1 ...; default "capture").</summary>
+        static string _out = "capture";
+        // calibration (coordinator 2026-10-25): look=main puts the main world's look profile on the lab's LookDriver308 for the run (runtime only, restored at the end);
         // realm=auto makes the look step at a point inside the realm of the soil (적로 for red, 청림 for green) before every render instead of at the lab's own position;
-        // p0=nb20 swaps the kept NB20 P0 recipe in for the run; template AJ = the approved 앞잡 one stroke (RiposteStroke308Effect) fired at the first body
-        static bool _mainLook, _p0Nb20; static string _realmMode = "lab";
-        // stroke20 (D308-150 V7): pitch= the video camera pitch (the in-game shoulder camera is pitch 0 by default; the old captures used 15), rules=1 renders every video frame three times
-        // (with / without the VFX / without the enemy body) and writes rules.csv + m_NNNNN.png masks (R = VFX pixels, G = enemy body pixels) for the machine checks, dist=3/6/12 adds P0 jobs
-        // with the body at those distances; p0=9a swaps the kept slice 9a P0 back in
-        static float _videoPitch = 15f; static bool _rules, _p09a, _legacy; static int _legacyFrames; static Vol2WiringCaster _legacyCaster; static readonly List<float> Dists = new List<float>();
+        // template AJ = the approved 앞잡 one stroke (RiposteStroke308Effect) fired at the first body
+        static bool _mainLook; static string _realmMode = "lab";
+        // pitch= the video camera pitch (the in-game shoulder camera is pitch 0 by default; the old captures used 15)
+        // (2026-10-26: the options of the removed slice 9a / NB20 / stroke20 recipes - p0=9a|nb20, rules=1, dist=, the nb20 template group - are gone)
+        static float _videoPitch = 15f; static bool _legacy; static int _legacyFrames; static Vol2WiringCaster _legacyCaster;
         // D308-150 V9 (legacy bridge): legacy=2 = the Legacy308 route WITH the old glyph bodies. The old route presents a glyph's body through the stroke adapter
         // (BrushStrokeFeedAdapter.SpawnPattern), which needs the drawn letter's strokes - a lab letter raised on the channel has none, so legacy=1 showed the swing,
         // the brush-tip ink and the wards but no projectile / area / guard body. legacy=2 (LAB-ONLY, editor capture) feeds the REAL SpawnPattern at the moment
@@ -130,7 +130,6 @@ namespace Oheangbu.EditorTools.Vol2
             if (n > 0) _note = "cleared " + n + " old bodies";
         }
         static Action<CastPlan> _onLegacyPlanned; static Action<SpellCast, Vector3, Vector3> _onLegacyAccepted;
-        static StreamWriter _rulesCsv; static RenderTexture _rtB, _rtC; static Texture2D _texB, _texC, _mask;
         static Oheangbu.App.World.LookDriver308 _lookDriver; static Oheangbu.Data.World.LookProfile308 _lookSaved; static bool _lookSwapped;
         static Vector3? _realmEye;
         static Oheangbu.App.World.RiposteStroke308Effect _rip; static Oheangbu.App.World.RiposteStroke308Effect.Slot _ripSlot; static int _ripFrames;
@@ -145,7 +144,7 @@ namespace Oheangbu.EditorTools.Vol2
             { "F1", "곡녹목속옥" }, { "F2", "곤논몬손온" }, { "F3", "곰놈몸솜옴" }, { "F4", "곳놋못솟옷" }, { "F5", "공농몽송옹" },
             { "R1", "국눅묵숙욱" }, { "R2", "군눈문순운" }, { "R3", "굼눔뭄숨움" }, { "R4", "굿눗뭇숫웃" }, { "R5", "궁눙뭉숭웅" },
         };
-        /// <summary>Step 4: a batchim template (P1 - R5) recorded as the legacy bridge plays it (bridge4 = 1, the default; p0=9a keeps the slice 9a jobs of P1 - P5).</summary>
+        /// <summary>Step 4: a batchim template (P1 - R5) recorded as the legacy bridge plays it.</summary>
         static bool Batchim(string t) => t.Length == 2 && "PAFR".IndexOf(t[0]) >= 0 && t[1] >= '1' && t[1] <= '5';
         static int _noLogFrames, _describe; static float _pitch2;
 
@@ -205,11 +204,10 @@ namespace Oheangbu.EditorTools.Vol2
             foreach (string t in parts[0].Split(','))
             {
                 if (t == "all") templates.AddRange(new[] { "P0", "P1", "P2", "P3", "P4", "P5" });
-                else if (t == "nb20") templates.AddRange(new[] { "P0", "A0", "F0", "R0" });
                 else if (t == "batchim") foreach (char f in "PAFR") for (int v = 1; v <= 5; v++) templates.Add(f + v.ToString());
                 else templates.Add(t.Trim());
             }
-            _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _rules = false; _p09a = false; _legacy = false; Dists.Clear();
+            _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
             _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; AdapterBodies.Clear(); BridgeBodies.Clear();
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
@@ -225,24 +223,20 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "out") _out = v.Trim().Trim('/').Replace("..", "");
                 else if (k == "look") _mainLook = v.Trim() == "main";
                 else if (k == "realm") _realmMode = v.Trim();
-                else if (k == "p0") { _p0Nb20 = v.Trim() == "nb20"; _p09a = v.Trim() == "9a"; }
                 else if (k == "pitch") _videoPitch = float.Parse(v, Inv);
                 else if (k == "pitch2") _pitch2 = float.Parse(v, Inv);       // step 4: a second, higher view of every video frame (g_NNNNN.jpg) to read the state on the ground
-                else if (k == "rules") _rules = v == "1";
                 else if (k == "legacy") { _legacy = v == "1" || v == "2"; _legacyFeed = v == "2"; }
                 else if (k == "apex") _apex = v.Trim() == "1";
                 else if (k == "wardband") _wardBand = v.Trim() == "1";
                 else if (k == "stroke") _strokeFeed = v.Trim() == "1";
                 else if (k == "lasting") _lasting = v.Trim() == "1";
-                else if (k == "dist") Dists.AddRange(v.Split('/').Select(x => float.Parse(x, Inv)));
-                else if (k == "p0" && v.Trim() == "9a") _p09a = true;
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
             foreach (string t in templates)
             {
                 if (!(t.Length == 2 && t[0] == 'P' && t[1] >= '0' && t[1] <= '5') && !RowOf.ContainsKey(t) && t != "AJ") return "REFUSED vfx9a:run: template " + t + " (P0 - P5, A0 - A5, F0 - F5, R0 - R5, AJ)";
-                var variants = t == "P3" && _p09a ? new[] { "work", "expire" } : t == "P0" && Dists.Count > 0 ? new[] { "main" }.Concat(Dists.Select(d => "d" + d.ToString("0", Inv))).ToArray() : new[] { "main" };
+                var variants = new[] { "main" };
                 foreach (string variant in variants)
                 {
                     if (variantOnly != null && variant != variantOnly) continue;
@@ -279,59 +273,29 @@ namespace Oheangbu.EditorTools.Vol2
         static Job MakeJob(string template, string variant, Body body, string back, bool video)
         {
             int verb = template[0] == 'P' ? template[1] - '0' : 0;
-            var j = new Job { Template = template, Variant = variant, Body = body, Back = back, Video = video, Keys = variant != "expire" };
+            var j = new Job { Template = template, Variant = variant, Body = body, Back = back, Video = video, Keys = true };
             j.Letter = template == "AJ" ? '\0' : RowOf.TryGetValue(template, out var row) ? row[(int)body] : Rows[verb][(int)body];
             j.Dummies.Add((4.6f, 0f));
             switch (template)
             {
                 case "AJ": j.MaxAge = 1.3; j.MinAge = 1.25; break;          // the approved 앞잡 one stroke: reveal .05 - .20, dry from .60, gone 1.20 (profile defaults)
-                case "A0":
-                    // the bare parry: a body 1.6 m ahead; LAB-SIMULATED: its attack is parried successfully 0.22 s into the window (the model is told what the combat wiring would relay)
-                    j.Dummies[0] = (1.6f, 0.25f); j.MaxAge = 0.95; j.MinAge = 0.8;
-                    j.Steps.Add(new Step { At = 0.22, Name = "LAB-SIMULATED: a successful parry of the body's attack (ParryResolved Success at its chest)", Do = c => { SimulateParry(c); return true; } });
-                    break;
-                case "F0": j.Dummies[0] = (3.4f, -0.3f); j.Dummies.Add((4.3f, 1.25f)); j.MaxAge = 0.6; j.MinAge = 0.45; break;
-                case "R0": j.Dummies[0] = (1.85f, 0.75f); j.MaxAge = 0.6; j.MinAge = 0.45; break;
-                case "P0":
-                    if (variant.StartsWith("d", StringComparison.Ordinal)) { j.Dummies[0] = (float.Parse(variant.Substring(1), Inv), 0f); j.MaxAge = 1.0; j.MinAge = 0.75; break; }
-                    j.Dummies.Add((8f, 0f)); j.MaxAge = 1.0; j.MinAge = 0.7; break;
-                case "P1":
-                    j.Dummies[0] = (4.6f, 0f); j.MaxAge = 14.0; j.MinAge = 1.2;
-                    j.Steps.Add(new Step { At = 2.0, Name = "JUMP to 0.55 s before the residue expires (LAB-SIMULATED: 10 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
-                    break;
-                case "P2":
-                    j.Dummies[0] = (4.6f, 0f); j.Dummies.Add((6.2f, 1.7f)); j.Dummies.Add((5.8f, -1.9f)); j.Dummies.Add((3.6f, 2.3f)); j.MaxAge = 8.0; j.MinAge = 1.2;
-                    j.Steps.Add(new Step { At = 0.9, Name = "JUMP to 0.55 s before the marks expire (LAB-SIMULATED: 3 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
-                    break;
-                case "P3":
-                    if (variant == "work")
-                    {
-                        j.MaxAge = 2.3; j.MinAge = 1.8;
-                        char follow = Rows[0][(int)body];
-                        j.Steps.Add(new Step { At = 1.0, Name = "LAB-SIMULATED: a direct hit of the same body works the seed (" + follow + ")", Do = c => { RaiseLetter(c, follow); return true; } });
-                    }
-                    else
-                    {
-                        j.MaxAge = 12.0; j.MinAge = 1.2;
-                        j.Steps.Add(new Step { At = 1.0, Name = "JUMP to 0.55 s before the seed expires unused (LAB-SIMULATED: 8 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
-                    }
-                    break;
-                case "P4":
-                    j.MaxAge = 8.0; j.MinAge = 1.2;
-                    j.Steps.Add(new Step { At = 0.8, Name = "JUMP to 0.55 s before the strip ends (LAB-SIMULATED: 3 s wait)", Do = c => JumpBeforeStripEnd(c, 0.55) });
-                    break;
+                // the bodies of each frame (the ages of P0 / A0 / F0 / R0 are set below for the bridge, the batchim ones by Step4Job or legacy=1|2)
+                case "A0": j.Dummies[0] = (1.6f, 0.25f); break;              // the bare parry: a body 1.6 m ahead
+                case "F0": j.Dummies[0] = (3.4f, -0.3f); j.Dummies.Add((4.3f, 1.25f)); break;
+                case "R0": j.Dummies[0] = (1.85f, 0.75f); break;
+                case "P0": j.Dummies.Add((8f, 0f)); break;
+                case "P2": j.Dummies.Add((6.2f, 1.7f)); j.Dummies.Add((5.8f, -1.9f)); j.Dummies.Add((3.6f, 2.3f)); break;   // the spread's neighbours for legacy=1|2 (Step4Job places its own)
                 default: j.MaxAge = 1.5; j.MinAge = 1.2; break;
             }
-            if (Batchim(template) && !_p09a && !_legacy) { Step4Job(j); if (_lasting.HasValue) j.Variant = _lasting.Value ? "lasting1" : "lasting0"; }   // step 5a: old / new in their own folders
+            if (Batchim(template) && !_legacy) { Step4Job(j); if (_lasting.HasValue) j.Variant = _lasting.Value ? "lasting1" : "lasting0"; }   // step 5a: old / new in their own folders
             if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : Batchim(template) ? 4.5 : 1.6; j.MinAge = j.MaxAge; j.Variant = _legacyFeed ? "old" : "legacy"; }
             // D308-150 V9: the old visuals live longer than the vol.2 ink looks (windup + flight + impact): both sides of the legacy bridge comparison record the same full
             // length (no early stop), with no lab-simulated parry (the old route only shows a parry's success on a real enemy impact)
             if (template == "P0" || template == "A0" || template == "F0" || template == "R0")
-                if (_legacyFeed || (!_p0Nb20 && !_p09a))
-                {
-                    j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.6 : 2.2; j.MinAge = j.MaxAge;
-                    if (!_legacy) j.Variant = _apex == true ? "bridge_apex" : "bridge";
-                }
+            {
+                j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.6 : 2.2; j.MinAge = j.MaxAge;
+                if (!_legacy) j.Variant = _apex == true ? "bridge_apex" : "bridge";
+            }
             // D308-150 V13 (cast camera, rapid casts): burst=N/every raises the job's letter N - 1 more times, every `every` s after the first commit (LAB-SIMULATED:
             // the same letter on the channel, no drawing), and records the whole run plus BurstTail s (no early stop when the first cast retires)
             if (_burstCount > 1)
@@ -537,15 +501,6 @@ namespace Oheangbu.EditorTools.Vol2
             return true;
         }
 
-        static void SimulateParry(Ctx c)
-        {
-            if (c.Dummies.Count == 0) return;
-            Vector3 p = c.Dummies[0].transform.position; p.y = c.Origin.y + 1.15f;
-            Vector3 to = p - c.Origin; to.y = 0f;
-            p -= to.normalized * 0.55f;                     // the impact meets the brush in front of the body
-            c.Presenter.Model.Parried(p, c.Services.Clock.NowUs);
-        }
-
         static void RaiseLetter(Ctx c, char letter)
         {
             try { c.Wiring.LetterChannel.Raise(new DrawnLetter(letter, default, default, null, 0.6f, 0.6f, 1f, 1f, 3)); }
@@ -625,9 +580,6 @@ namespace Oheangbu.EditorTools.Vol2
             _ctx.Services.Route.Adapter.Decided += _onDecided = d => _lastDecision = d;
             _ctx.Coordinator.CastBegan += _onBegan = l => { if (_beganLog == null) _beganLog = l; };
             Time.captureFramerate = 60;
-            // calibration options (runtime only; Finish puts everything back)
-            if (_p0Nb20) p.Model.Recipes.Set(new Vol2Nb20PathRecipe());
-            if (_p09a) p.Model.Recipes.Set(new Vol2PathOneHitRecipe());
             // D308-150 V9: apex=0|1 = the TE-S3-6 launch switch for this run (the lab scope's own value is put back by Finish)
             _apexTuning = p.Coordinator.Tuning; _apexSaved = _apexTuning.LaunchAtApex;
             if (_apex.HasValue) _apexTuning.LaunchAtApex = _apex.Value;
@@ -733,17 +685,14 @@ namespace Oheangbu.EditorTools.Vol2
             }
             _rtVideo = new RenderTexture(VideoW, VideoH, 24); _rtKey = new RenderTexture(KeyW, KeyH, 24);
             _texVideo = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false); _texKey = new Texture2D(KeyW, KeyH, TextureFormat.RGB24, false);
-            _rtB = new RenderTexture(VideoW, VideoH, 24); _rtC = new RenderTexture(VideoW, VideoH, 24);
-            _texB = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false); _texC = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false);
-            _mask = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false);
         }
 
         static void DestroyCamera()
         {
             if (_cam != null) Object.DestroyImmediate(_cam.gameObject);
-            foreach (var rt in new[] { _rtVideo, _rtKey, _rtB, _rtC }) if (rt != null) { rt.Release(); Object.DestroyImmediate(rt); }
-            foreach (var tx in new[] { _texVideo, _texKey, _texB, _texC, _mask }) if (tx != null) Object.DestroyImmediate(tx);
-            _cam = null; _rtVideo = _rtKey = _rtB = _rtC = null; _texVideo = _texKey = _texB = _texC = _mask = null;
+            foreach (var rt in new[] { _rtVideo, _rtKey }) if (rt != null) { rt.Release(); Object.DestroyImmediate(rt); }
+            foreach (var tx in new[] { _texVideo, _texKey }) if (tx != null) Object.DestroyImmediate(tx);
+            _cam = null; _rtVideo = _rtKey = null; _texVideo = _texKey = null;
         }
 
         static void NextJob()
@@ -983,14 +932,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (Directory.Exists(_folder)) foreach (var f in Directory.GetFiles(_folder)) File.Delete(f);
             Directory.CreateDirectory(_folder);
             _index = new StreamWriter(Path.Combine(_folder, "index.csv"), false, new UTF8Encoding(false));
-            _index.WriteLine("frame,unityFrame,clockUs,ageSec,video,key,note,template,variant,body,back,letter,parts,version,verts,views");
-            try { _rulesCsv?.Dispose(); } catch (Exception) { }
-            _rulesCsv = null;
-            if (_rules)
-            {
-                _rulesCsv = new StreamWriter(Path.Combine(_folder, "rules.csv"), false, new UTF8Encoding(false));
-                _rulesCsv.WriteLine("frame,ageSec,vfxPx,enemyPx,occludedPx,enemyVisible,contacts,pitch");
-            }
+            _index.WriteLine("frame,unityFrame,clockUs,ageSec,video,key,note,template,variant,body,back,letter,parts,detail");
             _frames = 0; _keys = 0;
             _guardUntil = EditorApplication.timeSinceStartup + 120.0;
             _settle = 5; _st = St.Settle;
@@ -1148,7 +1090,7 @@ namespace Oheangbu.EditorTools.Vol2
         {
             Vector3 origin = c.Log != null ? c.Log.Spec.Origin : c.Origin, fwd = c.Log != null ? c.Log.Spec.Forward : c.Forward;
             float yaw = Quaternion.LookRotation(fwd, Vector3.up).eulerAngles.y;
-            if (video) { Shoot(origin, yaw, _videoPitch, _rtVideo, _texVideo, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"), false); if (_rules && !_legacy) Rules(c, origin, yaw, age); }
+            if (video) { Shoot(origin, yaw, _videoPitch, _rtVideo, _texVideo, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"), false); }
             if (video && _pitch2 > 0f) Shoot2(origin, yaw, Path.Combine(_folder, "g_" + _frames.ToString("D5", Inv) + ".jpg"));
             if (key)
             {
@@ -1161,56 +1103,6 @@ namespace Oheangbu.EditorTools.Vol2
             _index.WriteLine(string.Join(",", _frames.ToString(Inv), Time.frameCount.ToString(Inv), stepUs.ToString(Inv), age.ToString("0.0000", Inv), video ? "1" : "0", key ? "1" : "0", _note.Replace(',', ';'),
                 _job.Template, _job.Variant, _job.Body, _job.Back, _job.Letter, PartInfo(c)));
             _frames++;
-        }
-
-        /// <summary>stroke20 rule probe: the frame just shot (_texVideo) against the same frame rendered without the VFX (B) and without the VFX and the enemy body (C, the body made
-        /// shadows-only so its shadow stays): VFX pixels = A != B, enemy body pixels = B != C, occluded = enemy body pixels the VFX changed in A. Tolerance 12/255 on any channel.</summary>
-        static void Rules(Ctx c, Vector3 origin, float yaw, double age)
-        {
-            var vfx = c.Presenter.GetComponentsInChildren<Renderer>(false).Where(r => r.enabled).ToList();
-            var body = new List<(Renderer r, UnityEngine.Rendering.ShadowCastingMode m)>();
-            foreach (var d in c.Dummies) if (d != null) foreach (var r in d.GetComponentsInChildren<Renderer>(false)) if (r.enabled) body.Add((r, r.shadowCastingMode));
-            try
-            {
-                foreach (var r in vfx) r.enabled = false;
-                Render(origin, yaw, _videoPitch, _rtB, _texB);
-                foreach (var b in body) b.r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-                Render(origin, yaw, _videoPitch, _rtC, _texC);
-            }
-            finally
-            {
-                foreach (var r in vfx) if (r != null) r.enabled = true;
-                foreach (var b in body) if (b.r != null) b.r.shadowCastingMode = b.m;
-            }
-            var A = _texVideo.GetPixels32(); var B = _texB.GetPixels32(); var C = _texC.GetPixels32();
-            var M = new Color32[A.Length];
-            int vfxPx = 0, enemyPx = 0, occ = 0; const int Tol = 12;
-            for (int i = 0; i < A.Length; i++)
-            {
-                bool v = Mathf.Max(Mathf.Abs(A[i].r - B[i].r), Mathf.Max(Mathf.Abs(A[i].g - B[i].g), Mathf.Abs(A[i].b - B[i].b))) > Tol;
-                bool e = Mathf.Max(Mathf.Abs(B[i].r - C[i].r), Mathf.Max(Mathf.Abs(B[i].g - C[i].g), Mathf.Abs(B[i].b - C[i].b))) > Tol;
-                if (v) vfxPx++; if (e) enemyPx++; if (v && e) occ++;
-                M[i] = new Color32(v ? (byte)255 : (byte)0, e ? (byte)255 : (byte)0, 0, 255);
-            }
-            _mask.SetPixels32(M); _mask.Apply(false);
-            File.WriteAllBytes(Path.Combine(_folder, "m_" + _frames.ToString("D5", Inv) + ".png"), _mask.EncodeToPNG());
-            int contacts = c.Log != null ? c.Log.Contacts.Count(x => x.BudgetAccepted) : (_ripSlot != null && _ripSlot.HasImpact ? 1 : 0);
-            float vis = enemyPx > 0 ? 1f - occ / (float)enemyPx : 1f;
-            _rulesCsv?.WriteLine(string.Join(",", _frames.ToString(Inv), age.ToString("0.0000", Inv), vfxPx.ToString(Inv), enemyPx.ToString(Inv), occ.ToString(Inv), vis.ToString("0.0000", Inv), contacts.ToString(Inv), _videoPitch.ToString("0", Inv)));
-        }
-
-        static void Render(Vector3 origin, float yawDegrees, float pitchDegrees, RenderTexture rt, Texture2D tex)
-        {
-            Quaternion rot = Quaternion.Euler(pitchDegrees, yawDegrees, 0f);
-            Vector3 pivot = origin + Vector3.up * 1.7f;
-            _cam.transform.SetPositionAndRotation(pivot + rot * new Vector3(0.7f, 0.55f, -2.8f), rot);
-            _cam.fieldOfView = 60f;
-            _cam.targetTexture = rt;
-            if (_realmEye.HasValue && _lookDriver != null) _lookDriver.Refresh(_realmEye.Value);
-            _cam.Render();
-            var was = RenderTexture.active;
-            try { RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0, false); tex.Apply(false); }
-            finally { RenderTexture.active = was; }
         }
 
         /// <summary>The plan's shoulder camera: pivot 1.7 m above the cast point, local offset (0.7, 0.55, -2.8) turned with the aim (yaw) and the pitch about the pivot, FOV 60.</summary>
@@ -1253,10 +1145,10 @@ namespace Oheangbu.EditorTools.Vol2
 
         static string PartInfo(Ctx c)
         {
-            if (_legacy) return "legacy,-,-,-";
-            if (c.Log == null) return "riposte," + (_ripSlot != null ? _ripSlot.RevealU.ToString("0.00", Inv) + "," + _ripSlot.DryNow.ToString("0.00", Inv) : "-,-") + "," + (_rip != null ? _rip.LookWeight.ToString("0.00", Inv) : "-");
-            if (!c.Presenter.Model.TryGet(c.Log.Cast, out var inst)) return "0,0,0," + c.Presenter.ActiveViews;
-            return inst.Parts.Count + "," + inst.Version + "," + c.Presenter.LastVertices + "," + c.Presenter.ActiveViews;
+            if (_legacy) return "-,legacy";
+            if (c.Log == null) return "-,riposte reveal " + (_ripSlot != null ? _ripSlot.RevealU.ToString("0.00", Inv) + " dry " + _ripSlot.DryNow.ToString("0.00", Inv) : "- dry -") + " weight " + (_rip != null ? _rip.LookWeight.ToString("0.00", Inv) : "-");
+            if (!c.Presenter.Model.TryGet(c.Log.Cast, out var inst)) return "0,retired";
+            return inst.Parts.Count + ",live";
         }
 
         static void Teardown()
@@ -1281,8 +1173,6 @@ namespace Oheangbu.EditorTools.Vol2
             }
             try { _index?.Dispose(); } catch (Exception) { }
             _index = null;
-            try { _rulesCsv?.Dispose(); } catch (Exception) { }
-            _rulesCsv = null;
             string summary = j.Name + " | letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (c.Log != null ? " | cast " + c.Log.Status + " contacts " + c.Log.Contacts.Count + " materials " + c.Log.Materials.Count : " | NO CAST");
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : "") + (_strokeFeed ? BodyCount() : ""));
             _rip?.CancelAll(); _ripSlot = null;
@@ -1353,7 +1243,6 @@ namespace Oheangbu.EditorTools.Vol2
             _rip = null; _ripSlot = null;
             if (_lookSwapped && _lookDriver != null) _lookDriver.Profile = _lookSaved;
             _lookSwapped = false; _lookSaved = null; _realmEye = null;
-            if (_p0Nb20 || _p09a) { var pres = Object.FindFirstObjectByType<Vol2VfxPresenter>(); if (pres != null && pres.Model != null) pres.Model.Recipes.Set(new Vol2LegacyPathRecipe()); }
             // D308-150 V9: the legacy feed listeners leave, the launch switch goes back to what the scope had
             try
             {
@@ -1366,8 +1255,6 @@ namespace Oheangbu.EditorTools.Vol2
             }
             catch (Exception) { }
             _onLegacyPlanned = null; _onLegacyAccepted = null; _apexTuning = null;
-            try { _rulesCsv?.Dispose(); } catch (Exception) { }
-            _rulesCsv = null;
             DestroyCamera();
             Queue.Clear(); _job = null; _st = St.Idle;
             try

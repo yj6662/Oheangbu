@@ -418,7 +418,6 @@ namespace Oheangbu.App
                 if (p.Ended) continue;
                 if (p.Mat != null)
                 {
-                    p.BuiltExpiresUs = p.Mat.ExpiresUs;                                         // the model reads it live; this part draws no mesh
                     if (role == "residue" && p.Mat.Footprint != null && p.Mat.Footprint.Kind == Vol2FootprintKind.Fan && p.Mat.Footprint.GrowLinear != 1f)
                         Place(inst, p, Ground(inst, CentreOf(p.Mat.Footprint, nowUs)), RadiusOf(p.Mat.Footprint, nowUs));
                     // a material that ended without this instance hearing it (the model routes its events only while the instance lives): the executor's end, read back
@@ -462,7 +461,6 @@ namespace Oheangbu.App
                     if (role == "strip" && p.EndSchedule > 0) continue;
                     ClosePart(inst, p, nowUs, Vol2EndCode.Expire, inst.Forward);
                 }
-            inst.Dirty = false;
         }
 
         /// <summary>0 at the start of a trip, 1 at its turn, 0 again at its end (the report's legs on the scope clock).</summary>

@@ -17,7 +17,7 @@ namespace Oheangbu.EditorTools.Vol2
     /// python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.Vol2LegacyBridgeFixture Run "all"
     ///   L0 the default registry maps P0 / A0 / F0 / R0 to the four bridge recipes (and P1 - P5 stay the ink recipes)
     ///   L1 the 20 casts on the hand clock with a RECORDING stage: one swing at the commit (the old category, apex = the launch), one body at the launch (kind, letter,
-    ///      body, target, impact clock = predicted vol.2 contact), contacts relayed, no ink mesh written, end -> one End (not immediate) once the body is gone
+    ///      body, target, impact clock = predicted vol.2 contact), contacts relayed, end -> one End (not immediate) once the body is gone
     ///   L2 the lab reset (AbortAll) and the model's disposal end every body at once (immediate), nothing left in the stage
     ///   L3 legacy assets resolved for all 20: the main game's visual set (the one the lab and W_Demo_Main point at) has a Vfx120Effect + profile for every glyph;
     ///      the ward letters also have the lab's ward profile membrane
@@ -171,18 +171,15 @@ namespace Oheangbu.EditorTools.Vol2
                         for (int i = 0; i < 160 && (i < 40 || !log.Finished); i++) { rig.Advance(0.05); model.Tick(rig.Services.Clock.NowUs); }
                         int paid = log.Contacts.Count(c => c.BudgetAccepted);
                         bool contacts = stage.Contacts.Count == paid && (f == 1 || paid >= 1);
-                        var w2 = new Vol2InkWriter { Record = new List<Vol2StrokeAttr>() };
-                        inst.Recipe.Write(inst, w2);
-                        bool noMesh = w2.Record.Count == 0 && w2.Vertices == 0;
                         // the cast ended; the body is still "alive" (its own life): the instance waits, then the body runs out and the instance retires with one End
                         bool waiting = !inst.Retired && log.Finished && stage.Ends.Count == 0;
                         stage.Alive_.Clear();
                         rig.Advance(0.05); model.Tick(rig.Services.Clock.NowUs);
                         bool ended = inst.Retired && stage.Ends.Count == 1 && stage.Ends[0].h == 1 && !stage.Ends[0].immediate;
-                        Check(r, "L1." + tag, swing && begun && kindOk && contacts && noMesh && waiting && ended,
+                        Check(r, "L1." + tag, swing && begun && kindOk && contacts && waiting && ended,
                             letter + " " + body + ": swing at the commit (" + (stage.Swings.Count > 0 ? stage.Swings[0].Kind + " toApex " + stage.Swings[0].ToApex.ToString("0.00") : "none") + ")"
                             + (swing ? "" : " NOT MET") + ", body at the launch" + (begun ? "" : " NOT MET") + ", " + kindNote + (kindOk ? "" : " NOT MET")
-                            + ", contacts relayed " + stage.Contacts.Count + "/" + paid + (contacts ? "" : " NOT MET") + ", no ink mesh" + (noMesh ? "" : " NOT MET")
+                            + ", contacts relayed " + stage.Contacts.Count + "/" + paid + (contacts ? "" : " NOT MET")
                             + ", waits for its body" + (waiting ? "" : " NOT MET") + ", one End when it is gone" + (ended ? "" : " NOT MET (" + stage.Ends.Count + ")"));
                     }
                     finally { model.Dispose(); }
@@ -433,12 +430,9 @@ namespace Oheangbu.EditorTools.Vol2
                             var ring = roles.Where(x => x.Value == "ring").Select(x => x.Key).ToList();
                             if (ring.Count != 1 || !ring[0].Ended || ring[0].EndUs < emitterEnd) notes.Add("ring " + (ring.Count == 1 ? "closed " + ring[0].EndUs + " emitter end " + emitterEnd : ring.Count + " parts"));
                         }
-                        // C8 bookkeeping: one non-immediate Close per Lay, nothing open, no ink mesh
+                        // C8 bookkeeping: one non-immediate Close per Lay, nothing open
                         bool closes = stage.Laid.Count == stage.Closes.Count && stage.Closes.All(c => !c.immediate) && stage.Open.Count == 0 && stage.Closes.Select(c => c.h).Distinct().Count() == stage.Closes.Count;
                         if (!closes) notes.Add("lay " + stage.Laid.Count + " close " + stage.Closes.Count + " open " + stage.Open.Count + " immediate " + stage.Closes.Count(c => c.immediate));
-                        var w2 = new Vol2InkWriter { Record = new List<Vol2StrokeAttr>() };
-                        inst.Recipe.Write(inst, w2);
-                        if (w2.Record.Count != 0) notes.Add("ink strokes written");
                         // C9 the verb is seen: at least one lasting part (or, for a return on a path, its back leg)
                         if (stage.Laid.Count == 0 && !(frame == Frame.Path && verb == Verb.Return && stage.Pulses.Any(p => p.Role == "back-leg"))) notes.Add("NOTHING of the verb was laid");
                         foreach (var p in stage.Laid) { roleCount.TryGetValue(tid + " " + p.Role, out int n); roleCount[tid + " " + p.Role] = n + 1; }

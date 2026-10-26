@@ -8,30 +8,9 @@ namespace Oheangbu.App
     // S5-b slice 9a: the PURE half of the vol.2 presenter. It listens to the coordinator (cast begun, contact resolved, material created / changed / ended, cast ended) and keeps, per
     // cast, what is on screen: parts with timestamps taken from the executors (the scope clock). It owns NO lifetime: a part lives until the executor's event ends it (a material's
     // expiry or end reason, the path emitter finishing, the return report) and then runs its look-tail (plan B: <= 0.3 s) measured on the same clock from the event frame.
-    // It makes no Unity objects, so an edit-mode fixture drives it with the hand clock of Vol2ShapeFixtureKit.Rig. The view (Vol2VfxPresenter) turns the parts into one mesh per instance.
-
-    public enum Vol2VfxPhase { Reveal, Outline, Surface, Settled }
-
-    /// <summary>Plan B beats and plan G branch height, as pure functions.</summary>
-    public static class Vol2VfxBeats
-    {
-        public static Vol2VfxPhase PhaseAt(Vol2VfxTemplate t, float age)
-        {
-            if (age < t.revealSeconds) return Vol2VfxPhase.Reveal;
-            if (age < t.outlineSeconds) return Vol2VfxPhase.Outline;
-            if (age < t.surfaceSeconds) return Vol2VfxPhase.Surface;
-            return Vol2VfxPhase.Settled;
-        }
-
-        /// <summary>0 = just shown (wet), 1 = settled: only the tone changes in the surface beat (0.18 - 0.30 s); a required cue is never added late.</summary>
-        public static float Settle(Vol2VfxTemplate t, float age) => Mathf.Clamp01((age - t.outlineSeconds) / Mathf.Max(0.001f, t.surfaceSeconds - t.outlineSeconds));
-
-        /// <summary>Plan G "가지 높이 결정": h_max(d) = 0.4 + 0.25 x clamp(d - 3, 0, 2) metres, d = ground distance from the settled shoulder camera to the branch root.</summary>
-        public static float BranchMaxHeight(float d) => 0.4f + 0.25f * Mathf.Clamp(d - 3f, 0f, 2f);
-
-        /// <summary>The settled shoulder camera on the ground (plan G: local offset (0.7, 0.55, -2.8) from the pivot, yaw = the cast's aim).</summary>
-        public static Vector3 ShoulderGround(Vector3 origin, Vector3 forward) => origin + Vector3.Cross(Vector3.up, forward) * 0.7f - forward * 2.8f;
-    }
+    // It makes no Unity objects, so an edit-mode fixture drives it with the hand clock of Vol2ShapeFixtureKit.Rig. The recipes registered today (the legacy bridge and the free
+    // showcase) present each cast with their own Unity objects; the ink-mesh recipes of slice 9a / NB20 / stroke20 and their mesh view were removed on 2026-10-26
+    // (D308-150 V5 - V8 rejected; Docs/Research/vfx120/cleanup_code_20261026.md).
 
     /// <summary>One drawn piece of an instance (a path stroke, a landing, a tree, a mark, a seed dot ...). <see cref="Kind"/> is the recipe's own number.</summary>
     public sealed class Vol2VfxPart
@@ -52,9 +31,6 @@ namespace Oheangbu.App
         public float F0, F1, Density = 1f;
         public int Seed;
         public long Aux;
-        /// <summary>stroke20: the brush tip's path sampled on the scope clock (the swing's ink); null for every other part.</summary>
-        public List<Vector3> Trail;
-        public long BuiltExpiresUs;
         /// <summary>The executor's SCHEDULED end for a part with no material of its own (a strip's UntilUs, the latest mark's expiry): > 0 once known. The part is ended by the recipe at that moment.</summary>
         public long EndSchedule;
         /// <summary>Expiry warning window before <see cref="EndSchedule"/> (seconds, 0 = none).</summary>
@@ -76,19 +52,13 @@ namespace Oheangbu.App
         public Vector3 Forward { get; }
         public Vector3 Right { get; }
         public float ChestY { get; }
-        public float Seed { get; }
         public readonly List<Vol2VfxPart> Parts = new List<Vol2VfxPart>(8);
-        /// <summary>true = the mesh must be rebuilt (a part appeared / ended / moved).</summary>
-        public bool Dirty = true;
         public bool Retired;
         public bool CastIsEnded;
         public long CastEndUs;
         public bool HasLanding;
         public Vector3 Landing;
-        /// <summary>The scope-clock moment the path head stopped (contact, wall or its full length); -1 while it runs.</summary>
-        public long HeadStopUs = -1;
         public string Note = "";
-        public int Version;
 
         public Vol2VfxInstance(Vol2VfxModel model, Vol2CastLog log, Vol2VfxTemplate template, Vol2BodyLook look, Vol2VfxRecipe recipe, float chestHeight)
         {
@@ -98,7 +68,6 @@ namespace Oheangbu.App
             var spec = log.Spec;
             Origin = spec.Origin; Forward = spec.Forward; Right = Vector3.Cross(Vector3.up, spec.Forward);
             ChestY = Origin.y + chestHeight;
-            Seed = Vol2Curves.Hash((int)(log.Cast.Value & 0x7fffffff), 7) * 97f;
         }
 
         public CastId Cast => Log.Cast;
@@ -109,7 +78,7 @@ namespace Oheangbu.App
         public Vol2VfxPart AddPart(int kind, long appearUs)
         {
             var p = new Vol2VfxPart { Kind = kind, AppearUs = appearUs, Seed = Parts.Count + 1 };
-            Parts.Add(p); Dirty = true;
+            Parts.Add(p);
             return p;
         }
 
@@ -119,7 +88,7 @@ namespace Oheangbu.App
         public void EndPart(Vol2VfxPart p, long endUs, Vol2EndCode code, float seconds = 0f)
         {
             if (p == null || p.Ended) return;
-            p.EndUs = endUs; p.Code = code; p.EndSeconds = seconds; Dirty = true;
+            p.EndUs = endUs; p.Code = code; p.EndSeconds = seconds;
         }
 
         /// <summary>The path head in metres from the cast point at <paramref name="nowUs"/>: the emitter's own number once it stopped, else the pen speed of the spec (the emitter ticks once per frame).</summary>
@@ -141,8 +110,7 @@ namespace Oheangbu.App
         }
     }
 
-    /// <summary>A drawing routine for one template. The model calls the On* hooks from coordinator events and <see cref="Update"/> once per tick; the view calls
-    /// <see cref="Write"/> when an instance is dirty. Later slices add the A / F / R recipes and the peak looks to the registry.</summary>
+    /// <summary>The presentation of one template. The model calls the On* hooks from coordinator events and <see cref="Update"/> once per tick; a recipe shows the cast with its own Unity objects.</summary>
     public abstract class Vol2VfxRecipe
     {
         public abstract Vol2Recipe Kind { get; }
@@ -155,17 +123,12 @@ namespace Oheangbu.App
             var p = inst.PartOf(m);
             if (p != null) inst.EndPart(p, m.EndedUs, Vol2EndCodes.From(why));
         }
-        /// <summary>NB20: a successful parry landed while this cast's window was open (the combat wiring's ParryResolved, relayed by the scope on the scope clock).</summary>
+        /// <summary>A successful parry landed while this cast's window was open (the combat wiring's ParryResolved, relayed by the scope on the scope clock).</summary>
         public virtual bool OnParried(Vol2VfxInstance inst, Vector3 point, long nowUs) => false;
         public virtual void Update(Vol2VfxInstance inst, long nowUs) { }
         /// <summary>D308-150 V9: the instance left the model (its look is over, the lab reset aborted it, or the model was disposed). The legacy bridge lets go of its
-        /// Unity body here; the ink recipes have nothing to do (their view is pooled by the presenter).</summary>
+        /// Unity body here.</summary>
         public virtual void OnRetired(Vol2VfxInstance inst, bool aborted) { }
-        /// <summary>The path head (metres from the cast point) the shader reveals the line up to.</summary>
-        public virtual float Head(Vol2VfxInstance inst, long nowUs) => inst.HeadAlong(nowUs);
-        /// <summary>The rigid offset of the parts with role RigidOffset (the loop riding the head).</summary>
-        public virtual Vector3 Offset(Vol2VfxInstance inst, long nowUs) => Vector3.zero;
-        public abstract void Write(Vol2VfxInstance inst, Vol2InkWriter w);
         /// <summary>Is everything of this instance over? Default: the cast ended and every part's tail is over.</summary>
         public virtual bool IsFinished(Vol2VfxInstance inst, long nowUs)
         {
@@ -193,10 +156,9 @@ namespace Oheangbu.App
         {
             var reg = new Vol2VfxRecipeRegistry();
             // D308-150 V9 (2026-10-25, the user: "기존 투사체 방식이 전부 낫다"): the 20 no-batchim spells P0 / A0 / F0 / R0 play the OLD main game's visuals of each glyph
-            // through the legacy bridge (Vol2LegacyRecipes + Vol2LegacyStage). The rejected looks stay in the code, unregistered, for comparison (a capture / fixture
-            // swaps them in with Set): stroke20 (Vol2Stroke*, V7 / V8), NB20 (Vol2Nb20*, V6), slice 9a P0 (Vol2PathOneHitRecipe, V5)
-            // Step 4: the 100 batchim spells (P1 - P5, A1 - A5, F1 - F5, R1 - R5) play the old glyph bodies + the verb states as old parts (Vol2LegacyVerbRecipes); the slice 9a ink
-            // recipes of P1 - P5 (Vol2PathLeave / Spread / Seed / Split / ReturnRecipe) stay in the code, unregistered
+            // through the legacy bridge (Vol2LegacyRecipes + Vol2LegacyStage). The rejected ink looks (slice 9a V5, NB20 V6, stroke20 V7 / V8) were removed on 2026-10-26.
+            // Step 4: the 100 batchim spells (P1 - P5, A1 - A5, F1 - F5, R1 - R5) play the old glyph bodies + the verb states as old parts (Vol2LegacyVerbRecipes)
+            // (the free showcase wraps these recipes per glyph: Vol2FreeShowcaseInstaller)
             reg.Add(new Vol2LegacyPathRecipe());        // P0 (legacy bridge)
             reg.Add(new Vol2LegacyAttachRecipe());      // A0 (legacy bridge)
             reg.Add(new Vol2LegacyFanRecipe());         // F0 (legacy bridge)
@@ -224,16 +186,16 @@ namespace Oheangbu.App
         public int AbortedCount { get; private set; }
         public int ContactsAccented { get; private set; }
         public int ContactsSkipped { get; private set; }
-        /// <summary>Plan H "기술 슬롯": my sustained instances at most 3. NOT ENFORCED in slice 9a (no shrink / hysteresis yet): the count is recorded, the overflow is counted here.</summary>
+        /// <summary>Plan H "기술 슬롯": my sustained instances at most 3. NOT ENFORCED (no shrink / hysteresis yet): the count is recorded, the overflow is counted here.</summary>
         public int LastingCap = 3;
         public int CapExceeded { get; private set; }
-        /// <summary>NB20: where the player's brush tip and grip are now (the view binds it to the great brush of the scene; null in a fixture: the recipes fall back to the caster's hand height).</summary>
+        /// <summary>Where the player's brush tip and grip are now (the view binds it to the great brush of the scene; null in a fixture: the recipes fall back to the caster's hand height).</summary>
         public Func<Vector3?> BrushTip, BrushGrip;
         /// <summary>D308-150 V9: the Unity side of the legacy bridge (the view binds Vol2LegacyStage; a fixture binds a recording fake; null = the bridge recipes only keep their bookkeeping).</summary>
         public IVol2LegacyStage Legacy;
         public int ParriesDrawn { get; private set; }
 
-        /// <summary>NB20: a successful parry at <paramref name="point"/> - every live ㅓ instance whose parry window is open at <paramref name="nowUs"/> draws its splash. A plain call
+        /// <summary>A successful parry at <paramref name="point"/> - every live ㅓ instance whose parry window is open at <paramref name="nowUs"/> is told (the showcase draws its splash). A plain call
         /// (the scope relays the combat wiring's ParryResolved; the capture calls it for a lab-simulated parry); never decides anything of the parry.</summary>
         public void Parried(Vector3 point, long nowUs)
         {
@@ -312,7 +274,7 @@ namespace Oheangbu.App
             {
                 if (!_byCast.TryGetValue(m.Cast.Value, out var inst) || inst.Retired) return;
                 inst.Recipe.OnMaterialCreated(inst, m);
-                // plan H slot "my sustained looks, 3": counted when a sustained material stands, NOT enforced in slice 9a
+                // plan H slot "my sustained looks, 3": counted when a sustained material stands, NOT enforced
                 int lasting = 0;
                 foreach (var i in _list) { if (i.Retired) continue; foreach (var p in i.Parts) if (p.Mat != null && !p.Dead && !p.Ended) { lasting++; break; } }
                 if (lasting > LastingCap) CapExceeded++;
@@ -329,7 +291,7 @@ namespace Oheangbu.App
             Safe(() =>
             {
                 if (!_byCast.TryGetValue(m.Cast.Value, out var inst) || inst.Retired) return;
-                if (why == Vol2MaterialEnd.Aborted) { var p = inst.PartOf(m); if (p != null) { p.Gone = true; inst.Dirty = true; } return; }
+                if (why == Vol2MaterialEnd.Aborted) { var p = inst.PartOf(m); if (p != null) p.Gone = true; return; }
                 inst.Recipe.OnMaterialEnded(inst, m, why);
             });
         }
@@ -356,9 +318,7 @@ namespace Oheangbu.App
                     if (inst.Log.Status == "Aborted") { Retire(inst, true); _list.RemoveAt(i); continue; }
                     if (inst.Log.Finished && !inst.CastIsEnded) { inst.CastIsEnded = true; inst.CastEndUs = inst.Log.EndUs; }
                     inst.Recipe.Update(inst, nowUs);
-                    foreach (var p in inst.Parts) if (!p.RetiredFlag && inst.PartRetired(p, nowUs)) { p.RetiredFlag = true; inst.Dirty = true; }
-                    foreach (var p in inst.Parts)
-                        if (p.Mat != null && !p.Ended && p.Mat.ExpiresUs != p.BuiltExpiresUs) inst.Dirty = true;      // 국's stretch / 信's pause move the scheduled end: read live
+                    foreach (var p in inst.Parts) if (!p.RetiredFlag && inst.PartRetired(p, nowUs)) p.RetiredFlag = true;
                     if (inst.Recipe.IsFinished(inst, nowUs)) { Retire(inst, false); _list.RemoveAt(i); }
                 }
                 catch (Exception e) { Debug.LogException(e); Retire(inst, true); _list.RemoveAt(i); }

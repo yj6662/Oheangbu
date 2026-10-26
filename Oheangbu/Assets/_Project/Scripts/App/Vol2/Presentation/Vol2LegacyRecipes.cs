@@ -183,7 +183,6 @@ namespace Oheangbu.App
         {
             var p = inst.AddPart(KindState, inst.StartUs);
             p.Pos = inst.Origin; p.Dir = inst.Forward;
-            inst.Dirty = false;                    // no ink mesh: the view never rents one for a bridged cast
             var stage = Stage(inst);
             if (stage == null) return;
             float toApex = Mathf.Max(MinToApex, (float)((LaunchUs(inst) - inst.StartUs) / 1000000.0));
@@ -199,7 +198,6 @@ namespace Oheangbu.App
 
         public override void Update(Vol2VfxInstance inst, long nowUs)
         {
-            inst.Dirty = false;
             var p = State(inst);
             if (p == null || p.F0 > 0f || inst.Log.Status == "Aborted") return;
             if (nowUs < SpawnUs(inst)) return;
@@ -226,8 +224,6 @@ namespace Oheangbu.App
             if (!_early.TryGetValue(inst, out var early)) _early[inst] = early = new System.Collections.Generic.List<long>(2);
             early.Add(rec.TargetId);
         }
-
-        public override void Write(Vol2VfxInstance inst, Vol2InkWriter w) { }
 
         public override bool IsFinished(Vol2VfxInstance inst, long nowUs)
         {
@@ -273,7 +269,6 @@ namespace Oheangbu.App
         {
             var p = inst.AddPart(KindLay, nowUs);
             p.Mat = mat; p.Pos = def.Point; p.Dir = def.Facing; p.F0 = def.Radius; p.Aux = 0;
-            inst.Dirty = false;
             var stage = Stage(inst);
             if (stage != null) p.Aux = stage.Lay(def);
             Laid(inst, p, def);
@@ -288,7 +283,6 @@ namespace Oheangbu.App
         {
             if (p == null || p.Ended) return;
             p.EndUs = atUs; p.Code = code; p.EndSeconds = 0f;
-            inst.Dirty = false;
             var stage = Stage(inst);
             if (stage != null && p.Aux != 0) stage.Close((int)p.Aux, code, direction, false);
         }

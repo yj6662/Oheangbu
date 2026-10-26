@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Oheangbu.App
 {
     // S5-b slice 9a (D308-150 V5): the DATA of the vol.2 spell look. Plan canon: Docs/Research/vfx120/plan_v10_final.md (B beats / end reasons, C body and ink,
-    // E ownership, G height, H slots) and s5b_design_v1.md section 11: ONE template per Frame x Verb (24), ONE look per body (5), the peaks (20) and the
-    // reactions (25) come later as more assets of the same kind. An instance on screen is (template x body x [peak]) - there is no prefab per glyph.
-    // Everything below is a number or a choice; the code that draws reads it (Vol2VfxRecipes / the shader) and invents nothing.
+    // E ownership, G height, H slots) and s5b_design_v1.md section 11: ONE template per Frame x Verb (24), ONE look per body (5). The model covers a cast when its
+    // template is filled and its recipe registered, and reads the end-reason tails; the drawing numbers were read by the slice 9a ink recipes, removed on 2026-10-26
+    // (the fields stay: they are serialized on the template / body-look assets).
 
     /// <summary>Plan B "종료 이유": 만 natural expiry | 소 consumed (a seed worked / a normal use) | 자 a child consumed it | 교 replaced by another bundle | 피 cancelled by a hit | 정 cleansed.
     /// The numbers are the shader's endMode: 1..6.</summary>
@@ -19,8 +19,7 @@ namespace Oheangbu.App
     /// <summary>Plan C "자연 종료": what a body does when it ends by expiry - wood fibres loosen forward, fire turns to ash that rises, earth sinks, metal snaps and parts sideways, water runs down.</summary>
     public enum Vol2EndBehaviour { UnravelForward = 0, AshRise = 1, SinkLift = 2, SnapSideways = 3, RunDown = 4 }
 
-    /// <summary>Which drawing routine a template uses (slice 9a: the six ㅏ templates; NB20 (D308-150 V6): the 한 번 of ㅓ ㅗ ㅜ, played from the authored ink atlas; the rest of A / F / R
-    /// and the peaks are later slices).</summary>
+    /// <summary>Which recipe a template uses (the registry's key; the numbers are serialized on the template assets - never renumber).</summary>
     // D308-150 V9 step 4: the 15 batchim templates of ㅓ ㅗ ㅜ (A1 - A5, F1 - F5, R1 - R5) - played by the legacy bridge (Vol2LegacyVerbRecipes), appended after the old values.
     public enum Vol2Recipe
     {
@@ -92,7 +91,7 @@ namespace Oheangbu.App
             return l;
         }
 
-        /// <summary>The recipe of a template: the six ㅏ verbs (slice 9a), the 한 번 of ㅓ ㅗ ㅜ (NB20) and, since D308-150 V9 step 4, the 15 batchim templates of ㅓ ㅗ ㅜ (the legacy bridge).</summary>
+        /// <summary>The recipe of a template: all 24 (Frame x Verb) are filled; all are played by the legacy bridge (D308-150 V9 + step 4).</summary>
         public static Vol2Recipe RecipeOf(Vol2TemplateId id)
         {
             if (id.Frame == Frame.Path) return (Vol2Recipe)((int)id.Verb + 1);
@@ -138,43 +137,14 @@ namespace Oheangbu.App
             string[] verbs = { "once", "leave", "spread", "seed", "split", "return" };
             t.summary = (t.filled ? "" : "(later slice) ") + id.Name + " " + id.Frame + " x " + verbs[(int)id.Verb];
             if (!t.filled) return t;
-            if (id.Frame != Frame.Path && id.Verb != Verb.Once)
-            {
-                // D308-150 V9 step 4: the legacy bridge draws these (the old glyph body + old lasting parts on the executor's events); the numbers below are not read by it
-                string[] verbKo = { "", "남긴다", "번진다", "심는다", "가른다", "돌아온다" };
-                t.summary = id.Name + " (legacy bridge, D308-150 V9 step 4): the glyph's old main-game body at the commit + the " + verbKo[(int)id.Verb] + " state as old parts (Vol2LegacyVerbRecipes)";
-                return t;
-            }
-            if (id.Frame != Frame.Path)
-            {
-                // NB20: the authored ink (Blender + After Effects atlas), plan B rows A0 / F0 / R0
-                switch (id.Frame)
-                {
-                    case Frame.Attachment: t.summary = "A0 (NB20): a short dry ink pulse along the brush shaft / sleeve for the parry window (0.5 s); a splash + needle star only on a successful parry"; break;
-                    case Frame.Fan: t.summary = "F0 (NB20): an instant bundle on the ground - both radial edges, the far arc, two inner strokes, one by one in 0.1 s; a contact stroke on each body; dry <= 0.18 s after"; break;
-                    default: t.summary = "R0 (NB20): instant strokes on the hollow band (r 2 m, 0.6 m wide, centre empty) + a standing pair at +/-20 deg; a contact stroke on each body crossing it; dry with the band"; break;
-                }
-                return t;
-            }
-            switch (id.Verb)
-            {
-                case Verb.Once:   // P0 (NB20): a travelling ink head + a short dry tail, a real-size contact stroke + 2 support strokes + 3 - 5 flecks, dries 0.12 - 0.27 s after the contact
-                    t.summary = "P0 (NB20): ignition at the brush tip, a hollow pressed ink head (dry rim) flying 36 m/s with a 1.5 m dry tail, at the first body a contact stroke + 2 support strokes (+33 / +67 ms) + flecks, dry 0.12 s after the contact over 0.15 s"; break;
-                case Verb.Leave:  // P1: the path lands, branches rise from the landing point
-                    t.summary = "P1: ground stroke, then a trunk that forks upward at the landing (10 s residue); height by distance (G)"; t.height = 0.9f; break;
-                case Verb.Spread: // P2: flat bundle at the landing, flat strokes to each approved neighbour (3 s marks)
-                    t.lineWidth = 0.22f; t.summary = "P2: ground stroke, a flat bundle at the landing, a flat connector and bundle to each approved neighbour (3 s marks)"; break;
-                case Verb.Seed:   // P3: vertical dot on the target (8 s), pressed once when it works
-                    t.summary = "P3: ground stroke, a vertical dot standing on the target (waits 8 s), pressed to its base when it works"; break;
-                case Verb.Split:  // P4: engraved cut with dry lips on the ground, a cut-face pair on the armour contact
-                    t.summary = "P4: engraved cut with two dry lips on the ground (<= 0.3 s), a pair of cut faces at the armour contact (strip 3 s)"; t.hollow = 0f; break;
-                default:          // P5: thin ground stroke out and back, a small closed loop riding its head
-                    t.summary = "P5: thin stroke out and back at chest height, a small closed loop (diameter < 1 m) riding the head, dry 0.15 s after the return"; t.tailMeters = 12f; t.lineWidth = 0.18f; break;
-            }
+            // D308-150 V9 + step 4: every template is played by the legacy bridge (the glyph's old main-game body at the commit, + for a batchim the verb state as old parts);
+            // the free showcase wraps the bridge for the glyphs it has a look for. The ink-mesh numbers of the rejected slice 9a / NB20 / stroke20 recipes are no longer set here.
+            string[] verbKo = { "한 번", "남긴다", "번진다", "심는다", "가른다", "돌아온다" };
+            t.summary = id.Name + " (legacy bridge, D308-150 V9" + (id.Verb == Verb.Once ? "" : " step 4") + "): the glyph's old main-game body at the commit" + (id.Verb == Verb.Once ? "" : " + the " + verbKo[(int)id.Verb] + " state as old parts (Vol2LegacyVerbRecipes)");
             return t;
         }
 
-        public static Vol2VfxCatalogue CreateCatalogue(Material ink)
+        public static Vol2VfxCatalogue CreateCatalogue()
         {
             var c = ScriptableObject.CreateInstance<Vol2VfxCatalogue>();
             c.name = "Vol2VfxCatalogue(default)";
@@ -184,7 +154,6 @@ namespace Oheangbu.App
             var bs = new System.Collections.Generic.List<Vol2BodyLook>();
             foreach (Body b in Enum.GetValues(typeof(Body))) bs.Add(NewLook(b));
             c.bodies = bs.ToArray();
-            c.inkMaterial = ink;
             return c;
         }
     }

@@ -159,7 +159,6 @@ namespace Oheangbu.App
             run.Bind(inst, kit, _parent);
             _runs[inst] = run;
             Shown++;
-            inst.Dirty = false;                                   // no vol.2 ink mesh for a showcase cast
             // the great brush's show swing of the bridge (presentation only, never a hit): the old category's motion, its apex at the launch
             var legacy = inst.Model.Legacy;
             if (legacy != null)
@@ -199,7 +198,6 @@ namespace Oheangbu.App
         {
             if (_runs.TryGetValue(inst, out var r))
             {
-                inst.Dirty = false;
                 if (r.CheckBodyGone()) { LastNote = inst.Log.Glyph.Letter + ": " + r.Note; return; }
                 try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; } catch (Exception e) { Debug.LogException(e); }
             }
@@ -211,10 +209,6 @@ namespace Oheangbu.App
             if (_runs.TryGetValue(inst, out var r)) { _runs.Remove(inst); r.Dispose(); }
             else Inner.OnRetired(inst, aborted);
         }
-
-        public override float Head(Vol2VfxInstance inst, long nowUs) => Mine(inst) ? inst.HeadAlong(nowUs) : Inner.Head(inst, nowUs);
-        public override Vector3 Offset(Vol2VfxInstance inst, long nowUs) => Mine(inst) ? Vector3.zero : Inner.Offset(inst, nowUs);
-        public override void Write(Vol2VfxInstance inst, Vol2InkWriter w) { if (!Mine(inst)) Inner.Write(inst, w); }
 
         public override bool IsFinished(Vol2VfxInstance inst, long nowUs)
         {
