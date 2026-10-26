@@ -211,6 +211,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _rules = false; _p09a = false; _legacy = false; Dists.Clear();
             _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; AdapterBodies.Clear(); BridgeBodies.Clear();
+            _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
             {
@@ -236,6 +237,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "dist") Dists.AddRange(v.Split('/').Select(x => float.Parse(x, Inv)));
                 else if (k == "p0" && v.Trim() == "9a") _p09a = true;
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
+                else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
             foreach (string t in templates)
             {
@@ -330,8 +332,23 @@ namespace Oheangbu.EditorTools.Vol2
                     j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.6 : 2.2; j.MinAge = j.MaxAge;
                     if (!_legacy) j.Variant = _apex == true ? "bridge_apex" : "bridge";
                 }
+            // D308-150 V13 (cast camera, rapid casts): burst=N/every raises the job's letter N - 1 more times, every `every` s after the first commit (LAB-SIMULATED:
+            // the same letter on the channel, no drawing), and records the whole run plus BurstTail s (no early stop when the first cast retires)
+            if (_burstCount > 1)
+            {
+                char letter = j.Letter;
+                for (int k = 1; k < _burstCount; k++)
+                {
+                    int nth = k + 1;
+                    j.Steps.Add(new Step { At = k * _burstEvery, Name = "LAB-SIMULATED: rapid cast " + nth + "/" + _burstCount + " (" + letter + " again)", Do = c => { RaiseLetter(c, letter); return true; } });
+                }
+                j.MaxAge = j.MinAge = (_burstCount - 1) * _burstEvery + BurstTail;
+                j.Variant += "_burst" + _burstCount;
+            }
             return j;
         }
+
+        static int _burstCount; static double _burstEvery = 0.65; const double BurstTail = 1.8;
 
         // ------------------------------------------------------------------------------------------------------------------------------------------------
         // step 4 (D308-150 V9): the batchim templates as the legacy bridge plays them - the cast AND the lasting verb state long enough to read it

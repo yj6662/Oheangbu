@@ -65,6 +65,8 @@ namespace Oheangbu.App
             go.AddComponent<Vol2ShapeRuntimeTicker>().Bind(runtime);
             runtime.Presenter = Vol2DebugPresenter.Attach(runtime.Coordinator, go.transform);
             runtime.Vfx = Vol2VfxPresenter.Attach(runtime.Coordinator, go.transform, null, runtime.Presenter, HideFlags.None, wiring);      // slice 9a (+ D308-150 V9 legacy bridge)
+            // D308-150 V13: the cast camera (A softened, the default of every vol.2 scope) lives with the scope; presentation only, Play only
+            if (runtime.Vfx != null && Application.isPlaying) Vol2CastCameraDirector.Ensure(go.transform);
             // TE-S3-6 (D308-150 V9, TEST, the user decides on return): the old feel launches a waiting cast at the swing's apex. ON in the spell lab scope only (the only
             // scene a Vol2 scope runs in today: Vol2LabRequestFile); the apex seconds are the live swing profile's (single / area), so the two never drift apart.
             var tuning = runtime.Coordinator.Tuning;

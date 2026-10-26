@@ -2,25 +2,51 @@ using UnityEngine;
 
 namespace Oheangbu.App
 {
-    /// <summary>D308-150 V12 cast camera treatments (LAB-ONLY prototype, TEST): every number of the four treatments the user compares.
-    /// Loaded from Resources "Vol2CastCamera/Vol2CastCameraProfile" (the editor command castcam:make-profile writes it); missing = these field
-    /// defaults. The director works on a runtime copy, so a castcam:set never changes the asset. Times are seconds after the commit (the cast's
-    /// StartUs on the scope clock); the swing apex launch is 0.28 s (path) / 0.53 s (fan) in the lab.</summary>
+    /// <summary>A's weight curve. Spring (D308-150 V13, the default): one critically damped weight per director, held at 1 while the latest cast's framing
+    /// lasts - a cast inside the hold only extends it, a cast during the return turns it back up smoothly (velocity continuous, no new swing).
+    /// AgeEnvelope = the V12 shape (in / hold / out as a pure function of the latest cast's age: every cast starts a new swing) - kept for comparison only.</summary>
+    public enum Vol2FrameShape { Spring = 0, AgeEnvelope = 1 }
+
+    /// <summary>D308-150 V12 cast camera treatments (lab prototype, TEST) and V13 (2026-10-26: A, softened, is the default of every vol.2 scope):
+    /// every number of the four treatments. Loaded from Resources "Vol2CastCamera/Vol2CastCameraProfile" (the editor command castcam:make-profile writes it);
+    /// missing = these field defaults. The director works on a runtime copy, so a castcam:set never changes the asset. Times are seconds after the commit
+    /// (the cast's StartUs on the scope clock); the swing apex launch is 0.28 s (path) / 0.53 s (fan) in the lab.</summary>
     [CreateAssetMenu(menuName = "Oheangbu/Vol2/Cast Camera Profile", fileName = "Vol2CastCameraProfile")]
     public sealed class Vol2CastCameraProfile : ScriptableObject
     {
         public const string ResourcePath = "Vol2CastCamera/Vol2CastCameraProfile";
 
-        [Header("A Frame: ease the eye up / back / right and pitch down, so caster and impact both fit")]
-        public float FrameIn = .28f;
+        [Header("A Frame: ease the eye up / back / right and pitch down, so caster and impact both fit (V13: softened, the vol.2 default)")]
+        public Vol2FrameShape FrameShape = Vol2FrameShape.Spring;
+        [Tooltip("Scales the offset, the pitch and the yaw of A together (1 = the V13 soft numbers below; 0 = no framing)")]
+        [Range(0f, 2f)] public float FrameStrength = 1f;
+        [Tooltip("Spring: smooth time (s) of the weight going up (about 90 % at 1.9 x this)")]
+        public float FrameRiseSmooth = .15f;
+        [Tooltip("Spring: smooth time (s) of the weight going back down")]
+        public float FrameReturnSmooth = .25f;
+        [Tooltip("Spring: the weight never changes faster than this per second (caps the eye's speed at |offset| x this)")]
+        public float FrameMaxRate = 4f;
+        [Tooltip("Both shapes: the framing is held until this long after the LATEST cast's commit")]
         public float FrameHoldUntil = 1.1f;
+        [Tooltip("AgeEnvelope only (V12): smoothstep in / out seconds")]
+        public float FrameIn = .28f;
         public float FrameOut = .4f;
-        [Tooltip("Added to the camera position in its own yaw frame (right, up, forward), metres")]
-        public Vector3 FrameOffset = new Vector3(.9f, .9f, -.6f);
-        public float FramePitchAdd = 20f;
-        public float FramePitchMax = 28f;
-        public float FrameYawAdd = -10f;
+        [Tooltip("Added to the camera position in its own yaw frame (right, up, forward), metres, times FrameStrength")]
+        public Vector3 FrameOffset = new Vector3(.45f, .45f, -.3f);
+        public float FramePitchAdd = 10f;
+        [Tooltip("The framed pitch never goes past this (a camera already looking further down keeps its own pitch)")]
+        public float FramePitchMax = 18f;
+        public float FrameYawAdd = -5f;
         public float FrameFovAdd = 0f;
+
+        [Header("A boom: the framed eye never goes into a wall (the rig's own SphereCast rule from the pivot)")]
+        public bool FrameBoom = true;
+        [Tooltip("Sphere radius of the cast (the rig's BoomRadius)")]
+        public float BoomRadius = .25f;
+        [Tooltip("Pivot height above the caster when the camera has no pivot parent (the capture camera's shoulder rig: 1.7 m)")]
+        public float BoomPivotHeight = 1.7f;
+        [Tooltip("A blocked offset is pulled in at once and given back at this rate (1 - exp(-rate dt), the rig's CameraBlendSpeed)")]
+        public float BoomReleaseRate = 8f;
 
         [Header("B Fade: dither the caster while it covers the line from the brush to the target")]
         public float FadeIn = .12f;
@@ -67,6 +93,7 @@ namespace Oheangbu.App
         public float LineStartAhead = .8f;
         public float LineStartHeight = 1.2f;
 
+        /// <summary>The age-driven treatments' end (s after the commit). A on the spring has no fixed end: it lasts while its weight does.</summary>
         public float EndOf(Vol2CastCamTreatment t)
         {
             float e = 0f;
