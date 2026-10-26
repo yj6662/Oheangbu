@@ -198,6 +198,8 @@ namespace Oheangbu.App
                     Vol2FsB1.EmitV(_fire, tip + Random.insideUnitSphere * 0.05f, Vector3.up * 1.1f, (0.38f + 0.25f * Random.value) * (1f + 0.6f * pulse), -1f);
                     if (k % 3 == 0) Vol2FsB1.Emit(_embers, tip, 1);
                 }
+                // 2026-10-27 polish (nak_a): fire licks up the whole trunk too, not only the crown
+                for (int j = 0; j < 2; j++) { var trk = _tree.Tubes[0]; float sv = trk.Grow; trk.Grow = sv * Random.Range(0.08f, 1f); Vector3 on = Vol2FsTubes.TipOf(trk); trk.Grow = sv; if (warn < 0.01f || Random.value > warn) Vol2FsB1.EmitV(_fire, on + Random.insideUnitSphere * 0.18f, Vector3.up * 1.0f, (0.32f + 0.25f * Random.value) * (1f + 0.5f * pulse), -1f); }
                 if (Time.frameCount % 5 == 0) Vol2FsB1.EmitV(_tall, _base + Vector3.up * (0.3f + 0.7f * Random.value) + Random.insideUnitSphere * 0.2f, Vector3.up * 1.2f, (0.55f + 0.3f * Random.value) * (1f - 0.6f * warn) * (1f + 0.5f * pulse), -1f);
                 if (Time.frameCount % 7 == 0) Vol2FsB1.Emit(_smoke, _base + Vector3.up * 2.4f, 1);
                 if (Time.frameCount % 2 == 0) Vol2FsB1.Emit(_embers, _base + Vector3.up * 0.2f + Random.insideUnitSphere * 0.6f, 1);

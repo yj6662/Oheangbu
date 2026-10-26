@@ -102,6 +102,7 @@ namespace Oheangbu.App
             _cageB = BodyBounds(_cageT, _cageFeet, t != null ? t.Radius : 0.5f);
             _cageAt = Inst.Rel(rec.NowUs);
             BuildCage();
+            HitStop(_cageAt);      // 2026-10-27 polish: the batch 1 - 4 hit-stop reaches batch 0 (the first direct contact)
             Note = "cage on " + rec.TargetId;
         }
 

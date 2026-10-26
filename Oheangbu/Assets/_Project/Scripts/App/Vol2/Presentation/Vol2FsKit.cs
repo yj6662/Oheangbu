@@ -15,10 +15,12 @@ namespace Oheangbu.App
         public string Tex, Ramp;
         public Color Tint, Edge;
         public float Intensity, AddMix, NoiseAmt, NoiseScale, Erode, EdgeWidth, Soft, Opacity, RampScale;
+        /// <summary>2026-10-27 per-glyph polish: the fire flipbook's heat reach on the ramp (0 = the default 1; &lt; 1 = redder).</summary>
+        public float FlipHeat;
         public Vector2 Scroll;
         public static Vol2FsMat Make(string tex, Color tint, float intensity, float addMix)
             => new Vol2FsMat { Tex = tex, Tint = tint, Intensity = intensity, AddMix = addMix, NoiseAmt = 0.5f, NoiseScale = 1f, Erode = 0.2f, EdgeWidth = 0.15f, Soft = 0.4f, Opacity = 1f, RampScale = 1.5f, Scroll = new Vector2(0f, -0.4f) };
-        public string Key => Tex + "|" + Ramp + "|" + Tint + "|" + Edge + "|" + Intensity + "|" + AddMix + "|" + NoiseAmt + "|" + NoiseScale + "|" + Erode + "|" + EdgeWidth + "|" + Soft + "|" + Opacity + "|" + RampScale + "|" + Scroll;
+        public string Key => Tex + "|" + Ramp + "|" + Tint + "|" + Edge + "|" + Intensity + "|" + AddMix + "|" + NoiseAmt + "|" + NoiseScale + "|" + Erode + "|" + EdgeWidth + "|" + Soft + "|" + Opacity + "|" + RampScale + "|" + Scroll + (FlipHeat > 0f ? "|fh" + FlipHeat : "");
     }
 
     public sealed class Vol2FsKit
@@ -64,12 +66,16 @@ namespace Oheangbu.App
             // r2: fire only - the smoke / dust / steam puffs keep their soft single sheet (r1 flipbook puffs read as flat torn sheets)
             bool fire = m.Tex == "fs_flame" && m.Ramp == "fs_ramp_fire";
             var flip = fire ? Tex(FlipTexName) : null;
-            if (flip != null) { mat.SetTexture("_FlipTex", flip); mat.SetFloat("_FsKind", 1f); }
-            if (m.Ramp == "fs_ramp_water" && (m.Tex == "fs_water" || m.Tex == "fs_swirl" || m.Tex == "fs_streak")) mat.SetFloat("_WaterMode", 1f);
+            if (flip != null) { mat.SetTexture("_FlipTex", flip); mat.SetFloat("_FsKind", 1f); if (m.FlipHeat > 0f) mat.SetFloat("_FlipHeat", m.FlipHeat); }
+            // 2026-10-27 per-glyph polish: fire stays orange-red - the batches' intensity 2 - 3 with a 1.6 - 1.7 ramp read yellow-white from the shoulder
+            if (fire) { mat.SetFloat("_Intensity", Mathf.Min(m.Intensity, 1.8f)); mat.SetFloat("_RampScale", Mathf.Min(m.RampScale, 1.3f)); }
+            if (m.Ramp == "fs_ramp_water" && (m.Tex == "fs_water" || m.Tex == "fs_swirl" || m.Tex == "fs_streak")) { mat.SetFloat("_WaterMode", 1f); mat.SetFloat("_WaterRim", WaterRim); }
             _mats[key] = mat;
             return mat;
         }
 
+        /// <summary>2026-10-27 per-glyph polish: clear water's white fringe narrowed (FsParticle _WaterRim; 1 = the material pass).</summary>
+        public const float WaterRim = 0.55f;
         public const string FlipTexName = "fs_fire_flip", MetalShaderName = "Oheangbu/FreeShowcase/Metal", StoneShaderName = "Oheangbu/FreeShowcase/Stone";
 
         /// <summary>2026-10-27 common material pass: showcase steel (Oheangbu/FreeShowcase/Metal - unlit chrome in the transparent queue, drawn after the ink
@@ -223,6 +229,12 @@ namespace Oheangbu.App
         public int SortFudge;
         /// <summary>batch 1: mesh particles (rock chunks, steel shards) - tumbling in 3D, lit when <see cref="Mat"/> is a lit material.</summary>
         public Mesh Mesh;
+        /// <summary>2026-10-27 per-glyph polish: this system never plays the kit's fire flipbook (a fire material keeps its plain tongue sheet here).</summary>
+        public bool NoFlip;
+        /// <summary>2026-10-27 per-glyph polish: the flipbook's size multiplier for this system (0 = the kit's default).</summary>
+        public float FlipScale;
+        /// <summary>2026-10-27 per-glyph polish: height / width of each billboard (1 = square; 2 = a tall licking tongue).</summary>
+        public float Aspect = 1f;
     }
 
     public static class Vol2Fs
@@ -231,6 +243,8 @@ namespace Oheangbu.App
         static readonly List<ParticleSystemVertexStream> MeshStreams = new List<ParticleSystemVertexStream> { ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Normal, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV };
         /// <summary>2026-10-27: size of a flipbook fire / puff particle against the old single-sheet one (the flipbook cells keep a margin).</summary>
         public const float FlipFireScale = 1.45f, FlipPuffScale = 1.2f;
+        /// <summary>2026-10-27 per-glyph polish: the automatic licking tongue of a fire system (height / width, width against its written size).</summary>
+        public const float AutoLickAspect = 2.1f, AutoLickWidth = 0.72f;
 
         public static ParticleSystem Build(Vol2FsPs d, Transform parent, string name)
         {
@@ -243,6 +257,14 @@ namespace Oheangbu.App
             main.startLifetime = new ParticleSystem.MinMaxCurve(d.Life0, d.Life1);
             main.startSpeed = new ParticleSystem.MinMaxCurve(d.Speed0, d.Speed1);
             main.startSize = new ParticleSystem.MinMaxCurve(d.Size0, d.Size1);
+            if (d.Mesh == null && Mathf.Abs(d.Aspect - 1f) > 0.01f)
+            {
+                // 2026-10-27 per-glyph polish: tall billboards (licking flame tongues, water jets); EmitV keeps the ratio (Vol2FsB1.EmitV)
+                main.startSize3D = true;
+                main.startSizeX = new ParticleSystem.MinMaxCurve(d.Size0, d.Size1);
+                main.startSizeY = new ParticleSystem.MinMaxCurve(d.Size0 * d.Aspect, d.Size1 * d.Aspect);
+                main.startSizeZ = new ParticleSystem.MinMaxCurve(d.Size0, d.Size1);
+            }
             main.startColor = new ParticleSystem.MinMaxGradient(d.C0, d.C1);
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, d.RandRot * Mathf.Deg2Rad);
             main.gravityModifier = d.Gravity;
@@ -283,14 +305,31 @@ namespace Oheangbu.App
             // 2026-10-27 common material pass: a fire / puff material that carries the flipbook plays it over each particle's life (8 x 8, birth -> burn ->
             // smoke), drawn a little bigger (the cells keep a margin; batches 0 - 4 fire read small and sparse). The material stays shared: the flipbook is
             // switched on for this renderer only (property block), so ribbons with the same material keep the plain texture.
-            int flipKind = d.Mesh == null && d.Mat != null && d.Mat.HasProperty("_FsKind") && d.Mat.GetTexture("_FlipTex") != null ? Mathf.RoundToInt(d.Mat.GetFloat("_FsKind")) : 0;
+            // 2026-10-27 per-glyph polish: a fire particle system that asked for nothing (no FlipScale, not NoFlip) plays licking tongues instead of the
+            // flipbook - the glyph sheets showed the flipbook as yellow paper cut-outs on every fire glyph (노 누 너 낙 녹 넉 눅 난 넌 논 눈); tall upright
+            // billboards of the plain tongue sheet, a little narrower. A glyph that wants the flipbook (나's fireball, 노's breath) sets FlipScale.
+            bool fireMat = d.Mesh == null && d.Mat != null && d.Mat.HasProperty("_FsKind") && d.Mat.GetTexture("_FlipTex") != null && Mathf.RoundToInt(d.Mat.GetFloat("_FsKind")) == 1;
+            if (fireMat && !d.NoFlip && d.FlipScale <= 0f && !d.Stretch)
+            {
+                d.NoFlip = true;
+                if (Mathf.Abs(d.Aspect - 1f) < 0.01f)
+                {
+                    main.startSize3D = true;
+                    main.startSizeX = new ParticleSystem.MinMaxCurve(d.Size0, d.Size1);
+                    main.startSizeY = new ParticleSystem.MinMaxCurve(d.Size0 * AutoLickAspect, d.Size1 * AutoLickAspect);
+                    main.startSizeZ = new ParticleSystem.MinMaxCurve(d.Size0, d.Size1);
+                    main.startRotation = new ParticleSystem.MinMaxCurve(-0.12f, 0.12f);
+                    sz.sizeMultiplier = AutoLickWidth;
+                }
+            }
+            int flipKind = !d.NoFlip && d.Mesh == null && d.Mat != null && d.Mat.HasProperty("_FsKind") && d.Mat.GetTexture("_FlipTex") != null ? Mathf.RoundToInt(d.Mat.GetFloat("_FsKind")) : 0;
             if (flipKind > 0)
             {
                 var ts = ps.textureSheetAnimation; ts.enabled = true; ts.mode = ParticleSystemAnimationMode.Grid; ts.numTilesX = 8; ts.numTilesY = 8;
                 ts.timeMode = ParticleSystemAnimationTimeMode.Lifetime; ts.cycleCount = 1;
                 ts.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f));
                 ts.startFrame = new ParticleSystem.MinMaxCurve(0f, flipKind == 1 ? 3.99f : 1.99f);      // a slightly different birth per particle
-                sz.sizeMultiplier = flipKind == 1 ? FlipFireScale : FlipPuffScale;
+                sz.sizeMultiplier = d.FlipScale > 0f ? d.FlipScale : flipKind == 1 ? FlipFireScale : FlipPuffScale;
             }
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.sharedMaterial = d.Mat;

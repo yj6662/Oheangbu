@@ -25,10 +25,12 @@ namespace Oheangbu.App
             var root = Root.transform;
             Vol2Fs.MeshObject(root, "FireWheel", Kit.Mat(FireMat("fs_petal", 2.6f, 0.75f)), out _wheelMesh);
             Vol2Fs.MeshObject(root, "WheelInk", Kit.InkSolid("fs_petal", Ink, new Color(3f, 0.9f, 0.15f, 1f), 0.12f, 0.45f, 0.3f, 1.4f), out _wheelInkMesh);
-            Vol2Fs.MeshObject(root, "PeonyFire", Kit.Mat(FireMat("fs_petal", 1.5f, 0.4f)), out _fireMesh);
+            // 2026-10-27 per-glyph polish: the peony reads by its PETALS (r4 / the material pass: 40 big flipbook flames at the parry made one yellow fireball) -
+            // orange-red petal fire (short ramp), more and longer petals in four layers, a hot small core, the flames only small licking tongues
+            var petal = FireMat("fs_petal", 1.75f, 0.45f); petal.RampScale = 1.15f; petal.NoiseAmt = 0.5f;
+            Vol2Fs.MeshObject(root, "PeonyFire", Kit.Mat(petal), out _fireMesh);
             Vol2Fs.MeshObject(root, "PeonyInk", Kit.InkSolid("fs_petal", Ink, new Color(3.2f, 1.0f, 0.18f, 1f), 0.1f, 0.5f, 0.28f, 1.3f), out _inkMesh);
-            _flames = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(FireMat("fs_flame", 2.2f, 0.55f)), Life0 = 0.25f, Life1 = 0.55f, Speed0 = 0.3f, Speed1 = 1.2f, Size0 = 0.25f, Size1 = 0.6f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.08f, Tiles = 2,
-                VelOverLife = new Vector3(0f, 2f, 0f), Noise = 0.8f, SizeStart = 0.5f, SizePeak = 1.2f, SizeEnd = 0.3f, Max = 900 }, root, "Flames");
+            _flames = Vol2Fs.Build(Vol2FsPolish.Licks(Kit.Mat(Vol2FsPolish.Lick(1.5f, 0.5f)), 0.18f, 0.36f, 0.25f, 0.5f, 2f, 900, 2f), root, "Flames");
             _embers = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", Hot, 5f, 1f)), Life0 = 0.5f, Life1 = 1.4f, Speed0 = 1.5f, Speed1 = 6f, Size0 = 0.025f, Size1 = 0.06f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.15f, Gravity = -0.3f,
                 Noise = 1.6f, NoiseFreq = 2f, Stretch = true, StretchVel = 0.05f, Max = 900 }, root, "Embers");
             var ash = M("fs_ink", new Color(0.5f, 0.47f, 0.44f, 1f), 1f, 0f); ash.NoiseAmt = 0.3f; ash.Edge = new Color(1.8f, 0.55f, 0.1f, 1f); ash.EdgeWidth = 0.25f; ash.Soft = 0.05f;
@@ -39,8 +41,8 @@ namespace Oheangbu.App
                 SizeStart = 0.5f, SizePeak = 1.2f, SizePeakAt = 0.5f, SizeEnd = 1.7f, VelOverLife = new Vector3(0f, 1f, 0f), Max = 80, SortFudge = 12 }, root, "Smoke");
             var drop = M("fs_ink", Ink, 1f, 0f); drop.Edge = new Color(2.5f, 0.7f, 0.12f, 1f); drop.EdgeWidth = 0.2f; drop.NoiseAmt = 0.3f; drop.Soft = 0.1f;
             _drops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(drop), Life0 = 0.7f, Life1 = 1.3f, Speed0 = 3f, Speed1 = 8f, Size0 = 0.08f, Size1 = 0.28f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Gravity = 2f, Drag = 0.4f, Tiles = 2, AlphaHoldTo = 0.6f, Max = 300 }, root, "InkDrops");
-            _scorch = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(FireMat("fs_flame", 2.4f, 0.55f)), Rate = 0f, Loop = true, Life0 = 0.3f, Life1 = 0.6f, Speed0 = 0.2f, Speed1 = 0.6f, Size0 = 0.25f, Size1 = 0.55f, Radius = 0.22f, Tiles = 2,
-                VelOverLife = new Vector3(0f, 2.2f, 0f), Noise = 0.8f, SizeStart = 0.6f, SizePeak = 1.2f, SizeEnd = 0.3f, Max = 250 }, root, "PawFire");
+            var paw = Vol2FsPolish.Licks(Kit.Mat(Vol2FsPolish.Lick(1.5f, 0.5f)), 0.22f, 0.42f, 0.3f, 0.6f, 2.2f, 250, 2.1f); paw.Loop = true; paw.Radius = 0.22f;
+            _scorch = Vol2Fs.Build(paw, root, "PawFire");
             foreach (var ps in new[] { _flames, _embers, _ash, _smoke, _drops, _scorch }) ps.Play(false);
             _light = Vol2Fs.PointLight(root, "FireLight", Orange, 6f);
         }
@@ -94,8 +96,8 @@ namespace Oheangbu.App
             Vector3 view = (cam - ParryPoint).normalized;
             _bloomN = (view * 0.75f - Away * 0.25f).normalized;                          // the flower opens toward the eye, a little back at the bear
             _bloomR = Vector3.Cross(Vector3.up, _bloomN).normalized; _bloomU = Vector3.Cross(_bloomN, _bloomR);
-            int[] counts = { 7, 12, 10 }; float[] lens = { 1.9f, 1.35f, 0.7f }; float[] wid = { 0.85f, 0.6f, 0.36f };
-            for (int L = 0; L < 3; L++)
+            int[] counts = { 9, 14, 12, 8 }; float[] lens = { 2.5f, 1.7f, 1.1f, 0.55f }; float[] wid = { 0.95f, 0.66f, 0.48f, 0.32f };      // polish: four layers, longer
+            for (int L = 0; L < 4; L++)
                 for (int k = 0; k < counts[L]; k++)
                 {
                     float ang = (k + 0.5f * L + 0.3f * Vol2Fs.Hash(Seed, L * 40 + k)) / counts[L] * Mathf.PI * 2f;
@@ -105,7 +107,7 @@ namespace Oheangbu.App
             _paw = Vol2FsB2.NearestBone(Attacker, ParryPoint);
             if (_paw != null) _pawLocal = _paw.InverseTransformPoint(ParryPoint + Away * 0.1f);
             Vol2FsB1.Emit(_embers, ParryPoint, 260); Vol2FsB1.Emit(_drops, ParryPoint, 70);
-            for (int k = 0; k < 40; k++) Vol2FsB1.EmitV(_flames, ParryPoint, (Random.onUnitSphere + _bloomN * 0.5f).normalized * Random.Range(2f, 6f), Random.Range(0.5f, 1.1f), 0.45f);
+            for (int k = 0; k < 18; k++) Vol2FsB1.EmitV(_flames, ParryPoint, (Random.onUnitSphere + _bloomN * 0.5f).normalized * Random.Range(2f, 5f), Random.Range(0.22f, 0.4f), 0.4f);
             Vol2FsB1.Emit(_smoke, ParryPoint + Vector3.up * 0.4f, 6);
             var em = _scorch.emission; em.rateOverTime = 70f;
         }
@@ -118,7 +120,7 @@ namespace Oheangbu.App
             {
                 float a = h - p.Delay; if (a <= 0f) continue;
                 float grow = Vol2Fs.EaseOutBack(Mathf.Clamp01(a / 0.2f));
-                float life = 1f - Vol2Fs.Smooth(0.4f, p.Life, a);
+                float life = 1f - Vol2Fs.Smooth(0.5f, p.Life + 0.15f, a);      // polish: the open flower holds a little longer
                 if (life <= 0.01f) continue;
                 Vector3 d = _bloomR * Mathf.Cos(p.Ang) + _bloomU * Mathf.Sin(p.Ang);
                 Vector3 dir = (d * (0.85f + 0.1f * p.Layer) + _bloomN * (0.25f + 0.15f * p.Layer)).normalized;   // the inner layers stand up toward the eye (a cup)

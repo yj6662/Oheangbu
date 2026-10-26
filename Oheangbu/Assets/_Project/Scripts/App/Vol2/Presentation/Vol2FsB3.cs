@@ -29,7 +29,7 @@ namespace Oheangbu.App
         protected static float Back(float ang) => Vol2Fs.Smooth(0.55f, 0.9f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)) / 180f);
         /// <summary>r2: 1 on the front arc (within 40 deg of the aim) .. 0 from 115 deg round: a ring's standing pieces are lower on the sides and gone behind - with the
         /// cast camera A pulled back inside the 2 m ring the side pieces loomed over the whole frame in r1.</summary>
-        protected static float Front(float ang) => 1f - Vol2Fs.Smooth(0.17f, 0.56f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)) / 180f);      // r3: 30 -> 100 deg
+        protected static float Front(float ang) => 1f - Vol2Fs.Smooth(95f, 165f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)));      // r3: 30 -> 100 deg; 2026-10-27 polish: the whole ring but the short arc behind the caster (only the front half read)
         protected static Vector3 FlatN(Vector3 v) { v.y = 0f; return v.sqrMagnitude > 1e-6f ? v.normalized : Vector3.forward; }
 
         // the bodies the executor touched (the instant strike and the residue's own touches)

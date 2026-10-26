@@ -43,11 +43,16 @@ namespace Oheangbu.App
 
         protected override void OnLaunch(long nowUs)
         {
-            const int N = 14;
+            // 2026-10-27 polish (u_b): geysers of very different heights and girths (r4: 14 equal columns read as a fence), the far arc tallest, the
+            // flanks lower (they stood at the frame edges, cut off), a thin twin jet beside every other one
+            const int N = 12;
             for (int k = 0; k < N; k++)
             {
-                float ang = Vol2FsB2.Angle(k, N, Seed, 0.5f), back = Back(ang);
-                _g.Add(new G { Ang = ang, H = Mathf.Lerp(2.2f, 3.4f, Vol2Fs.Hash(Seed, k + 20)) * (1f - 0.7f * back), W = Mathf.Lerp(0.45f, 0.7f, Vol2Fs.Hash(Seed, k + 30)) * (1f - 0.3f * back), At = ExpandSeconds * Vol2Fs.Hash(Seed, k + 40), Rnd = Vol2Fs.Hash(Seed, k + 50) });
+                float ang = Vol2FsB2.Angle(k, N, Seed, 0.9f), back = Back(ang);
+                float far = 1f - 0.4f * Vol2Fs.Smooth(40f, 100f, Mathf.Abs(ang * Mathf.Rad2Deg));
+                float big = Vol2Fs.Hash(Seed, k + 20);
+                _g.Add(new G { Ang = ang, H = Mathf.Lerp(1.3f, 4.2f, big * big) * far * (1f - 0.7f * back), W = Mathf.Lerp(0.35f, 0.95f, big) * (1f - 0.3f * back), At = ExpandSeconds * Vol2Fs.Hash(Seed, k + 40), Rnd = Vol2Fs.Hash(Seed, k + 50) });
+                if (k % 2 == 0) _g.Add(new G { Ang = ang + 0.12f, H = Mathf.Lerp(0.8f, 2.0f, Vol2Fs.Hash(Seed, k + 60)) * far * (1f - 0.7f * back), W = 0.22f, At = ExpandSeconds * Vol2Fs.Hash(Seed, k + 70) + 0.05f, Rnd = Vol2Fs.Hash(Seed, k + 80) });
             }
             _light.transform.position = Apex + F * R + Vector3.up * 1.4f;
         }
@@ -72,7 +77,7 @@ namespace Oheangbu.App
                 {
                     float u = j / 7f;
                     pts[j] = b + Vector3.up * h * u + side * Mathf.Sin(u * 5f + t * 9f + g.Rnd * 6f) * 0.08f + outw * 0.15f * u * u;
-                    w[j] = g.W * (1.1f - 0.45f * u) * (1f + 0.25f * fall); al[j] = life * (0.85f - 0.25f * u);
+                    w[j] = g.W * (1.35f - 0.95f * u + 0.5f * Mathf.Exp(-u * 12f)) * (1f + 0.25f * fall);      // polish: a splash skirt at the foot, a jet narrowing to the top al[j] = life * (0.85f - 0.25f * u);
                 }
                 _cols.Strip(pts, w, null, Color.white, al, g.Rnd, cam, 0f, 1f);
                 // the crown at the top: four sheets curling out and down
@@ -80,20 +85,20 @@ namespace Oheangbu.App
                 for (int c = 0; c < 4; c++)
                 {
                     float ca = c * Mathf.PI * 0.5f + g.Rnd * 3f; Vector3 d = (outw * Mathf.Cos(ca) + side * Mathf.Sin(ca)).normalized;
-                    var cp = new[] { top, top + d * 0.35f + Vector3.up * 0.25f, top + d * 0.7f + Vector3.down * 0.2f * (1f + fall) };
-                    _crowns.Strip(cp, new[] { 0.3f, 0.26f, 0.08f }, null, Color.white, new[] { life, life * 0.8f, life * 0.3f }, g.Rnd + c * 0.1f, cam, 0f, 1f);
+                    var cp = new[] { top, top + d * 0.5f * (0.6f + g.W) + Vector3.up * 0.35f, top + d * 1.0f * (0.6f + g.W) + Vector3.down * 0.3f * (1f + fall) };
+                    _crowns.Strip(cp, new[] { 0.36f, 0.32f, 0.1f }, null, Color.white, new[] { life, life * 0.8f, life * 0.3f }, g.Rnd + c * 0.1f, cam, 0f, 1f);
                 }
                 if ((k + Time.frameCount) % 2 == 0) { Vol2FsB1.EmitV(_drops, top, (Random.onUnitSphere * 2f + Vector3.up * 2.5f + outw * 1.5f)); Vol2FsB1.EmitV(_spray, top, Random.onUnitSphere * 1.2f + Vector3.up * 0.5f, -1f, 0.6f); }
                 if (fall > 0f && (k + Time.frameCount) % 2 == 0) Vol2FsB1.EmitV(_spray, top, Vector3.down * 2f + outw * 0.5f, -1f, 0.6f);
                 // an ink ribbon spiralling up round the column (front and sides)
-                if (Back(g.Ang) < 0.4f && k % 2 == 0)
+                if (Back(g.Ang) < 0.4f && g.W > 0.3f)
                 {
                     var rp = new Vector3[10]; var rw = new float[10]; var ra = new float[10];
                     for (int j = 0; j < 10; j++)
                     {
                         float u = j / 9f, sp = u * 7f + t * 6f + g.Rnd * 6f;
                         rp[j] = b + Vector3.up * (h * 1.05f * u) + (side * Mathf.Cos(sp) + outw * Mathf.Sin(sp)) * (0.32f + 0.25f * u);
-                        rw[j] = 0.13f * Mathf.Sin(u * Mathf.PI) + 0.02f; ra[j] = life;
+                        rw[j] = 0.2f * Mathf.Sin(u * Mathf.PI) + 0.03f; ra[j] = life;
                     }
                     _ribbons.Strip(rp, rw, null, Color.white, ra, g.Rnd * 0.7f + 0.2f, cam, 0f, 1f);
                 }

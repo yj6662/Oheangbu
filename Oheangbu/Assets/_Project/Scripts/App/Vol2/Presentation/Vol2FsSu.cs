@@ -36,7 +36,7 @@ namespace Oheangbu.App
             Vol2Fs.MeshObject(root, "LightTrails", Kit.Mat(M("fs_streak", White, 7f, 1f)), out _trailMesh);
             var ink = M("fs_stroke2", Ink, 1f, 0f); ink.Soft = 0.001f; ink.NoiseAmt = 0.5f; ink.Erode = 0.3f; ink.Opacity = 0.9f;
             Vol2Fs.MeshObject(root, "InkTrails", Kit.Mat(ink), out _inkMesh);
-            var saw = M("fs_kcisa79", Gold, 2.6f, 1f); saw.Soft = 0.001f; saw.NoiseAmt = 0.15f; saw.Erode = 0.1f;
+            var saw = M("fs_kcisa79", new Color(1f, 0.88f, 0.66f), 1.05f, 1f);      // polish: a dim engraved glow (2.6 gold read as a pale yellow cartoon scallop) saw.Soft = 0.001f; saw.NoiseAmt = 0.15f; saw.Erode = 0.1f;
             Vol2Fs.MeshObject(root, "SawRing", Kit.Mat(saw), out _sawMesh);
             Vol2Fs.MeshObject(root, "Cuts", Kit.Mat(M("fs_streak", White, 7f, 1f)), out _cutMesh);
             _sparks = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", Gold, 7f, 1f)), Life0 = 0.25f, Life1 = 0.7f, Speed0 = 4f, Speed1 = 12f, Size0 = 0.02f, Size1 = 0.05f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.1f,

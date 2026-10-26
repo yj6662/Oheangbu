@@ -115,11 +115,27 @@ namespace Oheangbu.App
         {
             Vector3 p = Line(f), d = (Line(Mathf.Min(1f, f + 0.02f)) - Line(Mathf.Max(0f, f - 0.02f))).normalized;
             PoseSword(p, d, t * 1400f);
+            // polish (Phantom Blade principle 5): the 6-frame flight leaves silver afterimages of the sword along its line (r6: the flying sword was barely seen)
+            while (_ghostNext < 5 && f >= (_ghostNext + 1) / 6f)
+            {
+                _ghostNext++;
+                var g = Vol2FsB1.Prop(Root.transform, "Phantom", _swordR.GetComponent<MeshFilter>().sharedMesh, _swordR.sharedMaterial, false).transform;
+                g.SetPositionAndRotation(_sword.position - (p - Line(_ghostNext / 6f)), _sword.rotation); g.localScale = _sword.localScale * 1.05f;
+                _ghosts.Add((g, t));
+            }
+            Ghosts(t);
             DrawEdge(1f);
             DrawStreak(f, 0f);
             float len = Vector3.Distance(From, HitPoint);
             int n = Mathf.CeilToInt((f - prev) * len * 3f);
             for (int k = 0; k < n; k++) { var q = Line(Mathf.Lerp(prev, f, (k + 0.5f) / n)); Vol2FsB1.Emit(_sparks, q, 2); Vol2FsB1.Emit(_glints, q, 1); }
+        }
+
+        readonly System.Collections.Generic.List<(Transform T, float At)> _ghosts = new System.Collections.Generic.List<(Transform T, float At)>(); int _ghostNext;
+        /// <summary>polish: the afterimages thin away (blade width -> 0) in 0.3 s.</summary>
+        void Ghosts(float t)
+        {
+            foreach (var g in _ghosts) { if (g.T == null) continue; float k = 1f - Vol2Fs.Smooth(0.04f, 0.32f, t - g.At); g.T.gameObject.SetActive(k > 0.02f); var s = g.T.localScale; g.T.localScale = new Vector3(SW * 1.05f * k, SW * 1.05f * k, s.z); }
         }
 
         protected override void OnHit(long nowUs)
@@ -171,6 +187,7 @@ namespace Oheangbu.App
         protected override void OnAfter(float t, float h, bool ended)
         {
             var cam = CamPos;
+            Ghosts(t);
             if (!_snapped && h >= _snapAt) Snap();
             _hitLight.intensity = h < 0.03f ? 14f * h / 0.03f : 14f * Mathf.Exp(-(h - 0.03f) * 7f);
             DrawEdge(_snapped ? 0f : 1f);

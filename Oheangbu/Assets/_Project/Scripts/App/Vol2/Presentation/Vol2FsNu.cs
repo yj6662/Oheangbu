@@ -27,13 +27,13 @@ namespace Oheangbu.App
         protected override void OnBegin()
         {
             var root = Root.transform;
-            _fire = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(FireMat(1.45f, 0.3f)), Life0 = 0.35f, Life1 = 0.7f, Speed0 = 0.3f, Speed1 = 1.2f, Size0 = 0.45f, Size1 = 0.9f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.15f, Tiles = 2,
-                VelOverLife = new Vector3(0f, 2.6f, 0f), Noise = 0.9f, NoiseFreq = 1.2f, SizeStart = 0.5f, SizePeak = 1.25f, SizeEnd = 0.45f, Max = 2000 }, root, "Fire");
-            _tall = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(FireMat(1.6f, 0.3f)), Life0 = 0.5f, Life1 = 0.9f, Speed0 = 1.5f, Speed1 = 3.5f, Size0 = 0.9f, Size1 = 1.6f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Tiles = 2,
-                VelOverLife = new Vector3(0f, 3.4f, 0f), Noise = 1.0f, NoiseFreq = 0.9f, SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.35f, SizeEnd = 0.5f, Max = 800 }, root, "TallFire");
+            // 2026-10-27 per-glyph polish: the wall is a line of tall licking tongues (r4 of batch 2 / the material pass: flipbook blobs of 0.9 - 2.3 m filled
+            // the whole frame yellow from the camera standing at the band) - see Vol2FsPolish.Lick
+            _fire = Vol2Fs.Build(Vol2FsPolish.Licks(Kit.Mat(Vol2FsPolish.Lick(1.4f, 0.5f)), 0.26f, 0.46f, 0.32f, 0.62f, 2.4f, 3000, 2.3f), root, "Fire");
+            _tall = Vol2Fs.Build(Vol2FsPolish.Licks(Kit.Mat(Vol2FsPolish.Lick(1.5f, 0.45f, 1.2f)), 0.45f, 0.8f, 0.45f, 0.8f, 3.4f, 900, 2.7f), root, "TallFire");
             _embers = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", Hot, 5f, 1f)), Life0 = 0.6f, Life1 = 1.6f, Speed0 = 1.5f, Speed1 = 4.5f, Size0 = 0.03f, Size1 = 0.07f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Gravity = -0.3f,
                 Noise = 1.5f, NoiseFreq = 2f, Stretch = true, StretchVel = 0.05f, Max = 1500 }, root, "Embers");
-            var smoke = M("fs_puff", new Color(0.08f, 0.06f, 0.05f, 1f), 1f, 0f); smoke.Opacity = 0.6f; smoke.NoiseAmt = 0.6f; smoke.Erode = 0.35f;
+            var smoke = Vol2FsPolish.Soot(0.5f);
             _smoke = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(smoke), Life0 = 1.2f, Life1 = 2.2f, Speed0 = 0.5f, Speed1 = 1.4f, Size0 = 0.9f, Size1 = 1.7f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.3f, Drag = 1f, Tiles = 2,
                 SizeStart = 0.5f, SizePeak = 1.3f, SizePeakAt = 0.5f, SizeEnd = 1.8f, VelOverLife = new Vector3(0f, 1.4f, 0f), Max = 250, SortFudge = 12 }, root, "Smoke");
             var ash = M("fs_ink", new Color(0.5f, 0.47f, 0.44f, 1f), 1f, 0f); ash.NoiseAmt = 0.3f; ash.Edge = new Color(1.6f, 0.5f, 0.1f, 1f); ash.EdgeWidth = 0.25f; ash.Soft = 0.05f;
@@ -51,15 +51,15 @@ namespace Oheangbu.App
 
         protected override void OnLaunch(long nowUs)
         {
-            const int N = 72;
+            const int N = 120;      // polish: a dense closed line of tongues (r4: 72 big blobs)
             for (int k = 0; k < N; k++)
             {
                 float ang = Vol2FsB2.Angle(k, N, Seed, 0.6f);
-                _pts.Add(new Pt { P = OnBand(ang, Mathf.Lerp(Inner, Outer, Vol2Fs.Hash(Seed, k + 10))) + Vector3.up * 0.08f, Ang = ang, Back = Back(ang) });
+                _pts.Add(new Pt { P = OnBand(ang, Mathf.Lerp(R - 0.2f, R + 0.2f, Vol2Fs.Hash(Seed, k + 10))) + Vector3.up * 0.05f, Ang = ang, Back = Back(ang) });
             }
-            for (int k = 0; k < 11; k++)
+            for (int k = 0; k < 9; k++)
             {
-                float ang = Mathf.Lerp(-1.95f, 1.95f, (k + 0.5f) / 11f) + 0.12f * (Vol2Fs.Hash(Seed, k + 200) - 0.5f);
+                float ang = Mathf.Lerp(-1.3f, 1.3f, (k + 0.5f) / 9f) + 0.12f * (Vol2Fs.Hash(Seed, k + 200) - 0.5f);      // polish: the plumes stand on the far arc (r4's ±112° ones rose at the lens)
                 _plumes.Add(new Plume { Ang = ang, H = Mathf.Lerp(2.4f, 3.6f, Vol2Fs.Hash(Seed, k + 210)), W = Mathf.Lerp(0.5f, 0.85f, Vol2Fs.Hash(Seed, k + 220)), At = ExpandSeconds + 0.05f + 0.12f * Vol2Fs.Hash(Seed, k + 230),
                     Twist = (Vol2Fs.Hash(Seed, k + 240) - 0.5f) * 3f, Rnd = Vol2Fs.Hash(Seed, k + 250) });
             }
@@ -74,8 +74,9 @@ namespace Oheangbu.App
             var b = new Burn { T = new GameObject("Burn").transform };
             b.T.SetParent(Root.transform, false);
             float rx = Mathf.Max(0.3f, s.B.extents.x * 0.8f), ry = Mathf.Max(0.3f, s.B.extents.y * 0.7f), rz = Mathf.Max(0.3f, s.B.extents.z * 0.8f);
-            b.Fire = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(FireMat(2.4f, 0.55f)), Rate = 90f, Loop = true, Life0 = 0.35f, Life1 = 0.75f, Speed0 = 0.2f, Speed1 = 0.6f, Size0 = 0.4f, Size1 = 0.9f, Radius = 1f, ShapeScale = new Vector3(rx, ry, rz), Tiles = 2,
-                VelOverLife = new Vector3(0f, 2.4f, 0f), Noise = 0.8f, SizeStart = 0.6f, SizePeak = 1.2f, SizeEnd = 0.3f, Max = 260 }, b.T, "BurnFire");
+            var bf = Vol2FsPolish.Licks(Kit.Mat(Vol2FsPolish.Lick(1.5f, 0.5f)), 0.3f, 0.55f, 0.35f, 0.7f, 2.4f, 300, 2.2f);      // polish: tongues over the body, not blobs
+            bf.Rate = 140f; bf.Loop = true; bf.Radius = 1f; bf.ShapeScale = new Vector3(rx, ry, rz);
+            b.Fire = Vol2Fs.Build(bf, b.T, "BurnFire");
             var smoke = M("fs_puff", new Color(0.08f, 0.06f, 0.05f, 1f), 1f, 0f); smoke.Opacity = 0.55f; smoke.NoiseAmt = 0.6f; smoke.Erode = 0.35f;
             b.Smoke = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(smoke), Rate = 8f, Loop = true, Life0 = 1.2f, Life1 = 2f, Speed0 = 0.2f, Speed1 = 0.5f, Size0 = 0.7f, Size1 = 1.3f, Radius = 1f, ShapeScale = new Vector3(rx, ry, rz), Tiles = 2,
                 VelOverLife = new Vector3(0f, 1.4f, 0f), SizeStart = 0.6f, SizePeak = 1.2f, SizeEnd = 1.8f, Max = 40, SortFudge = 10 }, b.T, "BurnSmoke");
@@ -103,16 +104,20 @@ namespace Oheangbu.App
                 var p = _pts[k];
                 if (a < ExpandSeconds * (0.6f + 0.4f * Vol2Fs.Hash(Seed, k + 400))) continue;
                 Vector3 outw = (p.P - Apex); outw.y = 0f; outw.Normalize();
+                float hf = Vol2FsPolish.RingHeight(p.Ang);      // polish: tall on the far arc, lower on the sides, a low glowing lick behind the caster
                 if (!p.Fired)
                 {
-                    p.Fired = true; Vol2FsB1.Emit(_fire, p.P, 2); if (p.Back < 0.5f) Vol2FsB1.Emit(_tall, p.P, 1); Vol2FsB1.Emit(_embers, p.P, 3);
+                    p.Fired = true;
+                    for (int j = 0; j < 3; j++) Vol2FsB1.EmitV(_fire, p.P + Random.insideUnitSphere * 0.1f, outw * 0.4f + Vector3.up * (1.2f + 1.4f * hf), Random.Range(0.28f, 0.5f) * hf, -1f);
+                    if (hf > 0.93f) Vol2FsB1.EmitV(_tall, p.P, outw * 0.5f + Vector3.up * 2.2f, Random.Range(0.55f, 0.85f), -1f);
+                    Vol2FsB1.Emit(_embers, p.P, 3);
                 }
-                else if (burnOut < 1f && (k + Time.frameCount) % (p.Back < 0.5f ? 8 : 16) == 0)
+                else if (burnOut < 1f && (k + Time.frameCount) % (hf > 0.93f ? 3 : 4) == 0)
                 {
-                    Vol2FsB1.EmitV(_fire, p.P, outw * 0.7f + Vector3.up * 0.5f, (p.Back < 0.5f ? 0.8f : 0.45f), -1f);
-                    if (p.Back < 0.3f && burnOut < 0.6f) Vol2FsB1.EmitV(_tall, p.P, outw * 0.9f + Vector3.up * 1.5f, Random.Range(1.0f, 1.6f), -1f);
+                    Vol2FsB1.EmitV(_fire, p.P + Random.insideUnitSphere * 0.08f, outw * 0.35f + Vector3.up * (0.6f + 0.8f * hf), Random.Range(0.24f, 0.46f) * hf * (1f - 0.5f * burnOut), -1f);
+                    if (hf > 0.93f && burnOut < 0.6f && (k + Time.frameCount) % 2 == 0) Vol2FsB1.EmitV(_tall, p.P, outw * 0.45f + Vector3.up * 1.6f, Random.Range(0.5f, 0.85f), -1f);
                     if (k % 3 == 0) Vol2FsB1.Emit(_embers, p.P, 1);
-                    if (k % 9 == 0 && p.Back < 0.5f && Time.frameCount % 4 == 0) Vol2FsB1.Emit(_smoke, p.P + Vector3.up * 1.5f, 1);
+                    if (k % 9 == 0 && hf > 0.93f && Time.frameCount % 4 == 0) Vol2FsB1.Emit(_smoke, p.P + Vector3.up * 1.8f, 1);
                 }
             }
             if (burnOut > 0.35f && !_ashed) { _ashed = true; for (int k = 0; k < _pts.Count; k += 2) { Vol2FsB1.Emit(_ash, _pts[k].P + Vector3.up * 0.5f, 3); if (k % 8 == 0) Vol2FsB1.Emit(_smoke, _pts[k].P + Vector3.up * 0.8f, 1); } }

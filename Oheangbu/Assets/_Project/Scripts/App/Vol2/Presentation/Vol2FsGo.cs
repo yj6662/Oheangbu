@@ -13,7 +13,7 @@ namespace Oheangbu.App
         static readonly Color Jade = new Color(0.55f, 1f, 0.3f), Gold = new Color(1f, 0.85f, 0.4f), Ink = new Color(0.03f, 0.035f, 0.025f);
 
         sealed class Shoot { public Vol2FsTubes.Tube Tube; public float At, Height; public Vector3 Base; public bool Burst; }
-        sealed class Snare { public long Id; public Transform T; public Bounds B; public float At; public Vol2FsTubes Tubes = new Vol2FsTubes(); public Mesh Mesh; public MeshRenderer R; public bool Shed; public Vector3 Feet; }
+        sealed class Snare { public long Id; public Transform T; public Bounds B; public float At; public Vol2FsTubes Tubes = new Vol2FsTubes(); public Mesh Mesh; public MeshRenderer R; public bool Shed, Stopped; public Vector3 Feet; }
 
         readonly Vol2FsTubes _shoots = new Vol2FsTubes();
         readonly List<Shoot> _list = new List<Shoot>();
@@ -253,6 +253,7 @@ namespace Oheangbu.App
             foreach (var sn in _snares)
             {
                 float sa = a - sn.At;
+                if (sa >= 0f && !sn.Stopped) { sn.Stopped = true; HitStop(t); }      // 2026-10-27 polish: the batch 1 - 4 hit-stop reaches batch 0 (the sweep meets the body)
                 float rel = Vol2Fs.Smooth(SnareSeconds - 0.4f, SnareSeconds, sa);
                 float grow = sa <= 0f ? 0f : Mathf.Clamp01(Vol2Fs.EaseOutBack(sa / 0.3f)) * (1f - rel);
                 foreach (var tb in sn.Tubes.Tubes) tb.Grow = grow;

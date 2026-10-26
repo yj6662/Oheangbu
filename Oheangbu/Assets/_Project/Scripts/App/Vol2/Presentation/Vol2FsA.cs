@@ -30,7 +30,7 @@ namespace Oheangbu.App
             var root = Root.transform;
             var water = Vol2FsB1.Water(Kit, 1.3f, 0.45f);      // r2: clearer (r1 read as ice)
             Vol2Fs.MeshObject(root, "Orb", water, out _orbMesh);
-            Vol2Fs.MeshObject(root, "Dome", water, out _domeMesh);
+            Vol2Fs.MeshObject(root, "Dome", Vol2FsB1.Water(Kit, 1.0f, 0.6f), out _domeMesh);      // polish: a clearer, see-through dome (r6 read as a faceted ice blob)
             // ink curling INSIDE the water (thin covering strips, no rim)
             var ink = M("fs_stroke2", Ink, 1f, 0f); ink.Soft = 0.05f; ink.NoiseAmt = 0.4f; ink.Opacity = 0.9f; ink.Erode = 0.25f;
             Vol2Fs.MeshObject(root, "InkInside", Kit.Mat(ink), out _inkMesh);
@@ -48,7 +48,7 @@ namespace Oheangbu.App
             var mist = M("fs_puff", new Color(0.85f, 0.93f, 0.97f, 1f), 1f, 0.15f); mist.Opacity = 0.4f; mist.NoiseAmt = 0.6f; mist.Erode = 0.4f;
             _mist = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(mist), Life0 = 0.8f, Life1 = 1.6f, Speed0 = 0.3f, Speed1 = 1.5f, Size0 = 0.6f, Size1 = 1.4f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.4f, Drag = 1.2f, Tiles = 2,
                 SizeStart = 0.5f, SizePeak = 1.2f, SizeEnd = 1.8f, Max = 120, SortFudge = 10 }, root, "Mist");
-            var spl = M("fs_splash", Foam, 1.0f, 0.55f); spl.Opacity = 0.55f; spl.NoiseAmt = 0.3f; spl.Erode = 0.25f; spl.Soft = 0.1f;
+            var spl = M("fs_splash", Foam, 0.9f, 0.55f); spl.Opacity = 0.42f;      // polish: lighter spray (icy flecks) spl.NoiseAmt = 0.3f; spl.Erode = 0.25f; spl.Soft = 0.1f;
             _splash = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(spl), Life0 = 0.35f, Life1 = 0.7f, Speed0 = 2f, Speed1 = 6f, Size0 = 0.6f, Size1 = 1.5f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.4f, Gravity = 1.6f, Tiles = 2,
                 SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.3f, Spin = 60f, Max = 120 }, root, "Splash");
             _crown = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(spl), Life0 = 0.5f, Life1 = 0.8f, Speed0 = 0f, Speed1 = 0f, Size0 = 4.5f, Size1 = 5.2f, Radius = 0.01f, Horizontal = true, SizeStart = 0.15f, SizePeak = 1f, SizePeakAt = 0.55f, SizeEnd = 1.15f, AlphaHoldTo = 0.35f, Max = 4 }, root, "Crown");
@@ -116,7 +116,7 @@ namespace Oheangbu.App
             _domeC = new Vector3(TB.center.x, Ground, TB.center.z);
             _domeR = Mathf.Max(TB.extents.x, TB.extents.z) + 1.0f;
             Vector3 g = new Vector3(_domeC.x, Ground + 0.05f, _domeC.z);
-            Vol2FsB1.Emit(_splash, HitPoint, 26); Vol2FsB1.EmitV(_crown, g, Vector3.zero);
+            Vol2FsB1.Emit(_splash, HitPoint, 40); Vol2FsB1.EmitV(_crown, g, Vector3.zero);
             for (int k = 0; k < 260; k++)
             {
                 float a = Vol2Fs.Hash(Seed, k) * Mathf.PI * 2f;
@@ -149,8 +149,26 @@ namespace Oheangbu.App
                     float spread = 1f + 0.55f * col * (1f - p.y);
                     p.x *= spread * (0.75f + 0.25f * rise); p.z *= spread * (0.75f + 0.25f * rise);
                     return p;
-                }, 30, 14, 1.9f);
+                }, 36, 18, 1.35f);
             else _domeMesh.Clear();
+            // polish (a_b): ink curling INSIDE the dome over the body while it stands
+            if (h > 0.08f && life > 0.01f)
+            {
+                _ink.Clear();
+                Vector3 ic = _domeC + shift + Vector3.up * _domeR * 0.55f * rise * (1f - 0.8f * col);
+                foreach (var td in _tendrils)
+                {
+                    var pts = new Vector3[9]; var w = new float[9]; var al = new float[9];
+                    for (int k = 0; k < 9; k++)
+                    {
+                        float u = k / 8f, a = td.A0 + t * td.Speed * 0.6f + u * td.Len * 2.2f;
+                        pts[k] = ic + new Vector3(Mathf.Cos(a), (u - 0.5f) * 0.9f + Mathf.Sin(u * 3f + td.A0) * 0.3f, Mathf.Sin(a)) * _domeR * (0.35f + 0.4f * u) * (1f + 0.4f * col);
+                        w[k] = td.W * 1.6f * Mathf.Sin(u * Mathf.PI); al[k] = life;
+                    }
+                    _ink.Strip(pts, w, null, Color.white, al, td.A0, cam, 0f, 1f);
+                }
+                _ink.Write(_inkMesh);
+            }
             if (h > 0.2f && h < 0.85f && Time.frameCount % 2 == 0)
             {
                 for (int k = 0; k < 6; k++)

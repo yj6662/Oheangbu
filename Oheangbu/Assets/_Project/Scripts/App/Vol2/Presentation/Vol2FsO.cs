@@ -32,8 +32,8 @@ namespace Oheangbu.App
             _inflow.transform.position = Tip();
             _inflow.Play(false);
             _drops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(drop), Life0 = 0.6f, Life1 = 1.3f, Speed0 = 3f, Speed1 = 8f, Size0 = 0.04f, Size1 = 0.12f, Radius = 0.3f, Gravity = 2.2f, Drag = 0.3f, Stretch = true, StretchVel = 0.03f, Max = 1500 }, root, "Drops");
-            var spl = M("fs_splash", Foam, 1.0f, 0.55f); spl.Opacity = 0.55f; spl.NoiseAmt = 0.3f; spl.Erode = 0.25f; spl.Soft = 0.1f;
-            _crest = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(spl), Life0 = 0.3f, Life1 = 0.55f, Speed0 = 1f, Speed1 = 3f, Size0 = 0.5f, Size1 = 1.1f, Radius = 0.2f, Gravity = 1.2f, Tiles = 2, SizeStart = 0.5f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.2f, Spin = 80f, Max = 500 }, root, "Crest");
+            var spl = M("fs_splash", Foam, 0.9f, 0.55f); spl.Opacity = 0.4f;      // polish: lighter spray (r6 / r2: white flecks crusted the whole face - icy) spl.NoiseAmt = 0.3f; spl.Erode = 0.25f; spl.Soft = 0.1f;
+            _crest = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(spl), Life0 = 0.3f, Life1 = 0.55f, Speed0 = 1f, Speed1 = 3f, Size0 = 0.3f, Size1 = 0.65f, Radius = 0.2f, Gravity = 1.2f, Tiles = 2, SizeStart = 0.5f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.2f, Spin = 80f, Max = 500 }, root, "Crest");
             _splash = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(spl), Life0 = 0.4f, Life1 = 0.8f, Speed0 = 2f, Speed1 = 6f, Size0 = 0.8f, Size1 = 1.8f, Shape = ParticleSystemShapeType.Hemisphere, Radius = 0.4f, Gravity = 1.6f, Tiles = 2,
                 SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.3f, Spin = 60f, Max = 200 }, root, "Splash");
             var mist = M("fs_puff", new Color(0.85f, 0.93f, 0.97f, 1f), 1f, 0.15f); mist.Opacity = 0.45f; mist.NoiseAmt = 0.6f; mist.Erode = 0.4f;
@@ -54,8 +54,8 @@ namespace Oheangbu.App
             var wet = M("fs_stroke2", new Color(0.05f, 0.04f, 0.04f, 1f), 1f, 0f); wet.Soft = 0.001f; wet.NoiseAmt = 0.45f; wet.Erode = 0.3f; wet.Opacity = 0.7f; wet.Edge = new Color(0.5f, 0.6f, 0.65f, 1f); wet.EdgeWidth = 0.05f;
             Vol2Fs.MeshObject(root, "WetFan", Kit.Mat(wet), out _wetMesh);
             for (int k = 0; k < 9; k++)
-                _swirls.Add(new Swirl { Ang = Mathf.Lerp(-Half * 1.9f, Half * 1.9f, (k + 0.5f) / 9f) + 0.1f * (Vol2Fs.Hash(Seed, k) - 0.5f), Span = Mathf.Lerp(0.25f, 0.5f, Vol2Fs.Hash(Seed, k + 10)), S = Mathf.Lerp(0.35f, 0.72f, Vol2Fs.Hash(Seed, k + 20)),
-                    W = Mathf.Lerp(0.12f, 0.24f, Vol2Fs.Hash(Seed, k + 30)), Phase = Vol2Fs.Hash(Seed, k + 40) * 6f });
+                _swirls.Add(new Swirl { Ang = Mathf.Lerp(-Half * 1.4f, Half * 1.4f, (k + 0.5f) / 9f) + 0.1f * (Vol2Fs.Hash(Seed, k) - 0.5f), Span = Mathf.Lerp(0.25f, 0.5f, Vol2Fs.Hash(Seed, k + 10)), S = Mathf.Lerp(0.35f, 0.72f, Vol2Fs.Hash(Seed, k + 20)),
+                    W = Mathf.Lerp(0.2f, 0.38f, Vol2Fs.Hash(Seed, k + 30)), Phase = Vol2Fs.Hash(Seed, k + 40) * 6f });
             _light = Vol2Fs.PointLight(root, "Light", new Color(0.6f, 0.85f, 1f), 7f);
             for (int k = 0; k < 40; k++) { var d = (F + Vector3.up * 0.4f + Right * (Vol2Fs.Hash(Seed, k + 3000) - 0.5f) * 1.4f).normalized; Vol2FsB1.EmitV(_drops, Tip(), d * Mathf.Lerp(4f, 9f, Vol2Fs.Hash(Seed, k + 3010))); }
         }
@@ -63,7 +63,7 @@ namespace Oheangbu.App
         protected override void OnStruck(Struck s) { }
 
         // the wave's state at a seconds after the launch
-        float R(float a) => Mathf.Lerp(1.7f, Depth * 1.0f, Vol2Fs.Smooth(0f, RollSeconds, a));      // r2: forms out in front (r1 stood up in the camera)
+        float R(float a) => Mathf.Lerp(2.6f, Depth * 1.05f, Vol2Fs.Smooth(0f, RollSeconds, a));      // r2: forms out in front (r1 stood up in the camera); polish: further out still (r6 hung over the caster like an umbrella)
         float Crash(float a) => Vol2Fs.Smooth(RollSeconds * 0.85f, RollSeconds + 0.35f, a);
         float H(float a) => 3.0f * Vol2Fs.Smooth(0f, 0.22f, a) * (1f - 0.88f * Crash(a));
         float Curl(float a) => Vol2Fs.Smooth(0.12f, RollSeconds * 0.9f, a);
@@ -71,21 +71,21 @@ namespace Oheangbu.App
         /// <summary>A point of the wave sheet: across 0..1 (angle), s 0..1 (back foot -> crest -> curling lip).</summary>
         Vector3 Sheet(float across, float s, float a, out float bright)
         {
-            float ang = Mathf.Lerp(-Half * 2.1f, Half * 2.1f, across);
+            float ang = Mathf.Lerp(-Half * 1.55f, Half * 1.55f, across);      // polish: a long wall across the front, not a dome round the caster
             float endFall = 1f - Mathf.Pow(Mathf.Abs(across * 2f - 1f), 3f);
-            float h = H(a) * endFall * (0.85f + 0.15f * Mathf.Sin(across * 9f + a * 6f)), c = Curl(a), cr = Crash(a), r = R(a) - 0.25f * (1f - endFall);
+            float h = H(a) * endFall * (0.85f + 0.15f * Mathf.Sin(across * 9f + a * 6f)) * (1.2f - 0.4f * across) /* o_a: the left end rears highest */, c = Curl(a), cr = Crash(a), r = R(a) - 0.25f * (1f - endFall);
             // profile control (radial offset, height) - back foot, face, crest, lip curling over and down; the crash throws the lip forward and down
             var ctrl = new[]
             {
-                new Vector2(-1.7f, 0f), new Vector2(-0.95f, 0.32f * h), new Vector2(-0.4f, 0.78f * h), new Vector2(0f, h),
+                new Vector2(-1.0f, 0f), new Vector2(-0.6f, 0.3f * h), new Vector2(-0.4f, 0.78f * h), new Vector2(0f, h),
                 new Vector2((0.35f * c + 0.6f * cr) * Mathf.Max(0.6f, h), h * (1f - 0.08f * c)), new Vector2((0.6f * c + 1.0f * cr) * Mathf.Max(0.6f, h), h * (1f - 0.42f * c - 0.4f * cr)), new Vector2((0.55f * c + 1.2f * cr) * Mathf.Max(0.6f, h), h * Mathf.Max(0f, 1f - 0.82f * c - 0.2f * cr))
             };
             float f = s * (ctrl.Length - 1); int i = Mathf.Min(ctrl.Length - 2, Mathf.FloorToInt(f)); float u = f - i;
             Vector2 p0 = ctrl[Mathf.Max(0, i - 1)], p1 = ctrl[i], p2 = ctrl[i + 1], p3 = ctrl[Mathf.Min(ctrl.Length - 1, i + 2)];
             Vector2 q = 0.5f * (2f * p1 + (-p0 + p2) * u + (2f * p0 - 5f * p1 + 4f * p2 - p3) * u * u + (-p0 + 3f * p1 - 3f * p2 + p3) * u * u * u);
-            bright = Mathf.Lerp(0.55f, 1.9f, Vol2Fs.Smooth(0.42f, 0.75f, s)) * (1f + 0.6f * cr);
+            bright = Mathf.Lerp(0.5f, 1.35f, Vol2Fs.Smooth(0.5f, 0.8f, s)) * (1f + 0.35f * cr);      // polish: a deeper body, white only on the lip
             Vector3 d = Dir(ang);
-            Vector3 p = Apex + d * (r + q.x); p.y = Ground + Mathf.Max(0f, q.y) + 0.02f;
+            Vector3 p = Apex + d * ((r + q.x) / Mathf.Pow(Mathf.Max(0.55f, Mathf.Cos(ang)), 0.7f)); p.y = Ground + Mathf.Max(0f, q.y) + 0.02f;      // polish: the arc flattened toward a straight wall
             return p;
         }
 
@@ -102,7 +102,7 @@ namespace Oheangbu.App
                         float ax = x / (float)Across, s = y / (float)Prof;
                         var p = Sheet(ax, s, a, out float b);
                         float edgeA = Mathf.Clamp01(Mathf.Min(ax, 1f - ax) * 8f);
-                        _v.Add(p); _c.Add(new Color(b, b, b, life * edgeA * Mathf.Lerp(0.75f, 1f, s))); _uv.Add(new Vector3(ax * 4f + a * 0.8f, s, 0.29f));
+                        _v.Add(p); _c.Add(new Color(b, b, b, life * edgeA * Mathf.Lerp(0.75f, 1f, s))); _uv.Add(new Vector3(ax * 4f + a * 0.8f, Mathf.Lerp(0.3f, 1f, s), 0.29f));      // polish: the sheet's broken (icicle-like) edge only on the lip, not the foot
                     }
                 for (int x = 0; x < Across; x++)
                     for (int y = 0; y < Prof; y++)
@@ -114,13 +114,14 @@ namespace Oheangbu.App
             _waveMesh.Clear(); _waveMesh.SetVertices(_v); _waveMesh.SetColors(_c); _waveMesh.SetUVs(0, _uv); _waveMesh.SetTriangles(_i, 0); _waveMesh.RecalculateBounds();
             // foam and spray off the crest while it rolls; the crash throws a wall of splash, mist and foam over the fan
             if (life > 0.05f && a > 0.08f)
-                for (int k = 0; k < 3; k++)
+                for (int k = 0; k < 2; k++)
                 {
-                    float ax = Random.value; var p = Sheet(ax, 0.62f + 0.3f * Random.value, a, out _);
+                    float ax = Random.value; var p = Sheet(ax, 0.86f + 0.14f * Random.value, a, out _);      // polish: spray off the lip only
                     Vol2FsB1.Emit(_crest, p, 1);
-                    Vector3 d = Dir(Mathf.Lerp(-Half * 2.1f, Half * 2.1f, ax));
+                    Vector3 d = Dir(Mathf.Lerp(-Half * 1.55f, Half * 1.55f, ax));
                     Vol2FsB1.EmitV(_drops, p, (d * Random.Range(1f, 3.5f) + Vector3.up * Random.Range(1f, 4f)));
                 }
+            if (life > 0.05f && a > 0.05f && Time.frameCount % 2 == 0) { var fp0 = Sheet(Random.value, 0.04f, a, out _); Vol2FsB1.Emit(_foam, new Vector3(fp0.x, Ground + 0.05f, fp0.z), 1); }      // polish: churned foam at the wave's foot
             if (!_crashed && a >= RollSeconds * 0.9f)
             {
                 _crashed = true;
@@ -129,7 +130,7 @@ namespace Oheangbu.App
                     float ax = (k + 0.5f) / 40f; var p = Sheet(ax, 1f, a, out _); p.y = Ground + 0.2f;
                     Vol2FsB1.Emit(_splash, p, 1); Vol2FsB1.Emit(_foam, new Vector3(p.x, Ground + 0.05f, p.z), 1);
                     if (k % 3 == 0) Vol2FsB1.Emit(_mist, p + Vector3.up * 0.6f, 1);
-                    for (int j = 0; j < 6; j++) Vol2FsB1.EmitV(_drops, p, (Dir(Mathf.Lerp(-Half * 2.1f, Half * 2.1f, ax)) * Random.Range(1f, 4f) + Vector3.up * Random.Range(2f, 6f)));
+                    for (int j = 0; j < 6; j++) Vol2FsB1.EmitV(_drops, p, (Dir(Mathf.Lerp(-Half * 1.55f, Half * 1.55f, ax)) * Random.Range(1f, 4f) + Vector3.up * Random.Range(2f, 6f)));
                 }
             }
             if (_crashed && a < RollSeconds + 0.9f && Time.frameCount % 3 == 0)
@@ -143,7 +144,7 @@ namespace Oheangbu.App
                 foreach (var sw in _swirls)
                 {
                     var pts = new Vector3[8]; var w = new float[8]; var al = new float[8];
-                    float ax0 = Mathf.InverseLerp(-Half * 2.1f, Half * 2.1f, sw.Ang);
+                    float ax0 = Mathf.InverseLerp(-Half * 1.55f, Half * 1.55f, sw.Ang);
                     for (int k = 0; k < 8; k++)
                     {
                         float u = k / 7f;

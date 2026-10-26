@@ -17,7 +17,8 @@ namespace Oheangbu.App
         Mesh _burstMesh, _ringMesh, _crackMesh; readonly Vol2FsStrips _burst = new Vol2FsStrips(), _ring = new Vol2FsStrips(), _crack = new Vol2FsStrips();
         List<Vol2FsB1.Stroke> _strokes;
         Vector3 _slabBase; Quaternion _slabRot; bool _rose, _slabSet;
-        const float SlabH = 2.0f;
+        const float SlabH = 1.4f;      // polish: chest-high (r4: a 2 m wall hid the whole bear and read as a box)
+        bool _shattered;
 
         Vol2FsMat M(string tex, Color tint, float intensity, float addMix) => Vol2FsB1.M(tex, tint, intensity, addMix);
 
@@ -25,7 +26,7 @@ namespace Oheangbu.App
         {
             var root = Root.transform;
             var stone = Vol2FsB1.Lit(Kit, "fs_rock", new Color(0.78f, 0.6f, 0.5f), 0f, 0.12f);
-            _slab = Vol2FsB1.Prop(root, "Slab", Kit.SharedMesh("meo_slab", () => Vol2FsB1.Slab(41, new Vector3(1.55f, SlabH, 0.45f), 0.78f)), stone).transform;
+            _slab = Vol2FsB1.Prop(root, "Slab", Kit.SharedMesh("meo_slab", () => Vol2FsB1.Slab(43, new Vector3(1.35f, SlabH, 0.5f), 0.55f)), stone).transform;
             _slab.gameObject.SetActive(false);
             for (int k = 0; k < 8; k++)
             {
@@ -43,8 +44,8 @@ namespace Oheangbu.App
                 SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.7f, Max = 300, SortFudge = 8 }, root, "Dust");
             _bigDust = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(dust), Life0 = 1.0f, Life1 = 1.9f, Speed0 = 2f, Speed1 = 6f, Size0 = 1.0f, Size1 = 2.0f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.3f, Drag = 2.4f, Tiles = 2,
                 SizeStart = 0.35f, SizePeak = 1.2f, SizePeakAt = 0.35f, SizeEnd = 1.8f, Max = 120, SortFudge = 10 }, root, "BigDust");
-            _chunks = Vol2Fs.Build(new Vol2FsPs { Mat = stone, Mesh = Kit.SharedMesh("meo_chunk", () => Vol2FsB1.Rock(81, 1f, 0.75f, 8, 6)), Life0 = 0.9f, Life1 = 1.6f, Speed0 = 4f, Speed1 = 9f, Size0 = 0.08f, Size1 = 0.22f,
-                Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Gravity = 2.2f, Drag = 0.2f, Spin = 400f, Max = 200 }, root, "Chunks");
+            _chunks = Vol2Fs.Build(new Vol2FsPs { Mat = stone, Mesh = Kit.SharedMesh("meo_chunk", () => Vol2FsB1.Rock(81, 1f, 0.75f, 8, 6)), Life0 = 0.9f, Life1 = 1.6f, Speed0 = 4f, Speed1 = 9f, Size0 = 0.1f, Size1 = 0.4f,
+                Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Gravity = 2.2f, Drag = 0.2f, Spin = 400f, Max = 320 }, root, "Chunks");
             var clod = M("fs_ink", new Color(0.3f, 0.2f, 0.15f, 1f), 1f, 0f); clod.Soft = 0.1f; clod.NoiseAmt = 0.3f;
             _clods = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(clod), Life0 = 0.7f, Life1 = 1.4f, Speed0 = 2f, Speed1 = 7f, Size0 = 0.05f, Size1 = 0.16f, Shape = ParticleSystemShapeType.Hemisphere, Radius = 0.4f, Gravity = 2.4f, Tiles = 2, Max = 400 }, root, "Clods");
             var drop = M("fs_ink", Ink, 1f, 0f); drop.Edge = new Color(0.9f, 0.55f, 0.35f, 1f); drop.EdgeWidth = 0.12f; drop.NoiseAmt = 0.3f; drop.Soft = 0.1f;
@@ -67,7 +68,7 @@ namespace Oheangbu.App
                 _slabRot = Quaternion.LookRotation(Away, Vector3.up);
             }
             float h = SlabH * (Mathf.Clamp01(rise) - sink * 1.05f);
-            _slab.gameObject.SetActive(h > -SlabH + 0.05f);
+            _slab.gameObject.SetActive(h > -SlabH + 0.05f && !_shattered);
             _slab.SetPositionAndRotation(_slabBase + Vector3.up * (h - SlabH), _slabRot * Quaternion.Euler(-tilt, 0f, 0f));
         }
 
@@ -94,10 +95,11 @@ namespace Oheangbu.App
 
         protected override void OnParry()
         {
-            _strokes = Vol2FsB1.Burst(Seed, 9, Vector3.Cross(Vector3.up, Away).normalized, Away, 0.8f, 1.9f, 0.32f, 0.62f, 0.12f, 0.6f);     // r4: low heavy ground-hugging strokes (r1 - r3 read as 나's star burst)
+            _strokes = WideX();     // polish (meo_a): a wide heavy X of ink thrown out to both sides of the wall (r4: low ground strokes were hidden behind the caster)
             _light.transform.position = ParryPoint - Away * 0.3f;
             Vol2FsB1.Emit(_bigDust, ParryPoint, 14); Vol2FsB1.Emit(_dust, ParryPoint, 20); Vol2FsB1.Emit(_drops, ParryPoint, 40);
             for (int k = 0; k < 44; k++) Vol2FsB1.EmitV(_chunks, ParryPoint + Random.insideUnitSphere * 0.3f, (Random.onUnitSphere * 0.9f + Vector3.up * 0.5f - Away * 0.2f).normalized * Random.Range(3f, 9f));
+            Vol2FsB1.Emit(_bigDust, _slabBase + Vector3.up * 1.2f, 10);
             for (int k = 0; k < 14; k++) { Vector3 o = Vector3.Cross(Vector3.up, Away) * Mathf.Lerp(-1f, 1f, k / 13f); Vol2FsB1.Emit(_dust, _slabBase + o, 1); Vol2FsB1.Emit(_clods, _slabBase + o, 6); }
             // the plates round the slab (they lift as it sinks)
             Vector3 side = Vector3.Cross(Vector3.up, Away);
@@ -114,7 +116,20 @@ namespace Oheangbu.App
         protected override void OnReaction(float t, float h)
         {
             var cam = CamPos;
-            _burst.Clear(); Vol2FsB1.DrawBurst(_burst, _strokes, new Vector3(ParryPoint.x, Ground + 0.45f, ParryPoint.z) - Away * 0.1f, h, cam, 1.1f, 0.18f); _burst.Write(_burstMesh);
+            _burst.Clear(); Vol2FsB1.DrawBurst(_burst, _strokes, ParryPoint - Away * 0.1f + Vector3.up * 0.2f, h, cam, 0.35f, 0.12f); _burst.Write(_burstMesh);
+            // polish: the wall bursts 0.1 s after the blow - big pieces flung out to the sides and up, so the bear stands clear behind it
+            if (!_shattered && h > 0.1f)
+            {
+                _shattered = true; _slab.gameObject.SetActive(false);
+                Vector3 sd = Vector3.Cross(Vector3.up, Away);
+                for (int k = 0; k < 34; k++)
+                {
+                    Vector3 at = _slabBase + sd * Random.Range(-0.65f, 0.65f) + Vector3.up * Random.Range(0.1f, SlabH);
+                    Vector3 v = (sd * Random.Range(-1.6f, 1.6f) + Vector3.up * Random.Range(0.6f, 1.6f) + Away * Random.Range(-0.2f, 0.7f)).normalized * Random.Range(3f, 8f);
+                    Vol2FsB1.EmitV(_chunks, at, v, Random.Range(0.25f, 0.6f), Random.Range(1.2f, 1.8f));
+                }
+                Vol2FsB1.Emit(_bigDust, _slabBase + Vector3.up * 0.7f, 10); Vol2FsB1.Emit(_clods, _slabBase + Vector3.up * 0.6f, 60);
+            }
             // the dust shock ring on the ground round the slab
             _ring.Clear();
             float rr = Mathf.Lerp(0.4f, 3.4f, 1f - Mathf.Pow(1f - Mathf.Clamp01(h / 0.45f), 2.5f)), ra = 1f - Vol2Fs.Smooth(0.25f, 0.9f, h);
@@ -136,6 +151,21 @@ namespace Oheangbu.App
                 p.T.SetPositionAndRotation(p.Base + Vector3.up * (0.12f * up - 0.18f), Quaternion.AngleAxis(-p.Tilt * up, axis) * Quaternion.LookRotation(p.Out));
                 if (a > 0f && a < 0.03f) { Vol2FsB1.Emit(_dust, p.Base, 2); Vol2FsB1.Emit(_clods, p.Base, 5); }
             }
+        }
+    
+        /// <summary>polish (meo_a): heavy ink thrown out to both sides of the wall in a wide X (up-left / up-right long, down-left / down-right shorter).</summary>
+        List<Vol2FsB1.Stroke> WideX()
+        {
+            var list = new List<Vol2FsB1.Stroke>();
+            Vector3 sd = Vector3.Cross(Vector3.up, Away).normalized;
+            for (int k = 0; k < 12; k++)
+            {
+                float s = k % 2 == 0 ? 1f : -1f; bool high = k % 4 < 2;
+                float up = high ? Mathf.Lerp(0.35f, 0.85f, Vol2Fs.Hash(Seed, k + 700)) : -Mathf.Lerp(0.05f, 0.3f, Vol2Fs.Hash(Seed, k + 700));
+                Vector3 d = (sd * s + Vector3.up * up + Away * Mathf.Lerp(-0.1f, 0.35f, Vol2Fs.Hash(Seed, k + 710))).normalized;
+                list.Add(new Vol2FsB1.Stroke { Dir = d, Len = (high ? 1f : 0.65f) * Mathf.Lerp(2.6f, 4.4f, Vol2Fs.Hash(Seed, k + 720)), Width = Mathf.Lerp(0.45f, 0.85f, Vol2Fs.Hash(Seed, k + 730)), Delay = 0.02f * Vol2Fs.Hash(Seed, k + 740), Life = 1.0f + 0.4f * Vol2Fs.Hash(Seed, k + 750), Rnd = Vol2Fs.Hash(Seed, k + 760) });
+            }
+            return list;
         }
     }
 }

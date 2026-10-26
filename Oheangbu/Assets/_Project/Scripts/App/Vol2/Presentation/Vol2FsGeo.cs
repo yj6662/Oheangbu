@@ -82,13 +82,13 @@ namespace Oheangbu.App
             _crossN = face;
             Vector3 s1 = Vector3.Cross(face, Vector3.up).normalized;                     // across
             Vector3 s2 = (Quaternion.AngleAxis(62f, face) * s1).normalized;               // the second stalk, crossing
-            float len = 1.75f * grow;
+            float len = 2.05f * grow;      // polish: a bigger cross (geo_b fills the frame)
             foreach (var s in new[] { s1, s2 })
             {
                 if (len < 0.02f) continue;
                 Vector3 a = _crossAt - s * len, c = _crossAt + s * len;
                 Vector3 bow = face * 0.12f * (1f - crack) + Vector3.down * 0.25f * crack;
-                var t = _cross.Add(new[] { a, Vector3.Lerp(a, _crossAt, 0.5f) + bow, _crossAt + face * 0.05f, Vector3.Lerp(_crossAt, c, 0.5f) + bow, c }, 0.095f, 0.075f, 22);
+                var t = _cross.Add(new[] { a, Vector3.Lerp(a, _crossAt, 0.5f) + bow, _crossAt + face * 0.05f, Vector3.Lerp(_crossAt, c, 0.5f) + bow, c }, 0.11f, 0.085f, 22);
                 t.Grow = 1f; t.NodeEvery = 0.34f; t.Sharp = 0.15f; t.Sides = 8;
             }
             _cross.Write(_crossMesh);
@@ -123,7 +123,7 @@ namespace Oheangbu.App
 
         protected override void OnParry()
         {
-            _strokes = Vol2FsB1.Burst(Seed, 7, Vector3.Cross(Vector3.up, Away).normalized, Away, 0.9f, 1.9f, 0.14f, 0.3f, 0.9f, 0.5f);     // r2: fewer, shorter (r1 read as 나's star burst)
+            _strokes = CrossInk();     // polish: the ink streaks out ALONG the two bamboo stalks (an X behind the cross - geo_b); r2's small star was still 나's burst
             _paw = Vol2FsB2.NearestBone(Attacker, ParryPoint);
             if (_paw != null) _pawLocal = _paw.InverseTransformPoint(ParryPoint + Away * 0.1f);
             Vol2FsB1.Emit(_leaves, ParryPoint, 160); Vol2FsB1.Emit(_drops, ParryPoint, 80); Vol2FsB1.Emit(_sparks, ParryPoint, 140);
@@ -149,7 +149,7 @@ namespace Oheangbu.App
             var cam = CamPos;
             // the ink burst at the contact
             _burst.Clear();
-            Vol2FsB1.DrawBurst(_burst, _strokes, ParryPoint, h, cam, 0.9f);
+            Vol2FsB1.DrawBurst(_burst, _strokes, _crossAt + _crossN * 0.15f, h, cam, 0.12f, 0.1f);
             _burst.Write(_burstMesh);
             // the vines snapped round the paw: a helix round the gripped bone, holding, then (the end) loosening into rootlets reaching forward
             Vector3 c = _paw != null ? _paw.TransformPoint(_pawLocal) : ParryPoint + Away * 0.15f;
@@ -186,6 +186,21 @@ namespace Oheangbu.App
             }
             _roots.Write(_rootMesh);
             if (h < 0.5f && Time.frameCount % 3 == 0) Vol2FsB1.Emit(_sparks, c, 3);
+        }
+    
+        /// <summary>polish (geo_b): two long ink slashes out each way along both bamboo stalks, flung a little forward - an X of ink behind the cross.</summary>
+        List<Vol2FsB1.Stroke> CrossInk()
+        {
+            var list = new List<Vol2FsB1.Stroke>();
+            Vector3 face = Away - Vector3.Dot(Away, ShaftAxis) * ShaftAxis; if (face.sqrMagnitude < 1e-4f) face = Fwd; face.Normalize();
+            Vector3 s1 = Vector3.Cross(face, Vector3.up).normalized, s2 = (Quaternion.AngleAxis(62f, face) * s1).normalized;
+            Vector3[] dirs = { s1, -s1, s2, -s2 };
+            for (int k = 0; k < 8; k++)
+            {
+                Vector3 d = (Quaternion.AngleAxis(k < 4 ? 24f : -20f, face) * dirs[k % 4] + face * Mathf.Lerp(0.05f, 0.3f, Vol2Fs.Hash(Seed, k + 900)) + Random.insideUnitSphere * 0.08f).normalized;
+                list.Add(new Vol2FsB1.Stroke { Dir = d, Len = (k < 4 ? 1f : 0.7f) * Mathf.Lerp(2.6f, 3.6f, Vol2Fs.Hash(Seed, k + 910)), Width = (k < 4 ? 1f : 0.6f) * Mathf.Lerp(0.38f, 0.58f, Vol2Fs.Hash(Seed, k + 920)), Delay = 0.015f * k, Life = 0.95f + 0.4f * Vol2Fs.Hash(Seed, k + 930), Rnd = Vol2Fs.Hash(Seed, k + 940) });
+            }
+            return list;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Oheangbu.App
         /// <summary>A water surface for the particle shader: the water sheet texture coloured by the water ramp, partly additive (glints) and partly covering.</summary>
         public static Material Water(Vol2FsKit kit, float intensity = 1.6f, float addMix = 0.35f, string tex = "fs_water")
         {
-            var w = M(tex, Color.white, intensity, addMix); w.Ramp = "fs_ramp_water"; w.RampScale = 1.6f; w.NoiseAmt = 0.45f; w.NoiseScale = 1.4f; w.Erode = 0.2f; w.Soft = 0.15f;
+            var w = M(tex, Color.white, intensity, addMix); w.Ramp = "fs_ramp_water"; w.RampScale = 1.6f; w.NoiseAmt = 0.3f; w.NoiseScale = 1.4f; w.Erode = 0.3f; w.Soft = 0.15f;      // polish: smoother sheet edges (0.45 / 0.2 tore them into icicle-like shards)
             w.Scroll = new Vector2(-0.9f, 0f); w.Edge = new Color(0.9f, 1f, 1f, 1f) * 0.6f; w.EdgeWidth = 0.12f;
             return kit.Mat(w);
         }
@@ -315,7 +315,10 @@ namespace Oheangbu.App
         {
             if (ps == null) return;
             var e = new ParticleSystem.EmitParams { position = at, velocity = vel, applyShapeToPosition = false };
-            if (size > 0f) e.startSize = size;
+            var main = ps.main;
+            // 2026-10-27 per-glyph polish: a tall billboard system (Vol2FsPs.Aspect) keeps its height / width when the size is given here
+            if (size > 0f && main.startSize3D) { float asp = main.startSizeX.constantMax > 1e-4f ? main.startSizeY.constantMax / main.startSizeX.constantMax : 1f; e.startSize3D = new Vector3(size, size * asp, size); }
+            else if (size > 0f) e.startSize = size;
             if (life > 0f) e.startLifetime = life;
             ps.Emit(e, 1);
         }

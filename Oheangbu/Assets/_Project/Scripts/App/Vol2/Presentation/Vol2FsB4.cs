@@ -32,7 +32,7 @@ namespace Oheangbu.App
         protected Vector3 Dir(float ang) => Quaternion.AngleAxis(ang * Mathf.Rad2Deg, Vector3.up) * F;
         protected Vector3 OnBand(float ang, float r) { var p = Apex + Dir(ang) * r; p.y = Ground; return p; }
         /// <summary>1 on the front arc .. 0 from ~100 deg round (a ring's standing pieces stay low on the sides and are gone behind: the camera is inside the ring).</summary>
-        protected static float Front(float ang) => 1f - Vol2Fs.Smooth(0.17f, 0.56f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)) / 180f);
+        protected static float Front(float ang) => 1f - Vol2Fs.Smooth(95f, 165f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)));      // 2026-10-27 polish: the whole ring but the arc behind the caster
         protected static Vector3 FlatN(Vector3 v) { v.y = 0f; return v.sqrMagnitude > 1e-6f ? v.normalized : Vector3.forward; }
         protected Vector3 G(Vector3 p) { p.y = Ground; return p; }
         /// <summary>The attachment host's / timed ring's end (the emitter's EndUs, rel); -1 = none.</summary>

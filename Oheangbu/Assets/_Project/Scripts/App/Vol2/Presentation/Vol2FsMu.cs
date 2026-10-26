@@ -45,8 +45,8 @@ namespace Oheangbu.App
             var dust = M("fs_puff", Soil, 1f, 0f); dust.Opacity = 0.72f; dust.Erode = 0.35f; dust.NoiseAmt = 0.55f;
             _dust = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(dust), Life0 = 0.9f, Life1 = 1.7f, Speed0 = 0.4f, Speed1 = 1.6f, Size0 = 0.6f, Size1 = 1.3f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.3f, Drag = 1.4f, Tiles = 2,
                 SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.7f, Max = 400, SortFudge = 8 }, root, "Dust");
-            _donut = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(dust), Life0 = 1.2f, Life1 = 2.0f, Speed0 = 0f, Speed1 = 0.2f, Size0 = 1.2f, Size1 = 2.2f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Drag = 2.2f, Tiles = 2,
-                SizeStart = 0.35f, SizePeak = 1.1f, SizePeakAt = 0.35f, SizeEnd = 1.6f, Max = 260, SortFudge = 10 }, root, "DustDonut");
+            _donut = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(dust), Life0 = 1.2f, Life1 = 2.0f, Speed0 = 0f, Speed1 = 0.2f, Size0 = 1.8f, Size1 = 3.2f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Drag = 2.2f, Tiles = 2,
+                SizeStart = 0.35f, SizePeak = 1.1f, SizePeakAt = 0.35f, SizeEnd = 1.6f, Max = 500, SortFudge = 10 }, root, "DustDonut");
             var drop = M("fs_ink", Ink, 1f, 0f); drop.Edge = new Color(0.9f, 0.55f, 0.35f, 1f); drop.EdgeWidth = 0.12f; drop.NoiseAmt = 0.3f; drop.Soft = 0.1f;
             _drops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(drop), Life0 = 0.6f, Life1 = 1.2f, Speed0 = 3f, Speed1 = 8f, Size0 = 0.08f, Size1 = 0.26f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Gravity = 2.2f, Drag = 0.4f, Tiles = 2, AlphaHoldTo = 0.6f, Max = 400 }, root, "InkDrops");
             foreach (var ps in new[] { _rocks, _clods, _dust, _donut, _drops }) ps.Play(false);
@@ -64,8 +64,8 @@ namespace Oheangbu.App
         protected override void OnLaunch(long nowUs)
         {
             _light.transform.position = Apex + F * (R + 0.6f) + Vector3.up * 0.8f;     // r2: off the caster (r1 lit him white)
-            for (int k = 0; k < 9; k++)
-                _throws.Add(new Throw { Ang = Mathf.Lerp(-1.9f, 1.9f, (k + 0.5f) / 9f) + 0.15f * (Vol2Fs.Hash(Seed, k + 600) - 0.5f), Len = Mathf.Lerp(1.6f, 2.8f, Vol2Fs.Hash(Seed, k + 610)), W = Mathf.Lerp(0.35f, 0.6f, Vol2Fs.Hash(Seed, k + 620)),
+            for (int k = 0; k < 16; k++)      // polish: thinner, longer flung ink (r4 read as black fins)
+                _throws.Add(new Throw { Ang = Mathf.Lerp(-2.0f, 2.0f, (k + 0.5f) / 16f) + 0.15f * (Vol2Fs.Hash(Seed, k + 600) - 0.5f), Len = Mathf.Lerp(2.2f, 3.8f, Vol2Fs.Hash(Seed, k + 610)), W = Mathf.Lerp(0.16f, 0.32f, Vol2Fs.Hash(Seed, k + 620)),
                     At = ExpandSeconds + 0.04f * Vol2Fs.Hash(Seed, k + 630), Rnd = Vol2Fs.Hash(Seed, k + 640) });
             for (int k = 0; k < _plates.Count; k++)
             {
@@ -112,17 +112,17 @@ namespace Oheangbu.App
             // the earth wave: rises out of the ground near the feet, rolls out through the band (its crest on the band at the strike), slumps behind it
             float roll = Mathf.Clamp01(a / RollSeconds);
             float rc = Mathf.Lerp(0.7f, R + 0.9f, 1f - Mathf.Pow(1f - roll, 1.6f));
-            float h = 1.1f * Vol2Fs.Smooth(0f, 0.08f, a) * (1f - Vol2Fs.Smooth(RollSeconds * 0.55f, RollSeconds + 0.25f, a));
+            float h = 1.5f * Vol2Fs.Smooth(0f, 0.08f, a) * (1f - Vol2Fs.Smooth(RollSeconds * 0.55f, RollSeconds + 0.25f, a));
             WriteRidge(rc, h, Mathf.Lerp(0.45f, 0.8f, roll));
             if (!_burst && a >= ExpandSeconds)
             {
                 _burst = true;
-                for (int k = 0; k < 64; k++)
+                for (int k = 0; k < 96; k++)      // polish: more and bigger rocks thrown higher (mu_a)
                 {
-                    float ang = Vol2FsB2.Angle(k, 64, Seed + 9, 0.8f);
+                    float ang = Vol2FsB2.Angle(k, 96, Seed + 9, 0.8f);
                     Vector3 p = OnBand(ang, R), d = Dir(ang);
                     float back = Back(ang);
-                    Vol2FsB1.EmitV(_rocks, p + Vector3.up * 0.4f, (d * Random.Range(2f, 6f) + Vector3.up * Random.Range(3f, 7f)) * (1f - 0.6f * back));
+                    Vol2FsB1.EmitV(_rocks, p + Vector3.up * 0.4f, (d * Random.Range(2f, 7f) + Vector3.up * Random.Range(4f, 9f)) * (1f - 0.6f * back), Random.Range(0.12f, 0.5f), -1f);
                     Vol2FsB1.Emit(_clods, p, 6);
                     if (k % 2 == 0) Vol2FsB1.Emit(_drops, p + Vector3.up * 0.3f, 1);
                 }
@@ -131,7 +131,7 @@ namespace Oheangbu.App
             _light.intensity = Mathf.Max(0f, _light.intensity - Time.deltaTime * 20f);
             // the dust donut rolling out with the wave
             if (a < RollSeconds + 0.1f && Time.frameCount % 1 == 0)
-                for (int k = 0; k < 5; k++)
+                for (int k = 0; k < 8; k++)
                 {
                     float ang = Random.Range(-Mathf.PI, Mathf.PI);
                     Vector3 p = OnBand(ang, rc + 0.3f) + Vector3.up * 0.4f;

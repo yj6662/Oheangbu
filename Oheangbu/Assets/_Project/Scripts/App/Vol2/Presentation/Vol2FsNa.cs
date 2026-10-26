@@ -159,7 +159,9 @@ namespace Oheangbu.App
             _projLight.intensity = 0f;
             var at = new GameObject("Hit").transform; at.SetParent(root, false); at.position = _hitPoint;
             _flash = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", Orange, 5f, 1f)), Burst = 2, Life0 = 0.1f, Life1 = 0.16f, Speed0 = 0f, Speed1 = 0f, Size0 = 1.8f, Size1 = 2.4f, Radius = 0.05f, SizeStart = 0.4f, SizePeak = 1f, SizePeakAt = 0.2f, SizeEnd = 1.1f, Max = 4, SortFudge = -30 }, at, "Flash");
-            _fireball = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(FireMat(2.3f, 0.3f)), Burst = 30, Life0 = 0.4f, Life1 = 0.85f, Speed0 = 2.5f, Speed1 = 6.5f, Size0 = 0.9f, Size1 = 2.0f, Radius = 0.3f, Drag = 1.0f, Tiles = 2,
+            // polish: the flipbook fireball kept (the material pass liked its volume) but redder and a little smaller - r6 read as a yellow paper blob
+            var fb = FireMat(1.75f, 0.35f); fb.FlipHeat = 0.78f;
+            _fireball = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(fb), FlipScale = 1.2f, Burst = 30, Life0 = 0.4f, Life1 = 0.85f, Speed0 = 2.5f, Speed1 = 6.5f, Size0 = 0.8f, Size1 = 1.7f, Radius = 0.3f, Drag = 1.0f, Tiles = 2,
                 SizeStart = 0.5f, SizePeak = 1.2f, SizePeakAt = 0.25f, SizeEnd = 0.9f, VelOverLife = new Vector3(0f, 1.4f, 0f), Max = 60 }, at, "Fireball");
             var drop = M("fs_ink", Ink, 1f, 0f); drop.Edge = new Color(2.5f, 0.7f, 0.12f, 1f); drop.EdgeWidth = 0.2f; drop.NoiseAmt = 0.3f; drop.Soft = 0.1f;
             _hitDrops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(drop), Burst = 130, Life0 = 0.8f, Life1 = 1.6f, Speed0 = 5f, Speed1 = 13f, Size0 = 0.12f, Size1 = 0.45f, Radius = 0.25f, Gravity = 2.2f, Drag = 0.4f, Tiles = 2, AlphaHoldTo = 0.6f, Max = 140 }, at, "InkDrops");
@@ -174,6 +176,7 @@ namespace Oheangbu.App
                 SizeStart = 0.08f, SizePeak = 0.8f, SizePeakAt = 0.6f, SizeEnd = 1f, AlphaHoldTo = 0.3f, Max = 2 }, ringT, "Ring");
             _hitLight = Vol2Fs.PointLight(at, "HitLight", Orange, 10f);
             foreach (var ps in new[] { _flash, _fireball, _hitDrops, _hitEmbers, _smoke, _ring }) ps.Play(false);
+            HitStop(_hitAt);      // 2026-10-27 polish: the batch 1 - 4 hit-stop reaches batch 0
             // the ink flung out of the hit (picture 3 / na_c): 12 solid strokes, thick at their flung ends, burning rims; kept low and sideways so they stay over the ground
             Vol2Fs.MeshObject(root, "InkBurst", Kit.InkSolid("fs_stroke2", Ink, Rim, 0.16f, 0.5f, 0.28f, 1.6f), out _strokes);
             int seed = (int)(Inst.Cast.Value & 0x7fff);

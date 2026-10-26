@@ -44,12 +44,12 @@ namespace Oheangbu.App
             _trailDust = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(dust), Life0 = 0.8f, Life1 = 1.5f, Speed0 = 0.3f, Speed1 = 1.2f, Size0 = 0.7f, Size1 = 1.4f, Shape = ParticleSystemShapeType.Hemisphere, Radius = 0.4f, Drag = 1f, Tiles = 2,
                 SizeStart = 0.5f, SizePeak = 1.2f, SizeEnd = 1.7f, VelOverLife = new Vector3(0f, 0.4f, 0f), Max = 200, SortFudge = 10 }, root, "TrailDust");
             _trailBits = Vol2Fs.Build(new Vol2FsPs { Mat = _rock, Mesh = chunk, Life0 = 0.6f, Life1 = 1.1f, Speed0 = 1.5f, Speed1 = 4f, Size0 = 0.05f, Size1 = 0.14f, Shape = ParticleSystemShapeType.Hemisphere, Radius = 0.3f, Gravity = 2.5f, Spin = 400f, Max = 200 }, root, "TrailBits");
-            _chunks = Vol2Fs.Build(new Vol2FsPs { Mat = _rock, Mesh = chunk, Life0 = 1.0f, Life1 = 1.8f, Speed0 = 4f, Speed1 = 10f, Size0 = 0.12f, Size1 = 0.5f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.4f, Gravity = 2.2f, Drag = 0.3f, Spin = 500f, AlphaHoldTo = 0.9f, Max = 120 }, root, "Chunks");
+            _chunks = Vol2Fs.Build(new Vol2FsPs { Mat = _rock, Mesh = chunk, Life0 = 1.0f, Life1 = 1.8f, Speed0 = 4f, Speed1 = 10f, Size0 = 0.12f, Size1 = 0.5f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.4f, Gravity = 2.2f, Drag = 0.3f, Spin = 500f, AlphaHoldTo = 0.9f, Max = 220 }, root, "Chunks");
             var cloud = M("fs_puff", Dust, 1f, 0f); cloud.Opacity = 0.8f; cloud.NoiseAmt = 0.6f; cloud.Erode = 0.35f;
             _dustCloud = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(cloud), Life0 = 1.2f, Life1 = 2.2f, Speed0 = 1.5f, Speed1 = 5f, Size0 = 1.6f, Size1 = 3.4f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.8f, Drag = 2f, Tiles = 2,
-                SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.6f, VelOverLife = new Vector3(0f, 0.5f, 0f), Max = 60, SortFudge = 10 }, root, "DustCloud");
+                SizeStart = 0.4f, SizePeak = 1.2f, SizePeakAt = 0.4f, SizeEnd = 1.6f, VelOverLife = new Vector3(0f, 0.5f, 0f), Max = 90, SortFudge = 10 }, root, "DustCloud");
             var clod = M("fs_ink", Soil, 1f, 0f); clod.NoiseAmt = 0.4f; clod.Soft = 0.1f;
-            _clods = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(clod), Life0 = 0.6f, Life1 = 1.3f, Speed0 = 3f, Speed1 = 9f, Size0 = 0.08f, Size1 = 0.3f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.4f, Gravity = 2.6f, Tiles = 2, AlphaHoldTo = 0.7f, Max = 400 }, root, "Clods");
+            _clods = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(clod), Life0 = 0.6f, Life1 = 1.3f, Speed0 = 3f, Speed1 = 9f, Size0 = 0.08f, Size1 = 0.3f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.4f, Gravity = 2.6f, Tiles = 2, AlphaHoldTo = 0.7f, Max = 800 }, root, "Clods");
             var ring = M("fs_ring", Dust, 1f, 0f); ring.Opacity = 0.8f; ring.NoiseAmt = 0.5f; ring.Soft = 0.02f;
             _ring = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(ring), Life0 = 0.6f, Life1 = 0.6f, Speed0 = 0f, Speed1 = 0f, Size0 = 6.5f, Size1 = 6.5f, Radius = 0.01f, Horizontal = true, SizeStart = 0.1f, SizePeak = 0.85f, SizePeakAt = 0.5f, SizeEnd = 1f, AlphaHoldTo = 0.3f, Max = 2 }, root, "Ring");
             // dust streaks flung away behind the struck body (the shove)
@@ -129,12 +129,16 @@ namespace Oheangbu.App
             _boulderR.enabled = false;                       // the boulder bursts
             Vector3 feet = FeetNow(); Vector3 g = new Vector3(feet.x, Ground, feet.z);
             // chunks, clods, dust - biased AWAY from the caster (the shove)
-            for (int k = 0; k < 46; k++)
+            // 2026-10-27 per-glyph polish (ma_a's scale is the debris reach): ~120 chunks thrown high and WIDE to both sides (r6: 46 low chunks stayed behind
+            // the caster's back), a tall dust column, more clods
+            for (int k = 0; k < 120; k++)
             {
-                Vector3 d = (_fwd * (0.5f + Vol2Fs.Hash(Seed, k)) + _side * (Vol2Fs.Hash(Seed, k + 40) - 0.5f) * 2.2f + Vector3.up * (0.4f + Vol2Fs.Hash(Seed, k + 80))).normalized;
-                Vol2FsB1.EmitV(_chunks, HitPoint + d * 0.3f, d * Mathf.Lerp(4f, 10f, Vol2Fs.Hash(Seed, k + 120)), Mathf.Lerp(0.12f, 0.55f, Vol2Fs.Hash(Seed, k + 160)), Mathf.Lerp(1f, 1.8f, Vol2Fs.Hash(Seed, k + 200)));
+                float s = (Vol2Fs.Hash(Seed, k + 40) - 0.5f) * 2f;
+                Vector3 d = (_fwd * (0.25f + Vol2Fs.Hash(Seed, k)) + _side * s * 1.8f + Vector3.up * (0.7f + 1.4f * Vol2Fs.Hash(Seed, k + 80))).normalized;
+                Vol2FsB1.EmitV(_chunks, HitPoint + d * 0.3f, d * Mathf.Lerp(5f, 13f, Vol2Fs.Hash(Seed, k + 120)), Mathf.Lerp(0.1f, 0.6f, Mathf.Pow(Vol2Fs.Hash(Seed, k + 160), 1.6f)), Mathf.Lerp(1.2f, 2.2f, Vol2Fs.Hash(Seed, k + 200)));
             }
-            Vol2FsB1.Emit(_clods, HitPoint, 160); Vol2FsB1.Emit(_dustCloud, HitPoint + _fwd * 0.6f, 26); Vol2FsB1.Emit(_dustCloud, g, 12);
+            Vol2FsB1.Emit(_clods, HitPoint, 320); Vol2FsB1.Emit(_dustCloud, HitPoint + _fwd * 0.6f, 26); Vol2FsB1.Emit(_dustCloud, g, 12);
+            for (int k = 0; k < 16; k++) Vol2FsB1.EmitV(_dustCloud, HitPoint + Vector3.up * (0.6f + 0.25f * k) + _side * (Vol2Fs.Hash(Seed, k + 950) - 0.5f) * 2.5f, Vector3.up * Mathf.Lerp(1.5f, 3.5f, Vol2Fs.Hash(Seed, k + 960)) + _side * (Vol2Fs.Hash(Seed, k + 970) - 0.5f) * 3f, Mathf.Lerp(2.4f, 4.2f, Vol2Fs.Hash(Seed, k + 980)), Mathf.Lerp(1.6f, 2.6f, Vol2Fs.Hash(Seed, k + 990)));
             for (int k = 0; k < 30; k++) Vol2FsB1.EmitV(_speed, HitPoint + _side * (Vol2Fs.Hash(Seed, k + 300) - 0.5f) * 1.2f + Vector3.up * (Vol2Fs.Hash(Seed, k + 330) - 0.3f), (_fwd + _side * (Vol2Fs.Hash(Seed, k + 360) - 0.5f) * 0.6f).normalized * Mathf.Lerp(9f, 16f, Vol2Fs.Hash(Seed, k + 390)));
             Vol2FsB1.EmitV(_ring, g + Vector3.up * 0.06f, Vector3.zero);
             // ink strokes flung away (brown-black, no glow)
@@ -146,13 +150,14 @@ namespace Oheangbu.App
             var slabMat = Vol2FsB1.Lit(Kit, "fs_rock", new Color(0.62f, 0.42f, 0.32f), 0f, 0.08f);
             for (int k = 0; k < 11; k++)
             {
-                float a = (k + 0.4f * Vol2Fs.Hash(Seed, k + 500)) / 11f * Mathf.PI * 2f;
-                Vector3 o = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a));
-                float r = Mathf.Lerp(1.2f, 2.6f, Vol2Fs.Hash(Seed, k + 520));
+                // polish: the plates heave round the far side and the flanks only (r6: the near ones stood as brown boxes beside the caster), steeper and thinner
+                float a = Mathf.Lerp(-2.1f, 2.1f, (k + 0.4f * Vol2Fs.Hash(Seed, k + 500)) / 11f);
+                Vector3 o = Quaternion.AngleAxis(a * Mathf.Rad2Deg, Vector3.up) * _fwd;
+                float r = Mathf.Lerp(1.4f, 3.0f, Vol2Fs.Hash(Seed, k + 520));
                 var mesh = Kit.SharedMesh("slab" + (k % 5), () => Vol2FsB1.Slab(100 + k % 5, new Vector3(1.0f, 0.35f, 0.75f)));
                 var pr = Vol2FsB1.Prop(root, "Plate", mesh, slabMat);
-                var pl = new Plate { T = pr.transform, Base = g + o * r - Vector3.up * 0.26f, Out = o, Tilt = Mathf.Lerp(30f, 60f, Vol2Fs.Hash(Seed, k + 540)), Rise = Mathf.Lerp(0.5f, 1.0f, Vol2Fs.Hash(Seed, k + 560)), Delay = 0.03f * r };
-                pl.T.localScale = new Vector3(Mathf.Lerp(1.3f, 2.0f, Vol2Fs.Hash(Seed, k + 580)), 0.7f, Mathf.Lerp(1.1f, 1.7f, Vol2Fs.Hash(Seed, k + 600)));
+                var pl = new Plate { T = pr.transform, Base = g + o * r - Vector3.up * 0.26f, Out = o, Tilt = Mathf.Lerp(50f, 78f, Vol2Fs.Hash(Seed, k + 540)), Rise = Mathf.Lerp(0.6f, 1.2f, Vol2Fs.Hash(Seed, k + 560)), Delay = 0.03f * r };
+                pl.T.localScale = new Vector3(Mathf.Lerp(1.0f, 1.6f, Vol2Fs.Hash(Seed, k + 580)), 0.55f, Mathf.Lerp(1.3f, 2.1f, Vol2Fs.Hash(Seed, k + 600)));
                 _plates.Add(pl);
                 Vol2FsB1.Emit(_clods, g + o * r, 6);
             }
@@ -186,11 +191,19 @@ namespace Oheangbu.App
         List<Vol2FsB1.Stroke> ForwardSplats()
         {
             var list = new List<Vol2FsB1.Stroke>();
-            for (int k = 0; k < 9; k++)
+            // 2026-10-27 polish (ma_a): long heavy ink thrown up and out to BOTH sides in a wide V over the boulder (r6: 9 low forward strokes hid behind the
+            // caster) + a few low ones skidding forward; still not 나's all-round star (no strokes downward / toward the caster)
+            for (int k = 0; k < 14; k++)
             {
-                float s = (k / 8f - 0.5f) * 2f;
-                Vector3 d = (_fwd * 1.1f + _side * s * 1.3f + Vector3.up * (0.15f + 0.35f * Vol2Fs.Hash(Seed, k + 800))).normalized;
-                list.Add(new Vol2FsB1.Stroke { Dir = d, Len = Mathf.Lerp(2.2f, 4.2f, Vol2Fs.Hash(Seed, k + 810)), Width = Mathf.Lerp(0.5f, 0.85f, Vol2Fs.Hash(Seed, k + 820)), Delay = 0.03f * Vol2Fs.Hash(Seed, k + 830), Life = 0.9f + 0.5f * Vol2Fs.Hash(Seed, k + 840), Rnd = Vol2Fs.Hash(Seed, k + 850) });
+                float s = (k / 13f - 0.5f) * 2f;
+                float up = 0.25f + 1.05f * (1f - Mathf.Abs(s)) * (0.55f + 0.45f * Vol2Fs.Hash(Seed, k + 800)) + 0.35f * Mathf.Abs(s);
+                Vector3 d = (_fwd * 0.55f + _side * s * 1.6f + Vector3.up * up).normalized;
+                list.Add(new Vol2FsB1.Stroke { Dir = d, Len = Mathf.Lerp(3.4f, 6.2f, Vol2Fs.Hash(Seed, k + 810)), Width = Mathf.Lerp(0.55f, 0.95f, Vol2Fs.Hash(Seed, k + 820)), Delay = 0.03f * Vol2Fs.Hash(Seed, k + 830), Life = 1.0f + 0.5f * Vol2Fs.Hash(Seed, k + 840), Rnd = Vol2Fs.Hash(Seed, k + 850) });
+            }
+            for (int k = 0; k < 4; k++)
+            {
+                Vector3 d = (_fwd + _side * (k / 3f - 0.5f) * 1.4f + Vector3.up * 0.12f).normalized;
+                list.Add(new Vol2FsB1.Stroke { Dir = d, Len = Mathf.Lerp(2.4f, 3.6f, Vol2Fs.Hash(Seed, k + 860)), Width = 0.7f, Delay = 0.02f, Life = 1.1f, Rnd = Vol2Fs.Hash(Seed, k + 870) });
             }
             return list;
         }

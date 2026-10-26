@@ -63,7 +63,7 @@ namespace Oheangbu.App
             {
                 float rad = Mathf.Lerp(2.0f, Depth * 1.0f, r / (rows - 1f));
                 float arc = 2f * Half * rad;
-                int n = Mathf.Max(2, Mathf.RoundToInt(arc / 1.15f));
+                int n = Mathf.Max(2, Mathf.RoundToInt(arc / 1.5f));      // polish: fewer, broader slabs
                 for (int k = 0; k < n; k++)
                 {
                     int id = r * 31 + k;
@@ -72,12 +72,12 @@ namespace Oheangbu.App
                     Vector3 o = Dir(ang);
                     float rr = rad + 0.35f * (Vol2Fs.Hash(Seed, id + 7) - 0.5f);
                     Vector3 b = Apex + o * rr; b.y = Ground - 0.5f;
-                    float scale = Mathf.Lerp(0.45f, 1.3f, r / (rows - 1f));      // r2: low near the caster, tall far out (r1 walled the view)
-                    var mesh = Kit.SharedMesh("slabm" + (id % 6), () => Vol2FsB1.Slab(200 + id % 6, new Vector3(1.0f, 1.6f, 0.45f), 0.3f));      // r2: jagged pointed shards (r1 read as boxes)
+                    float scale = Mathf.Lerp(0.75f, 1.45f, r / (rows - 1f));      // r2: low near the caster, tall far out (r1 walled the view); polish: bigger near rows too (mo_b)
+                    var mesh = Kit.SharedMesh("slabp" + (id % 6), () => Vol2FsB1.Slab(260 + id % 6, new Vector3(1.7f, 1.5f, 0.5f), 0.7f));      // polish: broad tilted rock plates (mo_b) - the r2 pointed shards read as thin dark spikes far off
                     var pr = Vol2FsB1.Prop(root, "Slab", mesh, slabMat);
                     pr.transform.localScale = new Vector3(Mathf.Lerp(0.8f, 1.2f, Vol2Fs.Hash(Seed, id + 11)), Mathf.Lerp(0.7f, 1.25f, Vol2Fs.Hash(Seed, id + 13)) * scale, Mathf.Lerp(0.8f, 1.3f, Vol2Fs.Hash(Seed, id + 17))) ;
                     pr.transform.position = b;
-                    _slabs.Add(new Slab { T = pr.transform, Base = b, Out = o, At = WaveSeconds * (rr / Depth) + 0.02f * Vol2Fs.Hash(Seed, id + 19), Tilt = Mathf.Lerp(45f, 72f, Vol2Fs.Hash(Seed, id + 23)), Rise = 0.5f, Last = r == rows - 1, Spin = (Vol2Fs.Hash(Seed, id + 29) - 0.5f) * 60f });
+                    _slabs.Add(new Slab { T = pr.transform, Base = b, Out = o, At = WaveSeconds * (rr / Depth) + 0.02f * Vol2Fs.Hash(Seed, id + 19), Tilt = Mathf.Lerp(32f, 58f, Vol2Fs.Hash(Seed, id + 23)), Rise = 0.5f, Last = r == rows - 1, Spin = (Vol2Fs.Hash(Seed, id + 29) - 0.5f) * 60f });
                 }
             }
             // the rim plates (the 끝: the ground round the fan lifts in plates as it sinks)
@@ -100,7 +100,7 @@ namespace Oheangbu.App
                 float rr = Mathf.Lerp(Depth * 0.55f, Depth, Vol2Fs.Hash(Seed, k + 950));
                 Vector3 b = Apex + o * rr; b.y = Ground + 0.6f;
                 Vector3 d = (Vector3.up * 1.6f + o * 0.9f + Vector3.Cross(Vector3.up, o) * (Vol2Fs.Hash(Seed, k + 960) - 0.5f) * 0.9f).normalized;
-                _spikes.Add(new Spike { Base = b, Dir = d, At = WaveSeconds * rr / Depth + 0.04f, Len = Mathf.Lerp(2.2f, 4.2f, Vol2Fs.Hash(Seed, k + 970)), W = Mathf.Lerp(0.3f, 0.6f, Vol2Fs.Hash(Seed, k + 980)), Life = 0.8f + 0.4f * Vol2Fs.Hash(Seed, k + 990), Rnd = Vol2Fs.Hash(Seed, k + 999) });
+                _spikes.Add(new Spike { Base = b, Dir = d, At = WaveSeconds * rr / Depth + 0.04f, Len = Mathf.Lerp(3.4f, 5.6f, Vol2Fs.Hash(Seed, k + 970)), W = Mathf.Lerp(0.45f, 0.8f, Vol2Fs.Hash(Seed, k + 980)), Life = 0.8f + 0.4f * Vol2Fs.Hash(Seed, k + 990), Rnd = Vol2Fs.Hash(Seed, k + 999) });
             }
             Vol2Fs.MeshObject(root, "InkSpikes", Kit.InkSolid("fs_stroke2", Ink, new Color(0.3f, 0.18f, 0.1f, 1f), 0.1f, 0.5f, 0.28f, 1.6f), out _inkMesh);
             var crack = M("fs_crack", new Color(0.05f, 0.03f, 0.02f, 1f), 1f, 0f); crack.Soft = 0.001f; crack.NoiseAmt = 0.3f; crack.Opacity = 0.95f;
@@ -124,7 +124,7 @@ namespace Oheangbu.App
             foreach (var s in _slabs)
             {
                 float u = a < s.At ? 0f : Vol2Fs.EaseOutBack((a - s.At) / 0.13f);
-                if (!s.Last) u *= 1f - 0.85f * Vol2Fs.Smooth(s.At + 0.3f, s.At + 0.65f, a);      // r2 (mo_a): the wave passes - inner rows fall back, the far crest stands
+                if (!s.Last) u *= 1f - 0.45f * Vol2Fs.Smooth(s.At + 0.3f, s.At + 0.65f, a);      // polish: the inner rows only sag (the whole fan stays heaved - mo_b)      // r2 (mo_a): the wave passes - inner rows fall back, the far crest stands
                 Pose(s, u * (1f - sink * 0.9f), sink);
                 if (!s.Burst && a >= s.At)
                 {
@@ -154,7 +154,7 @@ namespace Oheangbu.App
                 for (int k = 0; k < 7; k++)
                 {
                     float u = k / 6f;
-                    pts[k] = s.Base + s.Dir * s.Len * grow * u + Vector3.down * 0.6f * u * u * Vol2Fs.Smooth(0.1f, 0.8f, e);
+                    pts[k] = s.Base + s.Dir * s.Len * grow * u + Vector3.down * 0.6f * u * u * Vol2Fs.Smooth(0.1f, 0.8f, e) + Vector3.Cross(Vector3.up, s.Dir).normalized * (s.Rnd - 0.5f) * 2.6f * u * u * u * grow;      // polish: the tip hooks over (mo_b ink curls)
                     w[k] = s.W * (0.6f + 0.7f * Mathf.Sin(Mathf.Min(1f, u * 1.4f + 0.1f) * Mathf.PI)) * (1f - 0.6f * u);
                     al[k] = life;
                 }

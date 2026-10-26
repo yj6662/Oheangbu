@@ -81,11 +81,11 @@ namespace Oheangbu.App
                 {
                     float u = k / 15f;
                     float ang = u * Mathf.PI * 2f * 3f + v * Mathf.PI * 2f / 3f;
-                    float rad = 0.22f * radiusK * Mathf.Sin(Mathf.Clamp01(u * 1.3f) * Mathf.PI * 0.5f + 0.4f);
-                    Vector3 on = Vector3.Lerp(a, b, u) + Vector3.up * 4f * LobHeight * u * (1f - u) * (a == From ? 1f : 0.3f);
+                    float rad = 0.27f * radiusK * Mathf.Sin(Mathf.Clamp01(u * 1.3f) * Mathf.PI * 0.5f + 0.4f);
+                    Vector3 on = Vector3.Lerp(a, b, u) + Vector3.up * 4f * LobHeight * u * (1f - u) * (a == From ? 1f : 0.08f);      // polish: taut once it holds (ga_a)
                     pts[k] = on + (n * Mathf.Cos(ang) + bn * Mathf.Sin(ang)) * rad;
                 }
-                var tube = _braid.Add(pts, 0.11f, 0.05f, 60); tube.Knots = 0.35f; tube.Sharp = 0.3f; tube.Sides = 6;
+                var tube = _braid.Add(pts, 0.13f, 0.065f, 60); tube.Knots = 0.35f; tube.Sharp = 0.3f; tube.Sides = 6;
             }
             // thorns along the braid (short sharp cones off the vines)
             int nThorn = Mathf.Clamp(Mathf.RoundToInt(len * 5f), 6, 40);
@@ -121,9 +121,9 @@ namespace Oheangbu.App
             _feet0 = FeetNow();
             // the splash of ink and leaves (ga_a): solid strokes with a jade rim, drops, leaves, sparks, soil
             Vector3 fwd = Flat(HitPoint - From), side = Vector3.Cross(Vector3.up, fwd);
-            _burst = Vol2FsB1.Burst(Seed, 7, side, fwd, 1.0f, 2.0f, 0.16f, 0.28f, 0.7f, 0.5f);      // r2: a small splash (r1 repeated the 나 star)
+            _burst = Vol2FsB1.Burst(Seed, 9, side, fwd, 1.3f, 2.5f, 0.17f, 0.3f, 0.75f, 0.5f);      // polish: a fuller splash (ga_a)      // r2: a small splash (r1 repeated the 나 star)
             Vol2Fs.MeshObject(root, "InkSplash", Kit.InkSolid("fs_stroke2", Ink, Rim, 0.14f, 0.5f, 0.28f, 1.6f), out _burstMesh);
-            Vol2FsB1.Emit(_drops, HitPoint, 90); Vol2FsB1.Emit(_leaves, HitPoint, 140); Vol2FsB1.Emit(_sparks, HitPoint, 120); Vol2FsB1.Emit(_dirt, _feet0, 40);
+            Vol2FsB1.Emit(_drops, HitPoint, 170); Vol2FsB1.Emit(_leaves, HitPoint, 200); Vol2FsB1.Emit(_sparks, HitPoint, 120); Vol2FsB1.Emit(_dirt, _feet0, 40);
             _hitLight = Vol2Fs.PointLight(root, "HitLight", Jade, 8f); _hitLight.transform.position = HitPoint;
             // the coils: three helical vines round the body (feet -> shoulders, ~2.5 turns each) + thorns, and leaves sprouting on them
             _coilR = Vol2Fs.MeshObject(root, "Coils", _vine, out _coilMesh);
@@ -187,13 +187,14 @@ namespace Oheangbu.App
             var cam = CamPos;
             _hitLight.intensity = h < 0.05f ? Mathf.Lerp(0f, 10f, h / 0.05f) : 10f * Mathf.Exp(-(h - 0.05f) * 5f);
             // the tether: the brush end of the braid lets go and is pulled into the coils (the vine is reeled into the body)
-            float pull = Vol2Fs.Smooth(0.75f, 0.75f + PullSeconds, h);      // r2: the taut tether stays longer (the concept's read)
+            float pull = Vol2Fs.Smooth(1.3f, 1.3f + PullSeconds, h);      // r2: the taut tether stays longer (the concept's read); polish: held to 1.3 s, its brush end on the brush
             Vector3 body = BodyNow();
             Vector3 shift = FeetNow() - _feet0;
             if (pull < 1f)
             {
-                Vector3 a = Vector3.Lerp(From, HitPoint + shift, pull);
-                if (pull > 0f) BuildBraid(a, HitPoint + shift, 1f - 0.5f * pull);
+                Vector3 a = Vector3.Lerp(Tip(), HitPoint + shift, pull);
+                BuildBraid(a, HitPoint + shift, 1f - 0.5f * pull);
+                if (pull <= 0f && Time.frameCount % 2 == 0) { float u = Random.value; Vol2FsB1.Emit(_sparks, Vector3.Lerp(a, HitPoint + shift, u), 2); }      // the strained vine sheds jade sparks
                 foreach (var tube in _braid.Tubes) tube.Grow = 1f;
                 _braid.Write(_braidMesh);
             }

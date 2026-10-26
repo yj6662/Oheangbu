@@ -7,7 +7,7 @@ namespace Oheangbu.App
     public static class Vol2FsB4R
     {
         /// <summary>1 within ±55° of the ring's forward, 0 from ±70° (radians in).</summary>
-        public static float Front55(float ang) => 1f - Vol2Fs.Smooth(55f, 70f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)));
+        public static float Front55(float ang) => 1f - Vol2Fs.Smooth(100f, 135f, Mathf.Abs(Mathf.DeltaAngle(0f, ang * Mathf.Rad2Deg)));      // 2026-10-27 polish: ±100° (the ring reads round; was ±55°)
         /// <summary>The front arc's half span in radians (70°).</summary>
         public const float Span = 70f * Mathf.Deg2Rad;
     }

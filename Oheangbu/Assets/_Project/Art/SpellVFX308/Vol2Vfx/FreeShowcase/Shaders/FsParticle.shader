@@ -31,6 +31,10 @@ Shader "Oheangbu/FreeShowcase/Particle"
         _SmokeColor ("Fire flipbook: smoke colour", Color) = (0.045, 0.036, 0.032, 1)
         _WaterMode ("Clear water (0 off, 1 on)", Float) = 0
         _WaterDeep ("Clear water: body colour", Color) = (0.03, 0.26, 0.36, 1)
+        // 2026-10-27 per-glyph polish: how far up the fire ramp the flipbook's heat walks (1 = the material pass; < 1 = redder, less yellow-white)
+        _FlipHeat ("Fire flipbook: heat reach", Float) = 1
+        // 2026-10-27 per-glyph polish: clear water's white fringe (1 = the material pass; < 1 = the white only on a thin rim)
+        _WaterRim ("Clear water: rim power", Float) = 1
     }
     SubShader
     {
@@ -58,7 +62,7 @@ Shader "Oheangbu/FreeShowcase/Particle"
                 float _Intensity, _AddMix, _UseRamp, _RampScale, _NoiseAmt, _NoiseScale, _Erode, _EdgeWidth, _SoftFade, _Opacity;
                 float4 _NoiseScroll;
                 float4 _EdgeColor;
-                float _FsKind, _Flip, _WaterMode;
+                float _FsKind, _Flip, _WaterMode, _FlipHeat, _WaterRim;
                 float4 _SmokeColor, _WaterDeep;
             CBUFFER_END
 
@@ -100,7 +104,7 @@ Shader "Oheangbu/FreeShowcase/Particle"
                 float heat = f.r * keep;
                 // r2 (material pass r1 read as white blobs): the heat walks only the lower ~3/4 of the fire ramp (red -> orange -> yellow; white only in
                 // the hottest pockets), a little less light, and a lighter, softer soot
-                float3 ramp = SAMPLE_TEXTURE2D(_RampMap, sampler_RampMap, float2(saturate(heat * 0.62 + 0.14), 0.5)).rgb;      // r3: r2 read pale yellow - redder, more orange
+                float3 ramp = SAMPLE_TEXTURE2D(_RampMap, sampler_RampMap, float2(saturate(heat * 0.62 * _FlipHeat + 0.14), 0.5)).rgb;      // r3: r2 read pale yellow - redder, more orange
                 float3 fire = ramp * i.color.rgb * _Tint.rgb * _Intensity * 0.9 * saturate(heat * 1.7) * soft * _Tint.a * _Opacity;
                 float smoke = saturate(f.g * keep - heat * 1.3) * soft * (1.0 - _AddMix) * _Opacity * 0.7;
                 return half4(fire + _SmokeColor.rgb * smoke, saturate(smoke * _SmokeColor.a + heat * soft * (1.0 - _AddMix) * 0.35));
@@ -147,6 +151,10 @@ Shader "Oheangbu/FreeShowcase/Particle"
                     float clarity = lerp(0.55, 1.0, saturate(rim * 0.9 + fr * 0.9));
                     float bodyA = cover * (1.0 - _AddMix) * clarity;
                     float3 tintW = _WaterDeep.rgb * (0.8 + 0.9 * thick);
+                    // 2026-10-27 per-glyph polish (아 오 우 언 운 read icy - a wide white fringe round every eroded sheet): the ramp's white only on a thin rim,
+                    // the sheet's body walks into the teal sooner (_WaterRim 1 = the material pass)
+                    if (_UseRamp > 0.5 && _WaterRim < 0.999)
+                        col = SAMPLE_TEXTURE2D(_RampMap, sampler_RampMap, float2(pow(saturate(over * _RampScale), _WaterRim), 0.5)).rgb * i.color.rgb * _Tint.rgb * _Intensity;
                     float3 w = col * cover * 0.85 + tintW * bodyA + glint * thick * cover * float3(0.9, 0.97, 1.0) * max(1.0, _Intensity * 0.5);
                     w += _EdgeColor.rgb * edge * 0.3;
                     return half4(w, saturate(bodyA));
