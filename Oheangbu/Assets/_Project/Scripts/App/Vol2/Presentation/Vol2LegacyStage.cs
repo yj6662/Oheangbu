@@ -1072,7 +1072,23 @@ namespace Oheangbu.App
             foreach (int id in _dead) { var live = _live[id]; _live.Remove(id); Release(live); }
             SweepParts();
             BindRecovery();
+            RouteAfterFog();
         }
+
+        // ---- 2026-10-26 fog fix (VfxAfterFog308, Docs/Research/vfx120/fog_occlusion_20261026.md): the transparent pieces of the bodies, lasting parts and pulses
+        // this stage laid draw after the realm fog (the fog of what stands behind them no longer paints over them). Re-routed when the count changes and every 20 sweeps.
+        int _afterFogCount = -1, _afterFogTick;
+        void RouteAfterFog()
+        {
+            if (!Application.isPlaying) return;
+            int n = _live.Count + _parts.Count + _pulses.Count;
+            if (n == _afterFogCount && ++_afterFogTick < 20) return;
+            _afterFogCount = n; _afterFogTick = 0;
+            foreach (var kv in _live) if (kv.Value.Go != null) VfxAfterFog308.Route(kv.Value.Go.transform);
+            foreach (var kv in _parts) if (kv.Value.Go != null) VfxAfterFog308.Route(kv.Value.Go.transform);
+            foreach (var g in _pulses) if (g != null) VfxAfterFog308.Route(g.transform);
+        }
+        // ---- end fog fix
 
         // ---------------------------------------------------------------- step 4: 걱, the recovery (the defence kit's: no vol.2 cast log, so no model instance)
 

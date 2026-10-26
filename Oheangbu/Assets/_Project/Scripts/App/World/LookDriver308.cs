@@ -220,7 +220,7 @@ namespace Oheangbu.App.World
             Shader.SetGlobalVector(BandId, new Vector4(Mathf.Max(0f, l.BandStart), Mathf.Max(l.BandEnd, l.BandStart + 1f), Mathf.Clamp(p.BandSteps, 1, 6), Mathf.Clamp01(l.BandAmount)));
             Shader.SetGlobalVector(AirId, Linear(l.Air, 1f, Mathf.Clamp(p.BandSoftness, .02f, .5f)));
             Shader.SetGlobalVector(PaperId, new Vector4(Mathf.Max(0f, l.PaperGrain), p.PaperValue.x, Mathf.Max(p.PaperValue.y, p.PaperValue.x + .01f), Mathf.Clamp01(l.DryBrush)));
-            Shader.SetGlobalVector(DryId, new Vector4(Mathf.Max(1f, p.DryBrushShape.x), Mathf.Max(.001f, p.DryBrushShape.y), Mathf.Clamp01(p.DryBrushShape.z), 0f));
+            Shader.SetGlobalVector(DryId, new Vector4(Mathf.Max(1f, p.DryBrushShape.x), Mathf.Max(.001f, p.DryBrushShape.y), Mathf.Clamp01(p.DryBrushShape.z), Mathf.Max(0f, p.DryBrushNear)));   // w: 2026-10-26 갈필 distance gate (0 = off)
             Shader.SetGlobalVector(RimId, Linear(l.RimColour, Mathf.Max(0f, l.RimAmount), Mathf.Clamp(l.RimPower, .5f, 16f)));
             Shader.SetGlobalVector(WetId, new Vector4(Mathf.Clamp01(l.Wetness), Mathf.Clamp01(l.WetDarken), Mathf.Max(0f, l.WetSpecular), Mathf.Clamp(l.WetGloss, 1f, 512f)));
             Shader.SetGlobalVector(FogId, new Vector4(Mathf.Max(0f, l.FogValue), Mathf.Max(0f, l.FogDensity), Mathf.Max(0f, l.FogStart), Mathf.Max(0f, l.MistDensity)));

@@ -182,6 +182,10 @@ namespace Oheangbu.Data.World
         [Min(1f)] public float LineWidthFade = 40f;
         [Tooltip("갈필: reach toward the sky in px at 1080p, world noise scale, noise threshold")]
         public Vector3 DryBrushShape = new Vector3(3f, .35f, .45f);
+        // 2026-10-26 fix A (the user: "A로 가자"; Docs/Research/vfx120/fog_occlusion_20261026.md): the 갈필 no longer eats near silhouettes
+        // (a lab capsule, the caster, an enemy against the sky split at the horizon) - it starts at this distance and is full at 2.5 x it
+        [Tooltip("갈필 distance gate: the break-up starts at this many metres (eye depth) and is full at 2.5 x; 0 = every distance (the look before 2026-10-26)")]
+        [Min(0f)] public float DryBrushNear = 0f;
         [Tooltip("Perceptual value where the extra highlight fibre starts / is full")]
         public Vector2 PaperValue = new Vector2(.55f, .9f);
         [Tooltip("Mote shells: nearest and farthest distance from the eye (m)")]

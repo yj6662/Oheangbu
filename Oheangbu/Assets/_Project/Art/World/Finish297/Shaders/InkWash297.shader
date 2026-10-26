@@ -393,6 +393,9 @@ Shader "Oheangbu/Finish297/InkWash"
                             float2 uS308 = sA308 > 0 ? uA308 : (sB308 > 0 ? uB308 : (sC308 > 0 ? uC308 : uD308));
                             float streak308 = Noise(float2(world.x + world.z, world.y * 3) * _OhLook308Dry.y);
                             half dry308 = smoothstep(_OhLook308Dry.z, _OhLook308Dry.z + .2, streak308) * _OhLook308Paper.w * exempt308;
+                            // 2026-10-26 fix A (fog_occlusion_20261026.md): near silhouettes keep their ink line - the break-up starts at _OhLook308Dry.w m (eye depth)
+                            // and is full at 2.5 x; w = 0 skips this line (the output before, bit for bit)
+                            if (_OhLook308Dry.w > 0) dry308 *= smoothstep(_OhLook308Dry.w, _OhLook308Dry.w * 2.5, d);
                             dbgDry308 = dry308;
                             half3 skyC308 = SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_LinearClamp, uS308, 0).rgb;
                             col = lerp(col, Grade308(skyC308, true, look308), dry308);
