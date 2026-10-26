@@ -83,7 +83,10 @@ namespace Oheangbu.App
             LastStepUs = now;
             _model.Tick(now);
             _legacy?.Sweep();
+            // 2026-10-26 fog fix: the recipes' own pieces (the free showcase roots live under this transform) draw after the realm fog when transparent (VfxAfterFog308)
+            VfxAfterFog308.Keep(transform, ref _afterFogCount, ref _afterFogTick);
         }
+        int _afterFogCount = -1, _afterFogTick;
 
         /// <summary>A scope reset: the coordinator's AbortAll already retires the instances through the model; this also clears the bridge's old bodies at once.</summary>
         public void ClearAll()

@@ -71,6 +71,7 @@ namespace Oheangbu.App
             pool=new Drop[Mathf.Clamp(settings.Droplets,4,20)];dropParticles=new ParticleSystem.Particle[pool.Length+1];
             drops=System("InkDroplets",material,ParticleSystemRenderMode.Billboard,dropParticles.Length,out dropRenderer);
             stains=System("InkStains",stainMaterial,ParticleSystemRenderMode.Billboard,stainParticles.Length,out stainRenderer);
+            if(Application.isPlaying)VfxAfterFog308.Route(root.transform);   // 2026-10-26 fog fix: the alpha-blended ink draws after the realm fog (VfxAfterFog308)
         }
         private ParticleSystem System(string name,Material mat,ParticleSystemRenderMode mode,int max,out ParticleSystemRenderer renderer)
         {

@@ -386,10 +386,14 @@ namespace Oheangbu.App.SpellVFX120
             renderer = mr; return go.transform;
         }
 
+        // 2026-10-26 fog fix (VfxAfterFog308): this body's transparent pieces draw after the realm fog, so the fog behind them no longer paints over them
+        int _afterFogCount = -1, _afterFogTick;
+
         private void Update()
         {
             if (!Begun || PreviewControlled) return;
             Sample(Age + Time.deltaTime);
+            VfxAfterFog308.Keep(transform, ref _afterFogCount, ref _afterFogTick);
             if (Age >= Life) Destroy(gameObject);
         }
 

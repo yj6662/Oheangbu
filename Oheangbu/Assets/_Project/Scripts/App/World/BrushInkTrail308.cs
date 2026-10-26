@@ -67,6 +67,7 @@ namespace Oheangbu.App.World
             trail.emitting = false;
             brushRenderers = rig.WorldTip.root != null ? BrushRenderers(rig.WorldTip) : null;
             Apply(1f);
+            VfxAfterFog308.Route(anchor);   // 2026-10-26 fog fix: the ribbon (alpha-blended, no depth) draws after the realm fog, not under the fog of what is behind it
             return true;
         }
 
