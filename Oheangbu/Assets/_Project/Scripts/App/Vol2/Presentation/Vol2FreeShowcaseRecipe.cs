@@ -98,6 +98,8 @@ namespace Oheangbu.App
         public virtual void Contact(Vol2ContactRecord rec) { }
         public virtual void MaterialCreated(Vol2Material m) { }
         public virtual void MaterialEnded(Vol2Material m, Vol2MaterialEnd why) { }
+        /// <summary>batch 3: the registry changed this cast's material (what = drawn | split | moved | extended | thickened | blocked | wet).</summary>
+        public virtual void MaterialChanged(Vol2Material m, string what) { }
         /// <summary>batch 2 (ㅓ): a successful parry landed while this cast's window was open (the combat wiring's ParryResolved, relayed by the scope). true = drawn.</summary>
         public virtual bool Parried(Vector3 point, long nowUs) => false;
         public abstract void Tick(long nowUs);
@@ -166,11 +168,11 @@ namespace Oheangbu.App
                 float toApex = Mathf.Max(Vol2LegacyRecipeBase.MinToApex, (float)((Vol2LegacyRecipeBase.LaunchUs(inst) - inst.StartUs) / 1000000.0));
                 // batch 2: the guard (ㅓ) and the ward (ㅜ) motions of the bridge, from the clip's start (as Vol2LegacyRecipeBase plays them)
                 var frame = inst.Log.Glyph.Frame;
-                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
+                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && inst.Log.Glyph.Verb == Verb.Leave ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
                 legacy.Swing(new Vol2LegacySwing
                 {
                     Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = kind,
-                    ToApex = toApex, FromClipStart = kind == Vol2LegacyKind.Guard || kind == Vol2LegacyKind.Ward, Distance = kind == Vol2LegacyKind.Guard || kind == Vol2LegacyKind.Ward ? 0f : 4.6f,
+                    ToApex = toApex, FromClipStart = kind == Vol2LegacyKind.Guard || kind == Vol2LegacyKind.Ward || kind == Vol2LegacyKind.Self, Distance = kind == Vol2LegacyKind.Guard || kind == Vol2LegacyKind.Ward || kind == Vol2LegacyKind.Self ? 0f : 4.6f,
                 });
             }
             try { run.Began(inst.StartUs); } catch (Exception e) { Debug.LogException(e); }
@@ -183,7 +185,7 @@ namespace Oheangbu.App
         { if (_runs.TryGetValue(inst, out var r)) { try { r.MaterialCreated(m); } catch (Exception e) { Debug.LogException(e); } } else Inner.OnMaterialCreated(inst, m); }
 
         public override void OnMaterialChanged(Vol2VfxInstance inst, Vol2Material m, string what)
-        { if (!Mine(inst)) Inner.OnMaterialChanged(inst, m, what); }
+        { if (_runs.TryGetValue(inst, out var r)) { try { r.MaterialChanged(m, what); } catch (Exception e) { Debug.LogException(e); } } else Inner.OnMaterialChanged(inst, m, what); }      // batch 3: forwarded (drawn / extended / moved ...)
 
         public override void OnMaterialEnded(Vol2VfxInstance inst, Vol2Material m, Vol2MaterialEnd why)
         { if (_runs.TryGetValue(inst, out var r)) { try { r.MaterialEnded(m, why); } catch (Exception e) { Debug.LogException(e); } } else Inner.OnMaterialEnded(inst, m, why); }

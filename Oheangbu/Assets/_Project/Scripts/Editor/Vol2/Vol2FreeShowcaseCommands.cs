@@ -60,6 +60,7 @@ namespace Oheangbu.EditorTools.Vol2
             s += " | " + Vol2FsEnemyStrike.Status();
             if (inst == null) return s + " installer=none";
             s += " installer on=" + inst.On + " views=" + inst.Installed + " kit=" + (inst.Kit != null && inst.Kit.Ok ? "ok" : inst.Kit != null ? inst.Kit.Problem : "null");
+            s += " geok=" + inst.GeokShown + (inst.GeokNote != "" ? " (" + inst.GeokNote + ")" : "");      // batch 3: 걱 (the recovery, no cast log)
             s += " recipes=[" + string.Join(", ", inst.Recipes.Select(r => r.Kind + "{" + string.Join(" ", r.Glyphs.Select(g => g + ":" + r.ShownOf(g))) + "} shown " + r.Shown + (r.LastNote != "" ? " (" + r.LastNote + ")" : ""))) + "]";
             return s;
         }

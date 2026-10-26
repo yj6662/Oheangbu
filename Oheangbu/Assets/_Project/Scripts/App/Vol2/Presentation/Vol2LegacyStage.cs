@@ -1078,6 +1078,8 @@ namespace Oheangbu.App
 
         Vol2RecoveryExecutor _recovery; Action<Vol2RecoveryRecord> _onRecovery; int _recoverySearches, _recoveryPart;
         public int RecoveriesShown { get; private set; }
+        /// <summary>batch 3 (2026-10-26): the free showcase draws 걱 itself (Vol2FsGeok, lab only) - the bridge keeps the buff swing but lays no aura while this is set.</summary>
+        public bool RecoveryShownElsewhere;
 
         /// <summary>걱 never reaches the coordinator (the payment gate runs it in the defence kit: Vol2RecoveryExecutor). Its old look - the swing of a buff and the wood buff
         /// band on the caster (걱 was an EA buff: its band is 건's) - is laid on the kit's own Begin record and closed on the record that says it no longer runs
@@ -1101,6 +1103,7 @@ namespace Oheangbu.App
                     if (_recoveryPart != 0) Close(_recoveryPart, Vol2EndCode.Replace, Vector3.zero, false);
                     var caster = Caster;
                     Swing(new Vol2LegacySwing { Letter = '걱', Body = Body.Wood, Kind = Vol2LegacyKind.Self, ToApex = Vol2LegacyRecipeBase.MinToApex, FromClipStart = true });
+                    if (RecoveryShownElsewhere) return;
                     _recoveryPart = Lay(new Vol2LegacyPart { Donor = '걱', Fallback = Vol2LegacyDonors.Of(Vol2LegacyDonors.Aura, Body.Wood), Field = Vol2LegacyField.Aura, Body = Body.Wood,
                         Point = caster != null ? caster.position : Vector3.zero, Facing = caster != null ? caster.forward : Vector3.forward, Radius = 1f, OnCaster = true, Role = "recovery" });
                     if (_recoveryPart != 0) RecoveriesShown++;

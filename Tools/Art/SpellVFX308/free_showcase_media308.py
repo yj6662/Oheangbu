@@ -41,6 +41,118 @@ B2_SPELLS = [
     ('su', 'R0_bridge_Metal_', ['su_a.png'], '수 · 금 · ㅜ 둘레 · 한 번 — 칼날 고리가 톱처럼 돌며 고리 위 적을 벤다(바닥에 KCISA 톱니 고리), 쨍 하고 부서져 파편이 옆으로'),
     ('u', 'R0_bridge_Water_', ['u_b.png'], '우 · 수 · ㅜ 둘레 · 한 번 — 고리를 따라 물기둥이 솟아 먹 리본이 감기고, 고리 위 적에게 쏟아져 적신다, 땅으로 흘러내림'),
 ]
+# batch 3 (2026-10-26, D308-150 V12): --batch b3 -> free_showcase/batch3/<round>/ (남긴다: the cast, then the residue that stays, the expiry warning and the exit).
+# Frames are STREAMED to the encoder (a 남긴다 job is 300 - 600 frames; holding 19 of them in memory would take tens of GB).
+# Video per glyph: the cast at 1x (age <= cut) -> the same at 0.5x -> the residue segment at 1x to the end, with the capture's JUMP (a LAB-SIMULATED long wait)
+# labelled on the frames after it.  --video key=<side-by-side age>[/...]  --cut key=<cast segment end, s> (default 1.8)
+B3_SPELLS = [
+    ('nak', 'P1_bridge4_Fire_red', ['nak_a.png'], '낙 · 화 · ㅏ 경로 · 남긴다 — 불먹 화살이 첫 적을 태우고, 맞은 자리에 불타는 먹숯 나무가 선다(잔존 10초), 끝부터 타 재로 날림'),
+    ('mak', 'P1_bridge4_Earth_red', ['mak_a.png'], '막 · 토 · ㅏ 경로 · 남긴다 — 돌창이 첫 적을 밀치고, 그 자리에 가지처럼 솟은 바위 벼랑이 선다(10초), 가라앉으며 둘레 땅이 판으로'),
+    ('sak', 'P1_bridge4_Metal_red', ['sak_a.png'], '삭 · 금 · ㅏ 경로 · 남긴다 — 강철 별이 첫 적을 베고, 그 자리에 칼날 가시덤불이 선다(10초), 쨍 하고 파편이 옆으로'),
+    ('ak', 'P1_bridge4_Water_red', ['ak_a.png'], '악 · 수 · ㅏ 경로 · 남긴다 — 물줄기가 첫 적을 적시고, 그 자리에 산호처럼 갈라지는 분수가 솟는다(10초), 아래로 흘러내림'),
+    ('geok', 'A1_bridge4_Wood_red', ['geok_a.png'], '걱 · 목 · ㅓ 부착 · 남긴다 극치 — 자기 회복 HP 30 / 3초: 어린 나무와 덩굴이 몸을 감싸 오르고 생명빛이 가슴으로, 다 차면 잔뿌리로 풀림'),
+    ('neok', 'A1_bridge4_Fire_red', ['neok_a.png'], '넉 · 화 · ㅓ 부착 · 남긴다 — 붓대와 소매에 불이 붙어 6초, 휘두르면 불의 호, 닿은 적이 탄다, 끝부터 타 재로'),
+    ('meok', 'A1_bridge4_Earth_red', ['meok_a.png'], '먹 · 토 · ㅓ 부착 · 남긴다 — 붓끝이 돌 철퇴, 팔에 돌 건틀릿(6초), 닿은 적을 민다, 가라앉으며 발밑 땅이 판으로'),
+    ('seok', 'A1_bridge4_Metal_red', ['seok_a.png'], '석 · 금 · ㅓ 부착 · 남긴다 — 붓대에 칼날 가지가 돋아 언월도(6초), 닿은 적을 벤다, 쨍 하고 파편이 옆으로'),
+    ('eok', 'A1_bridge4_Water_red', ['eok_a.png'], '억 · 수 · ㅓ 부착 · 남긴다 — 붓끝에서 물 채찍이 감겨 돈다(6초), 닿은 적을 적신다, 팔을 타고 아래로 흘러내림'),
+    ('gok', 'F1_bridge4_Wood_red', ['gok_a.png'], '곡 · 목 · ㅗ 면 · 남긴다 극치 — 앞 부채꼴에 어린 숲이 자라며 1.5배로 넓어지고(10초) 들어온 적을 붙든다, 잔뿌리로 풀림'),
+    ('nok', 'F1_bridge4_Fire_red', ['nok_a.png'], '녹 · 화 · ㅗ 면 · 남긴다 — 앞 부채꼴이 불타는 갈대밭으로 남아(10초) 안의 적을 태운다, 끝부터 타 재로'),
+    ('mok', 'F1_bridge4_Earth_red', ['mok_b.png'], '목 · 토 · ㅗ 면 · 남긴다 — 앞 부채꼴에 현무암 기둥 고원이 솟아(10초) 안의 적을 민다, 가라앉으며 둘레 땅이 판으로'),
+    ('sok', 'F1_bridge4_Metal_red', ['sok_a.png'], '속 · 금 · ㅗ 면 · 남긴다 — 앞 부채꼴에 강철 말뚝이 꽂히고 날선 줄로 이어져(10초) 지나는 적을 벤다, 쨍 하고 파편이 옆으로'),
+    ('ok', 'F1_bridge4_Water_red', ['ok_b.png'], '옥 · 수 · ㅗ 면 · 남긴다 — 앞 부채꼴이 꼬인 물기둥이 선 늪으로(10초) 안의 적을 적신다, 땅으로 흘러 빠짐'),
+    ('guk', 'R1_bridge4_Wood_red', ['guk_a.png'], '국 · 목 · ㅜ 둘레 · 남긴다 극치 — 2 m 고리의 뿌리가 나무 기둥(발판)으로 자란다(10초), 고리 안 내 잔존물 수명 ×1.5, 잔뿌리로 풀림'),
+    ('nuk', 'R1_bridge4_Fire_red', ['nuk_a.png'], '눅 · 화 · ㅜ 둘레 · 남긴다 — 2 m 고리에 불 횃불 기둥이 선다(10초), 고리를 넘는 적을 태운다, 끝부터 타 재로'),
+    ('muk', 'R1_bridge4_Earth_red', ['muk_a.png'], '묵 · 토 · ㅜ 둘레 · 남긴다 — 2 m 고리에 선돌이 둘러선다(10초), 넘는 적을 민다, 가라앉으며 둘레 땅이 판으로'),
+    ('suk', 'R1_bridge4_Metal_red', ['suk_b.png'], '숙 · 금 · ㅜ 둘레 · 남긴다 — 2 m 고리에 칼이 거꾸로 꽂히고 빛 고리와 날선 줄로 이어진다(10초), 넘는 적을 벤다, 쨍 하고 파편이 옆으로'),
+    ('uk', 'R1_bridge4_Water_red', ['uk_b.png'], '욱 · 수 · ㅜ 둘레 · 남긴다 — 2 m 고리를 물이 강처럼 돌며 아치로 솟는다(10초), 넘는 적을 적신다, 땅으로 스며 내려감'),
+]
+
+
+def b3_main(rnd, ages, cuts, only):
+    import imageio_ffmpeg
+    base = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch3'
+    concepts = base / 'concepts'
+    frames_root = base / rnd / 'frames'
+
+    def open_writer(dst):
+        g = imageio_ffmpeg.write_frames(str(dst), (W, H), fps=60, codec='libx264', pix_fmt_out='yuv420p', output_params=['-crf', '19', '-preset', 'medium'], macro_block_size=8)
+        g.send(None)
+        return g
+
+    combined = None if only else open_writer(base / rnd / 'free_showcase_batch3_all.mp4')
+    for key, folder, cons, text in B3_SPELLS:
+        if only and key not in only:
+            continue
+        d = frames_root / folder
+        if not (d / 'index.csv').exists():
+            print('NO FRAMES', key, d); continue
+        with open(d / 'index.csv', encoding='utf-8', errors='replace') as f:
+            rs = [r for r in csv.DictReader(f) if r.get('video') == '1' and (d / ('f_%05d.jpg' % int(r['frame']))).exists()]
+        if not rs:
+            print('NO VIDEO FRAMES', key); continue
+        cut = cuts.get(key, 1.8)
+        name = text.split(' — ')[0]
+        # side by side at the asked ages
+        for i, age in enumerate(ages.get(key, [1.2])):
+            best = min(rs, key=lambda r: abs(float(r['ageSec']) - age))
+            eng = label(Image.open(d / ('f_%05d.jpg' % int(best['frame']))).resize((W, H)), 'ENGINE (실제 게임 카메라) · %.2f s' % float(best['ageSec']))
+            con = label(Image.open(concepts / cons[0]).resize((W, H)), 'CONCEPT ' + cons[0][:-4])
+            sbs = Image.new('RGB', (W * 2 + 16, H), (20, 20, 20)); sbs.paste(con, (0, 0)); sbs.paste(eng, (W + 16, 0))
+            dst = base / rnd / f'{key}_side_by_side{"" if i == 0 else "_" + str(i + 1)}.jpg'
+            sbs.save(dst, quality=92); print('side', dst)
+        one = open_writer(base / rnd / f'{key}_cast_half_then_lasting.mp4')
+        writers = [w for w in (one, combined) if w is not None]
+
+        def send(im, times=1):
+            b = im.convert('RGB').tobytes()
+            for w in writers:
+                for _ in range(times):
+                    w.send(b)
+
+        if combined is not None:
+            t = label(Image.open(concepts / cons[0]).resize((W, H)), 'CONCEPT (자유 시안) · ' + cons[0][:-4], text)
+            b = t.convert('RGB').tobytes()
+            for _ in range(90):
+                combined.send(b)
+        cast = [r for r in rs if float(r['ageSec']) <= cut]
+        rest = [r for r in rs if float(r['ageSec']) > cut]
+        for r in cast:
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + ' · 시전 1×', 't = %s s' % r['ageSec']))
+        for r in cast:
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + ' · 시전 0.5×', 't = %s s' % r['ageSec']), 2)
+        jumped, jump_note, jump_left = False, '', 0
+        for r in rest:
+            note = r.get('note', '') or ''
+            if 'JUMP' in note:
+                jumped, jump_note, jump_left = True, note, 75
+            sub = 't = %s s' % r['ageSec']
+            if jumped:
+                sub += '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]' if jump_left > 0 else '   [시간 건너뜀 뒤]'
+                jump_left -= 1
+            if 'LAB-SIMULATED' in note:
+                sub += '   [' + note.replace('LAB-SIMULATED: ', '실험실 연출: ')[:60] + ']'
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + ' · 남은 것 1×', sub))
+        one.close()
+        print('mp4', key, len(cast), 'cast frames +', len(rest), 'lasting frames')
+    if combined is not None:
+        combined.close()
+        print('mp4 combined', base / rnd / 'free_showcase_batch3_all.mp4')
+
+
+def b3_entry():
+    rnd = sys.argv[1]
+    ages, cuts = {}, {}
+    for flag, dst in (('--video', ages), ('--cut', cuts)):
+        if flag in sys.argv:
+            for a in sys.argv[sys.argv.index(flag) + 1:]:
+                if a.startswith('--'):
+                    break
+                k, v = a.split('=')
+                dst[k] = [float(x) for x in v.split('/')] if flag == '--video' else float(v)
+    only = sys.argv[sys.argv.index('--only') + 1].split(',') if '--only' in sys.argv else None
+    b3_main(rnd, ages, cuts, only)
+
+
 if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b1':
     BASE = BASE / 'batch1'
     CONCEPTS = BASE / 'concepts'
@@ -158,6 +270,9 @@ def title(concept, text, seconds=1.5, fps=60):
 
 
 def main():
+    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b3':
+        b3_entry()
+        return
     rnd = sys.argv[1]
     ages = {}
     if '--video' in sys.argv:

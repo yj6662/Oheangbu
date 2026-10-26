@@ -208,7 +208,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else templates.Add(t.Trim());
             }
             _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
-            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; AdapterBodies.Clear(); BridgeBodies.Clear();
+            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; AdapterBodies.Clear(); BridgeBodies.Clear();
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
@@ -230,6 +230,8 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "wardband") _wardBand = v.Trim() == "1";
                 else if (k == "stroke") _strokeFeed = v.Trim() == "1";
                 else if (k == "lasting") _lasting = v.Trim() == "1";
+                else if (k == "walkin") _walkIn = v.Trim() == "1";          // batch 3 (opt-in): a body walks onto the 남긴다 residue at 1.6 s (P1 / F1 / R1)
+                else if (k == "endwith") _endWith = (Vol2MaterialEnd)Enum.Parse(typeof(Vol2MaterialEnd), v.Trim(), true);   // batch 3 (opt-in): end the residue for this reason instead of the expiry jump
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
@@ -313,6 +315,18 @@ namespace Oheangbu.EditorTools.Vol2
         }
 
         static int _burstCount; static double _burstEvery = 0.65; const double BurstTail = 1.8;
+        // batch 3 free showcase (2026-10-26, opt-in, defaults unchanged): walkin=1 / endwith=<Vol2MaterialEnd> for the 남긴다 rows P1 / F1 / R1 (see Step4Job)
+        static bool _walkIn; static Vol2MaterialEnd _endWith = Vol2MaterialEnd.None;
+
+        /// <summary>LAB-SIMULATED (endwith=): ends the cast's live residue through the registry for the given reason (a stand-in for a cleanse / a reaction / a
+        /// replace that the capture has no other way to stage), so the look's exit for that reason is on the video.</summary>
+        static bool EndResidueWith(Ctx c, Vol2MaterialEnd why)
+        {
+            if (c.Log == null) return false;
+            if (c.Log.Materials.Count == 0) return false;          // not there yet (try again next frame)
+            foreach (var m in c.Log.Materials) if (m.Alive) c.Coordinator.Materials.TryEnd(m.Id, why, c.Services.Clock.NowUs);
+            return true;
+        }
 
         // ------------------------------------------------------------------------------------------------------------------------------------------------
         // step 4 (D308-150 V9): the batchim templates as the legacy bridge plays them - the cast AND the lasting verb state long enough to read it
@@ -331,6 +345,19 @@ namespace Oheangbu.EditorTools.Vol2
             void JumpStrip(double at) => Step(at, "JUMP to " + Lead + " s before the strip ends (LAB-SIMULATED 3 s wait)", c => JumpBeforeStripEnd(c, Lead));
             void JumpHost(double at) => Step(at, "JUMP to " + Lead + " s before the attachment ends (LAB-SIMULATED 6 s wait)", c => JumpBeforeEmitterEnd(c, Lead));
             void SwingAt(double at) => Step(at, "LAB-SIMULATED: the swing's touch (the caster's brush sweeps the body)", c => { SimSwing(c); return true; });
+            // batch 3 (opt-in): a body walking onto the 남긴다 residue / the residue ended for another reason than its expiry
+            void Leave1Options((float ahead, float side) from, (float ahead, float side) to)
+            {
+                if (v != 1) return;
+                if (_walkIn) { int idx = j.Dummies.Count; j.Dummies.Add(from); Step(1.6, "LAB-SIMULATED: a body walks onto the residue", c => MoveDummy(c, idx, to.ahead, to.side)); }
+                if (_endWith != Vol2MaterialEnd.None)
+                {
+                    j.Steps.RemoveAll(s => s.Name.StartsWith("JUMP", StringComparison.Ordinal));
+                    var why = _endWith;
+                    Step(3.0, "LAB-SIMULATED: the residue ends " + why + " (registry TryEnd)", c => EndResidueWith(c, why));
+                    j.MaxAge = 6; j.Variant += "_" + why.ToString().ToLowerInvariant();
+                }
+            }
             switch (f)
             {
                 case 'P':
@@ -347,6 +374,7 @@ namespace Oheangbu.EditorTools.Vol2
                         case 4: j.MaxAge = 8; j.MinAge = 1.5; JumpStrip(1.2); break;
                         default: j.Dummies.Add((8.5f, 0.4f)); j.MaxAge = 3.2; j.MinAge = 2.0; break;                                    // out to 12 m and back
                     }
+                    Leave1Options((6.5f, 2.6f), (4.7f, 0.85f));
                     break;
                 case 'A':
                     j.Dummies.Add((1.2f, 0.3f));
@@ -377,6 +405,7 @@ namespace Oheangbu.EditorTools.Vol2
                         case 4: j.Dummies.Add((4.3f, 1.25f)); j.MaxAge = 8; j.MinAge = 1.5; JumpStrip(1.2); break;
                         default: j.Dummies.Add((5.6f, 0.5f)); j.MaxAge = 3.2; j.MinAge = 2.0; break;
                     }
+                    Leave1Options((2.4f, 3.2f), (2.6f, 0.55f));
                     break;
                 default:
                     j.Dummies.Add((1.9f, 0.5f));
@@ -401,6 +430,7 @@ namespace Oheangbu.EditorTools.Vol2
                             break;
                         default: j.Dummies.Add((3.7f, 0.9f)); j.MaxAge = 3.2; j.MinAge = 2.0; break;                                // the ring goes 2 -> 4 m and back
                     }
+                    Leave1Options((0.6f, -3.4f), (0.5f, -1.95f));
                     break;
             }
         }

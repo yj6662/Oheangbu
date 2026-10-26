@@ -61,11 +61,71 @@ namespace Oheangbu.App
                 // batch 0 (a61dce39): 나 고 각; batch 1 (2026-10-26): P0 가 마 사 아 · F0 노 모 소 오 - each glyph its own class
                 Wrap(model, Vol2Recipe.PathOneHit, p.transform, ('나', () => new Vol2FsNa()), ('가', () => new Vol2FsGa()), ('마', () => new Vol2FsMa()), ('사', () => new Vol2FsSa()), ('아', () => new Vol2FsA()));
                 Wrap(model, Vol2Recipe.FanOnce, p.transform, ('고', () => new Vol2FsGo()), ('노', () => new Vol2FsNo()), ('모', () => new Vol2FsMo()), ('소', () => new Vol2FsSo()), ('오', () => new Vol2FsO()));
-                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Leave).Kind, p.transform, ('각', () => new Vol2FsGak()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Leave).Kind, p.transform, ('각', () => new Vol2FsGak()), ('낙', () => new Vol2FsNak()), ('막', () => new Vol2FsMak()), ('삭', () => new Vol2FsSak()), ('악', () => new Vol2FsAk()));
                 // batch 2 (2026-10-26): A0 거 너 머 서 어 (the guard on the brush, its parry reaction) · R0 구 누 무 수 우 (the instant ring)
                 Wrap(model, Vol2Recipe.AttachOnce, p.transform, ('거', () => new Vol2FsGeo()), ('너', () => new Vol2FsNeo()), ('머', () => new Vol2FsMeo()), ('서', () => new Vol2FsSeo()), ('어', () => new Vol2FsEo()));
                 Wrap(model, Vol2Recipe.RingOnce, p.transform, ('구', () => new Vol2FsGu()), ('누', () => new Vol2FsNu()), ('무', () => new Vol2FsMu()), ('수', () => new Vol2FsSu()), ('우', () => new Vol2FsU()));
+                // batch 3 (2026-10-26): 남긴다 - P1 낙 막 삭 악 (with 각) · A1 넉 먹 석 억 · F1 곡 녹 목 속 옥 · R1 국 눅 묵 숙 욱 (걱 = the recovery, below)
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Leave).Kind, p.transform, ('넉', () => new Vol2FsNeok()), ('먹', () => new Vol2FsMeok()), ('석', () => new Vol2FsSeok()), ('억', () => new Vol2FsEok()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Leave).Kind, p.transform, ('곡', () => new Vol2FsGok()), ('녹', () => new Vol2FsNok()), ('목', () => new Vol2FsMok()), ('속', () => new Vol2FsSok()), ('옥', () => new Vol2FsOk()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Leave).Kind, p.transform, ('국', () => new Vol2FsGuk()), ('눅', () => new Vol2FsNuk()), ('묵', () => new Vol2FsMuk()), ('숙', () => new Vol2FsSuk()), ('욱', () => new Vol2FsUk()));
+                if (_view == null) _view = p;
             }
+            BindRecovery();
+        }
+
+        void LateUpdate()
+        {
+            // batch 3: 걱 ticks every frame on the scope clock (the recovery has no cast log, so no vol.2 instance carries it)
+            if (_geok == null || _view == null || _view.Coordinator == null) return;
+            long now = _view.Coordinator.Services.Clock.NowUs;
+            try { _geok.Tick(now); if (_geok.Done(now)) { _geok.Dispose(); _geok = null; } }
+            catch (System.Exception e) { Debug.LogException(e); _geok?.Dispose(); _geok = null; }
+        }
+
+        // ---------------------------------------------------------------- batch 3: 걱, the recovery (the defence kit's Vol2RecoveryExecutor: records, never answered)
+        Vol2VfxPresenter _view;
+        Vol2RecoveryExecutor _recovery; Vol2DefenceKit _defence; System.Action<Vol2RecoveryRecord> _onRecovery; int _recoverySearches;
+        Vol2FsGeok _geok;
+        public int GeokShown { get; private set; }
+        public string GeokNote => _geok != null ? _geok.Note : _geokLast;
+        string _geokLast = "";
+
+        void BindRecovery()
+        {
+            if (_view != null && _view.Legacy != null) _view.Legacy.RecoveryShownElsewhere = On && _kit != null && _kit.Ok;
+            if (_recovery != null || _recoverySearches >= 40) return;
+            _recoverySearches++;
+            var wiring = FindFirstObjectByType<CombatLoopWiring>();
+            var kit = wiring != null ? wiring.Vol2Defence : null;
+            if (kit == null || kit.Recovery == null) return;
+            _defence = kit; _recovery = kit.Recovery;
+            _recovery.Recorded += _onRecovery = OnRecovery;
+        }
+
+        void OnRecovery(Vol2RecoveryRecord rec)
+        {
+            try
+            {
+                if (_view == null || _view.Coordinator == null || !On || _kit == null || !_kit.Ok) return;
+                long now = _view.Coordinator.Services.Clock.NowUs;
+                if (rec.Kind == "Begin" && rec.Accepted && rec.Active)
+                {
+                    if (_geok != null) { _geok.End("Replaced", now); _geokLast = _geok.Note; }
+                    var st = _defence != null && _defence.Session != null ? _defence.Session.Recovery : null;
+                    long start = st != null && st.Active ? st.StartedUs : now, life = st != null ? st.Numbers.HealingLifeUs : 3000000;
+                    var caster = _view.Coordinator.Services.Shapes != null ? _view.Coordinator.Services.Shapes.Caster : null;
+                    var model = _view.Model;
+                    var g = new Vol2FsGeok(_kit, _view.transform, () => caster != null ? caster.Position : _view.transform.position,
+                        () => caster != null ? caster.AimDirection : Vector3.forward, model != null ? model.BrushTip : null, model != null ? model.BrushGrip : null);
+                    g.Begin(start, life, now, (float)rec.HpReserved);
+                    if (_geok != null) _geok.Dispose();
+                    _geok = g; GeokShown++;
+                    return;
+                }
+                if (_geok != null) _geok.Record(rec, now);
+            }
+            catch (System.Exception e) { Debug.LogException(e); }
         }
 
         void Wrap(Vol2VfxModel model, Vol2Recipe kind, Transform parent, params (char Glyph, System.Func<Vol2FsRun> Make)[] glyphs)
@@ -81,6 +141,10 @@ namespace Oheangbu.App
 
         void OnDestroy()
         {
+            if (_recovery != null && _onRecovery != null) _recovery.Recorded -= _onRecovery;
+            _recovery = null; _onRecovery = null;
+            if (_view != null && _view.Legacy != null) _view.Legacy.RecoveryShownElsewhere = false;
+            _geok?.Dispose(); _geok = null;
             foreach (var r in _recipes) r.ClearAll();
             _kit?.Dispose();
         }
