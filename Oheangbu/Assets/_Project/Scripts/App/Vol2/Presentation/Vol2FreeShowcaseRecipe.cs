@@ -143,6 +143,8 @@ namespace Oheangbu.App
         public int Shown { get; private set; }
         public int ShownOf(char glyph) => _shownBy.TryGetValue(glyph, out var n) ? n : 0;
         public string LastNote = "";
+        /// <summary>batch 4: the last note of each glyph (the status lists them, so every glyph's facts can be read, not only the template's last one).</summary>
+        public readonly Dictionary<char, string> Notes = new Dictionary<char, string>();
 
         public Vol2FreeShowcaseRecipe(Vol2VfxRecipe inner, IReadOnlyDictionary<char, Func<Vol2FsRun>> makers, string order, Func<Vol2FsKit> kit, Func<bool> on, Transform parent)
         { Inner = inner; _makers = makers; Glyphs = order; _kit = kit; _on = on; _parent = parent; }
@@ -168,7 +170,8 @@ namespace Oheangbu.App
                 float toApex = Mathf.Max(Vol2LegacyRecipeBase.MinToApex, (float)((Vol2LegacyRecipeBase.LaunchUs(inst) - inst.StartUs) / 1000000.0));
                 // batch 2: the guard (ㅓ) and the ward (ㅜ) motions of the bridge, from the clip's start (as Vol2LegacyRecipeBase plays them)
                 var frame = inst.Log.Glyph.Frame;
-                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && inst.Log.Glyph.Verb == Verb.Leave ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
+                // batch 4: the ㅓ 번진다 dresses the caster for its 6 s attachment and swings like 남긴다 (Self), as the bridge's own LegacyKind for an attachment
+                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
                 legacy.Swing(new Vol2LegacySwing
                 {
                     Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = kind,
@@ -201,7 +204,7 @@ namespace Oheangbu.App
             if (_runs.TryGetValue(inst, out var r))
             {
                 if (r.CheckBodyGone()) { LastNote = inst.Log.Glyph.Letter + ": " + r.Note; return; }
-                try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; } catch (Exception e) { Debug.LogException(e); }
+                try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; Notes[inst.Log.Glyph.Letter] = r.Note; } catch (Exception e) { Debug.LogException(e); }
             }
             else Inner.Update(inst, nowUs);
         }

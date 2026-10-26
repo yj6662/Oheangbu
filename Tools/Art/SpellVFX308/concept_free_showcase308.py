@@ -236,6 +236,103 @@ B3_VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 4 (2026-10-26, D308-150 V12, the user: "번진다 20자(묶음 4)를 쇼케이스 방식으로 시작해줘."): the ㄴ book 번진다 - the spell strikes, then SPREADS from what it
+# struck to the enemies standing next to it (3 m), each neighbour takes a SHARE and a short mark of the element stays at its feet for 3 s.
+# P2 간 난 만 산 안 · A2 건 넌 먼 선 언 · F2 곤 논 몬 손 온 · R2 군 눈 문 순 운 (peaks: 난 넌 논 눈).
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b4 [--run] [--wave 6] [ids]
+# Picture 1 = the real gameplay frame of the template's own capture (batch4/r0 f_00000, cast camera A on, capture option spread=1).
+B4_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch4/concepts'
+B4_GAME = {t: REPO / f'Art/SpellVFX308/Vol2Vfx/free_showcase/batch4/r0/frames/{t}_bridge4_b4_Fire_red/f_00000.jpg' for t in ('P2', 'A2', 'F2', 'R2')}
+_B4_SCENE = """Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, and %s. Paint the concept ON THIS VIEW: keep this camera height, angle and framing (you may raise the camera a little so the spreading between the bears reads), the same ground, sky and bears at the same places. Picture 1 has dark ink smoke and a reddish cloud around the bears and the brush: they are capture artefacts of another spell - remove them, paint the bears clean. The scene keeps its muted Korean ink-wash painted look."""
+B4_REF = {
+    'P2': '--- THE ATTACHED PICTURES ---\n' + _B4_SCENE % "FOUR real enemies (dark matted bears with crusted crystal growths on their backs) in a loose group ahead: the FIRST one about 4.6 metres straight ahead (just above the caster's head), the others around it within 2 to 3 metres - one ahead-right (about 6 m ahead), one ahead-left (about 6 m ahead), one farther behind the first (about 7 m ahead)",
+    'A2': '--- THE ATTACHED PICTURES ---\n' + _B4_SCENE % "THREE real enemies (dark matted bears with crusted crystal growths on their backs): the FIRST one VERY close, about 1.2 metres ahead (right in front of the caster, partly hidden by the caster's body), one about 3 metres ahead on the right, one about 3.5 metres ahead on the left",
+    'F2': '--- THE ATTACHED PICTURES ---\n' + _B4_SCENE % "THREE real enemies (dark matted bears with crusted crystal growths on their backs): the FIRST one about 3.8 metres ahead inside the fan in front of the caster (partly hidden behind the caster), and two more OUTSIDE the fan's left and right edges, close by on either side (the big bears at the left and right of picture 1)",
+    'R2': '--- THE ATTACHED PICTURES ---\n' + _B4_SCENE % "THREE real enemies (dark matted bears with crusted crystal growths on their backs): the FIRST one about 2 metres ahead and a little to the right - exactly on the ring around the caster (the big near bear right of centre), and two more FARTHER OUT beyond the ring: one about 4.5 metres away on the right, one about 4 metres away ahead-left (behind the caster's head)",
+}
+_SPREAD = ("It is a 'SPREADS' spell (번진다): it strikes the first enemy, and FROM THAT ENEMY the effect visibly LEAPS / RUNS ON to every enemy standing next to it (within 3 m) - one after another, each leap clearly seen travelling from one bear to the next - and at the feet of every enemy it reached a short-lived MARK of the element stays (about 3 seconds). "
+           "Show the moment the spread is happening: the first bear already struck, the spread visibly travelling to and reaching the next bears, the marks forming at their feet, so a player sees at a glance BOTH what the spell does AND that it spreads to the neighbours.")
+B4_P2 = "It flies along a narrow straight PATH from the brush tip to the FIRST bear (4.6 m ahead) and hits it. " + _SPREAD + " The normal spread is SHARED: the more neighbours, the thinner each one's part."
+B4_A2 = ("The element is ON THE CASTER'S BRUSH AND SLEEVE for 6 seconds (nothing on the ground at first); the caster's swing of the brush strikes the very close first bear, and from that bear the effect spreads to the other two. " + _SPREAD)
+B4_F2 = ("It sweeps a fan-shaped area in front of the caster (5 m deep, about 4 m wide at its far edge) and hits the bear inside; then FROM THE FAN'S EDGE it spreads OUTWARD to the two bears standing just outside the fan on the left and right. " + _SPREAD)
+B4_R2 = ("It strikes a hollow circular band about 2 metres around the caster (a ring, not a filled disc - the caster stands in the empty middle); the bear standing on the ring is struck, and from that bear the effect spreads OUTWARD, away from the caster, to the two bears farther out. " + _SPREAD)
+B4_SPELLS = {
+    'gan': ('P2', "THE SPELL 간 (WOOD, path, spreads): " + B4_P2 + " WOOD: living vines, tendrils, seeds and leaves; every bear it reaches is snared and held (slowed to half speed). NOT a thorn harpoon wrapping one bear, NOT a branch cage, NOT a forest or bamboo shoots, NOT a ring of thorns (other spells own those)."),
+    'nan': ('P2', "THE SPELL 난 (FIRE, path, spreads - the PEAK of this book): " + B4_P2 + " BUT this is the peak: the fire does NOT thin out - it leaps to up to THREE neighbours and each one is struck JUST AS HARD as the first. FIRE: roaring orange-vermilion flame and burning black ink. NOT a single fire spear, NOT a fan of flame, NOT a fire wheel or peony, NOT a burning tree, NOT a ring wall of fire (other spells own those)."),
+    'man': ('P2', "THE SPELL 만 (EARTH, path, spreads): " + B4_P2 + " EARTH: rock, packed soil, dust, heavy; every bear it reaches is SHOVED (heavy hit + knockback). NOT a rolling boulder, NOT a wave of slabs, NOT a stone wall, NOT a crag or menhirs or basalt columns (other spells own those)."),
+    'san': ('P2', "THE SPELL 산 (METAL, path, spreads): " + B4_P2 + " METAL: polished steel, white-silver and pale gold light, razor-thin lines; every bear it reaches is CUT once, fast. NOT a single thrown sword, NOT a fan of knives, NOT a saw ring, NOT a thornbush of blades, NOT planted swords (other spells own those)."),
+    'an': ('P2', "THE SPELL 안 (WATER, path, spreads): " + B4_P2 + " WATER: clear heavy blue-green water with black ink swirling inside, white foam; every bear it reaches is DRENCHED (soaked 4 s). NOT a water orb or dome, NOT a curling wave, NOT a whirlpool disc, NOT geysers or a coral fountain, NOT ice (other spells own those)."),
+    'geon': ('A2', "THE SPELL 건 (WOOD on my brush, spreads): " + B4_A2 + " WOOD: living vines, tendrils, seeds and leaves; every bear it reaches is snared and held. NOT a bamboo cross guard, NOT a sapling embracing the caster (other spells own those)."),
+    'neon': ('A2', "THE SPELL 넌 (FIRE on my brush, spreads - the PEAK of this book): " + B4_A2 + " BUT this is the peak: the brush becomes a TORCH that CARRIES a fixed bundle of fire for 6 seconds - three equal portions of flame held on the brush (show them clearly, e.g. three flames or fire spirits riding the brush); the first two swings send these portions leaping from the struck bear to its neighbours, each portion as strong as the others (it never thins); once the bundle is spent nothing more spreads. FIRE: roaring orange-vermilion flame and burning black ink. NOT a fire mantle over the whole arm, NOT a fire wheel or peony (other spells own those)."),
+    'meon': ('A2', "THE SPELL 먼 (EARTH on my brush, spreads): " + B4_A2 + " EARTH: rock, packed soil, dust, heavy; every bear it reaches is SHOVED. NOT a stone mace or gauntlet, NOT a stone wall in front of the caster (other spells own those)."),
+    'seon': ('A2', "THE SPELL 선 (METAL on my brush, spreads): " + B4_A2 + " METAL: polished steel, white-silver and pale gold light, razor-thin lines; every bear it reaches is CUT. NOT a crescent blade on the shaft, NOT a glaive of blades (other spells own those)."),
+    'eon': ('A2', "THE SPELL 언 (WATER on my brush, spreads): " + B4_A2 + " WATER: clear heavy blue-green water with black ink swirling, white foam; every bear it reaches is DRENCHED. NOT a water whip, NOT a whirlpool disc shield (other spells own those)."),
+    'gon': ('F2', "THE SPELL 곤 (WOOD, fan, spreads): " + B4_F2 + " WOOD: living vines, runners, seeds, moss and leaves; every bear it reaches is snared and held. NOT a sweeping forest of bamboo shoots, NOT a growing grove (other spells own those)."),
+    'non': ('F2', "THE SPELL 논 (FIRE, fan, spreads - the PEAK of this book): " + B4_F2 + " BUT this is the peak: BACKFIRE - the fire runs out over the fan and on to the neighbours to the very end, then after a heartbeat it RUSHES BACK the way it came, scorching the same bears a second time (weaker), like a flame tide that goes out and returns. Show both directions clearly (the outward front and the returning backdraft). FIRE: roaring orange-vermilion flame and burning black ink. NOT a dragon-breath fan, NOT a field of burning reeds (other spells own those)."),
+    'mon': ('F2', "THE SPELL 몬 (EARTH, fan, spreads): " + B4_F2 + " EARTH: rock, packed soil, dust, heavy; every bear it reaches is SHOVED. NOT a wave of slabs, NOT basalt columns (other spells own those)."),
+    'son': ('F2', "THE SPELL 손 (METAL, fan, spreads): " + B4_F2 + " METAL: polished steel, white-silver and pale gold light, razor-thin lines; every bear it reaches is CUT. NOT a fan of flying knives, NOT a field of stakes (other spells own those)."),
+    'on': ('F2', "THE SPELL 온 (WATER, fan, spreads): " + B4_F2 + " WATER: clear heavy blue-green water with black ink swirling, white foam; every bear it reaches is DRENCHED. NOT a curling wave, NOT a marsh of water pillars (other spells own those)."),
+    'gun': ('R2', "THE SPELL 군 (WOOD, ring, spreads): " + B4_R2 + " WOOD: living vines, roots, runners and leaves; every bear it reaches is snared and held. NOT a crown of thorns standing on the ring, NOT tree pillars (other spells own those)."),
+    'nun': ('R2', "THE SPELL 눈 (FIRE, ring, spreads - the PEAK of this book): the burning ring does NOT jump between bears: FIRE FOLLOWS WOOD. On the ground there are patches of dry dead vines and brush: one patch lies across the ring ahead-left, and from it a trail of vine patches runs outward, one under the far bear ahead-left and one even farther out. The ring's fire catches the vines on the ring and RUNS ALONG THE VINE TRAIL like a burning fuse all the way to its end, consuming the wood; the bear standing in the burning vines is engulfed. The bear on the ring is struck by the ring but the fire does not leap from it; the bear on the far right (no vines under it) stays untouched. A dark enemy slime patch on the ring burns away too. Show the ring of fire AND the fire racing outward along the vine trail. FIRE: roaring orange-vermilion flame and burning black ink. NOT a wall of fire, NOT torches standing on the ring (other spells own those)."),
+    'mun': ('R2', "THE SPELL 문 (EARTH, ring, spreads): " + B4_R2 + " EARTH: rock, packed soil, dust, heavy; every bear it reaches is SHOVED. NOT a rolling earth mound ring, NOT standing stones (other spells own those)."),
+    'sun': ('R2', "THE SPELL 순 (METAL, ring, spreads): " + B4_R2 + " METAL: polished steel, white-silver and pale gold light, razor-thin lines; every bear it reaches is CUT. NOT a spinning saw of knives, NOT swords planted in a circle (other spells own those)."),
+    'un': ('R2', "THE SPELL 운 (WATER, ring, spreads): " + B4_R2 + " WATER: clear heavy blue-green water with black ink swirling, white foam; every bear it reaches is DRENCHED. NOT geyser pillars, NOT a river flowing round the ring (other spells own those)."),
+}
+B4_VARIANTS = {
+    'gan_a': ('gan', "VARIANT A - liana leaps: the vine bolt has struck the first bear and burst into a knot of tendrils; from it, long living lianas ARC through the air like leaping vines from bear to bear (three arcs, one to each neighbour), each arc landing in a sprouting snare of tendrils and leaves that grips the bear's legs; small green leafy marks root on the ground at their feet; leaves and jade sparks drift along the arcs."),
+    'gan_b': ('gan', "VARIANT B - seed burst: the vine bolt bursts on the first bear into a puff of glowing jade seeds that fly out in visible streams to each neighbour; where the seeds land they sprout instantly into coils of tendrils that bind the bear; the seed streams leave dotted trails of sprouts on the ground between the bears."),
+    'nan_a': ('nan', "VARIANT A - fire birds: the fire bolt has burst on the first bear and from the blast THREE great birds of flame and burning ink (like fire crows with wide wings) burst out and dive each onto one neighbour, every one as big and bright as the first blast; each neighbour erupts in an equal column of fire; scorched marks glow at their feet."),
+    'nan_b': ('nan', "VARIANT B - chain blaze: from the first burning bear, thick bright arcs of fire LEAP like lightning-fast flame chains to each neighbour, and every bear it reaches bursts into the SAME huge explosion of fire and ink as the first (no smaller); burning ink splashes and embers everywhere; fire marks on the ground under each."),
+    'nan_c': ('nan', "VARIANT C - wildfire runners: the strike sets the first bear ablaze and three blazing fire-lines RACE across the ground from it to the neighbours like wildfire fuses, each ending in an equally tall pillar of flame engulfing that bear; the ground along the runners is scorched black."),
+    'man_a': ('man', "VARIANT A - ground rupture chain: the earth bolt has slammed the first bear back; from its feet, cracks RACE through the ground to each neighbour like a fault line splitting, and under every neighbour the ground bursts up in a jagged heave of rock and soil that shoves it backwards; dust plumes along the cracks; small cracked mounds stay at their feet."),
+    'man_b': ('man', "VARIANT B - rock ricochet: the heavy stone has struck the first bear and BROKEN into three big rock fragments that bounce on to the neighbours like ricocheting cannonballs (curved dust trails between the bears), each smashing into its bear with a dust shock; pits of broken earth stay where they landed."),
+    'san_a': ('san', "VARIANT A - ricochet blade: a spinning steel blade has struck the first bear and RICOCHETS from bear to bear in a zig-zag, leaving a razor-thin bright silver line hanging in the air along its whole path; every bear it passed has a bright cut flash and sparks; small blade-stars stick in the ground at their feet."),
+    'san_b': ('san', "VARIANT B - steel lightning: from the first struck bear, forked thin threads of white-silver light fork out like lightning to every neighbour, each thread a chain of tiny steel links, cutting where it lands with a sharp flash and sparks; glinting steel needles stay in the ground where it struck."),
+    'an_a': ('an', "VARIANT A - water bridges: the water bolt has drenched the first bear and from its splash, arching ropes of clear water leap through the air like fountain arcs to each neighbour, each landing in a heavy splash crown that soaks that bear; rippling puddles stay at their feet; ink curls inside the arcs."),
+    'an_b': ('an', "VARIANT B - skipping splash: the water bolt bursts on the first bear and big water drops SKIP on to the neighbours like stones skipping over water, each bounce leaving a ring of ripples on the red ground, each neighbour drenched in a splash; the ripple rings stay a moment."),
+    'geon_a': ('geon', "VARIANT A - tendril web: the brush is wrapped in creeping vines with tendrils trailing off the bristles; the swing has struck the close bear and from it a WEB of vine tendrils shoots out to the two other bears, pulling taut between them like a net, snaring their legs; leafy snares at their feet."),
+    'geon_b': ('geon', "VARIANT B - blossoming brush: the brush head has blossomed into a big vine flower; the swing strikes the close bear and the flower bursts, scattering petals and seeds that fly in streams to the other bears and sprout around them into binding coils; small leafy sprouts at their feet."),
+    'neon_a': ('neon', "VARIANT A - three fire spirits: the brush burns like a torch and THREE equal orbs of fire (like little fire spirits with flame tails) circle the brush head; on the swing the close bear is struck and two of the orbs shoot from it to the two other bears, each exploding equally hard; the third orb still circles the brush; scorched marks on the ground."),
+    'neon_b': ('neon', "VARIANT B - torch of three tongues: the brush head is a blazing torch split into three great flame tongues; the swing strikes the close bear and two of the tongues tear off and leap from the bear to the two others as streaking comets, both bursting into equal fireballs; the brush still carries one tongue."),
+    'neon_c': ('neon', "VARIANT C - burning bundle: a tied bundle of burning ink-reeds rides on the brush head like a firebrand; at the swing, burning reeds fly from the struck bear to the two others like flaming darts, setting each ablaze equally."),
+    'meon_a': ('meon', "VARIANT A - ground tremor: the brush is crusted with earth and stone; the swing has smashed the close bear and a visible tremor rolls out through the ground from it - rippling rings of heaving soil running to the two other bears - and under each the ground bucks up and shoves it; dust everywhere, cracked earth at their feet."),
+    'meon_b': ('meon', "VARIANT B - flung stones: the swing smashes the close bear and the stone crust of the brush bursts off in heavy chunks that bounce on to the two other bears in dusty arcs, slamming them back; craters at their feet."),
+    'seon_a': ('seon', "VARIANT A - needle storm: thin steel needles bristle along the brush; the swing cuts the close bear and from the cut a storm of bright steel needles sprays on to the two other bears along thin glowing light threads, cutting them; glinting needles stuck in the ground at their feet."),
+    'seon_b': ('seon', "VARIANT B - chakram chain: a ring blade (chakram) spins on the brush head; the swing cuts the close bear and the ring blade flies off it, bouncing to the two other bears with a bright arcing light trail, cutting each; sparks and shards."),
+    'eon_a': ('eon', "VARIANT A - splash arcs: water swirls around the brush and sleeve; the swing hits the close bear in a heavy splash and from it two big arcs of water leap on to the other bears, soaking them in splash crowns; puddles ripple at their feet."),
+    'eon_b': ('eon', "VARIANT B - bubble burst: the brush drips with water; the swing hits the close bear and a cluster of big wobbling water bubbles bursts off it and drifts to the other bears, popping over them and drenching them; wet ripples on the ground."),
+    'gon_a': ('gon', "VARIANT A - creeping runners: the swing has laid a carpet of moss, creeping vines and leaves over the fan; from the fan's outer EDGE, long runner-vines creep fast over the ground OUTWARD to the two bears outside the fan and coil up their legs; little leafy patches at their feet."),
+    'gon_b': ('gon', "VARIANT B - leaf gust: a gust of whirling leaves and seeds sweeps the fan and spills over its edges, streaming on to the two bears outside where the leaves turn into snaring tendrils; leafy marks at their feet."),
+    'non_a': ('non', "VARIANT A - flame tide and backdraft: the fan is a sheet of fire; the fire has run out past its edges to the two bears outside, and now a second wave of flame is RUSHING BACK from them toward the caster like a backdraft, the two waves crossing in a burning swirl; all three bears burning; scorched marks."),
+    'non_b': ('non', "VARIANT B - breathing fire: a great tide of flame washes out over the fan and over the neighbours like an exhaling breath, with curling arrows of flame showing it SUCKING BACK in, a ring of fire pulled back toward the caster; the bears scorched twice, embers whirling."),
+    'non_c': ('non', "VARIANT C - echo fire: the first fire front spreads out to the neighbours and, a beat later, a fainter EMBER ECHO of it runs back over the same bears the other way, like a reflection of the fire; two layers of flame on every bear."),
+    'mon_a': ('mon', "VARIANT A - plough furrows: the fan of earth is churned into furrows and clods; at the fan's edge the furrows keep on running outward as ploughing cracks to the two bears outside and heave up under them, shoving them; clods and dust flying; cracked mounds at their feet."),
+    'mon_b': ('mon', "VARIANT B - dust storm: a wall of dust and gravel sweeps the fan and spills over its edges as rolling dust clouds that slam the two bears outside; gravel and stones pelting them; dust marks at their feet."),
+    'son_a': ('son', "VARIANT A - wire web: the fan is laced with taut thin steel wires shining white-gold; from its edge the wires SHOOT outward and wrap the two bears outside, cutting with sharp flashes and sparks; little steel spikes in the ground at their feet."),
+    'son_b': ('son', "VARIANT B - metal dust: a glittering cloud of steel dust and fine blades sweeps the fan and drifts over its edges onto the two bears outside, flashing with tiny cuts and sparks; glints on the ground."),
+    'on_a': ('on', "VARIANT A - spilling flood: the fan floods with a sheet of clear water; at its edges the water SPILLS OVER in fast rivulets that run along the ground to the two bears outside and splash up over them, soaking them; puddles at their feet."),
+    'on_b': ('on', "VARIANT B - rain veil: a curtain of heavy rain and mist sweeps the fan and drifts beyond its edges as rain clouds over the two bears outside, drenching them; ripples on the ground."),
+    'gun_a': ('gun', "VARIANT A - racing roots: a ring of vines circles the caster; from the bear on the ring, roots RACE outward through the ground (raised lines of torn earth) to the two bears farther out and burst up around them as snaring vines; leafy patches at their feet."),
+    'gun_b': ('gun', "VARIANT B - spiral of leaves: a ring of vines circles the caster; from the bear on the ring a spiral of leaves and tendrils whirls outward to the two bears farther out, wrapping them; leaf marks at their feet."),
+    'nun_a': ('nun', "VARIANT A - fuse of fire: the ring around the caster is a low line of flame; where it crosses the dry vine patch ahead-left, the vines catch and fire RUNS outward along the vine trail like a burning fuse, bright flames racing over the dead vines all the way to the far end; the far bear standing in the vines is engulfed; the slime patch on the ring burns away in a burst."),
+    'nun_b': ('nun', "VARIANT B - burning vine snake: the burning ring touches the dead vines, and the fire travels along the vine trail like a glowing serpent of flame slithering outward, the vines behind it collapsing into ash and embers; the bear in the vines bursts into flame."),
+    'nun_c': ('nun', "VARIANT C - ember trail: a ring of embers circles the caster; the vines on it ignite and a line of fire spreads outward along the vine trail, each vine patch flaring up one after another in a chain of bonfires; the bear in the burning patch is engulfed, the bear without vines stays untouched."),
+    'mun_a': ('mun', "VARIANT A - radial fissures: a ring of churned earth circles the caster; from the bear on the ring, fissures split the ground OUTWARD to the two farther bears and blast up under them in bursts of rock, shoving them away; dust and clods; cracked mounds at their feet."),
+    'mun_b': ('mun', "VARIANT B - earth ripple: the ring is a ridge of heaved earth; from the bear on it a ripple of rolling soil runs outward like a ripple in a pond to the farther bears and throws them back; dust rings on the ground."),
+    'sun_a': ('sun', "VARIANT A - radiating light lines: a thin bright ring of steel light circles the caster; from the bear on the ring, razor-thin lines of white-silver light shoot OUTWARD like spokes to the two farther bears, cutting them with bright flashes; little steel spikes at their feet."),
+    'sun_b': ('sun', "VARIANT B - rolling ring blades: a ring of steel circles the caster; from the bear on it two spinning ring blades break off and roll outward along the ground to the farther bears, cutting them with sparks; scored lines on the ground behind them."),
+    'un_a': ('un', "VARIANT A - outward ripples: a ring of water circles the caster; the bear on it is drenched and from it big concentric ripples of water run OUTWARD across the ground like a stone dropped in a pond, rising into splashing waves as they reach the two farther bears, soaking them; puddles at their feet."),
+    'un_b': ('un', "VARIANT B - water serpents: a ring of water circles the caster; from the bear on it two serpents of clear water with ink swirling inside slither outward over the ground to the farther bears and crash over them in splashes; wet trails on the ground."),
+}
+
+
+def prompt_b4(vid):
+    spell, var = B4_VARIANTS[vid]
+    tmpl, text = B4_SPELLS[spell]
+    return '\n\n'.join([HEAD, B4_REF[tmpl] + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B4_OUT / f'{vid}.png')])
+
+
 def prompt_b3(vid):
     spell, var = B3_VARIANTS[vid]
     tmpl, text = B3_SPELLS[spell]
@@ -255,6 +352,8 @@ def prompt_b1(vid):
 
 
 def prompt(vid):
+    if vid in B4_VARIANTS:
+        return prompt_b4(vid)
     if vid in B3_VARIANTS:
         return prompt_b3(vid)
     if vid in B2_VARIANTS:
@@ -269,10 +368,12 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def out_of(vid):
-    return B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
+    return B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
 
 
 def game_of(vid):
+    if vid in B4_VARIANTS:
+        return B4_GAME[B4_SPELLS[B4_VARIANTS[vid][0]][0]]
     if vid in B3_VARIANTS:
         return B3_GAME[B3_SPELLS[B3_VARIANTS[vid][0]][0]]
     if vid in B2_VARIANTS:
@@ -306,7 +407,7 @@ def recover(vid, started):
 def main():
     batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
     args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
-    pool = B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
+    pool = B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
     vids = [v for v in pool if not args or v in args]
     for v in vids:
         out_of(v).mkdir(parents=True, exist_ok=True)

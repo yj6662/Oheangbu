@@ -69,6 +69,11 @@ namespace Oheangbu.App
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Leave).Kind, p.transform, ('넉', () => new Vol2FsNeok()), ('먹', () => new Vol2FsMeok()), ('석', () => new Vol2FsSeok()), ('억', () => new Vol2FsEok()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Leave).Kind, p.transform, ('곡', () => new Vol2FsGok()), ('녹', () => new Vol2FsNok()), ('목', () => new Vol2FsMok()), ('속', () => new Vol2FsSok()), ('옥', () => new Vol2FsOk()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Leave).Kind, p.transform, ('국', () => new Vol2FsGuk()), ('눅', () => new Vol2FsNuk()), ('묵', () => new Vol2FsMuk()), ('숙', () => new Vol2FsSuk()), ('욱', () => new Vol2FsUk()));
+                // batch 4 (2026-10-26): 번진다 - P2 간 난 만 산 안 · A2 건 넌 먼 선 언 · F2 곤 논 몬 손 온 · R2 군 눈 문 순 운 (Vol2FsSpread: hops / marks / 넌's carrier / 눈's burns)
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Spread).Kind, p.transform, ('간', () => new Vol2FsGan()), ('난', () => new Vol2FsNan()), ('만', () => new Vol2FsMan()), ('산', () => new Vol2FsSan()), ('안', () => new Vol2FsAn()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Spread).Kind, p.transform, ('건', () => new Vol2FsGeon()), ('넌', () => new Vol2FsNeon()), ('먼', () => new Vol2FsMeon()), ('선', () => new Vol2FsSeon()), ('언', () => new Vol2FsEon()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Spread).Kind, p.transform, ('곤', () => new Vol2FsGon()), ('논', () => new Vol2FsNon()), ('몬', () => new Vol2FsMon()), ('손', () => new Vol2FsSon()), ('온', () => new Vol2FsOn()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Spread).Kind, p.transform, ('군', () => new Vol2FsGun()), ('눈', () => new Vol2FsNun()), ('문', () => new Vol2FsMun()), ('순', () => new Vol2FsSun()), ('운', () => new Vol2FsUn()));
                 if (_view == null) _view = p;
             }
             BindRecovery();

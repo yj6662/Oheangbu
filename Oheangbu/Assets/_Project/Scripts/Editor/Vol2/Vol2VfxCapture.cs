@@ -156,6 +156,8 @@ namespace Oheangbu.EditorTools.Vol2
             public double MaxAge = 1.2, MinAge = 0.4;
             /// <summary>Step 4 F2: the bodies are placed from the fan's own spec at setup (in it / outside its edges within the spread's reach).</summary>
             public bool FanNeighbours;
+            /// <summary>batch 4 (spread=1, 눈): stage wood materials before the cast (LAB-SIMULATED).</summary>
+            public bool PlantWood;
             public readonly List<Step> Steps = new List<Step>();
             public List<(float ahead, float side)> Dummies = new List<(float, float)>();
             public string Name => Template + "_" + Variant + "_" + Body + "_" + Back;
@@ -208,7 +210,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else templates.Add(t.Trim());
             }
             _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
-            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; AdapterBodies.Clear(); BridgeBodies.Clear();
+            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; _spreadB4 = false; AdapterBodies.Clear(); BridgeBodies.Clear();
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
@@ -232,6 +234,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "lasting") _lasting = v.Trim() == "1";
                 else if (k == "walkin") _walkIn = v.Trim() == "1";          // batch 3 (opt-in): a body walks onto the 남긴다 residue at 1.6 s (P1 / F1 / R1)
                 else if (k == "endwith") _endWith = (Vol2MaterialEnd)Enum.Parse(typeof(Vol2MaterialEnd), v.Trim(), true);   // batch 3 (opt-in): end the residue for this reason instead of the expiry jump
+                else if (k == "spread") _spreadB4 = v.Trim() == "1";       // batch 4 (opt-in): the 번진다 rows P2 / A2 / R2 with a third neighbour / 넌's second swing / 눈's staged wood (see Step4Job)
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
@@ -433,7 +436,43 @@ namespace Oheangbu.EditorTools.Vol2
                     Leave1Options((0.6f, -3.4f), (0.5f, -1.95f));
                     break;
             }
+            // batch 4 free showcase (2026-10-26, opt-in spread=1, defaults unchanged): the 번진다 rows laid out so every spread is seen
+            if (_spreadB4 && v == 2)
+            {
+                if (f == 'P') j.Dummies.Add((7.2f, -0.4f));                 // a third neighbour of the struck body (2.6 m): 간 shares 1.0 three ways, 난 gives each 0.5
+                else if (f == 'A' && j.Letter == '넌') SwingAt(0.9);        // 넌: a second swing (the shared 1.5 budget; the effect-target cap decides what it may still reach)
+                else if (f == 'R')
+                {
+                    // the struck body stands on the band from the launch; two neighbours farther out within 3 m of it (2.7 m each), in front of the camera
+                    j.Steps.RemoveAll(s => s.Name.StartsWith("LAB-SIMULATED: a body crosses", StringComparison.Ordinal));
+                    j.Dummies.Clear(); j.Dummies.Add((1.9f, 0.5f)); j.Dummies.Add((4.3f, 1.8f)); j.Dummies.Add((3.9f, -1.3f));
+                    if (j.Letter == '눈') j.PlantWood = true;
+                }
+                j.Variant += "_b4";
+            }
         }
+
+        /// <summary>batch 4 (spread=1, 눈 only, LAB-SIMULATED): wood materials staged before the cast as the fixture S8 plants them - one on the band ahead-left, one under
+        /// the right-hand bear 1.9 m from it, one 2 m farther out (the chain), and one enemy patch on the band; the left-hand bear's ground has no wood (fire follows
+        /// wood, not bodies). Ended at teardown when still alive.</summary>
+        static void PlantWood(Ctx c)
+        {
+            var mats = c.Coordinator.Materials; long now = c.Services.Clock.NowUs; long life = Vol2Time.FromSeconds(6.0);
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            Vector3 At(float ahead, float side) => c.Origin + c.Forward * ahead + right * side;
+            void Plant(long cast, Body body, long faction, float ahead, float side, float radius, string tag)
+            {
+                var m = mats.Create(new CastId(cast), '가', body, Vol2MaterialKind.Residue, 0.9m, life, Vol2Footprint.Disc(At(ahead, side), radius), faction == Vol2Faction.Enemy ? 2 : 1, faction, true, now, 0, 0, tag);
+                if (m != null) Planted.Add(m);
+            }
+            Plant(98001, Body.Wood, Vol2Faction.Player, 2.0f, -0.9f, 0.7f, "lab-wood");
+            Plant(98002, Body.Wood, Vol2Faction.World, 3.9f, -1.3f, 0.7f, "lab-wood");
+            Plant(98003, Body.Wood, Vol2Faction.Player, 5.6f, -2.4f, 0.7f, "lab-wood");
+            Plant(98011, Body.Water, Vol2Faction.Enemy, 1.2f, 1.6f, 0.7f, "lab-enemy-patch");
+            Finished.Add("  " + _job.Name + ": LAB-SIMULATED wood staged: " + Planted.Count + " materials (3 wood, 1 enemy patch)");
+        }
+        static readonly List<Vol2Material> Planted = new List<Vol2Material>();
+        static bool _spreadB4;
 
         static bool MoveDummy(Ctx c, int index, float ahead, float side)
         {
@@ -955,6 +994,7 @@ namespace Oheangbu.EditorTools.Vol2
                 c.Dummies.Add(go);
             }
             Physics.SyncTransforms();
+            if (j.PlantWood) PlantWood(c);
             if (!MeasuredGround.Contains(j.Back)) MeasureGround(c, j.Back);
             c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f; _describe = 0;
             foreach (var s in _job.Steps) s.Done = false;
@@ -1204,6 +1244,15 @@ namespace Oheangbu.EditorTools.Vol2
             try { _index?.Dispose(); } catch (Exception) { }
             _index = null;
             string summary = j.Name + " | letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (c.Log != null ? " | cast " + c.Log.Status + " contacts " + c.Log.Contacts.Count + " materials " + c.Log.Materials.Count : " | NO CAST");
+            // batch 4 (spread=1): every contact (kind:target:amount) and every material's end, to check each glyph's spread against the executor's facts
+            if (_spreadB4 && c.Log != null)
+            {
+                summary += " | contacts " + string.Join(" ", c.Log.Contacts.Select(x => x.Kind + ":" + x.TargetName + ":" + x.Amount.ToString("0.###", Inv) + (x.BudgetAccepted ? "" : "(refused " + x.BudgetReason + ")")));
+                summary += " | materials " + string.Join(" ", c.Log.Materials.Select(m => m.Kind + ":" + m.Initial.ToString("0.###", Inv) + ":" + (m.Alive ? "alive" : m.End.ToString())));
+                if (c.Log.Burned.Count > 0) summary += " | burned " + string.Join(" ", c.Log.Burned);
+            }
+            foreach (var m in Planted) if (m != null && m.Alive) c.Coordinator.Materials.TryEnd(m.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
+            Planted.Clear();
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : "") + (_strokeFeed ? BodyCount() : ""));
             _rip?.CancelAll(); _ripSlot = null;
             var stage = c.Presenter.Legacy;

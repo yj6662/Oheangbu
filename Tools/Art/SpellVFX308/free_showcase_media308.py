@@ -68,9 +68,36 @@ B3_SPELLS = [
 ]
 
 
-def b3_main(rnd, ages, cuts, only):
+# batch 4 (2026-10-26, D308-150 V12): --batch b4 -> free_showcase/batch4/<round>/ (번진다: the strike, the hops to the neighbours, the 3 s marks to their end).
+# Same streamed writer as batch 3 (cast 1x -> 0.5x -> the rest 1x with the JUMP labelled); the capture folders carry the opt-in spread=1 suffix (_b4).
+B4_SPELLS = [
+    ('gan', 'P2_bridge4_b4_Wood_red', ['gan_a.png'], '간 · 목 · ㅏ 경로 · 번진다 — 덩굴 탄이 첫 적을 맞히고, 덩굴이 이웃 적(3 m)마다 아치로 건너가 묶는다(1.0을 나눠 가짐), 발밑 덩굴 자국 3초, 끝에 잔뿌리로 풀림'),
+    ('nan', 'P2_bridge4_b4_Fire_red', ['nan_a.png'], '난 · 화 · ㅏ 경로 · 번진다 극치 — 불먹 탄이 터지고 불새가 이웃마다 같은 크기로 날아가 꽂힌다(묽어지지 않음: 각 0.5, 셋까지), 화 자국 3초, 끝부터 타 재로'),
+    ('man', 'P2_bridge4_b4_Earth_red', ['man_a.png'], '만 · 토 · ㅏ 경로 · 번진다 — 흙 탄이 첫 적을 밀고, 땅을 타고 이웃마다 번져 민다(1.0을 나눠 가짐), 토 자국 3초, 가라앉으며 둘레 땅이 판으로'),
+    ('san', 'P2_bridge4_b4_Metal_red', ['san_b.png'], '산 · 금 · ㅏ 경로 · 번진다 — 쇠날이 첫 적을 베고 이웃마다 번져 벤다(1.0을 나눠 가짐), 금 자국 3초, 쨍 끊기며 파편이 옆으로'),
+    ('an', 'P2_bridge4_b4_Water_red', ['an_a.png'], '안 · 수 · ㅏ 경로 · 번진다 — 물 탄이 첫 적을 적시고 이웃마다 번져 적신다(1.0을 나눠 가짐), 물 자국 3초, 아래로 흘러내림'),
+    ('geon', 'A2_bridge4_b4_Wood_red', ['geon_a.png'], '건 · 목 · ㅓ 부착 · 번진다 — 덩굴이 붓에 붙고(6초), 휘두르기에 닿은 적에서 이웃으로 번져 묶는다, 자국 3초, 잔뿌리로 풀림'),
+    ('neon', 'A2_bridge4_b4_Fire_red', ['neon_a.png'], '넌 · 화 · ㅓ 부착 · 번진다 극치 — 횃불 붓(6초)이 불 몫 셋(예산 1.5)을 싣고, 첫 두 휘두르기에서 이웃으로 날린다(각 0.5), 자국 3초, 끝부터 타 재로'),
+    ('meon', 'A2_bridge4_b4_Earth_red', ['meon_b.png'], '먼 · 토 · ㅓ 부착 · 번진다 — 흙이 붓에 붙고(6초), 휘두르기에 닿은 적에서 이웃으로 번져 민다, 자국 3초, 가라앉으며 땅판'),
+    ('seon', 'A2_bridge4_b4_Metal_red', ['seon_b.png'], '선 · 금 · ㅓ 부착 · 번진다 — 쇠날이 붓에 붙고(6초), 휘두르기에 닿은 적에서 이웃으로 번져 벤다, 자국 3초, 쨍 끊기며 파편'),
+    ('eon', 'A2_bridge4_b4_Water_red', ['eon_b.png'], '언 · 수 · ㅓ 부착 · 번진다 — 물이 붓에 붙고(6초), 휘두르기에 닿은 적에서 이웃으로 번져 적신다, 자국 3초, 아래로 흘러내림'),
+    ('gon', 'F2_bridge4_b4_Wood_red', ['gon_a.png'], '곤 · 목 · ㅗ 면 · 번진다 — 부채꼴 덩굴이 가장자리에서 바깥 적으로 번져 묶는다, 자국 3초, 잔뿌리로 풀림'),
+    ('non', 'F2_bridge4_b4_Fire_red', ['non_a.png'], '논 · 화 · ㅗ 면 · 번진다 극치 — 부채꼴 불이 끝까지 번진 뒤 되돌아 번진다(역화: 1.0 + 되번짐 0.5), 자국 3초 두 겹, 끝부터 타 재로'),
+    ('mon', 'F2_bridge4_b4_Earth_red', ['mon_a.png'], '몬 · 토 · ㅗ 면 · 번진다 — 부채꼴 흙이 가장자리에서 바깥 적으로 번져 민다, 자국 3초, 가라앉으며 땅판'),
+    ('son', 'F2_bridge4_b4_Metal_red', ['son_b.png'], '손 · 금 · ㅗ 면 · 번진다 — 부채꼴 쇠날이 가장자리에서 바깥 적으로 번져 벤다, 자국 3초, 쨍 끊기며 파편'),
+    ('on', 'F2_bridge4_b4_Water_red', ['on_a.png'], '온 · 수 · ㅗ 면 · 번진다 — 부채꼴 물이 가장자리에서 바깥 적으로 번져 적신다, 자국 3초, 아래로 흘러내림'),
+    ('gun', 'R2_bridge4_b4_Wood_red', ['gun_a.png'], '군 · 목 · ㅜ 둘레 · 번진다 — 2 m 덩굴 고리를 넘는 적에서 바깥으로 번져 묶는다, 자국 3초, 잔뿌리로 풀림'),
+    ('nun', 'R2_bridge4_b4_Fire_red', ['nun_a.png'], '눈 · 화 · ㅜ 둘레 · 번진다 극치 — 불 고리가 목 재료(덩굴)를 따라 끝까지 번진다(실험실 연출: 덩굴 재료를 깔아 둠), 덩굴 안의 적이 1.0, 적 장판도 태움'),
+    ('mun', 'R2_bridge4_b4_Earth_red', ['mun_a.png'], '문 · 토 · ㅜ 둘레 · 번진다 — 2 m 흙 고리를 넘는 적에서 바깥으로 번져 민다, 자국 3초, 가라앉으며 땅판'),
+    ('sun', 'R2_bridge4_b4_Metal_red', ['sun_a.png'], '순 · 금 · ㅜ 둘레 · 번진다 — 2 m 쇠날 고리를 넘는 적에서 바깥으로 번져 벤다, 자국 3초, 쨍 끊기며 파편'),
+    ('un', 'R2_bridge4_b4_Water_red', ['un_a.png'], '운 · 수 · ㅜ 둘레 · 번진다 — 2 m 물 고리를 넘는 적에서 바깥으로 번져 적신다, 자국 3초, 아래로 흘러내림'),
+]
+
+
+def b3_main(rnd, ages, cuts, only, batch='b3'):
     import imageio_ffmpeg
-    base = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch3'
+    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch4' if batch == 'b4' else 'batch3'))
+    spells = B4_SPELLS if batch == 'b4' else B3_SPELLS
     concepts = base / 'concepts'
     frames_root = base / rnd / 'frames'
 
@@ -79,8 +106,9 @@ def b3_main(rnd, ages, cuts, only):
         g.send(None)
         return g
 
-    combined = None if only else open_writer(base / rnd / 'free_showcase_batch3_all.mp4')
-    for key, folder, cons, text in B3_SPELLS:
+    combined_name = 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
+    combined = None if only else open_writer(base / rnd / combined_name)
+    for key, folder, cons, text in spells:
         if only and key not in only:
             continue
         d = frames_root / folder
@@ -127,16 +155,16 @@ def b3_main(rnd, ages, cuts, only):
                 jumped, jump_note, jump_left = True, note, 75
             sub = 't = %s s' % r['ageSec']
             if jumped:
-                sub += '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]' if jump_left > 0 else '   [시간 건너뜀 뒤]'
+                sub += ('   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
                 jump_left -= 1
             if 'LAB-SIMULATED' in note:
                 sub += '   [' + note.replace('LAB-SIMULATED: ', '실험실 연출: ')[:60] + ']'
-            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + ' · 남은 것 1×', sub))
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
         one.close()
         print('mp4', key, len(cast), 'cast frames +', len(rest), 'lasting frames')
     if combined is not None:
         combined.close()
-        print('mp4 combined', base / rnd / 'free_showcase_batch3_all.mp4')
+        print('mp4 combined', base / rnd / combined_name)
 
 
 def b3_entry():
@@ -150,7 +178,7 @@ def b3_entry():
                 k, v = a.split('=')
                 dst[k] = [float(x) for x in v.split('/')] if flag == '--video' else float(v)
     only = sys.argv[sys.argv.index('--only') + 1].split(',') if '--only' in sys.argv else None
-    b3_main(rnd, ages, cuts, only)
+    b3_main(rnd, ages, cuts, only, sys.argv[sys.argv.index('--batch') + 1])
 
 
 if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b1':
@@ -270,7 +298,7 @@ def title(concept, text, seconds=1.5, fps=60):
 
 
 def main():
-    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b3':
+    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4'):
         b3_entry()
         return
     rnd = sys.argv[1]
