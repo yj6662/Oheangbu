@@ -207,7 +207,7 @@ namespace Oheangbu.App
                 float f = Frac(nowUs);
                 OnFly(t, f, LastFrac);
                 LastFrac = f;
-                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); }
+                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); HitStop(t); }
                 else return;
             }
             bool ended = Inst.CastIsEnded || Inst.Log.Finished;
@@ -321,9 +321,8 @@ namespace Oheangbu.App
                 Vector3 ct = new Vector3(0f, (top[0].y + top[3].y) * 0.5f, 0f);
                 Tri(top[k], ct, top[n], new Vector2(top[k].x + 0.5f, top[k].z + 0.5f), new Vector2(0.5f, 0.5f), new Vector2(top[n].x + 0.5f, top[n].z + 0.5f));
             }
-            var m = new Mesh { name = "FsHex" };
-            m.SetVertices(v); m.SetUVs(0, uv); m.SetTriangles(idx, 0); m.RecalculateNormals(); m.RecalculateBounds();
-            return m;
+            // 2026-10-27 common material pass: chipped column edges (cleavage faces off the rim, fine roughness), the bottom stays on the pivot
+            return Vol2FsB1.Chip(v, idx, seed, 2, 5, 0.12f, 0.025f, true, "FsHex");
         }
 
         /// <summary>A disc of points (sunflower spiral) of radius r round c on the ground.</summary>

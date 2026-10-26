@@ -416,7 +416,7 @@ namespace Oheangbu.App
                 float f = Frac(nowUs);
                 OnFly(t, f, LastFrac);
                 LastFrac = f;
-                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); }
+                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); HitStop(t); }
                 else return;
             }
             bool ended = Inst.CastIsEnded || Inst.Log.Finished;
@@ -447,7 +447,7 @@ namespace Oheangbu.App
             if (Carrier != null && CarrierEndAt < 0f && !Carrier.Alive) EndCarrier(Carrier, Carrier.End);
             // the hops' visual arrivals (in the executor's order)
             foreach (var h in Hops)
-                if (!h.Landed && t >= h.Start + h.Travel) { h.Landed = true; try { OnLand(h); } catch (System.Exception e) { Debug.LogException(e); } }
+                if (!h.Landed && t >= h.Start + h.Travel) { h.Landed = true; HitStop(t); try { OnLand(h); } catch (System.Exception e) { Debug.LogException(e); } }
             OnLive(t, t - HitAt);
         }
 
@@ -519,6 +519,9 @@ namespace Oheangbu.App
         /// <paramref name="glow"/> 0..2 scales the self-light (a hot edge = a warmer, brighter one).</summary>
         public static Material Steel(Vol2FsKit kit, float glow = 1f, bool warm = false)
         {
+            // 2026-10-27 common material pass: the showcase steel shader (silver after the ink wash) for every batch; this URP Lit graphite is the fallback
+            var metal = kit.Metal(0.9f + 0.1f * glow, warm ? Mathf.Clamp01(0.35f * glow) : 0f, warm ? default : new Color(0.01f, 0.014f, 0.022f) * glow);
+            if (metal != null) return metal;
             string key = "b4steel|" + glow + "|" + warm;
             return kit.Custom(key, () =>
             {

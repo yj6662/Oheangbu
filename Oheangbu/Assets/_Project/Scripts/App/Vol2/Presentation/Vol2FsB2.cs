@@ -68,6 +68,7 @@ namespace Oheangbu.App
             }
             Note = "parried at " + ParryAt.ToString("0.00") + "s" + (HasAttacker ? " by " + best.Id : "");
             OnParry();
+            HitStop(ParryAt);      // 2026-10-27: a short hit-stop of the look's particles (Phantom Blade principle 3)
             return true;
         }
 

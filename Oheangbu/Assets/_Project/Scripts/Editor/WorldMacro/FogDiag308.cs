@@ -192,6 +192,31 @@ namespace Oheangbu.EditorTools.WorldMacro
                         sb.AppendLine("  _OhLook308Paper = " + was.ToString("F3") + " _OhLook308Dry = " + Shader.GetGlobalVector("_OhLook308Dry").ToString("F3"));
                         Shader.SetGlobalVector(id, new Vector4(was.x, was.y, was.z, 0f)); try { Render(); } finally { Shader.SetGlobalVector(id, was); }
                     }
+                    else if (v.StartsWith("farbox", StringComparison.Ordinal))
+                    {   // farbox<metres>: a temporary opaque "ridge" (lit box, 120 x 40 m) that far along the view, half above the horizon: is the 갈필 still on far silhouettes?
+                        float far = v.Length > 6 ? float.Parse(v.Substring(6), inv) : 600f;
+                        var box = GameObject.CreatePrimitive(PrimitiveType.Cube); box.hideFlags = HideFlags.HideAndDontSave; Object.DestroyImmediate(box.GetComponent<Collider>());
+                        Vector3 fwd = cam.transform.forward; fwd.y = 0f; fwd.Normalize();
+                        box.transform.SetPositionAndRotation(cam.transform.position + fwd * far + Vector3.right * Vector3.Dot(Vector3.right, Vector3.zero) + Vector3.down * 5f, Quaternion.LookRotation(fwd, Vector3.up));
+                        box.transform.localScale = new Vector3(far * .2f, far * .07f, 10f);
+                        int id = Shader.PropertyToID("_OhLook308Paper"); var was = Shader.GetGlobalVector(id);
+                        try
+                        {
+                            var shots = new List<int[]>();
+                            foreach (var dry in new[] { true, false })
+                            {
+                                if (!dry) Shader.SetGlobalVector(id, new Vector4(was.x, was.y, was.z, 0f));
+                                cam.targetTexture = rt; cam.Render();
+                                var keep = RenderTexture.active; try { RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0, false); } finally { RenderTexture.active = keep; }
+                                File.WriteAllBytes(Path.Combine(folder, label + "_" + v + (dry ? "_now" : "_nodry") + ".png"), tex.EncodeToPNG());
+                                shots.Add(tex.GetPixels32().Select(c => c.r + c.g * 256 + c.b * 65536).ToArray());
+                                Shader.SetGlobalVector(id, was);
+                            }
+                            int diff = 0; for (int k = 0; k < shots[0].Length; k++) if (shots[0][k] != shots[1][k]) diff++;
+                            sb.AppendLine("  " + v + ": box at " + far + " m | pixels where 갈필 changed the picture (now vs DryBrush 0): " + diff + " -> " + label + "_" + v + "_now/_nodry.png");
+                        }
+                        finally { Shader.SetGlobalVector(id, was); Object.DestroyImmediate(box); }
+                    }
                     else if (v == "occl20" || v == "occl0")
                     {   // occlusion test: a bright transparent quad 1 m BEHIND the object (on the after-fog layer / on Default); if the object's centre turns magenta, the pass does not depth-test
                         var q = GameObject.CreatePrimitive(PrimitiveType.Quad); q.hideFlags = HideFlags.HideAndDontSave; Object.DestroyImmediate(q.GetComponent<Collider>());

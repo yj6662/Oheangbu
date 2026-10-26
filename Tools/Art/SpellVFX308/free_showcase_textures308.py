@@ -143,6 +143,100 @@ def b2():
     save('fs_petal.png', rgba(np.clip(body * (0.55 + core) * (0.75 + 0.5 * fbm(P, 10, 3, 2112)), 0, 1)))
 
 
+def noise3(x, y, z, seed, L=32):
+    """Value noise in [0,1] on a periodic L^3 lattice (trilinear, smoothstep), x / y / z float arrays of one shape (lattice units)."""
+    lat = np.random.default_rng(seed).random((L, L, L))
+    xi = np.floor(x).astype(int); yi = np.floor(y).astype(int); zi = np.floor(z).astype(int)
+    fx = x - xi; fy = y - yi; fz = z - zi
+    fx = fx * fx * (3 - 2 * fx); fy = fy * fy * (3 - 2 * fy); fz = fz * fz * (3 - 2 * fz)
+    x0 = xi % L; y0 = yi % L; z0 = zi % L; x1 = (x0 + 1) % L; y1 = (y0 + 1) % L; z1 = (z0 + 1) % L
+    def g(a, b, c): return lat[a, b, c]
+    c00 = g(x0, y0, z0) * (1 - fx) + g(x1, y0, z0) * fx; c10 = g(x0, y1, z0) * (1 - fx) + g(x1, y1, z0) * fx
+    c01 = g(x0, y0, z1) * (1 - fx) + g(x1, y0, z1) * fx; c11 = g(x0, y1, z1) * (1 - fx) + g(x1, y1, z1) * fx
+    return (c00 * (1 - fy) + c10 * fy) * (1 - fz) + (c01 * (1 - fy) + c11 * fy) * fz
+
+
+def fbm3(x, y, z, octaves, seed, gain=0.5):
+    acc = np.zeros_like(x); amp = 1.0; tot = 0.0
+    for o in range(octaves):
+        s = 2 ** o
+        acc += amp * noise3(x * s, y * s, z * s, seed + o * 31); tot += amp; amp *= gain
+    return acc / tot
+
+
+def lin2srgb(v):
+    """the textures import as sRGB: store the sRGB code of the wanted LINEAR value, so the sampler returns that value."""
+    v = np.clip(v, 0, 1)
+    return np.where(v <= 0.0031308, v * 12.92, 1.055 * np.power(v, 1 / 2.4) - 0.055)
+
+
+def mat_pass():
+    """2026-10-27 common material pass (showcase120_plan.md step 2, the user: "묶음 4 끝나면 공통 재질(불 · 강철 · 물 · 돌 · 나무) 다듬기부터 하고 ..."):
+    fs_fire_flip = one fire / smoke 'lick' over its life as an 8 x 8 flipbook (256 px cells, 2048 px), procedural (domain-warped 3D value noise rising
+    through a teardrop flame body that lifts off, thins into wisps and cools into smoke). Channels (LINEAR after the sRGB import): R = heat (flame
+    emission, 0 cold .. 1 white core), G = smoke / body density (coverage), B = 0, A = max(R, G) (the generic mask). Frame order: row 0 left -> right = birth.
+    Only this is written (--mat)."""
+    C, N = 256, 8
+    y, x = np.mgrid[0:C, 0:C] / (C - 1)
+    X = x * 2 - 1; Y = 1 - y * 2                      # Y up
+    win = np.clip((0.985 - np.maximum(np.abs(X), np.abs(Y))) * 9, 0, 1)        # keep every cell's content inside its cell (no mip bleed)
+    atlas = np.zeros((C * N, C * N, 4))
+    preview = []
+    for f in range(N * N):
+        t = f / (N * N - 1)
+        z = np.full_like(X, t * 7.0)                   # noise time (lattice units: a fresh pattern every ~1/7 of the life)
+        rise = t * 5.5                                 # features rise (noise scrolls down in noise space)
+        # domain warp, growing with height and age
+        a = 0.16 + 0.26 * t + 0.30 * np.clip((Y + 1) / 2, 0, 1)
+        wx = fbm3(X * 1.6 + 11, Y * 1.3 - rise * 0.6, z, 3, 4100) - 0.5
+        wx2 = fbm3(X * 3.4 + 19, Y * 2.6 - rise * 1.1, z + 3, 3, 4150) - 0.5
+        Xw = X + a * (wx * 1.7 + wx2 * 0.6)
+        # the flame body: wide at the base, narrowing to the tip; the base lifts off and the tip shortens as it burns out
+        yb = -0.9 + 1.25 * t ** 1.6
+        yt = min(0.96, -0.35 + 1.4 * min(1, t * 3.2) ** 0.7) - 0.25 * t ** 2
+        span = max(0.15, yt - yb)
+        h = (Y - yb) / span                            # 0 base .. 1 tip
+        hc = np.clip(h, 0, 1)
+        w = (0.62 - 0.12 * t) * (1 - hc ** 1.3) ** 0.75 + 0.02
+        env = np.clip(1 - np.abs(Xw) / w, 0, 1) * np.clip(h * 4 + 1, 0, 1) * np.clip((1.12 - h) * 3, 0, 1)
+        # tongues: vertically stretched noise rising through the body (licks break off near the tip)
+        n = fbm3(Xw * 3.2 + 3, Y * 1.15 - rise, z + 9, 4, 4300)
+        nr = 1 - np.abs(fbm3(Xw * 2.1 + 7, Y * 0.9 - rise * 0.8, z * 0.8 + 21, 3, 4400) * 2 - 1)      # ridged: sharp lick edges
+        thr = 0.15 + 0.75 * hc ** 1.2
+        body = np.clip((env * 1.25 + (n - 0.5) * 1.1 + (nr - 0.6) * 0.5 - thr) * 1.9, 0, 1) * np.clip(env * 4, 0, 1)
+        # late life: the body breaks into wisps and dissolves
+        eat = np.clip((t - 0.5) / 0.5, 0, 1) ** 1.3
+        body = np.clip(body - eat * (1.3 - n * 1.2), 0, 1)
+        core = np.clip(env * 1.5 - hc * 0.55 + (n - 0.5) * 0.9 + (nr - 0.5) * 0.4, 0, 1)
+        heat = body * core ** 1.4 * (1 - 0.55 * hc) * (1 - np.clip((t - 0.28) / 0.6, 0, 1)) ** 1.3
+        heat = np.clip(heat * (0.35 + 0.9 * nr) * (0.7 + 0.5 * n), 0, 1)      # r2: pockets and licks inside the body (r1 saturated to a flat white core)
+        smoke = body * np.clip(0.3 + 0.8 * (hc * 0.6 + t * 0.9), 0, 1)
+        dens = np.clip(np.maximum(smoke, heat * 0.55) * 1.15, 0, 1) * win
+        heat = heat * win
+        # r2 (material pass r1: hard torn-paper silhouettes): a soft edge - blur every channel a little inside the cell
+        from PIL import ImageFilter
+        soft = lambda m: np.asarray(Image.fromarray((np.clip(m, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(3.0)), dtype=np.float64) / 255
+        heat = soft(heat); dens = soft(dens)
+        cell = np.dstack([lin2srgb(heat), lin2srgb(dens), np.zeros_like(heat), np.maximum(heat, dens)])
+        r0, c0 = (f // N) * C, (f % N) * C
+        atlas[r0:r0 + C, c0:c0 + C] = cell
+    save('fs_fire_flip.png', atlas)
+    # a preview strip for the eye (not under Assets): heat on red, smoke as grey over a mid ground
+    pv = np.zeros((C * N, C * N, 3)) + 0.42
+    h = atlas[..., 0] ** 2.2; d = atlas[..., 1] ** 2.2
+    fire = np.dstack([np.clip(h * 3.0, 0, 1), np.clip(h * 1.6 - 0.15, 0, 1), np.clip(h * 1.2 - 0.5, 0, 1)])
+    pv = pv * (1 - d[..., None] * 0.85) + 0.05 * d[..., None]
+    pv = np.clip(pv + fire, 0, 1)
+    import sys as _s
+    out = Path(_s.argv[_s.argv.index('--preview') + 1]) if '--preview' in _s.argv else None
+    if out is not None:
+        Image.fromarray((pv * 255).astype(np.uint8)).resize((1024, 1024)).save(out)
+        print('preview', out)
+
+
+if '--mat' in __import__('sys').argv:
+    mat_pass()
+    raise SystemExit(0)
 if '--b1' in __import__('sys').argv:
     b1()
     raise SystemExit(0)

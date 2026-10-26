@@ -17,6 +17,20 @@ namespace Oheangbu.App
         /// <summary>URP Lit, opaque: stone (metallic 0) or steel (metallic ~1).</summary>
         public static Material Lit(Vol2FsKit kit, string tex, Color tint, float metallic, float smooth, Color emission = default, string emissionTex = null)
         {
+            // 2026-10-27 common material pass: steel and stone go to their own showcase shaders (every caller of the batches gets them; URP Lit stays the
+            // fallback when a shader is missing). Steel: a warm self-light = a hot edge; a bright one = a brighter mirror (the shards / the 사 sword).
+            if (tex == "fs_steel")
+            {
+                float em = emission.maxColorComponent;
+                bool warm = em > 0.2f && emission.r > emission.b * 1.15f;
+                var m = kit.Metal(em > 1f ? 1.25f : 1f, warm ? Mathf.Clamp01(em * 0.6f) : 0f, warm ? default : new Color(0.012f, 0.016f, 0.024f));
+                if (m != null) return m;
+            }
+            else if (tex != null && tex.StartsWith("fs_rock"))
+            {
+                var m = kit.Stone(tex, tint, emission, emissionTex);
+                if (m != null) return m;
+            }
             string key = "lit|" + tex + "|" + tint + "|" + metallic + "|" + smooth + "|" + emission + "|" + emissionTex;
             return kit.Custom(key, () =>
             {
@@ -64,7 +78,69 @@ namespace Oheangbu.App
                     int a = y * (lon + 1) + x, b = a + 1, c = a + lon + 1, d = c + 1;
                     idx.Add(a); idx.Add(b); idx.Add(c); idx.Add(b); idx.Add(d); idx.Add(c);
                 }
-            return Facet(v, uv, idx, "FsRock");
+            // 2026-10-27 common material pass: chipped (flat cleavage faces cut off the lump + a fine roughness), not a smooth potato
+            return Chip(v, idx, seed, 1, 7, 0.16f, 0.035f, false, "FsRock");
+        }
+
+        /// <summary>2026-10-27 common material pass (stone read boxy / smooth: 마 모 막 목 묵 먼 만 몬 문 머): welds the triangles, subdivides them
+        /// <paramref name="levels"/> times, cuts <paramref name="cuts"/> flat cleavage faces off the form (every point beyond a random plane near the surface is
+        /// pushed onto it - a chipped corner / edge), adds a fine noise roughness along the normal, then facets (flat shading). <paramref name="keepBottom"/>:
+        /// the cut planes never face down and points at y ~ 0 stay (a slab / column standing on its pivot).</summary>
+        public static Mesh Chip(List<Vector3> v0, List<int> idx0, int seed, int levels, int cuts, float cutDepth, float rough, bool keepBottom, string name)
+        {
+            // weld by position
+            var map = new Dictionary<Vector3Int, int>(); var v = new List<Vector3>(); var idx = new List<int>(idx0.Count);
+            foreach (int i in idx0)
+            {
+                var p = v0[i]; var key = new Vector3Int(Mathf.RoundToInt(p.x * 2000f), Mathf.RoundToInt(p.y * 2000f), Mathf.RoundToInt(p.z * 2000f));
+                if (!map.TryGetValue(key, out int w)) { w = v.Count; v.Add(p); map[key] = w; }
+                idx.Add(w);
+            }
+            for (int l = 0; l < levels; l++)
+            {
+                var mid = new Dictionary<long, int>(); var ni = new List<int>(idx.Count * 4);
+                int Mid(int a, int b)
+                {
+                    long k = a < b ? (long)a * 1000003L + b : (long)b * 1000003L + a;
+                    if (mid.TryGetValue(k, out int m)) return m;
+                    m = v.Count; v.Add((v[a] + v[b]) * 0.5f); mid[k] = m; return m;
+                }
+                for (int t = 0; t < idx.Count; t += 3)
+                {
+                    int a = idx[t], b = idx[t + 1], c = idx[t + 2], ab = Mid(a, b), bc = Mid(b, c), ca = Mid(c, a);
+                    ni.AddRange(new[] { a, ab, ca, ab, b, bc, ca, bc, c, ab, bc, ca });
+                }
+                idx = ni;
+            }
+            // smooth normals of the welded form (for the roughness direction)
+            var nrm = new Vector3[v.Count];
+            for (int t = 0; t < idx.Count; t += 3) { var fn = Vector3.Cross(v[idx[t + 1]] - v[idx[t]], v[idx[t + 2]] - v[idx[t]]); nrm[idx[t]] += fn; nrm[idx[t + 1]] += fn; nrm[idx[t + 2]] += fn; }
+            var bb = new Bounds(v[0], Vector3.zero); foreach (var p in v) bb.Encapsulate(p);
+            Vector3 c0 = bb.center; float minExt = Mathf.Max(0.01f, Mathf.Min(bb.extents.x, Mathf.Min(bb.extents.y, bb.extents.z)));
+            // cleavage cuts
+            for (int k = 0; k < cuts; k++)
+            {
+                float az = Vol2Fs.Hash(seed, 900 + k) * Mathf.PI * 2f, el = (Vol2Fs.Hash(seed, 950 + k) * 2f - 1f) * 1.2f;
+                if (keepBottom) el = Mathf.Abs(el) * 0.75f + 0.12f;
+                var n = new Vector3(Mathf.Cos(az) * Mathf.Cos(el), Mathf.Sin(el), Mathf.Sin(az) * Mathf.Cos(el)).normalized;
+                float sup = float.MinValue; foreach (var p in v) sup = Mathf.Max(sup, Vector3.Dot(p - c0, n));
+                float d = sup - cutDepth * minExt * (0.6f + 0.9f * Vol2Fs.Hash(seed, 990 + k)) * 2f;
+                for (int i = 0; i < v.Count; i++)
+                {
+                    float s = Vector3.Dot(v[i] - c0, n);
+                    if (s > d && !(keepBottom && v[i].y < 0.002f)) v[i] -= n * (s - d);
+                }
+            }
+            // fine roughness
+            for (int i = 0; i < v.Count; i++)
+            {
+                if (keepBottom && v[i].y < 0.002f) continue;
+                var p = v[i] * 6.3f + new Vector3(seed * 0.37f, seed * 0.11f, 0f);
+                float nz = Mathf.PerlinNoise(p.x, p.y) + Mathf.PerlinNoise(p.y + 17.3f, p.z) + Mathf.PerlinNoise(p.z + 41.1f, p.x) - 1.5f;
+                v[i] += nrm[i].normalized * nz * rough * minExt * 2f;
+            }
+            var uv = new List<Vector2>(v.Count); foreach (var p in v) uv.Add(new Vector2(p.x + p.z, p.y));
+            return Facet(v, uv, idx, name);
         }
 
         /// <summary>A rough slab of earth / rock: a box with jittered corners and a broken top, its pivot at the middle of its bottom face (so it can rise and tilt).</summary>
@@ -84,7 +160,8 @@ namespace Oheangbu.App
                 idx.Add(s); idx.Add(s + 2); idx.Add(s + 1); idx.Add(s); idx.Add(s + 3); idx.Add(s + 2);
             }
             Quad(0, 1, 5, 4); Quad(1, 2, 6, 5); Quad(2, 3, 7, 6); Quad(3, 0, 4, 7); Quad(4, 5, 6, 7); Quad(3, 2, 1, 0);
-            return Facet(v, uv, idx, "FsSlab");
+            // 2026-10-27 common material pass: chipped edges / corners instead of a clean box (the pivot stays on its flat bottom)
+            return Chip(v, idx, seed, 2, 6, 0.22f, 0.03f, true, "FsSlab");
         }
 
         /// <summary>A straight double-edged sword along +Z (pivot at the grip's end): diamond-section blade with a point, a guard and a grip. Length ~1.55 m.</summary>
@@ -319,7 +396,7 @@ namespace Oheangbu.App
                 float f = Frac(nowUs);
                 OnFly(t, f, LastFrac);
                 LastFrac = f;
-                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); }
+                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); HitStop(t); }
                 else return;
             }
             bool ended = Inst.CastIsEnded || Inst.Log.Finished;
@@ -403,7 +480,10 @@ namespace Oheangbu.App
             bool ended = Inst.CastIsEnded || Inst.Log.Finished;
             if (ended && EndRel < 0f) { EndRel = t; OnCastEnded(t); }
             OnSweep(t, t - LaunchAt, ended);
+            // 2026-10-27: the hit-stop when the sweep reaches a struck body (its own start in the fan)
+            foreach (var h in Hits) if (t - LaunchAt >= h.At && _stopDone.Add(h.Id)) HitStop(t);
         }
+        readonly HashSet<long> _stopDone = new HashSet<long>();
 
         public override bool Done(long nowUs)
         {

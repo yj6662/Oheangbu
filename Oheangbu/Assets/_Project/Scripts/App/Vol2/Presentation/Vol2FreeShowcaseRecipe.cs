@@ -94,6 +94,72 @@ namespace Oheangbu.App
             return false;
         }
 
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        // 2026-10-27 common material pass (showcase120_plan.md step 2; the user's reference "팬텀 블레이드 제로의 vfx 효과를 참고해",
+        // Docs/Research/VFX-REF-PHANTOM-BLADE-ZERO.md principles 2 / 3 / 5, TEST) for every showcase look, drawn by the recipe after the look's own Tick:
+        //  * the swing: the brush tip's REAL recent path as a thin-to-wide crescent in the body's one accent colour + two lagged phantom afterimages
+        //    (the ㅓ 번진다 five draw their own - OwnSwingTrail);
+        //  * a short hit-stop: on a contact the look's own particles hold for ~75 ms (simulation speed only; no game time, no timeScale, no rule).
+        // Presentation only: nothing here is read by a rule or delays anything.
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        readonly List<(Vector3 P, float T)> _tipPath = new List<(Vector3 P, float T)>();
+        Vol2FsStrips _swing, _phantom; Mesh _swingMesh, _phantomMesh; bool _swingBuilt;
+        float _stopUntil = -1f;
+        /// <summary>The look draws its own swing trail / phantoms (batch 4 ㅓ).</summary>
+        protected virtual bool OwnSwingTrail => "건넌먼선언".IndexOf(Inst.Log.Glyph.Letter) >= 0;
+        public const float SwingSpan = 0.22f, HitStopSeconds = 0.075f;
+
+        /// <summary>The body's one accent colour (Phantom Blade principle 1: ink-dark base, one strong accent).</summary>
+        public static Color Accent(Body b)
+        {
+            switch (b)
+            {
+                case Body.Fire: return new Color(1f, 0.4f, 0.12f);
+                case Body.Metal: return new Color(1f, 0.86f, 0.55f);
+                case Body.Wood: return new Color(0.35f, 0.95f, 0.55f);
+                case Body.Water: return new Color(0.32f, 0.64f, 1f);
+                default: return new Color(0.95f, 0.66f, 0.3f);
+            }
+        }
+
+        /// <summary>A short hit-stop of this look's particles from now (t = the look's clock).</summary>
+        protected void HitStop(float t, float seconds = HitStopSeconds)
+        {
+            if (Root == null) return;
+            _stopUntil = Mathf.Max(_stopUntil, t + seconds);
+            foreach (var ps in Root.GetComponentsInChildren<ParticleSystem>()) { var m = ps.main; m.simulationSpeed = 0.04f; }
+        }
+
+        /// <summary>Called by the recipe after <see cref="Tick"/> every frame.</summary>
+        public void KitTick(long nowUs)
+        {
+            if (Root == null || BodyGone || !Root.activeSelf) return;
+            float t = Now(nowUs);
+            if (_stopUntil > 0f && t >= _stopUntil)
+            {
+                _stopUntil = -1f;
+                foreach (var ps in Root.GetComponentsInChildren<ParticleSystem>()) { var m = ps.main; m.simulationSpeed = 1f; }
+            }
+            if (OwnSwingTrail || t > LaunchRel + 0.6f) { if (_swingMesh != null && _swingMesh.vertexCount > 0) { _swingMesh.Clear(); _phantomMesh.Clear(); } return; }
+            _tipPath.Add((Tip(), t));
+            if (_tipPath.Count > 90) _tipPath.RemoveAt(0);
+            if (!_swingBuilt)
+            {
+                _swingBuilt = true;
+                var acc = Accent(Inst.Log.Glyph.Body);
+                _swing = new Vol2FsStrips(); _phantom = new Vol2FsStrips();
+                Vol2Fs.MeshObject(Root.transform, "KitSwing", Vol2FsB4A.PhantomMat(Kit, acc, 3f), out _swingMesh);
+                Vol2Fs.MeshObject(Root.transform, "KitPhantoms", Vol2FsB4A.PhantomMat(Kit, acc, 1.3f), out _phantomMesh);
+            }
+            // the crescent lives through the swing to just after the launch, then thins away
+            float life = 1f - Vol2Fs.Smooth(LaunchRel + 0.12f, LaunchRel + 0.55f, t);
+            var cam = CamPos;
+            _swing.Clear(); _phantom.Clear();
+            Vol2FsB4A.BladeTrail(_swing, _tipPath, t, SwingSpan, 0.24f, life, 0.37f, cam);      // r3: wider (r2 read as a hairline from the shoulder)
+            Vol2FsB4A.Phantoms(_phantom, _tipPath, t, SwingSpan, 0.24f, life * 1.4f, cam);
+            _swing.Write(_swingMesh); _phantom.Write(_phantomMesh);
+        }
+
         public virtual void Began(long nowUs) { }
         public virtual void Contact(Vol2ContactRecord rec) { }
         public virtual void MaterialCreated(Vol2Material m) { }
@@ -205,6 +271,7 @@ namespace Oheangbu.App
             {
                 if (r.CheckBodyGone()) { LastNote = inst.Log.Glyph.Letter + ": " + r.Note; return; }
                 try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; Notes[inst.Log.Glyph.Letter] = r.Note; } catch (Exception e) { Debug.LogException(e); }
+                try { r.KitTick(nowUs); } catch (Exception e) { Debug.LogException(e); }      // 2026-10-27: swing crescent + phantoms, hit-stop
             }
             else Inner.Update(inst, nowUs);
         }

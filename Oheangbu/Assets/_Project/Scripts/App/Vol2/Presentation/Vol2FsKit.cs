@@ -59,6 +59,52 @@ namespace Oheangbu.App
             mat.SetFloat("_NoiseAmt", m.NoiseAmt); mat.SetFloat("_NoiseScale", m.NoiseScale); mat.SetVector("_NoiseScroll", new Vector4(m.Scroll.x, m.Scroll.y, 0f, 0f));
             mat.SetFloat("_Erode", Mathf.Max(0.01f, m.Erode)); mat.SetColor("_EdgeColor", m.Edge); mat.SetFloat("_EdgeWidth", Mathf.Max(0.01f, m.EdgeWidth));
             mat.SetFloat("_SoftFade", m.Soft); mat.SetFloat("_Opacity", m.Opacity); mat.SetFloat("_RampScale", m.RampScale);
+            // 2026-10-27 common material pass: fire tongues and smoke / dust puffs carry the fire-smoke flipbook (used only by particle systems - Vol2Fs.Build
+            // turns it on per renderer; a ribbon with the same material keeps the plain texture), water sheets draw as clear water.
+            // r2: fire only - the smoke / dust / steam puffs keep their soft single sheet (r1 flipbook puffs read as flat torn sheets)
+            bool fire = m.Tex == "fs_flame" && m.Ramp == "fs_ramp_fire";
+            var flip = fire ? Tex(FlipTexName) : null;
+            if (flip != null) { mat.SetTexture("_FlipTex", flip); mat.SetFloat("_FsKind", 1f); }
+            if (m.Ramp == "fs_ramp_water" && (m.Tex == "fs_water" || m.Tex == "fs_swirl" || m.Tex == "fs_streak")) mat.SetFloat("_WaterMode", 1f);
+            _mats[key] = mat;
+            return mat;
+        }
+
+        public const string FlipTexName = "fs_fire_flip", MetalShaderName = "Oheangbu/FreeShowcase/Metal", StoneShaderName = "Oheangbu/FreeShowcase/Stone";
+
+        /// <summary>2026-10-27 common material pass: showcase steel (Oheangbu/FreeShowcase/Metal - unlit chrome in the transparent queue, drawn after the ink
+        /// wash so it stays silver on the red 적로 ground; see the shader's header). <paramref name="hot"/> 0..1 = a white-gold hot edge, <paramref name="accent"/> =
+        /// a faint self-light. Falls back to null when the shader is missing (the caller keeps its URP Lit steel).</summary>
+        public Material Metal(float bright = 1f, float hot = 0f, Color accent = default, Color tint = default)
+        {
+            if (tint == default) tint = Color.white;
+            string key = "metal|" + bright + "|" + hot + "|" + accent + "|" + tint;
+            if (_mats.TryGetValue(key, out var mat)) return mat;
+            var sh = Shader.Find(MetalShaderName);
+            if (sh == null) return null;
+            mat = new Material(sh) { name = "Fs_Metal", hideFlags = HideFlags.DontSave };
+            mat.SetTexture("_BaseMap", Tex("fs_steel")); mat.SetColor("_Tint", tint); mat.SetFloat("_Bright", bright); mat.SetFloat("_Hot", Mathf.Clamp01(hot)); mat.SetColor("_Accent", accent);
+            _mats[key] = mat;
+            return mat;
+        }
+
+        /// <summary>2026-10-27 common material pass: showcase stone (Oheangbu/FreeShowcase/Stone - opaque, wrapped sun + camera fill + rim, triplanar; the ink
+        /// wash still grades it and draws its lines). Null when the shader is missing (the caller keeps its URP Lit stone).</summary>
+        public Material Stone(string tex, Color tint, Color emission, string emissionTex)
+        {
+            string key = "stone|" + tex + "|" + tint + "|" + emission + "|" + emissionTex;
+            if (_mats.TryGetValue(key, out var mat)) return mat;
+            var sh = Shader.Find(StoneShaderName);
+            if (sh == null) return null;
+            mat = new Material(sh) { name = "Fs_Stone_" + tex, hideFlags = HideFlags.DontSave };
+            mat.SetTexture("_BaseMap", Tex(tex)); mat.SetColor("_BaseColor", tint);
+            if (emission.maxColorComponent > 0.001f)
+            {
+                // the batches' flat "self-light" (a backlit-black workaround: no mask, or the rock itself as the mask) is mostly the fill's job now
+                bool vein = !string.IsNullOrEmpty(emissionTex) && emissionTex != tex && emissionTex != "fs_rock";
+                mat.SetTexture("_EmissionMap", vein ? Tex(emissionTex) : Texture2D.whiteTexture);
+                mat.SetColor("_EmissionColor", vein ? emission : emission * 0.35f);
+            }
             _mats[key] = mat;
             return mat;
         }
@@ -102,11 +148,21 @@ namespace Oheangbu.App
             if (_mats.TryGetValue(key, out var mat)) return mat;
             var sh = Shader.Find("Universal Render Pipeline/Lit");
             mat = new Material(sh) { name = "Fs_Leaf", hideFlags = HideFlags.DontSave };
-            mat.SetTexture("_BaseMap", Tex("fs_leaf")); mat.SetColor("_BaseColor", tint); mat.SetFloat("_Smoothness", 0.3f);
+            // 2026-10-27 common material pass: batches 0 - 4 leaves read pale cream (the sky's sheen on a 0.3 smooth card, then the ink wash maps the bright
+            // value toward paper). A deeper jade-green albedo with no sheen keeps a green the wash's 비색 band keeps; a little jade self-light stands in for
+            // light through the leaf (backlit cards never go black).
+            // r2 (r1 read olive-khaki): less red, a little more blue - toward the jade / 비색 side the wash keeps
+            var deep = new Color(tint.r * 0.42f, tint.g * 0.82f, tint.b * 1.1f, tint.a);
+            mat.SetTexture("_BaseMap", Tex("fs_leaf")); mat.SetColor("_BaseColor", deep); mat.SetFloat("_Smoothness", 0.06f);
+            mat.SetFloat("_SpecularHighlights", 0f); mat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+            mat.SetFloat("_EnvironmentReflections", 0f); mat.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
             mat.SetFloat("_AlphaClip", 1f); mat.SetFloat("_Cutoff", 0.45f); mat.EnableKeyword("_ALPHATEST_ON");
             mat.SetFloat("_Cull", 0f); mat.doubleSidedGI = true;
             mat.renderQueue = (int)RenderQueue.AlphaTest;
-            if (glow.maxColorComponent > 0.001f) { mat.SetColor("_EmissionColor", glow); mat.EnableKeyword("_EMISSION"); }
+            // r2: a uniform jade self-light (r1 used the yellow-green leaf map as the emission mask: it carried no blue)
+            var through = new Color(0.012f, 0.07f, 0.05f);
+            mat.SetColor("_EmissionColor", new Color(glow.r * 0.45f, glow.g * 0.75f, glow.b * 0.75f + glow.g * 0.25f) + through); mat.EnableKeyword("_EMISSION");
+            mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
             _mats[key] = mat;
             return mat;
         }
@@ -173,6 +229,8 @@ namespace Oheangbu.App
     {
         static readonly List<ParticleSystemVertexStream> Streams = new List<ParticleSystemVertexStream> { ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV, ParticleSystemVertexStream.StableRandomX };
         static readonly List<ParticleSystemVertexStream> MeshStreams = new List<ParticleSystemVertexStream> { ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Normal, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV };
+        /// <summary>2026-10-27: size of a flipbook fire / puff particle against the old single-sheet one (the flipbook cells keep a margin).</summary>
+        public const float FlipFireScale = 1.45f, FlipPuffScale = 1.2f;
 
         public static ParticleSystem Build(Vol2FsPs d, Transform parent, string name)
         {
@@ -222,6 +280,18 @@ namespace Oheangbu.App
                 var ts = ps.textureSheetAnimation; ts.enabled = true; ts.mode = ParticleSystemAnimationMode.Grid; ts.numTilesX = d.Tiles; ts.numTilesY = d.Tiles;
                 ts.frameOverTime = new ParticleSystem.MinMaxCurve(0f); ts.startFrame = new ParticleSystem.MinMaxCurve(0f, d.Tiles * d.Tiles - 0.01f);
             }
+            // 2026-10-27 common material pass: a fire / puff material that carries the flipbook plays it over each particle's life (8 x 8, birth -> burn ->
+            // smoke), drawn a little bigger (the cells keep a margin; batches 0 - 4 fire read small and sparse). The material stays shared: the flipbook is
+            // switched on for this renderer only (property block), so ribbons with the same material keep the plain texture.
+            int flipKind = d.Mesh == null && d.Mat != null && d.Mat.HasProperty("_FsKind") && d.Mat.GetTexture("_FlipTex") != null ? Mathf.RoundToInt(d.Mat.GetFloat("_FsKind")) : 0;
+            if (flipKind > 0)
+            {
+                var ts = ps.textureSheetAnimation; ts.enabled = true; ts.mode = ParticleSystemAnimationMode.Grid; ts.numTilesX = 8; ts.numTilesY = 8;
+                ts.timeMode = ParticleSystemAnimationTimeMode.Lifetime; ts.cycleCount = 1;
+                ts.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f));
+                ts.startFrame = new ParticleSystem.MinMaxCurve(0f, flipKind == 1 ? 3.99f : 1.99f);      // a slightly different birth per particle
+                sz.sizeMultiplier = flipKind == 1 ? FlipFireScale : FlipPuffScale;
+            }
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.sharedMaterial = d.Mat;
             r.renderMode = d.Stretch ? ParticleSystemRenderMode.Stretch : d.Horizontal ? ParticleSystemRenderMode.HorizontalBillboard : ParticleSystemRenderMode.Billboard;
@@ -230,6 +300,7 @@ namespace Oheangbu.App
             r.sortingFudge = d.SortFudge;
             r.maxParticleSize = 3f;
             r.SetActiveVertexStreams(Streams);
+            if (flipKind > 0) { var mpb = new MaterialPropertyBlock(); r.GetPropertyBlock(mpb); mpb.SetFloat("_Flip", 1f); r.SetPropertyBlock(mpb); }
             if (d.Mesh != null)
             {
                 r.renderMode = ParticleSystemRenderMode.Mesh; r.mesh = d.Mesh; r.alignment = ParticleSystemRenderSpace.World;
@@ -309,6 +380,8 @@ namespace Oheangbu.App
         }
 
         public readonly List<Tube> Tubes = new List<Tube>();
+        /// <summary>2026-10-27: girth of a long thin tube (vine / snare / branch) against its written radius.</summary>
+        public const float VineGirth = 1.3f;
         readonly List<Vector3> _v = new List<Vector3>(4096), _n = new List<Vector3>(4096);
         readonly List<Vector2> _uv = new List<Vector2>(4096);
         readonly List<int> _i = new List<int>(16384);
@@ -358,12 +431,16 @@ namespace Oheangbu.App
                 int sides = t.Sides;
                 int baseV = _v.Count;
                 Vector3 prevN = Vector3.zero;
+                // 2026-10-27 common material pass: long thin tubes (vines, snares, branches; not thorns, not the thick cage ribs / trunks) read as thorn
+                // spikes from behind the caster - thicker, and they keep more of their girth toward the tip
+                bool vine = t.Len > 0.6f && t.R0 < 0.12f;
+                float r0 = vine ? t.R0 * VineGirth : t.R0, r1 = vine ? Mathf.Max(t.R1 * VineGirth, r0 * 0.5f) : t.R1;
                 for (int r = 0; r <= rings; r++)
                 {
                     float a = grown * r / rings;
                     Sample(t, a, out var p, out var dir);
                     float along = a / Mathf.Max(1e-4f, t.Len);
-                    float rad = Mathf.Lerp(t.R0, t.R1, along);
+                    float rad = Mathf.Lerp(r0, r1, along);
                     float toTip = (grown - a) / Mathf.Max(0.01f, t.Sharp);       // the growing tip is a sharp point
                     rad *= Mathf.Clamp01(toTip);
                     if (t.Knots > 0f) rad *= 1f + t.Knots * (Mathf.PerlinNoise(a * 3.1f, t.R0 * 91f) - 0.5f);
@@ -456,25 +533,39 @@ namespace Oheangbu.App
         readonly List<Vector2> _uv = new List<Vector2>();
         readonly List<int> _i = new List<int>();
 
+        /// <summary>2026-10-27 common material pass: leaf cards are drawn this much bigger, each with a second card crossed at ~70 degrees (batches 0 - 4: small,
+        /// sparse cards that vanish edge-on from behind the caster).</summary>
+        public const float SizeScale = 1.3f;
+
         public void Write(Mesh mesh)
         {
             _v.Clear(); _n.Clear(); _uv.Clear(); _i.Clear();
             foreach (var l in Items)
             {
                 if (l.Grow <= 0.01f) continue;
-                float s = l.Size * Mathf.Clamp01(l.Grow);
-                Vector3 up = l.Up.normalized, right = Vector3.Cross(l.Normal, up).normalized;
-                int b = _v.Count;
-                Vector3 p0 = l.Pos - right * s * 0.5f, p1 = l.Pos + right * s * 0.5f;
-                _v.Add(p0); _v.Add(p1); _v.Add(p0 + up * s); _v.Add(p1 + up * s);
-                for (int k = 0; k < 4; k++) _n.Add(l.Normal);
-                float cu = (l.Cell % 2) * 0.5f, cv = (l.Cell / 2 % 2) * 0.5f;
-                _uv.Add(new Vector2(cu, cv)); _uv.Add(new Vector2(cu + 0.5f, cv)); _uv.Add(new Vector2(cu, cv + 0.5f)); _uv.Add(new Vector2(cu + 0.5f, cv + 0.5f));
-                _i.Add(b); _i.Add(b + 2); _i.Add(b + 1); _i.Add(b + 1); _i.Add(b + 2); _i.Add(b + 3);
+                float s = l.Size * Mathf.Clamp01(l.Grow) * SizeScale;
+                Vector3 up = l.Up.normalized, nrm = l.Normal.normalized;
+                Card(l.Pos, nrm, up, s, l.Cell);
+                // the crossed card: turned about the leaf's own axis, a little smaller, the next cell of the atlas
+                Vector3 n2 = Quaternion.AngleAxis(70f, up) * nrm;
+                Card(l.Pos + up * s * 0.08f, n2, up, s * 0.85f, l.Cell + 1);
             }
             mesh.Clear();
             mesh.SetVertices(_v); mesh.SetNormals(_n); mesh.SetUVs(0, _uv); mesh.SetTriangles(_i, 0);
             mesh.RecalculateBounds();
+        }
+
+        void Card(Vector3 pos, Vector3 normal, Vector3 up, float s, int cell)
+        {
+            Vector3 right = Vector3.Cross(normal, up).normalized;
+            if (right.sqrMagnitude < 1e-6f) return;
+            int b = _v.Count;
+            Vector3 p0 = pos - right * s * 0.5f, p1 = pos + right * s * 0.5f;
+            _v.Add(p0); _v.Add(p1); _v.Add(p0 + up * s); _v.Add(p1 + up * s);
+            for (int k = 0; k < 4; k++) _n.Add(normal);
+            float cu = (cell % 2) * 0.5f, cv = (cell / 2 % 2) * 0.5f;
+            _uv.Add(new Vector2(cu, cv)); _uv.Add(new Vector2(cu + 0.5f, cv)); _uv.Add(new Vector2(cu, cv + 0.5f)); _uv.Add(new Vector2(cu + 0.5f, cv + 0.5f));
+            _i.Add(b); _i.Add(b + 2); _i.Add(b + 1); _i.Add(b + 1); _i.Add(b + 2); _i.Add(b + 3);
         }
     }
 }
