@@ -3,116 +3,293 @@ using UnityEngine;
 
 namespace Oheangbu.App
 {
-    /// <summary>우 (water, ㅜ ring, 한 번 · 적신다) - free showcase batch 2, concept u_b (a ring of geyser jets shoots up out of the ground on the 2 m ring round the caster
-    /// like a fountain crown, black ink ribbons swirling up round the columns; the bear on the ring is soaked as the water crashes down on it; the columns fall and
-    /// (the CSV's end) the water runs down onto the ground in a wet ring with foam). Unlike 오's single rolling wave and 아's orb, it is many vertical columns.</summary>
+    /// <summary>A grid sheet for the showcase particle shader (position, vertex colour = life, uv = u along / v across / z random): the 우 wave wall and its foam cap.</summary>
+    public sealed class Vol2FsSheet
+    {
+        readonly List<Vector3> _v = new List<Vector3>(4096);
+        readonly List<Color> _c = new List<Color>(4096);
+        readonly List<Vector3> _uv = new List<Vector3>(4096);
+        readonly List<int> _i = new List<int>(16384);
+
+        public void Clear() { _v.Clear(); _c.Clear(); _uv.Clear(); _i.Clear(); }
+
+        /// <summary>One grid of <paramref name="nu"/> x <paramref name="nv"/> vertices (row-major: index = iu * nv + iv). A vertex with alpha &lt;= 0 on all four corners drops its quad.</summary>
+        public void Grid(int nu, int nv, Vector3[] pos, float[] alpha, float[] u, float[] v, float random, float[] shade = null)
+        {
+            int b = _v.Count;
+            for (int k = 0; k < nu * nv; k++)
+            {
+                var p = pos[k];
+                if (float.IsNaN(p.x + p.y + p.z) || float.IsInfinity(p.x + p.y + p.z)) return;
+            }
+            for (int iu = 0; iu < nu; iu++)
+                for (int iv = 0; iv < nv; iv++)
+                {
+                    int k = iu * nv + iv;
+                    float s = shade != null ? shade[k] : 1f;
+                    _v.Add(pos[k]); _c.Add(new Color(s, s, s, alpha[k])); _uv.Add(new Vector3(u[iu], v[iv], random));
+                }
+            for (int iu = 0; iu < nu - 1; iu++)
+                for (int iv = 0; iv < nv - 1; iv++)
+                {
+                    int a0 = iu * nv + iv, a1 = a0 + 1, b0 = a0 + nv, b1 = b0 + 1;
+                    if (alpha[a0] <= 0f && alpha[a1] <= 0f && alpha[b0] <= 0f && alpha[b1] <= 0f) continue;
+                    _i.Add(b + a0); _i.Add(b + b0); _i.Add(b + a1); _i.Add(b + a1); _i.Add(b + b0); _i.Add(b + b1);
+                }
+        }
+
+        public void Write(Mesh mesh)
+        {
+            mesh.Clear();
+            mesh.indexFormat = _v.Count > 65000 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
+            mesh.SetVertices(_v); mesh.SetColors(_c); mesh.SetUVs(0, _uv); mesh.SetTriangles(_i, 0);
+            mesh.RecalculateBounds();
+        }
+    }
+
+    /// <summary>우 (water, ㅜ ring, 한 번 · 적신다) - 2026-10-28 rebuilt to concept u_a (the user, 10-28: "시안에 비하면 너무 부족한 거 아니야? "우" 술식 하나만 시안대로 뽑아봐";
+    /// batch 2 had followed u_b, a crown of geysers): a ring of breaking waves stands up out of the band round the caster - teal sheets with white foam
+    /// crests curling inward, black ink ribbons running through the wave faces, spray and beads of water and ink thrown high - then the walls collapse inward
+    /// as a foam wash over the wet ground inside the ring. The crests stand over the executor's band (RingRadius 2 m, the one instant strike); the drawn water
+    /// is bigger than the band (outer foot to R + 1.2, inward lip / wash to R - 0.6 .. R - 1.8) but never moves where the contact landed. The near arc (toward
+    /// the shoulder camera) stays low and fades within 2.5 m of the lens. The shared ink layer's ring enso is off for this look (it would draw a second ring
+    /// under the wall); its swing, splash and contact ink stay.</summary>
     public sealed class Vol2FsU : Vol2FsRing
     {
-        static readonly Color Ink = new Color(0.02f, 0.03f, 0.04f), Foam = new Color(0.9f, 0.95f, 0.95f);
-        ParticleSystem _spray, _drops, _foam, _mist, _drip; Light _light;
-        Mesh _colMesh, _ribbonMesh, _wetMesh, _crownMesh;
-        readonly Vol2FsStrips _cols = new Vol2FsStrips(), _ribbons = new Vol2FsStrips(), _wet = new Vol2FsStrips(), _crowns = new Vol2FsStrips();
-        struct G { public float Ang, H, W, At, Rnd; public bool Burst; }
-        readonly List<G> _g = new List<G>();
-        const float RiseSeconds = 0.3f, HoldSeconds = 0.35f, FallSeconds = 0.5f;
-        protected override float LookSeconds => ExpandSeconds + RiseSeconds + HoldSeconds + FallSeconds + 0.6f;
+        static readonly Color Foam = new Color(0.93f, 0.95f, 0.94f);
+        protected override bool OwnFrameGesture => true;
+
+        const int NU = 132, NV = 16, NF = 14;
+        const float RiseSeconds = 0.32f, CurlFrom = 0.16f, CurlTo = 0.55f, WashFrom = 1.05f, WashTo = 1.7f, FadeFrom = 1.6f, FadeTo = 2.4f;
+        protected override float LookSeconds => ExpandSeconds + 2.6f;
+
+        ParticleSystem _spray, _foam, _sheets, _inkDrops, _mist, _drip; Light _light;
+        Mesh _waterMesh, _foamMesh, _inkMesh, _wetMesh, _glintMesh;
+        readonly Vol2FsSheet _water = new Vol2FsSheet(), _foamSheet = new Vol2FsSheet();
+        readonly Vol2FsStrips _ink = new Vol2FsStrips(), _wet = new Vol2FsStrips(), _glint = new Vol2FsStrips();
+        struct Rib { public float Th, Span, VA, VB, W, Rnd, At; public int Row; }
+        readonly List<Rib> _ribs = new List<Rib>();
+        readonly Vector3[] _pos = new Vector3[NU * NV], _fpos = new Vector3[NU * NF];
+        readonly float[] _al = new float[NU * NV], _fal = new float[NU * NF], _u = new float[NU], _v = new float[NV], _fv = new float[NF], _sh = new float[NU * NV];
+        float _lastA = -1f, _sheetClock;
 
         Vol2FsMat M(string tex, Color tint, float intensity, float addMix) => Vol2FsB1.M(tex, tint, intensity, addMix);
 
         protected override void OnBegin()
         {
             var root = Root.transform;
-            Vol2Fs.MeshObject(root, "Geysers", Vol2FsB1.Water(Kit, 1.8f, 0.35f), out _colMesh);
-            Vol2Fs.MeshObject(root, "InkRibbons", Kit.InkSolid("fs_stroke2", Ink, new Color(0.5f, 0.9f, 1f, 1f) * 0.8f, 0.05f, 0.45f, 0.26f, 1.4f), out _ribbonMesh);
-            Vol2Fs.MeshObject(root, "Crowns", Vol2FsB1.Water(Kit, 1.7f, 0.35f, "fs_splash"), out _crownMesh);
-            var wet = M("fs_wet", new Color(0.05f, 0.04f, 0.04f, 1f), 1f, 0f); wet.Soft = 0.001f; wet.Opacity = 0.7f; wet.NoiseAmt = 0.3f;
-            Vol2Fs.MeshObject(root, "WetRing", Kit.Mat(wet), out _wetMesh);
-            var water = M("fs_splash", Color.white, 1.6f, 0.3f); water.Ramp = "fs_ramp_water"; water.RampScale = 1.5f; water.NoiseAmt = 0.4f; water.Soft = 0.1f;
-            _spray = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(water), Life0 = 0.5f, Life1 = 1.1f, Speed0 = 1f, Speed1 = 4f, Size0 = 0.35f, Size1 = 0.9f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.2f, Gravity = 1.6f, Drag = 0.5f, Tiles = 2,
-                SizeStart = 0.4f, SizePeak = 1.2f, SizeEnd = 0.8f, Spin = 120f, Max = 1400 }, root, "Spray");
-            _drops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", new Color(0.8f, 0.95f, 1f), 2.2f, 0.6f)), Life0 = 0.6f, Life1 = 1.4f, Speed0 = 2f, Speed1 = 6f, Size0 = 0.03f, Size1 = 0.08f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.1f, Gravity = 1.8f,
-                Stretch = true, StretchVel = 0.03f, Max = 2000 }, root, "Drops");
-            var foam = M("fs_puff", Foam, 1.3f, 0.2f); foam.Opacity = 0.75f; foam.Erode = 0.4f; foam.NoiseAmt = 0.6f;
-            _foam = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(foam), Life0 = 0.5f, Life1 = 1.1f, Speed0 = 0.5f, Speed1 = 2f, Size0 = 0.3f, Size1 = 0.7f, Shape = ParticleSystemShapeType.Hemisphere, Radius = 0.2f, Drag = 1.5f, Tiles = 2, Max = 600 }, root, "Foam");
-            var mist = M("fs_puff", new Color(0.8f, 0.88f, 0.9f, 1f), 1.1f, 0.2f); mist.Opacity = 0.35f; mist.Erode = 0.4f;
-            _mist = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(mist), Life0 = 1.0f, Life1 = 1.8f, Speed0 = 0.3f, Speed1 = 1f, Size0 = 0.8f, Size1 = 1.6f, Shape = ParticleSystemShapeType.Sphere, Radius = 0.3f, Drag = 1.5f, Tiles = 2, Max = 120, SortFudge = 8 }, root, "Mist");
-            _drip = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(water), Rate = 0f, Loop = true, Life0 = 0.4f, Life1 = 0.8f, Speed0 = 0f, Speed1 = 0.4f, Size0 = 0.1f, Size1 = 0.22f, Radius = 0.5f, Gravity = 2f, Tiles = 2, Stretch = true, StretchVel = 0.08f, Max = 300 }, root, "Drip");
-            foreach (var ps in new[] { _spray, _drops, _foam, _mist, _drip }) ps.Play(false);
-            _light = Vol2Fs.PointLight(root, "WaterLight", new Color(0.6f, 0.85f, 1f), 7f);
+            // r2: the body is deep translucent teal (u_a), white only at the crest (r1: the water ramp sheet read as a white wall)
+            var body = M("fs_water", new Color(0.30f, 0.40f, 0.42f), 1.1f, 0.12f); body.Opacity = 0.8f; body.Soft = 0.12f; body.NoiseAmt = 0.3f; body.NoiseScale = 1.3f; body.Erode = 0.15f;
+            body.Edge = new Color(0.8f, 0.9f, 0.9f) * 0.45f; body.EdgeWidth = 0.1f; body.Scroll = new Vector2(-0.6f, 0.15f);
+            Vol2Fs.MeshObject(root, "WaveWall", Kit.Mat(body), out _waterMesh);
+            var foam = M("fs_splash", Foam, 1.25f, 0.15f); foam.Opacity = 0.9f; foam.Erode = 0.3f; foam.NoiseAmt = 0.65f; foam.NoiseScale = 1.9f; foam.Soft = 0.06f; foam.Scroll = new Vector2(-0.5f, 0.25f);
+            var fr = Vol2Fs.MeshObject(root, "FoamCap", Kit.Mat(foam), out _foamMesh); fr.sortingOrder = 1;
+            Vol2Fs.MeshObject(root, "WaveInk", Kit.InkSolid("fs_sumi_stroke", Vol2FsInkStage.InkC, new Color(0.22f, 0.24f, 0.25f), 0.30f, 0.42f, 0.30f, 3.5f), out _inkMesh);
+            var wet = M("fs_wet", new Color(0.05f, 0.04f, 0.035f, 1f), 1f, 0f); wet.Soft = 0.02f; wet.Opacity = 0.55f; wet.NoiseAmt = 0.25f; wet.Scroll = Vector2.zero;
+            Vol2Fs.MeshObject(root, "WetGround", Kit.Mat(wet), out _wetMesh);
+            var glint = M("fs_water", new Color(0.85f, 0.88f, 0.86f), 0.55f, 1f); glint.Opacity = 0.35f; glint.NoiseAmt = 0.5f; glint.Erode = 0.5f; glint.Scroll = new Vector2(0.05f, 0.02f);
+            var gr = Vol2Fs.MeshObject(root, "WetGlint", Kit.Mat(glint), out _glintMesh); gr.sortingOrder = 1;
+            _spray = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", new Color(0.92f, 0.97f, 1f), 2.0f, 0.5f)), Life0 = 0.5f, Life1 = 1.15f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.015f, Size1 = 0.045f,
+                Gravity = 1.6f, Drag = 0.2f, Stretch = true, StretchVel = 0.02f, StretchLen = 1.0f, Max = 2400 }, root, "Spray");
+            var puff = M("fs_puff", Foam, 1.3f, 0.2f); puff.Opacity = 0.7f; puff.Erode = 0.5f; puff.NoiseAmt = 0.65f;
+            _foam = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(puff), Life0 = 0.4f, Life1 = 0.85f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.18f, Size1 = 0.42f, Drag = 1.2f, Gravity = 0.4f, Tiles = 2,
+                SizeStart = 0.6f, SizePeak = 1.1f, SizeEnd = 1.4f, Max = 900 }, root, "Foam");
+            var sheet = M("fs_splash", Foam, 1.2f, 0.2f); sheet.Opacity = 0.75f; sheet.Erode = 0.35f; sheet.NoiseAmt = 0.4f;
+            _sheets = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(sheet), Life0 = 0.35f, Life1 = 0.6f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.8f, Size1 = 1.5f, Gravity = 1.2f, Tiles = 2,
+                SizeStart = 0.4f, SizePeak = 1.1f, SizePeakAt = 0.35f, SizeEnd = 1.25f, Spin = 40f, Max = 90 }, root, "SplashSheets");
+            _inkDrops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.InkSolid("fs_sumi_drops", Vol2FsInkStage.InkC, Color.black, 0.05f, 0.1f, 0.35f, 1f), Life0 = 0.6f, Life1 = 1.2f, Speed0 = 0f, Speed1 = 0.1f,
+                Size0 = 0.03f, Size1 = 0.09f, Gravity = 1.4f, Tiles = 4, Stretch = true, StretchVel = 0.07f, StretchLen = 1.4f, Max = 400, NoFlip = true }, root, "InkBeads");
+            var mist = M("fs_puff", new Color(0.82f, 0.88f, 0.9f, 1f), 1.1f, 0.2f); mist.Opacity = 0.3f; mist.Erode = 0.4f;
+            _mist = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(mist), Life0 = 1.0f, Life1 = 1.8f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 1.0f, Size1 = 1.8f, Drag = 1.5f, Tiles = 2, Max = 120, SortFudge = 8 }, root, "Mist");
+            var drip = Vol2FsB1.Water(Kit, 1.6f, 0.3f, "fs_splash");
+            _drip = Vol2Fs.Build(new Vol2FsPs { Mat = drip, Rate = 0f, Loop = true, Life0 = 0.4f, Life1 = 0.8f, Speed0 = 0f, Speed1 = 0.4f, Size0 = 0.1f, Size1 = 0.22f, Radius = 0.5f, Gravity = 2f, Tiles = 2,
+                Stretch = true, StretchVel = 0.08f, Max = 300 }, root, "Drip");
+            foreach (var ps in new[] { _spray, _foam, _sheets, _inkDrops, _mist, _drip }) ps.Play(false);
+            _light = Vol2Fs.PointLight(root, "WaterLight", new Color(0.7f, 0.88f, 0.95f), 7f);
+            for (int iu = 0; iu < NU; iu++) _u[iu] = iu / (NU - 1f) * 10f;
+            for (int iv = 0; iv < NV; iv++) _v[iv] = iv / (NV - 1f);
+            for (int iv = 0; iv < NF; iv++) _fv[iv] = iv / (NF - 1f);
         }
 
         protected override void OnLaunch(long nowUs)
         {
-            // 2026-10-27 polish (u_b): geysers of very different heights and girths (r4: 14 equal columns read as a fence), the far arc tallest, the
-            // flanks lower (they stood at the frame edges, cut off), a thin twin jet beside every other one
-            const int N = 12;
-            for (int k = 0; k < N; k++)
+            // the ink ribbons on the wave faces: 14 strokes, each 30 - 60 degrees of ring, sinuous over the upper face, hooking up into the crest
+            // (r2: on the side the shoulder camera sees - r1's low strokes on the outer face sat behind the sheet)
+            for (int k = 0; k < 18; k++)
             {
-                float ang = Vol2FsB2.Angle(k, N, Seed, 0.9f), back = Back(ang);
-                float far = 1f - 0.4f * Vol2Fs.Smooth(40f, 100f, Mathf.Abs(ang * Mathf.Rad2Deg));
-                float big = Vol2Fs.Hash(Seed, k + 20);
-                _g.Add(new G { Ang = ang, H = Mathf.Lerp(1.3f, 4.2f, big * big) * far * (1f - 0.7f * back), W = Mathf.Lerp(0.35f, 0.95f, big) * (1f - 0.3f * back), At = ExpandSeconds * Vol2Fs.Hash(Seed, k + 40), Rnd = Vol2Fs.Hash(Seed, k + 50) });
-                if (k % 2 == 0) _g.Add(new G { Ang = ang + 0.12f, H = Mathf.Lerp(0.8f, 2.0f, Vol2Fs.Hash(Seed, k + 60)) * far * (1f - 0.7f * back), W = 0.22f, At = ExpandSeconds * Vol2Fs.Hash(Seed, k + 70) + 0.05f, Rnd = Vol2Fs.Hash(Seed, k + 80) });
+                float th = Vol2FsB2.Angle(k, 18, Seed + 31, 0.8f);
+                if (Back(th) > 0.7f) continue;
+                _ribs.Add(new Rib { Th = th, Span = Mathf.Lerp(0.5f, 1.0f, Vol2Fs.Hash(Seed, k + 300)) * (Vol2Fs.Hash(Seed, k + 301) < 0.5f ? 1f : -1f),
+                    VA = Mathf.Lerp(0.42f, 0.6f, Vol2Fs.Hash(Seed, k + 302)), VB = Mathf.Lerp(0.85f, 0.98f, Vol2Fs.Hash(Seed, k + 303)),
+                    W = Mathf.Lerp(0.3f, 0.55f, Vol2Fs.Hash(Seed, k + 304)), Rnd = Vol2Fs.Hash(Seed, k + 305), At = CurlFrom + 0.15f * Vol2Fs.Hash(Seed, k + 306),
+                    Row = Vol2Fs.Hash(Seed, k + 307) < 0.5f ? 1 : 3 });
             }
             _light.transform.position = Apex + F * R + Vector3.up * 1.4f;
+            for (int k = 0; k < 24; k++) { float th = Random.Range(-Mathf.PI, Mathf.PI); if (Back(th) < 0.6f) Vol2FsB1.Emit(_mist, OnBand(th, R) + Vector3.up * 0.6f, 1); }
         }
 
         protected override void OnStruck(Struck s) { }
 
+        // ------------------------------------------------------------------------------------------------ the wave
+        /// <summary>The crest height at ring angle th and look time a (0 before the rise).</summary>
+        float Height(float th, float a)
+        {
+            float k = Mathf.Abs(th) / Mathf.PI;
+            float hmax = Mathf.Lerp(2.3f, 1.3f, Vol2Fs.Smooth(0.15f, 0.6f, k)) * (1f - 0.78f * Back(th));
+            float sd = Seed * 0.37f;
+            float bump = 0.72f + 0.18f * Mathf.Sin(3f * th + 2.2f * a + sd) + 0.12f * Mathf.Sin(7f * th - 3.1f * a + 2f * sd) + 0.08f * Mathf.Sin(13f * th + 5f * a);
+            float rise = Vol2Fs.EaseOutBack(Mathf.Clamp01((a - ExpandSeconds * 0.5f) / RiseSeconds));
+            return Mathf.Max(0f, hmax * bump * rise);
+        }
+
+        // the breaking-wave profile (dr outward from the band centre in units of the horizontal scale, y in units of the height): outer foot -> face -> crest -> inward lip
+        static readonly Vector2[] Prof = { new Vector2(1.10f, 0f), new Vector2(0.75f, 0.18f), new Vector2(0.42f, 0.48f), new Vector2(0.18f, 0.80f), new Vector2(0.02f, 0.97f),
+                                           new Vector2(-0.10f, 1f), new Vector2(-0.32f, 0.93f), new Vector2(-0.48f, 0.76f), new Vector2(-0.52f, 0.55f) };
+
+        static Vector2 ProfAt(float v)
+        {
+            float f = Mathf.Clamp01(v) * (Prof.Length - 1); int i = Mathf.Min(Prof.Length - 2, Mathf.FloorToInt(f)); float t = f - i;
+            Vector2 p0 = Prof[Mathf.Max(0, i - 1)], p1 = Prof[i], p2 = Prof[i + 1], p3 = Prof[Mathf.Min(Prof.Length - 1, i + 2)];
+            float t2 = t * t, t3 = t2 * t;
+            return 0.5f * (2f * p1 + (-p0 + p2) * t + (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 + (-p0 + 3f * p1 - 3f * p2 + p3) * t3);
+        }
+
+        /// <summary>A point of the wave surface at ring angle th, profile v (0 outer foot .. 1 lip tip).</summary>
+        Vector3 Surface(float th, float v, float a, out float h)
+        {
+            h = Height(th, a);
+            float curl = Vol2Fs.Smooth(CurlFrom, CurlTo, a), wash = Vol2Fs.Smooth(WashFrom, WashTo, a);
+            float ks = 0.45f + 0.35f * Mathf.Max(h, 0.4f);
+            Vector2 p = ProfAt(v);
+            // before the curl the upper face stands as a rising sheet (the lip not yet thrown)
+            float lipK = Vol2Fs.Smooth(0.5f, 0.75f, v);
+            Vector2 up = new Vector2(-0.02f, 0.97f + (v - 0.62f) * 0.55f);
+            p = Vector2.Lerp(p, Vector2.Lerp(p, up, lipK), 1f - curl);
+            float dr = p.x * ks, y = p.y * h;
+            // the collapse: the wall falls, the lip runs inward along the ground as a wash, the outer foot spreads out
+            y *= 1f - 0.9f * wash;
+            dr -= wash * 1.3f * Vol2Fs.Smooth(0.35f, 1f, v);
+            dr += wash * 0.35f * (1f - Vol2Fs.Smooth(0f, 0.3f, v));
+            Vector3 q = Apex + Dir(th) * Mathf.Max(0.15f, R + dr); q.y = Ground + Mathf.Max(0.02f, y);
+            return q;
+        }
+
+        Vector3 FaceNormal(float th, float v, float a)
+        {
+            Vector3 p = Surface(th, v, a, out _), pv = Surface(th, Mathf.Min(1f, v + 0.04f), a, out _), pt = Surface(th + 0.03f, v, a, out _);
+            Vector3 n = Vector3.Cross(pt - p, pv - p).normalized;
+            Vector3 toCam = CamPos - p; if (Vector3.Dot(n, toCam) < 0f) n = -n;
+            return n;
+        }
+
+        float CamFade(Vector3 p) => Vol2Fs.Smooth(1.5f, 2.6f, Vector3.Distance(p, CamPos));
+
         protected override void OnRing(float t, float a, bool ended)
         {
             var cam = CamPos;
-            _cols.Clear(); _ribbons.Clear(); _crowns.Clear();
-            for (int k = 0; k < _g.Count; k++)
+            float dt = _lastA < 0f ? 0f : Mathf.Clamp(a - _lastA, 0f, 0.1f); _lastA = a;
+            float life = 1f - Vol2Fs.Smooth(FadeFrom, FadeTo, a);
+            float wash = Vol2Fs.Smooth(WashFrom, WashTo, a);
+            // the wall and its foam cap
+            _water.Clear(); _foamSheet.Clear();
+            if (life > 0.01f && a > ExpandSeconds * 0.5f)
             {
-                var g = _g[k]; float s = a - g.At; if (s <= 0f) continue;
-                float rise = Vol2Fs.EaseOutBack(Mathf.Clamp01(s / RiseSeconds)), fall = Vol2Fs.Smooth(RiseSeconds + HoldSeconds, RiseSeconds + HoldSeconds + FallSeconds, s);
-                float h = g.H * rise * (1f - fall), life = 1f - Vol2Fs.Smooth(RiseSeconds + HoldSeconds + FallSeconds * 0.6f, RiseSeconds + HoldSeconds + FallSeconds + 0.1f, s);
-                Vector3 b = OnBand(g.Ang, R), outw = Dir(g.Ang), side = Vector3.Cross(Vector3.up, outw);
-                if (!g.Burst) { g.Burst = true; _g[k] = g; Vol2FsB1.Emit(_foam, b, 8); Vol2FsB1.Emit(_spray, b + Vector3.up * 0.3f, 8); Vol2FsB1.Emit(_mist, b + Vector3.up * 0.8f, 1); }
-                if (life <= 0.01f || h < 0.05f) continue;
-                // the column (a water sheet facing the eye), wobbling, its top bursting into a crown of spray
-                var pts = new Vector3[8]; var w = new float[8]; var al = new float[8];
-                for (int j = 0; j < 8; j++)
+                for (int iu = 0; iu < NU; iu++)
                 {
-                    float u = j / 7f;
-                    pts[j] = b + Vector3.up * h * u + side * Mathf.Sin(u * 5f + t * 9f + g.Rnd * 6f) * 0.08f + outw * 0.15f * u * u;
-                    w[j] = g.W * (1.35f - 0.95f * u + 0.5f * Mathf.Exp(-u * 12f)) * (1f + 0.25f * fall);      // polish: a splash skirt at the foot, a jet narrowing to the top al[j] = life * (0.85f - 0.25f * u);
-                }
-                _cols.Strip(pts, w, null, Color.white, al, g.Rnd, cam, 0f, 1f);
-                // the crown at the top: four sheets curling out and down
-                Vector3 top = pts[7];
-                for (int c = 0; c < 4; c++)
-                {
-                    float ca = c * Mathf.PI * 0.5f + g.Rnd * 3f; Vector3 d = (outw * Mathf.Cos(ca) + side * Mathf.Sin(ca)).normalized;
-                    var cp = new[] { top, top + d * 0.5f * (0.6f + g.W) + Vector3.up * 0.35f, top + d * 1.0f * (0.6f + g.W) + Vector3.down * 0.3f * (1f + fall) };
-                    _crowns.Strip(cp, new[] { 0.36f, 0.32f, 0.1f }, null, Color.white, new[] { life, life * 0.8f, life * 0.3f }, g.Rnd + c * 0.1f, cam, 0f, 1f);
-                }
-                if ((k + Time.frameCount) % 2 == 0) { Vol2FsB1.EmitV(_drops, top, (Random.onUnitSphere * 2f + Vector3.up * 2.5f + outw * 1.5f)); Vol2FsB1.EmitV(_spray, top, Random.onUnitSphere * 1.2f + Vector3.up * 0.5f, -1f, 0.6f); }
-                if (fall > 0f && (k + Time.frameCount) % 2 == 0) Vol2FsB1.EmitV(_spray, top, Vector3.down * 2f + outw * 0.5f, -1f, 0.6f);
-                // an ink ribbon spiralling up round the column (front and sides)
-                if (Back(g.Ang) < 0.4f && g.W > 0.3f)
-                {
-                    var rp = new Vector3[10]; var rw = new float[10]; var ra = new float[10];
-                    for (int j = 0; j < 10; j++)
+                    float th = (iu / (NU - 1f) * 2f - 1f) * Mathf.PI;
+                    for (int iv = 0; iv < NV; iv++)
                     {
-                        float u = j / 9f, sp = u * 7f + t * 6f + g.Rnd * 6f;
-                        rp[j] = b + Vector3.up * (h * 1.05f * u) + (side * Mathf.Cos(sp) + outw * Mathf.Sin(sp)) * (0.32f + 0.25f * u);
-                        rw[j] = 0.2f * Mathf.Sin(u * Mathf.PI) + 0.03f; ra[j] = life;
+                        float v = _v[iv];
+                        var p = Surface(th, v, a, out float h);
+                        int k = iu * NV + iv;
+                        _pos[k] = p;
+                        float foot = Vol2Fs.Smooth(0f, 0.12f, v), tip = 1f - 0.25f * Vol2Fs.Smooth(0.85f, 1f, v);
+                        _al[k] = h < 0.03f ? 0f : life * foot * tip * CamFade(p) * (0.75f + 0.25f * (1f - Back(th)));
+                        _sh[k] = Mathf.Lerp(0.35f, 1.05f, Vol2Fs.Smooth(0.1f, 0.75f, v));      // r2: deep at the foot, glassy toward the crest
                     }
-                    _ribbons.Strip(rp, rw, null, Color.white, ra, g.Rnd * 0.7f + 0.2f, cam, 0f, 1f);
+                    for (int iv = 0; iv < NF; iv++)
+                    {
+                        float v = Mathf.Lerp(0.25f, 0.97f, _fv[iv]);      // r3: white lace over the whole face, densest at the crest (r2: a flat green sheet)
+                        var p = Surface(th, v, a, out float h) + (cam - _pos[iu * NV + NV / 2]).normalized * 0.04f;
+                        int k = iu * NF + iv;
+                        _fpos[k] = p;
+                        float crest = Mathf.Clamp01(1f - Mathf.Abs(v - 0.74f) / 0.2f);
+                        _fal[k] = h < 0.05f ? 0f : life * Mathf.Clamp01(0.42f + 0.58f * crest) * (1f - 0.5f * wash) * CamFade(p) * Vol2Fs.Smooth(0f, 0.12f, _fv[iv] + 0.05f);
+                    }
                 }
+                _water.Grid(NU, NV, _pos, _al, _u, _v, 0.29f, _sh);
+                _foamSheet.Grid(NU, NF, _fpos, _fal, _u, _fv, 0.61f);
             }
-            _cols.Write(_colMesh); _ribbons.Write(_ribbonMesh); _crowns.Write(_crownMesh);
-            // the wet ring the water runs down into
-            _wet.Clear();
-            float wl = Vol2Fs.Smooth(ExpandSeconds, ExpandSeconds + 0.5f, a) * (1f - Vol2Fs.Smooth(LookSeconds, LookSeconds + 1.5f, a));
-            if (wl > 0.01f) Vol2FsB2.GroundRing(_wet, Apex, F, Ground, Inner - 0.6f * wl, Outer + 0.9f * wl, 64, null, 0.29f, cam, 0.02f, 0f, 5f);
-            _wet.Write(_wetMesh);
-            float fallAll = Vol2Fs.Smooth(ExpandSeconds + RiseSeconds + HoldSeconds, ExpandSeconds + RiseSeconds + HoldSeconds + FallSeconds, a);
-            if (fallAll > 0.05f && fallAll < 0.95f && Time.frameCount % 2 == 0) for (int k = 0; k < 3; k++) { float ang = Random.Range(-Mathf.PI, Mathf.PI); Vol2FsB1.Emit(_foam, OnBand(ang, R + Random.Range(-0.3f, 0.6f)), 1); }
-            _light.intensity = 4.5f * Vol2Fs.Smooth(0f, ExpandSeconds, a) * (1f - fallAll);
-            // the struck bodies: the water crashes down on them; they drip (the 4 s soak, a mirror of the rules) for as long as the look stands
+            _water.Write(_waterMesh); _foamSheet.Write(_foamMesh);
+
+            // the ink ribbons on the faces (drawn in along the wave as it curls, dried away with the wash)
+            _ink.Clear();
+            foreach (var r in _ribs)
+            {
+                float g = Mathf.Clamp01((a - r.At) / 0.35f); if (g <= 0.01f) continue;
+                float dry = Vol2Fs.Smooth(WashFrom - 0.1f, WashFrom + 0.5f, a);
+                const int n = 18; var pts = new Vector3[n]; var w = new float[n]; var al = new float[n]; var sd = new Vector3[n];
+                for (int j = 0; j < n; j++)
+                {
+                    float u = j / (n - 1f) * g;
+                    float th = r.Th + r.Span * u + 0.15f * a * Mathf.Sign(r.Span);
+                    float v = Mathf.Lerp(r.VA, r.VB, Mathf.Pow(u, 1.6f)) + 0.08f * Mathf.Sin(u * Mathf.PI * 2.2f + r.Rnd * 6f);
+                    var p = Surface(th, v, a, out _);
+                    var nrm = FaceNormal(th, v, a);
+                    pts[j] = p + nrm * 0.07f;
+                    var pv = Surface(th, Mathf.Min(1f, v + 0.05f), a, out _);
+                    sd[j] = (pv - p).normalized;
+                    w[j] = r.W * (0.25f + 0.75f * Mathf.Sin(Mathf.Clamp01(u / Mathf.Max(0.01f, g)) * Mathf.PI)) * (1f - 0.6f * dry);
+                    al[j] = (1f - dry) * CamFade(p);
+                }
+                float v0 = (3 - r.Row) * 0.25f + 0.012f, v1 = (4 - r.Row) * 0.25f - 0.012f;
+                _ink.Strip(pts, w, sd, Color.white, al, r.Rnd, cam, 0f, g, v0, v1);
+            }
+            _ink.Write(_inkMesh);
+
+            // spray, foam and beads off the crests; splash sheets at the tallest crests; the wash's foam along the inner edge
+            if (dt > 0f && life > 0.05f && a > ExpandSeconds * 0.5f)
+            {
+                float rate = dt * 60f;
+                int samples = Mathf.RoundToInt(28f * rate * (1f - 0.6f * wash));
+                float best = 0f; Vector3 bestP = Vector3.zero, bestOut = Vector3.zero;
+                for (int s = 0; s < samples; s++)
+                {
+                    float th = Random.Range(-Mathf.PI, Mathf.PI);
+                    var c = Surface(th, 0.7f, a, out float h);
+                    if (h < 0.25f || CamFade(c) < 0.5f) continue;
+                    Vector3 outw = Dir(th), tang = Vector3.Cross(Vector3.up, outw);
+                    float hk = Mathf.Clamp01(h / 2f);
+                    for (int q = 0; q < 2; q++) Vol2FsB1.EmitV(_spray, c + Random.insideUnitSphere * 0.15f, Vector3.up * Random.Range(1.5f, 4.5f) * (0.5f + hk) + outw * Random.Range(-1.5f, 1.8f) + tang * Random.Range(-1.2f, 1.2f), -1f, -1f);
+                    if (Random.value < 0.45f) Vol2FsB1.EmitV(_foam, c + Random.insideUnitSphere * 0.2f, Vector3.up * Random.Range(0.4f, 1.4f) - outw * Random.Range(0.2f, 0.9f), -1f, -1f);
+                    if (Random.value < 0.12f) Vol2FsB1.EmitV(_inkDrops, c, Vector3.up * Random.Range(2f, 5f) + outw * Random.Range(-1f, 1.5f), -1f, -1f);
+                    if (h > best) { best = h; bestP = c; bestOut = outw; }
+                }
+                _sheetClock += dt;
+                if (best > 0.8f && _sheetClock > 0.07f && wash < 0.5f) { _sheetClock = 0f; Vol2FsB1.EmitV(_sheets, bestP + Vector3.up * 0.2f, Vector3.up * Random.Range(1f, 2.5f) - bestOut * 0.6f, -1f, -1f); }
+                if (wash > 0.02f && wash < 0.98f)
+                    for (int s = 0; s < Mathf.RoundToInt(14f * rate); s++)
+                    {
+                        float th = Random.Range(-Mathf.PI, Mathf.PI);
+                        var p = Surface(th, 1f, a, out _); p.y = Ground + 0.05f;
+                        if (CamFade(p) < 0.5f) continue;
+                        Vol2FsB1.EmitV(_foam, p, -Dir(th) * Random.Range(0.4f, 1.4f) + Vector3.up * 0.3f, -1f, -1f);
+                    }
+            }
+
+            // the wet ground inside the ring (the water runs in with the wash) and its sheen
+            _wet.Clear(); _glint.Clear();
+            float wl = Vol2Fs.Smooth(0.25f, WashTo, a) * (1f - Vol2Fs.Smooth(LookSeconds + 0.5f, LookSeconds + 2.5f, a));
+            if (wl > 0.01f)
+            {
+                float rIn = Mathf.Max(0.3f, R - 0.4f + 0.5f * wash);
+                Vol2FsB2.GroundRing(_wet, Apex, F, Ground, 0.02f, rIn, 64, ang => wl * (0.85f + 0.15f * (1f - Back(ang))), 0.29f, cam, 0.02f, 0f, 5f);
+                Vol2FsB2.GroundRing(_glint, Apex, F, Ground, 0.02f, rIn, 64, ang => wl * 0.8f * (1f - Back(ang)), 0.47f, cam, 0.03f, 0f, 3f);
+            }
+            _wet.Write(_wetMesh); _glint.Write(_glintMesh);
+            _light.intensity = 4f * Vol2Fs.Smooth(0f, 0.3f, a) * (1f - wash);
+
+            // the struck bodies: a wave breaks over them; they drip (the 4 s soak, a mirror of the rules) for as long as the look stands
             foreach (var s in Hits)
             {
                 float sa = a - s.At; if (sa < 0f) continue;
@@ -120,8 +297,9 @@ namespace Oheangbu.App
                 if (!s.Started)
                 {
                     s.Started = true;
-                    for (int k = 0; k < 120; k++) Vol2FsB1.EmitV(_spray, c + Vector3.up * Random.Range(0.6f, 1.6f) + Random.insideUnitSphere * 0.4f, Vector3.down * Random.Range(1f, 4f) + Random.insideUnitSphere, -1f, Random.Range(0.4f, 0.8f));
-                    Vol2FsB1.Emit(_foam, FeetNow(s), 30); Vol2FsB1.Emit(_drops, c, 80);
+                    for (int k = 0; k < 140; k++) Vol2FsB1.EmitV(_spray, c + Vector3.up * Random.Range(0.6f, 1.8f) + Random.insideUnitSphere * 0.5f, Vector3.down * Random.Range(1f, 4f) + Random.insideUnitSphere * 1.5f, -1f, Random.Range(0.4f, 0.9f));
+                    for (int k = 0; k < 40; k++) Vol2FsB1.EmitV(_foam, FeetNow(s) + Random.insideUnitSphere * 0.5f, Random.insideUnitSphere * 1.2f + Vector3.up * 0.8f, -1f, -1f);
+                    for (int k = 0; k < 3; k++) Vol2FsB1.EmitV(_sheets, c + Random.insideUnitSphere * 0.4f, Vector3.up * Random.Range(1f, 2f), -1f, -1f);
                     var em = _drip.emission; em.rateOverTime = 45f;
                 }
                 _drip.transform.position = c + Vector3.up * 0.3f;

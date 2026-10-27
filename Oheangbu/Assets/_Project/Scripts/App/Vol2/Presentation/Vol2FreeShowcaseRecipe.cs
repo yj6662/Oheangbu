@@ -185,6 +185,8 @@ namespace Oheangbu.App
         // crescent, the launch splash, the frame's big gesture, the contact burst, the stains and the ash. Visuals only: reads the facts the look already reads.
         // ---------------------------------------------------------------------------------------------------------------------------------------------
         Vol2FsInkStage _ink; bool _inkLaunched; float _inkReach;
+        /// <summary>2026-10-28: the look draws its own frame gesture (the shared ink layer then skips its fan arc / ring enso / spiral; swing, splash and contact ink stay).</summary>
+        protected virtual bool OwnFrameGesture => false;
         readonly Dictionary<long, float> _inkLast = new Dictionary<long, float>();
 
         Vol2FsInkStage EnsureInk()
@@ -222,7 +224,7 @@ namespace Oheangbu.App
                 Vector3 tv = _tipPath.Count >= 2 ? _tipPath[_tipPath.Count - 1].P - _tipPath[Mathf.Max(0, _tipPath.Count - 4)].P : Vector3.zero;
                 _ink.Splash(tip, Fwd, tv, Ground, Inst.Origin, Fwd, Right, t);
                 var frame = Inst.Log.Glyph.Frame;
-                if (spec != null)
+                if (spec != null && !OwnFrameGesture)
                 {
                     Vector3 f = spec.Forward; f.y = 0f; f = f.sqrMagnitude > 1e-6f ? f.normalized : Fwd; Vector3 rr = Vector3.Cross(Vector3.up, f);
                     if (frame == Frame.Fan) _ink.FanArc(t, spec.Origin, f, rr, Ground, spec.FanDepth, spec.FanHalfAngleRad);
