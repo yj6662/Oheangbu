@@ -27,6 +27,11 @@ namespace Oheangbu.EditorTools.Vol2
                     case "off": Vol2FreeShowcaseInstaller.Mode = Vol2FreeShowcaseMode.Off; return "free showcase: Off " + Status();
                     case "auto": Vol2FreeShowcaseInstaller.Mode = Vol2FreeShowcaseMode.Auto; Ensure(); return "free showcase: Auto " + Status();
                     case "status": return Status();
+                    // 2026-10-27 ink-world pass: the shared ink layer and the world colour grade (default on; reset to on when Play starts) - before / after in one session
+                    case "ink:on": Vol2FsWorld.InkOn = true; return "free ink: On (grade " + (Vol2FsWorld.GradeOn ? "On" : "Off") + ")";
+                    case "ink:off": Vol2FsWorld.InkOn = false; return "free ink: Off (grade " + (Vol2FsWorld.GradeOn ? "On" : "Off") + ")";
+                    case "grade:on": Vol2FsWorld.GradeOn = true; return "free grade: On (ink " + (Vol2FsWorld.InkOn ? "On" : "Off") + ")";
+                    case "grade:off": Vol2FsWorld.GradeOn = false; return "free grade: Off (ink " + (Vol2FsWorld.InkOn ? "On" : "Off") + ")";
                     case "play": return Vol2VfxCommands.Run("play");
                     // batch 2 (LAB-ONLY): the scripted enemy blow on the ㅓ guard, judged by the real vol.2 parry rules (Vol2FsEnemyStrike)
                     case "strike:on": return Vol2FsEnemyStrike.Arm(true);
@@ -75,7 +80,7 @@ namespace Oheangbu.EditorTools.Vol2
         static string Status()
         {
             var inst = EditorApplication.isPlaying ? Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>() : null;
-            string s = "mode=" + Vol2FreeShowcaseInstaller.Mode + " playing=" + EditorApplication.isPlaying + " lab=" + Vol2FreeShowcaseInstaller.LabLoaded();
+            string s = "ink=" + Vol2FsWorld.InkOn + " grade=" + Vol2FsWorld.GradeOn + " mode=" + Vol2FreeShowcaseInstaller.Mode + " playing=" + EditorApplication.isPlaying + " lab=" + Vol2FreeShowcaseInstaller.LabLoaded();
             s += " | " + Vol2FsEnemyStrike.Status();
             if (inst == null) return s + " installer=none";
             s += " installer on=" + inst.On + " views=" + inst.Installed + " kit=" + (inst.Kit != null && inst.Kit.Ok ? "ok" : inst.Kit != null ? inst.Kit.Problem : "null");

@@ -246,6 +246,259 @@ def b5():
         save(f'fs_seal{n}.png', rgba(np.clip(a, 0, 1)))
 
 
+def ink():
+    """2026-10-27 먹 세계 맞추기 (Docs/Research/vfx120/world_ink_pass_design.md section 1): sumi-e brush strokes, splats, drops and ground stains, procedural.
+    White RGB + alpha = ink density (the showcase shaders multiply the colour). Deterministic seeds. Only these are written (--ink):
+      fs_sumi_stroke  2048 x 2048 = four 2048 x 512 rows (u = along the stroke, head -> tail; v = across): 0 a pressed fat stroke (wet head blob, belly, dry-brush
+                      tail), 1 a fast whip stroke (thin, long, ends in hair tufts), 2 a hooked stroke (a kink and a pointed hook at the end), 3 a stroke split in
+                      two dry-brush branches. Bristle lanes (parallel hairs of its own length / ink supply, breaking up toward the tail = 비백), a thin bleed
+                      halo (ink soaking into paper) and flung specks around the tail.
+      fs_sumi_splat   1024 x 1024 = 4 x 4 splats (row 0 crowns, row 1 radial rays, row 2 run-off lobes, row 3 big blots with satellite drops)
+      fs_sumi_drops   512 x 512 = 4 x 4 (row 0 round drops, row 1 tear drops, row 2 long thin drops, row 3 crumb shards)
+      fs_sumi_dot     128 x 128 a hard round drop (stretched billboards)
+      fs_sumi_stain   1024 x 1024 = 2 x 2 ground stains (dark core, pale water-bleed ring, flung specks)"""
+    from PIL import ImageFilter
+    global OUT
+    if '--out' in __import__('sys').argv: OUT = Path(__import__('sys').argv[__import__('sys').argv.index('--out') + 1])      # preview elsewhere (not under Assets)
+
+    def sm(a, b, x):
+        t = np.clip((x - a) / (b - a), 0, 1)
+        return t * t * (3 - 2 * t)
+
+    def n1(length, cells, seed):
+        r = np.random.default_rng(seed).random(cells + 3)
+        x = np.linspace(0, cells, length, endpoint=False)
+        i = np.floor(x).astype(int); f = x - i; f = f * f * (3 - 2 * f)
+        return r[i] * (1 - f) + r[i + 1] * f
+
+    def lanes_u(L, length, cells, seed):
+        """L lanes, each its own value noise along u -> (L, length)."""
+        r = np.random.default_rng(seed).random((L, cells + 3))
+        x = np.linspace(0, cells, length, endpoint=False)
+        i = np.floor(x).astype(int); f = x - i; f = f * f * (3 - 2 * f)
+        return r[:, i] * (1 - f) + r[:, i + 1] * f
+
+    def vresize(a, h):
+        im = Image.fromarray(a.astype(np.float32), mode='F').resize((a.shape[1], h), Image.BILINEAR)
+        return np.asarray(im, dtype=np.float64)
+
+    def blur(a, rad):
+        im = Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(rad))
+        return np.asarray(im, dtype=np.float64) / 255
+
+    def disc(canvas, cx, cy, rx, ry, ang=0.0, hard=1.0):
+        """Max a (rotated) ellipse into canvas (pixel units)."""
+        h, w = canvas.shape
+        m = int(max(rx, ry) * 1.5 + 3)
+        x0, x1 = max(0, int(cx) - m), min(w, int(cx) + m + 1); y0, y1 = max(0, int(cy) - m), min(h, int(cy) + m + 1)
+        if x0 >= x1 or y0 >= y1: return
+        yy, xx = np.mgrid[y0:y1, x0:x1]
+        dx, dy = xx - cx, yy - cy
+        ca, sa = np.cos(ang), np.sin(ang)
+        u = (dx * ca + dy * sa) / max(rx, 0.5); v = (-dx * sa + dy * ca) / max(ry, 0.5)
+        d = np.sqrt(u * u + v * v)
+        canvas[y0:y1, x0:x1] = np.maximum(canvas[y0:y1, x0:x1], np.clip((1 - d) * 6, 0, 1))
+
+    W, RH = 2048, 512
+    u = np.linspace(0, 1, W)[None, :]
+    vy = np.linspace(-1, 1, RH)[:, None]
+
+    def stroke_row(kind, seed):
+        rng = np.random.default_rng(seed)
+        edge = (n1(W, 18, seed + 1) - 0.5) * 0.20 + (n1(W, 90, seed + 2) - 0.5) * 0.07          # the outline wanders along the stroke
+        # width profile (half width in v units) and centre line; the pressed head is a rounded blob (never a flat cut)
+        round0 = np.sqrt(np.clip(1 - ((0.05 - u) / 0.05) ** 2, 0, 1)) * (u < 0.05) + (u >= 0.05)
+        if kind == 0:
+            base = (0.26 + 0.50 * sm(0, 0.09, u) ** 0.8) * (1 - 0.78 * sm(0.10, 0.85, u) ** 0.9) + 0.10 * np.exp(-((u - 0.07) / 0.04) ** 2)
+            centre = 0.05 * (n1(W, 5, seed + 3)[None, :] - 0.5) * 2 + 0.04 * np.sin(u * 3.2)
+            t0, ncell, lock = 0.22, 30, 0.0
+        elif kind == 1:
+            base = 0.30 * sm(0, 0.12, u) ** 0.55 * (1 - 0.82 * sm(0.22, 1.0, u) ** 0.8) + 0.05 * np.exp(-((u - 0.06) / 0.035) ** 2)
+            centre = 0.07 * (n1(W, 4, seed + 3)[None, :] - 0.5) * 2 + 0.06 * u
+            t0, ncell, lock = 0.45, 36, 0.0
+        elif kind == 2:
+            base = (0.24 + 0.32 * sm(0, 0.1, u) ** 0.7) * (1 - 0.45 * sm(0.18, 0.78, u)) * (1 - sm(0.88, 0.97, u)) + 0.09 * np.exp(-((u - 0.07) / 0.04) ** 2)
+            centre = -0.60 * sm(0.66, 0.90, u) ** 1.25 + 0.04 * (n1(W, 5, seed + 3)[None, :] - 0.5) * 2
+            t0, ncell, lock = 0.74, 32, 0.0
+        else:
+            base = (0.34 + 0.50 * sm(0, 0.1, u) ** 0.8) * (1 - 0.35 * sm(0.2, 1.0, u))
+            centre = 0.0 * u
+            t0, ncell, lock = 0.30, 28, 0.0
+        base = base * round0
+        w = np.maximum(base + edge[None, :] * (0.3 + base), 0.0)
+        # bristle lanes: fine hairs (2 - 3 px), medium (6 px) and coarse bands (12 px); each has its own ink supply and its own breaks along u (비백)
+        L = RH // 2
+        supply = vresize(np.repeat(np.random.default_rng(seed + 5).random((L, 1)), W, 1), RH)
+        L2 = RH // 6
+        supply2 = vresize(np.repeat(np.random.default_rng(seed + 15).random((L2, 1)), W, 1), RH)
+        brk = vresize(lanes_u(L, W, ncell, seed + 6), RH)
+        brk2 = vresize(lanes_u(RH // 12, W, 7, seed + 7), RH)
+        pressure = 1 - sm(0.05, 0.62, u)
+        drain = sm(t0, 1.0, u)
+        lane_edge = vresize(np.repeat(np.random.default_rng(seed + 8).random((L2, 1)), W, 1), RH)      # lanes also move the outline: a hairy edge
+        val = supply * 0.30 + supply2 * 0.30 + brk * 0.34 + brk2 * 0.45 + pressure * 0.46 - drain * 0.80 - 0.22
+        gate = sm(0.0, 0.2, val)
+        gate = np.maximum(gate, 1 - sm(0.045, 0.16, u))                   # a wet, solid head
+        if kind == 2: gate = np.maximum(gate, sm(0.66, 0.72, u) * (1 - sm(0.93, 0.98, u)) * 0.95)      # the hook stays solid
+        def body_of(cen, ww):
+            d = np.abs(vy - cen)
+            ww = ww + (lane_edge - 0.5) * 0.16 * (0.25 + ww)
+            return np.clip((ww - d) * 70, 0, 1)
+        if kind == 3:
+            sp = sm(0.14, 0.72, u) ** 1.0
+            wl = base * (1 - 0.55 * sm(0.12, 0.45, u)) + edge[None, :] * 0.14
+            body = np.maximum(body_of(centre + 0.52 * sp, wl), body_of(centre - 0.52 * sp, wl))
+        else:
+            body = body_of(centre, w)
+        a = body * gate
+        pocket = vresize(lanes_u(L // 2, W, 14, seed + 9), RH)
+        a = a * (0.88 + 0.12 * pocket)
+        # bleed halo (ink soaking into paper)
+        halo = np.clip(blur(a, 6) * 0.55 - 0.02, 0, 0.3)
+        a = np.maximum(a, halo * (1 - a))
+        # flung specks near the stroke (their number grows toward the tail), elongated along the stroke
+        sp_img = np.zeros_like(a)
+        count = 70 if kind in (0, 3) else 50
+        ux = u[0]
+        for _ in range(count):
+            uu = 0.22 + 0.76 * rng.random() ** 0.8
+            if rng.random() < 0.15: uu = 0.02 + 0.2 * rng.random()
+            cenv = float(np.interp(uu, ux, centre[0] if centre.shape[0] == 1 else centre[RH // 2]))
+            wid = float(np.interp(uu, ux, base[0]))
+            off = (wid * 1.05 + 0.06 + rng.random() * 0.30) * (1 if rng.random() < 0.5 else -1)
+            vv = np.clip(cenv + off, -0.88, 0.88)
+            r = 1.0 + rng.random() ** 2.5 * 4.2
+            disc(sp_img, uu * (W - 1), (vv + 1) / 2 * (RH - 1), r * (1 + rng.random() * 1.8), r, 0.0)
+        a = np.maximum(a, sp_img)
+        a[:10, :] = 0; a[-10:, :] = 0; a[:, :2] = 0; a[:, -3:] = 0
+        return np.clip(a, 0, 1)
+    sheet_s = np.concatenate([stroke_row(k, 100 + k * 37) for k in range(4)], axis=0)
+    save('fs_sumi_stroke.png', rgba(sheet_s))
+
+    # ---- splats (256 px cells): polar edge R(theta) with spikes ----
+    C = 256
+    def splat(kind, seed):
+        rng = np.random.default_rng(seed)
+        x, y = grid(C); r = np.sqrt(x * x + y * y); th = np.arctan2(y, x)
+        nz = lambda f, s: sum(np.sin(th * (f + k) + rng.random() * 6.28) * (0.5 / (k + 1)) for k in range(3))
+        base = 0.22 + 0.04 * nz(2, 0)
+        R = np.zeros_like(r) + base
+        drops = np.zeros_like(r)
+        def dd(rr, tt, rad, elong=1.0):
+            cx, cy = (np.cos(tt) * rr + 1) / 2 * (C - 1), (np.sin(tt) * rr + 1) / 2 * (C - 1)
+            disc(drops, cx, cy, rad * (C / 2) * elong, rad * (C / 2), tt)
+        def spike(t0, amp, sig):
+            d = np.angle(np.exp(1j * (th - t0)))
+            return amp * np.exp(-(d / sig) ** 2)
+        if kind == 0:
+            n = int(rng.integers(9, 14)); off = rng.random() * 6.28
+            for i in range(n):
+                t0 = off + i / n * 6.283 + (rng.random() - 0.5) * 0.25; amp = 0.30 + 0.30 * rng.random(); sig = 0.10 + 0.05 * rng.random()
+                R = R + spike(t0, amp, sig)
+                if rng.random() < 0.85: dd(0.22 + amp + 0.03, t0, 0.025 + 0.03 * rng.random(), 1.5)
+            for _ in range(10): dd(0.5 + 0.45 * rng.random(), rng.random() * 6.28, 0.008 + 0.018 * rng.random())
+        elif kind == 1:
+            n = int(rng.integers(26, 46))
+            for i in range(n):
+                t0 = rng.random() * 6.283; amp = 0.08 + 0.55 * rng.random() ** 1.7; sig = 0.022 + 0.03 * rng.random()
+                R = R + spike(t0, amp, sig)
+                if amp > 0.3 and rng.random() < 0.4: dd(0.22 + amp + 0.03, t0, 0.012 + 0.02 * rng.random(), 1.8)
+            for _ in range(14): dd(0.4 + 0.5 * rng.random(), rng.random() * 6.28, 0.006 + 0.014 * rng.random())
+        elif kind == 2:
+            down = rng.random() * 6.28
+            R = R + spike(down, 0.55, 0.20) + spike(down + 0.6, 0.30, 0.12) + spike(down - 0.5, 0.26, 0.10) + spike(down + 2.6, 0.18, 0.2)
+            dd(0.22 + 0.60, down, 0.05, 1.6)
+            for _ in range(8): dd(0.45 + 0.45 * rng.random(), down + (rng.random() - 0.5) * 1.8, 0.008 + 0.02 * rng.random(), 1.4)
+        else:
+            R = R + 0.13 + 0.05 * nz(3, 1)
+            for i in range(5): R = R + spike(rng.random() * 6.28, 0.1 + 0.12 * rng.random(), 0.2 + 0.1 * rng.random())
+            for _ in range(24): dd(0.5 + 0.45 * rng.random() ** 0.8, rng.random() * 6.28, 0.007 + 0.03 * rng.random() ** 2)
+        a = np.clip((R - r) * 46, 0, 1)
+        a = np.maximum(a, drops)
+        if seed % 2 == 1: a = np.maximum(np.clip(blur(a, 3.0) * 1.2 - 0.05, 0, 1) * 0.9, a * 0.0 + blur(a, 1.0))     # a bled one: a soft rim
+        win = np.clip((0.97 - np.maximum(np.abs(x), np.abs(y))) * 14, 0, 1)
+        return a * win
+
+    rows = []
+    for kr in range(4):
+        rows.append(np.concatenate([splat(kr, 300 + kr * 10 + k) for k in range(4)], axis=1))
+    save('fs_sumi_splat.png', rgba(np.concatenate(rows, axis=0)))
+
+    # ---- drops (128 px cells) ----
+    D = 128
+    def drop_cell(kind, k):
+        rng = np.random.default_rng(500 + kind * 10 + k)
+        cv = np.zeros((D, D))
+        if kind == 0:
+            rr = 0.55 + 0.12 * k
+            th = np.linspace(0, 6.283, 90); Rr = rr * (1 + 0.05 * np.sin(th * 3 + k) + 0.03 * np.sin(th * 5 + k * 2))
+            x, y = grid(D); r = np.sqrt(x * x + y * y); a = np.arctan2(y, x)
+            Rn = np.interp(a, np.linspace(-3.1416, 3.1416, 90), np.roll(Rr, 30))
+            cv = np.clip((Rn - r) * 30, 0, 1)
+        elif kind == 1:
+            x, y = grid(D)
+            head = 0.30 + 0.05 * k; cx0 = -0.35
+            d1 = np.sqrt((x - cx0) ** 2 + y * y) - head
+            tail = np.clip(1 - np.abs(y) / (head * 0.9 * (1 - np.clip((x - cx0) / (1.25 - cx0), 0, 1)) ** 1.4 + 1e-3), 0, 1) * (x > cx0) * (x < 0.9)
+            cv = np.maximum(np.clip(-d1 * 30, 0, 1), np.clip(tail * 14, 0, 1) * (x > cx0 - 0.05))
+        elif kind == 2:
+            x, y = grid(D)
+            head = 0.17 + 0.03 * k; cx0 = -0.7
+            d1 = np.sqrt((x - cx0) ** 2 + y * y) - head
+            tail = np.clip(1 - np.abs(y) / (head * 0.8 * (1 - np.clip((x - cx0) / (1.8), 0, 1)) ** 1.1 + 1e-3), 0, 1) * (x > cx0) * (x < 0.95)
+            cv = np.maximum(np.clip(-d1 * 30, 0, 1), np.clip(tail * 12, 0, 1))
+        else:
+            x, y = grid(D); r = np.sqrt(x * x + y * y); a = np.arctan2(y, x)
+            n = 5 + k
+            ang = np.sort(rng.random(n) * 6.283) - 3.1416
+            rad = 0.45 + 0.4 * rng.random(n)
+            Rn = np.interp(a, np.concatenate([ang, [ang[0] + 6.283]]), np.concatenate([rad, [rad[0]]]), period=6.283) if False else np.interp(a, np.concatenate([[ang[-1] - 6.283], ang, [ang[0] + 6.283]]), np.concatenate([[rad[-1]], rad, [rad[0]]]))
+            cv = np.clip((Rn - r) * 22, 0, 1)
+        win = np.clip((0.97 - np.maximum(np.abs(grid(D)[0]), np.abs(grid(D)[1]))) * 14, 0, 1)
+        return cv * win
+    save('fs_sumi_drops.png', rgba(np.concatenate([np.concatenate([drop_cell(kr, k) for k in range(4)], axis=1) for kr in range(4)], axis=0)))
+    x, y = grid(128); r = np.sqrt(x * x + y * y)
+    save('fs_sumi_dot.png', rgba(np.clip((0.9 - r) * 9, 0, 1)))
+
+    # ---- ground stains (512 px cells) ----
+    S = 512
+    def stain(k):
+        rng = np.random.default_rng(700 + k)
+        x, y = grid(S); r = np.sqrt(x * x + y * y); th = np.arctan2(y, x)
+        ph = rng.random(6) * 6.28
+        wob = 0.5 * np.sin(th * 2 + ph[0]) + 0.3 * np.sin(th * 3 + ph[1]) + 0.2 * np.sin(th * 5 + ph[2])
+        Rc = 0.27 + 0.07 * wob
+        core = np.clip((Rc - r) * 40, 0, 1) * (0.88 + 0.12 * fbm(S, 8, 3, 710 + k))
+        Rr = Rc + 0.11 + 0.06 * (0.5 * np.sin(th * 4 + ph[3]) + 0.5 * np.sin(th * 7 + ph[4]))
+        ring = np.clip((Rr - r) * 22, 0, 1) * np.clip((r - Rc + 0.04) * 20, 0, 1) * (0.28 + 0.14 * fbm(S, 12, 3, 720 + k))
+        a = np.maximum(core, ring)
+        sp = np.zeros_like(a)
+        for _ in range(26):
+            tt = rng.random() * 6.283; dr = 0.45 + 0.5 * rng.random() ** 0.9; rad = 0.006 + 0.02 * rng.random() ** 2
+            disc(sp, (np.cos(tt) * dr + 1) / 2 * (S - 1), (np.sin(tt) * dr + 1) / 2 * (S - 1), rad * S / 2 * 1.4, rad * S / 2, tt)
+        for _ in range(6):
+            tt = rng.random() * 6.283
+            for s in range(34):
+                dr = 0.33 + s * 0.016; rad = 0.017 * (1 - s / 36) ** 1.4 + 0.002
+                disc(sp, (np.cos(tt) * dr + 1) / 2 * (S - 1), (np.sin(tt) * dr + 1) / 2 * (S - 1), rad * S / 2 * 1.7, rad * S / 2, tt)
+        a = np.maximum(a, sp)
+        win = np.clip((0.97 - np.maximum(np.abs(x), np.abs(y))) * 14, 0, 1)
+        return a * win
+    save('fs_sumi_stain.png', rgba(np.concatenate([np.concatenate([stain(0), stain(1)], axis=1), np.concatenate([stain(2), stain(3)], axis=1)], axis=0)))
+    # ---- the wood energy ramp in the world palette (생죽 청록 -> pale silver-jade; the kit swaps it in while the world grade is on) ----
+    stops = [(0.0, (0.0, 0.0, 0.0)), (0.3, (0.03, 0.09, 0.07)), (0.6, (0.17, 0.40, 0.31)), (0.85, (0.58, 0.78, 0.64)), (1.0, (0.92, 0.96, 0.86))]
+    uu = np.linspace(0, 1, 256)
+    ramp = np.stack([np.interp(uu, [s[0] for s in stops], [s[1][c] for s in stops]) for c in range(3)], -1)
+    save('fs_ramp_wood_w.png', np.dstack([np.repeat(ramp[None], 4, 0), np.ones((4, 256))]))
+    # ---- the water ramp in the world palette (silver-white foam -> grey-teal -> deep ink-blue; the cyan ice of the first palette is gone) ----
+    stops = [(0.0, (0.90, 0.90, 0.87)), (0.22, (0.58, 0.66, 0.68)), (0.5, (0.17, 0.29, 0.34)), (0.8, (0.05, 0.10, 0.14)), (1.0, (0.02, 0.04, 0.06))]
+    ramp = np.stack([np.interp(uu, [s[0] for s in stops], [s[1][c] for s in stops]) for c in range(3)], -1)
+    save('fs_ramp_water_w.png', np.dstack([np.repeat(ramp[None], 4, 0), np.ones((4, 256))]))
+
+
+if '--ink' in __import__('sys').argv:
+    ink()
+    raise SystemExit(0)
 if '--b5' in __import__('sys').argv:
     b5()
     raise SystemExit(0)

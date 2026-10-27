@@ -51,6 +51,13 @@ namespace Oheangbu.App
 
         public Material Mat(Vol2FsMat m)
         {
+            // 2026-10-27 ink-world pass: the world grade, once, here (graded before the cache key, so grade on / off never share a material)
+            if (Vol2FsWorld.GradeOn)
+            {
+                m.Tint = Vol2FsWorld.Grade(m.Tint); m.Edge = Vol2FsWorld.Grade(m.Edge);
+                if (m.Ramp == "fs_ramp_wood" && Tex("fs_ramp_wood_w") != null) m.Ramp = "fs_ramp_wood_w";
+                if (m.Ramp == "fs_ramp_water" && Tex("fs_ramp_water_w") != null) m.Ramp = "fs_ramp_water_w";
+            }
             string key = m.Key;
             if (_mats.TryGetValue(key, out var mat)) return mat;
             mat = new Material(_shader) { name = "Fs_" + m.Tex, hideFlags = HideFlags.DontSave };
@@ -69,7 +76,7 @@ namespace Oheangbu.App
             if (flip != null) { mat.SetTexture("_FlipTex", flip); mat.SetFloat("_FsKind", 1f); if (m.FlipHeat > 0f) mat.SetFloat("_FlipHeat", m.FlipHeat); }
             // 2026-10-27 per-glyph polish: fire stays orange-red - the batches' intensity 2 - 3 with a 1.6 - 1.7 ramp read yellow-white from the shoulder
             if (fire) { mat.SetFloat("_Intensity", Mathf.Min(m.Intensity, 1.8f)); mat.SetFloat("_RampScale", Mathf.Min(m.RampScale, 1.3f)); }
-            if (m.Ramp == "fs_ramp_water" && (m.Tex == "fs_water" || m.Tex == "fs_swirl" || m.Tex == "fs_streak")) { mat.SetFloat("_WaterMode", 1f); mat.SetFloat("_WaterRim", WaterRim); }
+            if (m.Ramp == "fs_ramp_water" && (m.Tex == "fs_water" || m.Tex == "fs_swirl" || m.Tex == "fs_streak")) { mat.SetFloat("_WaterMode", 1f); mat.SetFloat("_WaterRim", WaterRim); if (Vol2FsWorld.GradeOn) mat.SetColor("_WaterDeep", new Color(0.025f, 0.10f, 0.15f, 1f)); }
             _mats[key] = mat;
             return mat;
         }
@@ -84,12 +91,14 @@ namespace Oheangbu.App
         public Material Metal(float bright = 1f, float hot = 0f, Color accent = default, Color tint = default)
         {
             if (tint == default) tint = Color.white;
-            string key = "metal|" + bright + "|" + hot + "|" + accent + "|" + tint;
+            accent = Vol2FsWorld.Grade(accent);
+            string key = "metal|" + (Vol2FsWorld.GradeOn ? "w|" : "") + bright + "|" + hot + "|" + accent + "|" + tint;
             if (_mats.TryGetValue(key, out var mat)) return mat;
             var sh = Shader.Find(MetalShaderName);
             if (sh == null) return null;
             mat = new Material(sh) { name = "Fs_Metal", hideFlags = HideFlags.DontSave };
             mat.SetTexture("_BaseMap", Tex("fs_steel")); mat.SetColor("_Tint", tint); mat.SetFloat("_Bright", bright); mat.SetFloat("_Hot", Mathf.Clamp01(hot)); mat.SetColor("_Accent", accent);
+            mat.SetFloat("_Chrome", Vol2FsWorld.GradeOn ? 1f : 0f);      // 2026-10-27 ink-world pass: silver two-tone chrome (1) vs last round's dark world (0)
             _mats[key] = mat;
             return mat;
         }
@@ -98,6 +107,7 @@ namespace Oheangbu.App
         /// wash still grades it and draws its lines). Null when the shader is missing (the caller keeps its URP Lit stone).</summary>
         public Material Stone(string tex, Color tint, Color emission, string emissionTex)
         {
+            tint = Vol2FsWorld.Grade(tint); emission = Vol2FsWorld.Grade(emission);
             string key = "stone|" + tex + "|" + tint + "|" + emission + "|" + emissionTex;
             if (_mats.TryGetValue(key, out var mat)) return mat;
             var sh = Shader.Find(StoneShaderName);
@@ -118,6 +128,7 @@ namespace Oheangbu.App
         /// <summary>URP Lit bark (tinted), with an emissive crack mask when <paramref name="glow"/> has any colour.</summary>
         public Material Bark(Color tint, Color glow, float smooth = 0.18f, string tex = "fs_bark", string glowTex = "fs_vein")
         {
+            tint = Vol2FsWorld.Grade(tint); glow = Vol2FsWorld.Grade(glow);
             string key = "bark|" + tint + "|" + glow + "|" + tex + "|" + glowTex;
             if (_mats.TryGetValue(key, out var mat)) return mat;
             var sh = Shader.Find("Universal Render Pipeline/Lit");
@@ -135,6 +146,7 @@ namespace Oheangbu.App
         /// <summary>Solid (alpha-clipped, depth-writing) ink with a burning rim: Oheangbu/FreeShowcase/InkSolid.</summary>
         public Material InkSolid(string tex, Color tint, Color edge, float edgeWidth = 0.12f, float noiseAmt = 0.5f, float cutoff = 0.35f, float noiseScale = 1f)
         {
+            tint = Vol2FsWorld.Grade(tint); edge = Vol2FsWorld.Grade(edge);
             string key = "solid|" + tex + "|" + tint + "|" + edge + "|" + edgeWidth + "|" + noiseAmt + "|" + cutoff + "|" + noiseScale;
             if (_mats.TryGetValue(key, out var mat)) return mat;
             var sh = Shader.Find(SolidShaderName);
@@ -150,6 +162,7 @@ namespace Oheangbu.App
         /// <summary>URP Lit two-sided alpha-clipped leaves (the leaf atlas: 2 x 2 cells).</summary>
         public Material Leaf(Color tint, Color glow)
         {
+            tint = Vol2FsWorld.Grade(tint); glow = Vol2FsWorld.Grade(glow);
             string key = "leaf|" + tint + "|" + glow;
             if (_mats.TryGetValue(key, out var mat)) return mat;
             var sh = Shader.Find("Universal Render Pipeline/Lit");
@@ -265,7 +278,9 @@ namespace Oheangbu.App
                 main.startSizeY = new ParticleSystem.MinMaxCurve(d.Size0 * d.Aspect, d.Size1 * d.Aspect);
                 main.startSizeZ = new ParticleSystem.MinMaxCurve(d.Size0, d.Size1);
             }
-            main.startColor = new ParticleSystem.MinMaxGradient(d.C0, d.C1);
+            // 2026-10-27 ink-world pass: the world grade on the system's colours (local copies: a description built once is never graded twice)
+            Color gC0 = Vol2FsWorld.Grade(d.C0), gC1 = Vol2FsWorld.Grade(d.C1), gEnd = Vol2FsWorld.Grade(d.EndTint);
+            main.startColor = new ParticleSystem.MinMaxGradient(gC0, gC1);
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, d.RandRot * Mathf.Deg2Rad);
             main.gravityModifier = d.Gravity;
             main.simulationSpace = d.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
@@ -280,7 +295,7 @@ namespace Oheangbu.App
             var col = ps.colorOverLifetime;
             col.enabled = true;
             var g = new Gradient();
-            g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(d.EndTint, 1f) },
+            g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(gEnd, 1f) },
                       new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, d.AlphaHoldTo), new GradientAlphaKey(0f, 1f) });
             col.color = new ParticleSystem.MinMaxGradient(g);
             var sz = ps.sizeOverLifetime;
@@ -363,7 +378,7 @@ namespace Oheangbu.App
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
             var l = go.AddComponent<Light>();
-            l.type = LightType.Point; l.color = c; l.range = range; l.intensity = 0f; l.shadows = LightShadows.None;
+            l.type = LightType.Point; l.color = Vol2FsWorld.Grade(c); l.range = range; l.intensity = 0f; l.shadows = LightShadows.None;
             l.renderMode = LightRenderMode.ForcePixel;
             return l;
         }
@@ -523,7 +538,7 @@ namespace Oheangbu.App
         public void Clear() { _v.Clear(); _c.Clear(); _uv.Clear(); _i.Clear(); }
 
         /// <summary>A polyline strip; <paramref name="side"/> gives the width direction per point (null = facing the camera).</summary>
-        public void Strip(IList<Vector3> pts, IList<float> widths, IList<Vector3> side, Color color, IList<float> alphas, float random, Vector3 camPos, float u0 = 0f, float u1 = 1f)
+        public void Strip(IList<Vector3> pts, IList<float> widths, IList<Vector3> side, Color color, IList<float> alphas, float random, Vector3 camPos, float u0 = 0f, float u1 = 1f, float v0 = 0f, float v1 = 1f)
         {
             int n = pts.Count;
             if (n < 2) return;
@@ -538,8 +553,8 @@ namespace Oheangbu.App
                 float w = widths[k] * 0.5f;
                 float u = Mathf.Lerp(u0, u1, k / (float)(n - 1));
                 var c = color; c.a = alphas != null ? alphas[k] : color.a;
-                _v.Add(pts[k] - s * w); _c.Add(c); _uv.Add(new Vector3(u, 0f, random));
-                _v.Add(pts[k] + s * w); _c.Add(c); _uv.Add(new Vector3(u, 1f, random));
+                _v.Add(pts[k] - s * w); _c.Add(c); _uv.Add(new Vector3(u, v0, random));
+                _v.Add(pts[k] + s * w); _c.Add(c); _uv.Add(new Vector3(u, v1, random));
             }
             for (int k = 0; k < n - 1; k++)
             {
@@ -555,6 +570,17 @@ namespace Oheangbu.App
             _v.Add(c - right * h - fwd * h); _v.Add(c + right * h - fwd * h); _v.Add(c - right * h + fwd * h); _v.Add(c + right * h + fwd * h);
             for (int k = 0; k < 4; k++) _c.Add(color);
             _uv.Add(new Vector3(0, 0, random)); _uv.Add(new Vector3(1, 0, random)); _uv.Add(new Vector3(0, 1, random)); _uv.Add(new Vector3(1, 1, random));
+            _i.Add(b); _i.Add(b + 2); _i.Add(b + 1); _i.Add(b + 1); _i.Add(b + 2); _i.Add(b + 3);
+        }
+
+        /// <summary>2026-10-27 ink-world pass: a ground quad that samples one cell of a 2 x 2 sheet (cell 0..3, row 0 = the bottom row of the texture).</summary>
+        public void QuadCell(Vector3 c, Vector3 right, Vector3 fwd, float size, Color color, float random, int cell)
+        {
+            int b = _v.Count; float h = size * 0.5f;
+            float cu = (cell % 2) * 0.5f, cv = (cell / 2 % 2) * 0.5f;
+            _v.Add(c - right * h - fwd * h); _v.Add(c + right * h - fwd * h); _v.Add(c - right * h + fwd * h); _v.Add(c + right * h + fwd * h);
+            for (int k = 0; k < 4; k++) _c.Add(color);
+            _uv.Add(new Vector3(cu, cv, random)); _uv.Add(new Vector3(cu + 0.5f, cv, random)); _uv.Add(new Vector3(cu, cv + 0.5f, random)); _uv.Add(new Vector3(cu + 0.5f, cv + 0.5f, random));
             _i.Add(b); _i.Add(b + 2); _i.Add(b + 1); _i.Add(b + 1); _i.Add(b + 2); _i.Add(b + 3);
         }
 

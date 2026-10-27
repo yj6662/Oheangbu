@@ -154,7 +154,21 @@ namespace Oheangbu.App
                 Half = new Vol2FsRxHalf(kit, Patch, Root.transform, P, Ground, Radius, Dir, Contacted, lost, HalfAt, Seed);
                 Note += " | " + Half.Note;
             }
+            // 2026-10-27 ink-world pass: the shared ink layer at the reaction point (burst: splat, droplets, X slashes, sparks; ground stain; ash)
+            if (Vol2FsWorld.InkOn && kit != null && kit.Ok)
+            {
+                try
+                {
+                    Ink = new Vol2FsInkStage(kit, Root.transform, AccA, Seed);
+                    Ink.Burst(P + Vector3.up * 0.9f, new Vector3(P.x, Ground, P.z), Dir, 1f, 0f);
+                    for (int i = 0; i < Bodies.Count && i < 3; i++) if (Bodies[i].T != null) Ink.Burst(Bodies[i].B.center, new Vector3(Bodies[i].B.center.x, Mathf.Max(Ground, Bodies[i].Feet.y), Bodies[i].B.center.z), Bodies[i].Dir, 0.45f, 0.05f);
+                }
+                catch (System.Exception e) { Debug.LogException(e); Ink = null; }
+            }
         }
+
+        /// <summary>2026-10-27 ink-world pass: the shared ink layer (null while free:ink is off).</summary>
+        protected Vol2FsInkStage Ink;
 
         /// <summary>2026-10-27 weak-points pass: the common 막힘 half (null for the other relations).</summary>
         protected Vol2FsRxHalf Half;
@@ -217,6 +231,7 @@ namespace Oheangbu.App
             // a body that went away (the lab's teardown) is dropped from the look
             for (int i = Bodies.Count - 1; i >= 0; i--) if (Bodies[i].T == null) { Bodies[i].Data = null; }
             OnLive(t);
+            if (Ink != null) { try { Ink.Tick(t, CamPos); } catch (System.Exception e) { Debug.LogException(e); Ink = null; } }
             if (Half != null)
             {
                 try { Half.Tick(t, ContactEndAt, CamPos); } catch (System.Exception e) { Debug.LogException(e); Half = null; }
@@ -241,7 +256,7 @@ namespace Oheangbu.App
             float by = Mathf.Max(Burst, Dur + 0.5f);
             if (ContactSurvives) { if (ContactEndAt < 0f) return false; by = Mathf.Max(by, ContactEndAt + 0.6f); }
             if (HasChild) { if (ChildEndAt < 0f) return false; by = Mathf.Max(by, ChildEndAt + 0.6f); }
-            return t > by + Tail && (!ParticlesAlive() || t > by + Tail + 2.5f);
+            return t > by + Tail && (!ParticlesAlive() || t > by + Tail + 2.5f) && (Ink == null || !Ink.Busy(t));
         }
 
         protected bool ParticlesAlive()

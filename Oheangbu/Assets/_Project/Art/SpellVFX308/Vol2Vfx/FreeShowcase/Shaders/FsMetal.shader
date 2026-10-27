@@ -32,6 +32,8 @@ Shader "Oheangbu/FreeShowcase/Metal"
         _EdgeGlint ("Rim strength", Float) = 1
         _InkRim ("Ink line at the silhouette", Range(0, 1)) = 0.55
         _Sweep ("Sweeping glint strength", Float) = 1
+        // 2026-10-27 ink-world pass: 1 = silver two-tone chrome (paper-silver above a sharp horizon, ink below), 0 = the dark ink world of the weak-points pass
+        _Chrome ("Silver two-tone chrome", Range(0, 1)) = 1
     }
     SubShader
     {
@@ -54,7 +56,7 @@ Shader "Oheangbu/FreeShowcase/Metal"
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 float4 _Tint, _Accent;
-                float _Bright, _Hot, _EdgeGlint, _InkRim, _Sweep;
+                float _Bright, _Hot, _EdgeGlint, _InkRim, _Sweep, _Chrome;
             CBUFFER_END
 
             struct Attributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float4 color : COLOR; float2 uv : TEXCOORD0; };
@@ -82,6 +84,14 @@ Shader "Oheangbu/FreeShowcase/Metal"
                 float3 sky = float3(0.05, 0.055, 0.072);
                 baseC = lerp(ground, horizon, smoothstep(-0.3, 0.02, h));
                 baseC = lerp(baseC, sky, smoothstep(0.2, 0.9, h));
+                // 2026-10-27 ink-world pass: a two-tone chrome. Above a SHARP horizon the paper / silver sky (brightest in a band just over the horizon), below it the ink
+                // world; a blade face turning through the horizon flips between silver and ink. (The weak-points pass lost the grey by going dark everywhere; the grey
+                // came from "no contrast", not from brightness - the concept's steel is silver blades on black ink.)
+                float up = smoothstep(-0.015, 0.025, h);
+                float skyTone = lerp(0.80, 0.50, smoothstep(0.02, 0.85, h)) * (0.8 + 0.2 * smoothstep(0.0, 0.1, h));
+                float3 silver = skyTone * float3(0.93, 0.935, 0.95);
+                float3 inkGround = lerp(float3(0.014, 0.014, 0.018), float3(0.05, 0.05, 0.058), smoothstep(-0.9, -0.03, h));
+                baseC = lerp(baseC, lerp(inkGround, silver, up), _Chrome);
                 float band = exp(-pow((h - 0.2) / 0.024, 2.0));                     // one thin hot band (was a broad softbox)
                 float az = atan2(r.z, r.x);
                 float streak = pow(saturate(cos(az - 0.6)), 1600.0) + pow(saturate(cos(az + 2.1)), 2400.0) + 0.6 * pow(saturate(cos(az - 2.9)), 1200.0);

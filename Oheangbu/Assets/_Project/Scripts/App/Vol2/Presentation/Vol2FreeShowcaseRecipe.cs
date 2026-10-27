@@ -115,6 +115,14 @@ namespace Oheangbu.App
         /// <summary>The body's one accent colour (Phantom Blade principle 1: ink-dark base, one strong accent).</summary>
         public static Color Accent(Body b)
         {
+            // 2026-10-27 ink-world pass: the world accents (design 3): 목 생죽 청록 · 수 은청 (the concept's silver spray) · 금 은백 (the gold sparks stay in the looks) · 화 · 토 as before
+            if (Vol2FsWorld.GradeOn)
+                switch (b)
+                {
+                    case Body.Wood: return new Color(0.34f, 0.68f, 0.40f);      // r2: jade-bamboo (r1 .30/.68/.52 read cyan)
+                    case Body.Water: return new Color(0.62f, 0.74f, 0.84f);
+                    case Body.Metal: return new Color(0.92f, 0.88f, 0.78f);
+                }
             switch (b)
             {
                 case Body.Fire: return new Color(1f, 0.4f, 0.12f);
@@ -172,8 +180,69 @@ namespace Oheangbu.App
         }
 
         /// <summary>Called by the recipe next to <see cref="Contact"/> (every contact record of the cast).</summary>
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        // 2026-10-27 ink-world pass (world_ink_pass_design.md section 2): the shared ink layer of every cast (Vol2FsInkStage) - the swing stroke instead of the accent
+        // crescent, the launch splash, the frame's big gesture, the contact burst, the stains and the ash. Visuals only: reads the facts the look already reads.
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        Vol2FsInkStage _ink; bool _inkLaunched; float _inkReach;
+        readonly Dictionary<long, float> _inkLast = new Dictionary<long, float>();
+
+        Vol2FsInkStage EnsureInk()
+        {
+            if (_ink == null && Root != null && Kit != null) _ink = new Vol2FsInkStage(Kit, Root.transform, Accent(Inst.Log.Glyph.Body), (int)(Inst.Cast.Value & 0x7fff));
+            return _ink;
+        }
+
+        /// <summary>The look is still drawing / dropping ink (the recipe does not retire it yet).</summary>
+        public bool InkBusy(long nowUs) => _ink != null && Vol2FsWorld.InkOn && Root != null && !BodyGone && _ink.Busy(Now(nowUs)) && Now(nowUs) < 40f;
+
+        void InkContact(Vol2ContactRecord rec)
+        {
+            var tr = TargetTransform(rec.TargetId);
+            if (tr == null || EnsureInk() == null) return;
+            var b = BodyBounds(tr, tr.position, 0.5f);
+            float tt = Now(rec.NowUs > 0 ? rec.NowUs : Inst.StartUs);
+            float sc = 1f;
+            if (_inkLast.TryGetValue(rec.TargetId, out var last) && tt - last < 0.25f) sc = 0.5f;      // a tick damage re-contact must not cover the screen
+            _inkLast[rec.TargetId] = tt;
+            _ink.Burst(b.center, new Vector3(b.center.x, Mathf.Max(Ground, tr.position.y), b.center.z), b.center - Inst.Origin, sc, tt);
+        }
+
+        void InkTick(float t)
+        {
+            if (EnsureInk() == null) return;
+            var cam = CamPos;
+            var spec = Inst.Log.Spec;
+            Vector3 pivot = Inst.Origin + Vector3.up * 1.15f;
+            if (!OwnSwingTrail && t <= LaunchRel + 0.6f) _ink.SwingFeed(_tipPath, t, LaunchRel, pivot, Fwd, Right, Ground);
+            if (!_inkLaunched && t >= LaunchRel)
+            {
+                _inkLaunched = true;
+                Vector3 tip = Tip();
+                Vector3 tv = _tipPath.Count >= 2 ? _tipPath[_tipPath.Count - 1].P - _tipPath[Mathf.Max(0, _tipPath.Count - 4)].P : Vector3.zero;
+                _ink.Splash(tip, Fwd, tv, Ground, Inst.Origin, Fwd, Right, t);
+                var frame = Inst.Log.Glyph.Frame;
+                if (spec != null)
+                {
+                    Vector3 f = spec.Forward; f.y = 0f; f = f.sqrMagnitude > 1e-6f ? f.normalized : Fwd; Vector3 rr = Vector3.Cross(Vector3.up, f);
+                    if (frame == Frame.Fan) _ink.FanArc(t, spec.Origin, f, rr, Ground, spec.FanDepth, spec.FanHalfAngleRad);
+                    else if (frame == Frame.Ring) _ink.RingEnso(t, spec.Origin, Ground, spec.RingRadius, (int)(Inst.Cast.Value & 0x7fff));
+                    else if (frame == Frame.Attachment) _ink.Spiral(t, Inst.Origin, Ground, () => Tip());
+                }
+            }
+            if (_inkLaunched && Inst.Log.Glyph.Frame == Frame.Path && Inst.Path != null && spec != null)
+            {
+                float along = Inst.Path.HeadAlong; if (float.IsNaN(along) || float.IsInfinity(along)) along = _inkReach;
+                _inkReach = Mathf.Max(_inkReach, Mathf.Clamp(along, 0f, spec.PathLength));
+                Vector3 f = spec.Forward; f.y = 0f; f = f.sqrMagnitude > 1e-6f ? f.normalized : Fwd;
+                _ink.PathFlanks(t, LaunchRel, spec.Origin, f, Vector3.Cross(Vector3.up, f), Ground, _inkReach, Inst.Path.Finished, (int)(Inst.Cast.Value & 0x7fff));
+            }
+            _ink.Tick(t, cam);
+        }
+
         public void KitContact(Vol2ContactRecord rec)
         {
+            if (Vol2FsWorld.InkOn && rec != null && rec.BudgetAccepted && Root != null && !BodyGone) { try { InkContact(rec); } catch (Exception e) { Debug.LogException(e); } }
             if (_pathRead != null && Root != null) { var tr = rec != null ? TargetTransform(rec.TargetId) : null; _pathRead.Contact(rec, Now(rec.NowUs > 0 ? rec.NowUs : Inst.StartUs), tr != null ? BodyBounds(tr, tr.position, 0.5f).center : (Vector3?)null); }
             else if (!_pathChecked && rec != null && rec.BudgetAccepted) _pendingContacts.Add(rec);      // only until the path read is decided (a non-path look keeps nothing)
         }
@@ -200,9 +269,12 @@ namespace Oheangbu.App
             }
             if (_pathRead != null && _pathRead.Tick(Root.transform, t, CamPos)) HitStop(t, 0.06f);
             if (_pathRead != null && !_pathNoted && _pathRead.Note.Length > 0) { _pathNoted = true; Note += " | path read: " + _pathRead.Note; }
+            // 2026-10-27 ink-world pass: the shared ink layer (before the early returns: its gestures and ash outlive the swing)
+            if (Vol2FsWorld.InkOn) InkTick(t);
             if (OwnSwingTrail || t > LaunchRel + 0.6f) { if (_swingMesh != null && _swingMesh.vertexCount > 0) { _swingMesh.Clear(); _phantomMesh.Clear(); } return; }
             _tipPath.Add((Tip(), t));
             if (_tipPath.Count > 90) _tipPath.RemoveAt(0);
+            if (Vol2FsWorld.InkOn) { if (_swingMesh != null && _swingMesh.vertexCount > 0) { _swingMesh.Clear(); _phantomMesh.Clear(); } return; }      // the ink stroke replaces the accent crescent
             if (!_swingBuilt)
             {
                 _swingBuilt = true;
@@ -364,7 +436,7 @@ namespace Oheangbu.App
             if (!_runs.TryGetValue(inst, out var r)) return Inner.IsFinished(inst, nowUs);
             if (r.BodyGone) return true;
             if (!inst.CastIsEnded && !inst.Log.Finished) return false;
-            try { return r.Done(nowUs); } catch (Exception e) { Debug.LogException(e); return true; }
+            try { return r.Done(nowUs) && !r.InkBusy(nowUs); } catch (Exception e) { Debug.LogException(e); return true; }
         }
 
         /// <summary>Drops every showcase look at once (the installer is going away).</summary>
