@@ -164,6 +164,13 @@ namespace Oheangbu.EditorTools.Vol2
             public readonly List<(float ahead, float side, float h, float speed, int shooter)> RetShots = new List<(float, float, float, float, int)>();
             /// <summary>batch 7 (ret=1): LAB-SIMULATED materials staged before the cast (kind carry | enemy | mine, ahead, side, radius).</summary>
             public readonly List<(string kind, float ahead, float side, float r)> RetMats = new List<(string, float, float, float)>();
+            /// <summary>batch 8 (react=1, template X0): the bare path of the acting body (this job's Body) flies over a LAB-SIMULATED enemy patch of <see cref="Over"/> - one of the
+            /// 25 reaction directions, the reaction engine on for this job only.</summary>
+            // r0b: the patch ahead-RIGHT (it sits in the middle of the shoulder camera's view, clear of the caster and the great brush; r0: at 6 m left of the axis it hid
+            // behind the brush head) and its bear at its back, off the path's line - so the path crosses the patch (a grazing contact) and flies on: the acting glyph's own
+            // impact burst no longer lands on the reaction (r0: 가 나 마 사 아's big hit covered it)
+            // r0c: nearer (3.2 m): the bare path flies its whole 12 m and the acting glyph's end burst stands on the axis far behind - the patch nearer the camera sits well BELOW it on screen (r0b at 4.4 m the burst stood right behind the patch)
+            public bool React; public Body Over; public (float ahead, float side, float r) Patch = (3.2f, 0.9f, 0.8f);
             public readonly List<Step> Steps = new List<Step>();
             public List<(float ahead, float side)> Dummies = new List<(float, float)>();
             public string Name => Template + "_" + Variant + "_" + Body + "_" + Back;
@@ -217,7 +224,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
             _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; _spreadB4 = false; _seedB5 = ""; _seedHold = false; AdapterBodies.Clear(); BridgeBodies.Clear();
-            _splitB6 = false; _retB7 = false;
+            _splitB6 = false; _retB7 = false; _reactB8 = false; _reactOver = Bodies.ToList();
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
@@ -246,12 +253,24 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "seedhold") _seedHold = v.Trim() == "1";      // batch 5 (opt-in): LAB-SIMULATED drawing for 0.8 s mid-wait (信)
                 else if (k == "split") _splitB6 = v.Trim() == "1";         // batch 6 (opt-in): the 가른다 rows with LAB-SIMULATED stand-in walls to cut, 삿's row of three, 솟's walker (see Step4Job)
                 else if (k == "ret") _retB7 = v.Trim() == "1";             // batch 7 (opt-in): the 돌아온다 rows with LAB-SIMULATED enemy shots, 앙's stone, 엉's shooter, 웅's enemy pools (see Step4Job)
+                else if (k == "react") _reactB8 = v.Trim() == "1";         // batch 8 (opt-in): template X0 = the 25 reaction directions (bodies= the acting bodies, over= the contacted ones; see MakeReactJob)
+                else if (k == "over") _reactOver = v.Split(',').Select(x => (Body)Enum.Parse(typeof(Body), x.Trim(), true)).ToList();
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
             foreach (string t in templates)
             {
-                if (!(t.Length == 2 && t[0] == 'P' && t[1] >= '0' && t[1] <= '5') && !RowOf.ContainsKey(t) && t != "AJ") return "REFUSED vfx9a:run: template " + t + " (P0 - P5, A0 - A5, F0 - F5, R0 - R5, AJ)";
+                // batch 8 (react=1): X0 = one job per (acting body, contacted body) pair
+                if (t == "X0")
+                {
+                    if (!_reactB8) return "REFUSED vfx9a:run: template X0 needs react=1";
+                    foreach (string back in backs)
+                        foreach (var acting in bodies)
+                            foreach (var over in _reactOver)
+                                Queue.Enqueue(MakeReactJob(acting, over, back, videoAll || (videoOnRed && back == backs[0])));
+                    continue;
+                }
+                if (!(t.Length == 2 && t[0] == 'P' && t[1] >= '0' && t[1] <= '5') && !RowOf.ContainsKey(t) && t != "AJ") return "REFUSED vfx9a:run: template " + t + " (P0 - P5, A0 - A5, F0 - F5, R0 - R5, AJ, X0)";
                 var variants = new[] { "main" };
                 foreach (string variant in variants)
                 {
@@ -680,6 +699,118 @@ namespace Oheangbu.EditorTools.Vol2
             if (c.Log.FieldNotes.Count > 0) sb.Append(" | field ").Append(string.Join(" / ", c.Log.FieldNotes));
             if (RetMatsLive.Count > 0) sb.Append(" | staged ").Append(string.Join(" ", RetMatsLive.Select(r => r.Kind + ":" + (r.M != null ? r.M.Id + (r.M.Alive ? " alive" : " " + r.M.End + "@" + Rel(r.M.EndedUs)) + (r.M.MovedSerial > 0 ? " moved->(" + r.M.Footprint.Centre.x.ToString("0.0", Inv) + "," + r.M.Footprint.Centre.z.ToString("0.0", Inv) + ")" : "") + (r.M.Wet ? " wet" : "") : "?"))));
             sb.Append(" | status " + c.Log.Status + " end @" + (c.Log.EndUs > 0 ? Rel(c.Log.EndUs) : "-"));
+            return sb.ToString();
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------------------------------------
+        // batch 8 free showcase (2026-10-27, opt-in react=1, template X0, defaults unchanged): the 25 reaction directions. As Vol2ReactionLab's "dir" rows: the bare path of
+        // the acting body (가 나 마 사 아, a moving shape) flies over a standing ENEMY material of the contacted body (Disc r 0.8 at 6 m, LAB-SIMULATED, shown by
+        // Vol2FsB8.PatchProxy) with a bear standing in it (the product's body). The reaction engine is on for these jobs only (slice 9a's Setup switches it off for the
+        // verbs). The patch's stand-in goes the frame the reaction commits (the look's own copy of the patch carries on). The long waits (the child's 10 s, the
+        // thickened / halved patch's life) are JUMPed to 1.4 s before their end; the recording stops 0.9 s after the lasting thing ended.
+        // ------------------------------------------------------------------------------------------------------------------------------------------------
+        static bool _reactB8; static List<Body> _reactOver = new List<Body>();
+        static Vol2Material _rxPatch; static Vol2FsPatch _rxProxy; static double _rxDoneAge = -1;
+
+        static Job MakeReactJob(Body acting, Body over, string back, bool video)
+        {
+            var j = new Job { Template = "X0", Variant = "on" + over, Body = acting, Back = back, Video = video, Keys = true, React = true, Over = over };
+            j.Letter = Rows[0][(int)acting];
+            j.Dummies.Add((3.75f, 1.35f));              // in the patch (the product's body: 0.7 m from its centre), behind it from the camera, off the path's line (not struck by the cast: 0.15 + body 0.62 < 1.35)
+            j.MaxAge = 18.0; j.MinAge = 18.0;           // the real stop is _rxDoneAge (the lasting thing's end + 0.9 s); MaxAge is the cap
+            j.Steps.Add(new Step { At = 2.6, Name = "JUMP to 1.4 s before the child's / the patch's end (LAB-SIMULATED long wait)", Do = c => JumpBeforeReactEnd(c, 1.4) });
+            return j;
+        }
+
+        static Vol2ReactionRecord RxRecord(Ctx c)
+        {
+            if (c == null || c.Coordinator == null || c.Log == null) return null;
+            var led = c.Coordinator.Reactions.Ledger;
+            for (int i = led.Count - 1; i >= 0; i--) if (led[i].ActingCast == c.Log.Cast || (_rxPatch != null && led[i].ContactId == _rxPatch.Id.Value)) return led[i];
+            return null;
+        }
+
+        static Vol2Material RxMat(Ctx c, long id) => id > 0 && c.Coordinator.Materials.TryGet(new MaterialId(id), out var m) ? m : null;
+
+        static bool JumpBeforeReactEnd(Ctx c, double before)
+        {
+            var rec = RxRecord(c);
+            if (rec == null) return true;                // no reaction (yet): nothing to wait for
+            var child = RxMat(c, rec.ChildId);
+            var contact = RxMat(c, rec.ContactId);
+            long end = child != null && child.Alive ? child.ExpiresUs : contact != null && contact.Alive ? contact.ExpiresUs : 0;
+            if (end <= 0) return true;
+            Jump(c, end - Vol2Time.FromSeconds(before));
+            return true;
+        }
+
+        /// <summary>react=1 (LAB-SIMULATED): the enemy patch of the job's contacted body, another cast's (98301+) Disc material, and its stand-in.</summary>
+        static void PlaceReact(Ctx c, Job j)
+        {
+            var installer = Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>();
+            var kit = installer != null && installer.Kit != null && installer.Kit.Ok ? installer.Kit : (_ownKit ?? (_ownKit = new Vol2FsKit()));
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            Vector3 at = c.Origin + c.Forward * j.Patch.ahead + right * j.Patch.side; at.y = c.Origin.y;
+            long now = c.Services.Clock.NowUs;
+            _rxPatch = c.Coordinator.Materials.Create(new CastId(98301 + _done), Rows[0][(int)j.Over], j.Over, Vol2MaterialKind.Residue, 0.9m, Vol2Time.FromSeconds(14.0), Vol2Footprint.Disc(at, j.Patch.r), 2,
+                Vol2Faction.Enemy, true, now, 0, 0, "lab-react-patch");
+            if (_rxPatch == null) { Problems.Add(j.Name + ": the patch material was not made"); return; }
+            if (kit.Ok) _rxProxy = Vol2FsB8.PatchProxy(kit, j.Over, at, j.Patch.r, _rxPatch.Id.Value);
+            _rxDoneAge = -1;
+            Finished.Add("  " + j.Name + ": LAB-SIMULATED react staged: enemy " + j.Over + " patch M" + _rxPatch.Id + " at " + j.Patch.ahead.ToString("0.0", Inv) + " m (side " + j.Patch.side.ToString("0.0", Inv) + ", r " + j.Patch.r.ToString("0.0", Inv) + ")" + (_rxProxy != null ? "" : " NO PROXY"));
+        }
+
+        /// <summary>react=1: the stand-in goes the frame the reaction commits (the look carries the patch from there); the stop age once the lasting thing ended.</summary>
+        static void UpdateReact(Ctx c, double age)
+        {
+            var rec = RxRecord(c);
+            if (rec == null) { if (age > 3.0 && _rxDoneAge < 0) { _rxDoneAge = age; Problems.Add(_job.Name + ": no reaction by 3 s"); } return; }
+            if (_rxProxy != null && _rxProxy.Go != null && _rxProxy.Go.activeSelf) _rxProxy.SetActive(false);
+            if (_rxDoneAge >= 0) return;
+            double commit = (rec.AtUs - c.Log.StartUs) / 1e6;
+            if (rec.ChildId > 0) { var ch = RxMat(c, rec.ChildId); if (ch == null || !ch.Alive) _rxDoneAge = age + 0.9; return; }
+            var contact = RxMat(c, rec.ContactId);
+            if (contact != null && (rec.Relation == ReactionRulesV3.Kind.Same || rec.Relation == ReactionRulesV3.Kind.Block)) { if (!contact.Alive) _rxDoneAge = age + 0.9; return; }
+            double dur = rec.Relation == ReactionRulesV3.Kind.Break ? (rec.ActingBody == Body.Earth ? 3.0 : rec.ActingBody == Body.Wood || rec.ActingBody == Body.Fire ? 2.0 : 0.0) : 0.0;
+            if (age >= commit + Math.Max(dur, 1.2) + 1.6) _rxDoneAge = age;
+        }
+
+        static void ClearReact(Ctx c)
+        {
+            long now = c != null && c.Services != null ? c.Services.Clock.NowUs : 0;
+            if (c != null && c.Coordinator != null)
+            {
+                var rec = RxRecord(c);
+                if (rec != null) { var ch = RxMat(c, rec.ChildId); if (ch != null && ch.Alive) c.Coordinator.Materials.TryEnd(ch.Id, Vol2MaterialEnd.Aborted, now); }
+                if (_rxPatch != null && _rxPatch.Alive) c.Coordinator.Materials.TryEnd(_rxPatch.Id, Vol2MaterialEnd.Aborted, now);
+            }
+            var installer = Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>();
+            if (installer != null) installer.ClearReactions();
+            if (_rxProxy != null) _rxProxy.Destroy(_ownKit ?? (installer != null ? installer.Kit : null));
+            _rxProxy = null; _rxPatch = null; _rxDoneAge = -1;
+        }
+
+        /// <summary>react=1: the engine's facts of the job for the capture text - the ledger line (relation / product / consumed / child / slows / hits), the refused tries,
+        /// the patch's and the child's ends.</summary>
+        static string ReactFacts(Ctx c)
+        {
+            string Rel(long us) => us <= 0 ? "-" : ((us - c.Log.StartUs) / 1e6).ToString("0.00", Inv);
+            var rx = c.Coordinator.Reactions;
+            var sb = new StringBuilder();
+            var rec = RxRecord(c);
+            if (rec == null) sb.Append(" | NO REACTION");
+            else
+            {
+                sb.Append(" | reaction " + rec.ActingBody + ">" + rec.ContactedBody + " " + rec.Relation + "/" + rec.Product + " @" + Rel(rec.AtUs) + (rec.FromShape ? " shape" : " standing") + " consumed [" + string.Join(",", rec.Consumed) + "]");
+                if (rec.ChildId > 0) { var ch = RxMat(c, rec.ChildId); sb.Append(" child M" + rec.ChildId + " " + (ch != null ? ch.Body + " " + ch.Remaining.ToString("0.###", Inv) + " life " + (ch.LifeUs / 1e6).ToString("0.0", Inv) + "s " + (ch.Alive ? "alive" : ch.End + "@" + Rel(ch.EndedUs)) : "?") + " depth " + rec.ChildDepth + " owner " + rec.ChildOwner); }
+                var contact = RxMat(c, rec.ContactId);
+                if (contact != null) sb.Append(" | patch M" + contact.Id + " " + (contact.Alive ? "alive" : contact.End + "@" + Rel(contact.EndedUs)) + " rem " + contact.Remaining.ToString("0.###", Inv) + (contact.Thickened ? " thickened" : "") + " expires " + Rel(contact.ExpiresUs));
+                sb.Append(" | product bodies " + rec.Affected + " slows " + rec.SlowsApplied + " hits " + rec.Hits + " hp " + rec.HpApplied.ToString("0.##", Inv) + " units " + rec.UnitsGiven.ToString("0.###", Inv) + " budget " + rec.DamageBudget.ToString("0.###", Inv));
+            }
+            sb.Append(" | engine committed " + rx.Committed + " refused " + rx.Refused + " lost " + rx.Lost + " exceptions " + rx.Exceptions + (rx.RefusedReasons.Count > 0 ? " {" + string.Join(", ", rx.RefusedReasons.Select(kv => kv.Key + ":" + kv.Value)) + "}" : ""));
+            var installer = Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>();
+            if (installer != null && rec != null && installer.ReactNotes.TryGetValue(Vol2FsB8.Han(rec.ActingBody) + ">" + Vol2FsB8.Han(rec.ContactedBody), out var note)) sb.Append(" | look " + note);
+            sb.Append(" | contacts ").Append(string.Join(" ", c.Log.Contacts.Select(x => x.Kind + ":" + (x.TargetName ?? "").Replace("Vol2VfxDummy_", "") + ":" + x.Amount.ToString("0.###", Inv) + "@" + Rel(x.NowUs))));
             return sb.ToString();
         }
 
@@ -1318,6 +1449,8 @@ namespace Oheangbu.EditorTools.Vol2
             if (j.PlantWood) PlantWood(c);
             if (j.Walls.Count > 0) PlaceWalls(c, j);
             if (j.RetShots.Count > 0 || j.RetMats.Count > 0) PlaceRet(c, j);
+            // batch 8 (react=1): the reaction engine on for this job only (fresh ledger), the enemy patch staged
+            if (j.React) { c.Coordinator.Reactions.Enabled = true; c.Coordinator.Reactions.Reset(); PlaceReact(c, j); }
             if (!MeasuredGround.Contains(j.Back)) MeasureGround(c, j.Back);
             c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f; _describe = 0;
             foreach (var s in _job.Steps) s.Done = false;
@@ -1475,9 +1608,11 @@ namespace Oheangbu.EditorTools.Vol2
             bool lateKey = j.Keys && j.Template == "P1" && j.Body == Body.Wood && age >= 1.70 && age <= 1.74;       // 각 cages its body for 1.5 s: the residue stands after that
             if (Walls.Count > 0) UpdateWalls();
             if (RetShotsLive.Count > 0 || RetMatsLive.Count > 0) UpdateRet(c);
+            if (j.React) UpdateReact(c, age);
             if (j.Video || keyWindow || lateKey) SaveFrame(c, age, stepUs, j.Video, keyWindow || lateKey);
             _note = "";
             bool retired = !c.Presenter.Model.TryGet(c.Log.Cast, out _);
+            if (j.React && _rxDoneAge >= 0 && age >= _rxDoneAge) { _st = St.Teardown; return; }
             if (age >= j.MaxAge || (retired && age >= j.MinAge) || EditorApplication.timeSinceStartup > _guardUntil) { _st = St.Teardown; return; }
         }
 
@@ -1587,6 +1722,9 @@ namespace Oheangbu.EditorTools.Vol2
             if (_splitB6 && c.Log != null) summary += SplitFacts(c);
             // batch 7 (ret=): the executor's facts of this cast (contacts, legs, shots, carry, drags, cleanse, wet, field notes)
             if (_retB7 && c.Log != null) summary += ReturnFacts(c);
+            // batch 8 (react=): the engine's facts of the job (the ledger line, the refused tries, the patch's / the child's ends, the look's note)
+            if (j.React && c.Log != null) summary += ReactFacts(c);
+            if (j.React) ClearReact(c);
             if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }
             foreach (var m in Planted) if (m != null && m.Alive) c.Coordinator.Materials.TryEnd(m.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
             Planted.Clear();
@@ -1656,6 +1794,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             try { ClearWalls(_ctx); } catch (Exception) { Walls.Clear(); }
             try { ClearRet(_ctx); } catch (Exception) { RetShotsLive.Clear(); RetMatsLive.Clear(); }
+            try { ClearReact(_ctx); } catch (Exception) { _rxProxy = null; _rxPatch = null; }
             _ownKit?.Dispose(); _ownKit = null;
             _ctx = null; _onDecided = null; _onBegan = null;
             if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }      // batch 5 seedhold: never leave the scope "drawing"

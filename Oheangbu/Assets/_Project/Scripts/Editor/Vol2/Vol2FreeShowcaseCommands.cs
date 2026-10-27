@@ -80,6 +80,9 @@ namespace Oheangbu.EditorTools.Vol2
             // batch 7: + the 돌아온다 20 (legs / return hits / shots / carry / drags / cleanse)
             var notes = inst.Recipes.SelectMany(r => r.Notes).Where(kv => "간난만산안건넌먼선언곤논몬손온군눈문순운감남맘삼암검넘멈섬엄곰놈몸솜옴굼눔뭄숨움갓낫맛삿앗것넛멋섯엇곳놋못솟옷굿눗뭇숫웃강낭망상앙겅넝멍성엉공농몽송옹궁눙뭉숭웅".IndexOf(kv.Key) >= 0).Select(kv => kv.Key + ": " + kv.Value);
             if (notes.Any()) s += "\nnotes:\n" + string.Join("\n", notes);
+            // batch 8: the 25 reaction directions (no cast: the installer's own looks, by cell "목>화")
+            s += "\nreactions shown " + inst.ReactShown + " live " + inst.ReactLive;
+            if (inst.ReactNotes.Count > 0) s += "\n" + string.Join("\n", inst.ReactNotes.Select(kv => kv.Key + ": " + kv.Value));
             return s;
         }
     }

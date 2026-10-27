@@ -92,16 +92,61 @@ namespace Oheangbu.App
                 if (_view == null) _view = p;
             }
             BindRecovery();
+            BindReactions();
         }
 
         void LateUpdate()
         {
-            // batch 3: 걱 ticks every frame on the scope clock (the recovery has no cast log, so no vol.2 instance carries it)
-            if (_geok == null || _view == null || _view.Coordinator == null) return;
+            if (_view == null || _view.Coordinator == null) return;
             long now = _view.Coordinator.Services.Clock.NowUs;
+            // batch 8: the reaction looks tick on the scope clock (a reaction is no cast: no vol.2 instance carries it)
+            for (int i = _reacts.Count - 1; i >= 0; i--)
+            {
+                var r = _reacts[i];
+                try
+                {
+                    r.Tick(now);
+                    ReactNotes[r.Cell] = r.Note;
+                    if (r.Done(now)) { r.Dispose(); _reacts.RemoveAt(i); }
+                }
+                catch (System.Exception e) { Debug.LogException(e); r.Dispose(); _reacts.RemoveAt(i); }
+            }
+            // batch 3: 걱 ticks every frame on the scope clock (the recovery has no cast log, so no vol.2 instance carries it)
+            if (_geok == null) return;
             try { _geok.Tick(now); if (_geok.Done(now)) { _geok.Dispose(); _geok = null; } }
             catch (System.Exception e) { Debug.LogException(e); _geok?.Dispose(); _geok = null; }
         }
+
+        // ---------------------------------------------------------------- batch 8: the 25 reaction directions (the reaction engine's committed events: ReactionResolved)
+        Vol2ReactionEngine _rxEngine; System.Action<Vol2ReactionVisual> _onReaction;
+        readonly List<Vol2FsReact> _reacts = new List<Vol2FsReact>();
+        /// <summary>Reactions the showcase drew (bookkeeping, read by the command / ledger) and each cell's last note ("목>화" -> its facts).</summary>
+        public int ReactShown { get; private set; }
+        public readonly Dictionary<string, string> ReactNotes = new Dictionary<string, string>();
+        public int ReactLive => _reacts.Count;
+
+        void BindReactions()
+        {
+            if (_rxEngine != null || _view == null || _view.Coordinator == null) return;
+            _rxEngine = _view.Coordinator.Reactions;
+            _rxEngine.ReactionResolved += _onReaction = OnReaction;
+        }
+
+        void OnReaction(Vol2ReactionVisual v)
+        {
+            try
+            {
+                if (v == null || _view == null || _view.Coordinator == null || !On || _kit == null || !_kit.Ok) return;
+                var look = Vol2FsB8.Make(v.ActingBody, v.ContactedBody);
+                look.Begin(_kit, _view.transform, _view.Coordinator, v);
+                _reacts.Add(look); ReactShown++;
+                ReactNotes[look.Cell] = look.Note;
+            }
+            catch (System.Exception e) { Debug.LogException(e); }
+        }
+
+        /// <summary>Drops every reaction look at once (the capture's teardown: nothing of one job shows in the next one's frames).</summary>
+        public void ClearReactions() { foreach (var r in _reacts) r.Dispose(); _reacts.Clear(); }
 
         // ---------------------------------------------------------------- batch 3: 걱, the recovery (the defence kit's Vol2RecoveryExecutor: records, never answered)
         Vol2VfxPresenter _view;
@@ -163,6 +208,9 @@ namespace Oheangbu.App
         {
             if (_recovery != null && _onRecovery != null) _recovery.Recorded -= _onRecovery;
             _recovery = null; _onRecovery = null;
+            if (_rxEngine != null && _onReaction != null) _rxEngine.ReactionResolved -= _onReaction;
+            _rxEngine = null; _onReaction = null;
+            ClearReactions();
             if (_view != null && _view.Legacy != null) _view.Legacy.RecoveryShownElsewhere = false;
             _geok?.Dispose(); _geok = null;
             foreach (var r in _recipes) r.ClearAll();

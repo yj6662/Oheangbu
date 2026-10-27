@@ -633,6 +633,150 @@ B7_VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 8 (2026-10-27, D308-150 V12): the 25 REACTION directions (acting body -> contacted body). Picture 1 = the real gameplay frame of the cell's own capture
+# (batch8/r0 f_00000, capture option react=1: an ENEMY's patch of the contacted body at 6 m with a bear standing in it, LAB-SIMULATED stand-in).
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b8 [--run] [--wave 6] [ids]
+B8_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch8/concepts'
+_B8_FRAME = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch8/r0/frames/X0_on{c}_{a}_red/f_00000.jpg'
+_B8_SCENE = """Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky. About 6 metres ahead lies %s, about 1.6 metres across, and ONE real enemy (a dark matted bear with crusted crystal growths on its back) stands in that patch. Paint the concept ON THIS VIEW: keep this camera height, angle and framing (you may raise the camera a little), the same ground and sky, the patch and the bear where they are. Picture 1 may show a small bright mark or flash: capture artefacts of a placeholder effect - remove them. The scene keeps its muted Korean ink-wash painted look."""
+_B8_PATCH = {
+    'Wood': "an ENEMY's patch of WOOD on the ground: a low tangle of dark thorny vines and a few dull leaves on a dark violet-black pool of corrupted ink",
+    'Fire': "an ENEMY's patch of FIRE on the ground: low licking flames and glowing coals on a charred, dark violet-black pool of corrupted ink",
+    'Earth': "an ENEMY's patch of EARTH on the ground: a ring of broken stone slabs jutting out of a dark violet-black pool of corrupted ink",
+    'Metal': "an ENEMY's patch of METAL on the ground: a cluster of dull steel blades standing up out of a dark violet-black pool of corrupted ink",
+    'Water': "an ENEMY's patch of WATER on the ground: a dark, still pool of water with slow ripples, tinted violet-black by corruption",
+}
+_B8_BODY = {'Wood': 'WOOD (living vines, fibres, leaves, jade light)', 'Fire': 'FIRE (flame, burning ink, embers, heat)', 'Earth': 'EARTH (rock, packed earth, slabs, dust)',
+            'Metal': 'METAL (mirror steel, straight razor edges, white-gold light, sparks)', 'Water': 'WATER (clear blue-green water with ink swirling inside, foam, spray)'}
+_REACT = ("It is a REACTION of the five elements (오행 반응): the caster fires a bare, fast projectile of %s from the brush tip along a straight line low over the ground at the bear; "
+          "on its way it flies INTO the enemy's patch of %s and the two elements meet and REACT. What the reaction does must read AT A GLANCE in ONE picture (a player who never saw the game understands it): "
+          "%s The caster's own magic is clean calligraphy ink with the element's bright light (the caster's mark); the enemy's is dark violet-black corrupted ink. "
+          "Style of the motion (like a modern wuxia action game): very fast, sharp, a frozen instant of impact, sparks at the contact, a faint slow afterimage.")
+_KIND = {
+    'Same': "SAME ELEMENT (비화): the projectile MERGES into the enemy's patch of the same element and the patch THICKENS ONCE - visibly swelling by one layer, bigger and denser, its life renewed; it stays the ENEMY's patch (dark ink); there is NO explosion, NO attack, nothing new is born - only a pulse of the element joining and the patch growing by one layer.",
+    'Feed': "FEEDING (먹임, %s feeds %s): the projectile is swallowed by the enemy's patch and BOTH are used up; in their place a NEW patch of %s is born, now the CASTER's own (clean bright ink, the caster's mark), the same shape as the old patch, which will stand for 10 seconds - the projectile became food for the other element.",
+    'Transfer': "CATCHING ON (옮겨붙음, %s spreads onto %s): the projectile's element CATCHES ON the enemy's patch and takes it over: the enemy's patch is used up and in its place a NEW patch of %s stands in the same shape, now the CASTER's own (clean bright ink, the caster's mark), for 10 seconds.",
+    'Break': "BREAKING (꺾음, %s overcomes %s): the projectile BREAKS the enemy's patch: the patch is used up (no new patch is born) and the bear standing in it suffers it: %s",
+    'Block': "BLOCKED (막힘, %s is stopped by %s): the projectile is STOPPED by the enemy's patch and spent - it folds, breaks or dies against it; the enemy's patch SURVIVES but is visibly cut down to HALF (smaller, weaker, still the enemy's dark ink); no damage, nothing new is born: %s",
+}
+_CELL = {   # acting, contacted -> (kind, name, the cell's own sentence)
+    ('Wood', 'Wood'): ('Same', '비화', "the wood's long fibres lie ALONG the old vines as one more layer of growth: the tangle grows thicker, taller, with new leaves."),
+    ('Fire', 'Fire'): ('Same', '비화', "the flame's tongues join the burning patch and its saw-toothed flames rise one layer higher and denser."),
+    ('Earth', 'Earth'): ('Same', '비화', "the earth adds one more stepped layer to the slabs: the stone ring rises a step higher and wider."),
+    ('Metal', 'Metal'): ('Same', '비화', "a second row of parallel blade edges stands up beside the old blades: the steel thicket doubles its edges."),
+    ('Water', 'Water'): ('Same', '비화', "the water pours in as one deeper parallel current: the pool deepens and widens, a new inner ring of current."),
+    ('Wood', 'Fire'): ('Feed', '먹임', "the wood fibres fold INTO the forked tips of the fire and are eaten: the fire flares up and is reborn as the caster's own bright fire in the same place."),
+    ('Fire', 'Earth'): ('Feed', '먹임', "the fire wraps the edges of the enemy's slabs and burns them down, and a hard fired layer is left: a new baked-earth patch (kiln-hard, faintly glowing cracks) of the caster's own."),
+    ('Earth', 'Metal'): ('Feed', '먹임', "the earth flows onto the enemy's blades and hardens into ore along their cut faces; the blades are reforged as thicker, brighter steel edges of the caster's own."),
+    ('Metal', 'Water'): ('Feed', '먹임', "cold steel edges strike the dark pool and condense it: water runs out along the short cut edges and the pool is reborn as clear, bright water of the caster's own."),
+    ('Water', 'Wood'): ('Feed', '먹임', "the water soaks into the vines and is drunk up from below: the fibres swell thick and green, reborn as the caster's own living vines."),
+    ('Fire', 'Wood'): ('Transfer', '들불', "WILDFIRE (들불): the fire catches the enemy's vines and runs along their shapes as BLACK tongues of burning ink with hot orange cores, the vines turning to embers - a wildfire of the caster's own spreading over the whole tangle. No round burning pit, no ring of fire at the feet: the fire follows the vines' lines."),
+    ('Earth', 'Fire'): ('Transfer', '옮겨붙음', "the enemy's flames are smothered and sink, and in their place low flat slabs of earth pile up, still smoking, in the same forked shape - an earth patch of the caster's own."),
+    ('Metal', 'Earth'): ('Transfer', '옮겨붙음', "the enemy's slabs crack open and from their cracks straight steel blades stand up - a field of blades of the caster's own in the stone."),
+    ('Water', 'Metal'): ('Transfer', '옮겨붙음', "water floods the broken seams between the enemy's blades and stays there in the shape of the blades - blades of clear water of the caster's own."),
+    ('Wood', 'Water'): ('Transfer', '옮겨붙음', "the dark water dries in streaks and from those dry streaks wood fibres sprout and stand - a reed-bed of the caster's own where the pool was."),
+    ('Wood', 'Earth'): ('Break', '뿌리 붕괴', "ROOT COLLAPSE (뿌리 붕괴): roots burst through the slabs and break their support; the slabs tip and fall in on themselves, and the bear's legs sink and are caught in the broken ground - SLOWED for 2 seconds. No big pit, no falling into a hole."),
+    ('Fire', 'Metal'): ('Break', '달군 쇠', "RED-HOT IRON (달군 쇠): the fire heats the enemy's blades until their straight edges blunt and only their split tips glow red-hot; the bear standing among them is BURNED, again and again for 2 seconds (heat pulses)."),
+    ('Earth', 'Water'): ('Break', '진창', "MUD (진창): the earth falls into the dark pool and the two churn into a low thick MUD - flat slabs of earth half-sunk in hollow swirling currents; the bear's legs are stuck deep in the mud, SLOWED for 3 seconds; no damage."),
+    ('Metal', 'Wood'): ('Break', '가시', "THORN CUT (가시): the steel cuts the enemy's long vines into short, low, sharp-cut thorns all at once; the bear standing in them is STRUCK once by the cut thorns."),
+    ('Water', 'Fire'): ('Break', '김', "STEAM (김): the water hits the enemy's flames: they break into wet, dark islands and from between them STEAM rises in sparse tall plumes (a moment, under 2 seconds, not a ring of steam), scalding the bear once and briefly veiling it."),
+    ('Wood', 'Metal'): ('Block', '잘림', "CUT OFF (잘림): the wood's long fibres hit the steel's straight edges and are CUT - only short stubs fall away on both sides; the blades stand, but only half of them remain."),
+    ('Fire', 'Water'): ('Block', '꺼짐', "QUENCHED (꺼짐): the rising saw-toothed flame hits the water and is folded flat and snuffed with a hiss at the contact; the pool survives, half as large."),
+    ('Earth', 'Wood'): ('Block', '걸림', "SNAGGED (걸림): the earth's stepped slab is caught between the forked vine branches and stops dead; the vines hold, but half of them tear away."),
+    ('Metal', 'Fire'): ('Block', '무뎌짐', "BLUNTED (무뎌짐): the steel's sharp point is ground down into a short blunt edge at the flame and its sparks die; the fire survives, half as high."),
+    ('Water', 'Earth'): ('Block', '막힘', "DAMMED (막힘): the water's hooked wave hits the earth dyke and folds sideways, short and spent; the stone ring holds, but only half of it remains."),
+}
+_ENG = {'Wood': 'wood', 'Fire': 'fire', 'Earth': 'earth', 'Metal': 'metal', 'Water': 'water'}
+_KEY = {'Wood': 'w', 'Fire': 'f', 'Earth': 'e', 'Metal': 'm', 'Water': 'a'}
+
+
+def _b8_text(a, c):
+    kind, name, cell = _CELL[(a, c)]
+    if kind == 'Same':
+        what = _KIND['Same'] + ' ' + cell
+    elif kind == 'Feed':
+        what = _KIND['Feed'] % (_ENG[a], _ENG[c], _ENG[c]) + ' ' + cell
+    elif kind == 'Transfer':
+        what = _KIND['Transfer'] % (_ENG[a], _ENG[c], _ENG[a]) + ' ' + cell
+    elif kind == 'Break':
+        what = _KIND['Break'] % (_ENG[a], _ENG[c], cell)
+    else:
+        what = _KIND['Block'] % (_ENG[a], _ENG[c], cell)
+    return "THE REACTION %s>%s %s (%s acts on %s): " % (_ENG[a].upper(), _ENG[c].upper(), name, _B8_BODY[a], _B8_BODY[c]) + _REACT % (_ENG[a], _ENG[c], what)
+
+
+_V = {   # cell key -> variants (two each; three for the new 진창 and the signature 들불 / 김)
+    'ww': ["VARIANT A - layered growth: show the instant just after the merge: a jade pulse runs along every old vine and a second, thicker layer of vine coils over it, new leaves unfolding, the tangle clearly one step thicker than before; still dark enemy ink at its roots.",
+           "VARIANT B - grafting surge: the projectile splits into many fibres that graft onto the vine tips; the whole tangle heaves up and outward in one swell, a ghost outline of its old smaller size showing what it was."],
+    'ff': ["VARIANT A - flare one layer: the flames leap one full step higher as a second saw-toothed crown of fire over the first, a ring of embers bursting from the joining point; still the enemy's dark-cored fire.",
+           "VARIANT B - banked fire: the projectile dives into the coals and the whole bed swells - thicker, denser tongues and a brighter core, the outline of the old flames as a fading afterimage."],
+    'ee': ["VARIANT A - one more step: the slabs grow a new stepped tier, stone grinding up out of the pool in a ring, dust jetting out of the seams.",
+           "VARIANT B - stacked strata: a new layer of stone plates slides over the old slabs like a terrace, the ring wider and higher, grit raining down."],
+    'mm': ["VARIANT A - doubled edges: beside every old blade a parallel new edge rises with a ringing flash, the thicket of blades now twice as dense.",
+           "VARIANT B - steel bloom: the projectile shatters into a fan of new parallel blades that slot in among the old ones, sparks running along every edge."],
+    'aa': ["VARIANT A - deepening current: the water pours in as a swirling inner current, the pool darkening and deepening by one layer, a new inner ring of waves.",
+           "VARIANT B - rising swell: the pool lifts into a low dome of water one layer higher and spreads wider, its surface rippling in parallel lines."],
+    'wf': ["VARIANT A - eaten by fire: the vine-projectile's fibres fold into the forked flame tips and burn up in a bright flare; the patch is reborn as a clean, bright orange fire of the caster's own (sharp calligraphy flame shapes), the dark old flames gone.",
+           "VARIANT B - kindling knot: the fibres wrap the old fire like a woven basket that bursts into a tall bright bonfire of the caster's own; ash of the enemy's dark fire scattering."],
+    'fe': ["VARIANT A - kiln-fired ground: the flames lick round the enemy's slabs, the slabs crumble, and a smooth hard baked plate of fired earth (glowing cracks, pale glaze) of the caster's own is left.",
+           "VARIANT B - glassed earth: the fire melts the slabs into a low glossy fused crust that cools into the caster's own hard patch, smoke rising off it."],
+    'em': ["VARIANT A - reforged edges: earth flows up the enemy's blades and hardens into gleaming new steel - thicker, brighter edges of the caster's own, the old dull blades crumbling away.",
+           "VARIANT B - ore bloom: a crust of ore crystals grows over the blades and splits open into a cluster of bright new steel spikes of the caster's own."],
+    'ma': ["VARIANT A - cold condensation: the steel edges slice into the dark pool and frost; clear bright water wells up along the cut lines and floods the pool clean - the caster's own water.",
+           "VARIANT B - steel rain: the projectile shatters into fine steel needles over the pool, each turning into a bright drop of water; the pool is refilled with clear water of the caster's own."],
+    'aw': ["VARIANT A - drinking vines: the water is sucked up into the vines from below, they swell thick and green and sprout fresh leaves - the caster's own living vines, glowing jade.",
+           "VARIANT B - spring growth: a jet of water bursts in the tangle and in a heartbeat the old vines are replaced by lush new shoots and leaves of the caster's own."],
+    'fw': ["VARIANT A - black tongues: the fire runs along every vine as black tongues of burning ink with hot orange cores, racing outward along the lines of the tangle; embers and ash peel off.",
+           "VARIANT B - running wildfire: a line of fire races through the tangle from where the projectile hit, the vines it has passed glowing as orange coals under black ink, the wildfire still spreading toward the far side.",
+           "VARIANT C - burning lattice: the whole tangle is outlined in fire at once, a burning lattice of black-cored flames standing exactly in the shape of the vines."],
+    'ef': ["VARIANT A - smothered fire: falling earth smothers the enemy's flames, smoke billows, and flat stepped slabs of earth of the caster's own settle in their forked shape.",
+           "VARIANT B - ash to stone: the flames collapse into ash which piles and hardens into low earthen plates of the caster's own, embers dying inside."],
+    'me': ["VARIANT A - blades from stone: the slabs crack open with a flash and straight bright steel blades of the caster's own stand up out of every crack.",
+           "VARIANT B - iron sprouting: thin steel spikes push up through the broken stone like a field of grass made of blades, gleaming white-gold."],
+    'am': ["VARIANT A - water blades: water floods every seam between the broken enemy blades and freezes in place as blades of clear water of the caster's own.",
+           "VARIANT B - flowing edges: the old blades melt away like ice and their shapes are taken by clear water standing in razor forms, glinting."],
+    'wa': ["VARIANT A - reed bed: the dark water dries in long streaks and a dense bed of jade reeds and fibres of the caster's own springs up from them.",
+           "VARIANT B - roots drink: roots dart across the pool and drink it dry, leaving a mat of green fibres and leaves of the caster's own in its shape."],
+    'we': ["VARIANT A - toppling slabs: roots burst up through the slabs, the slabs tip inward and collapse, and the bear sinks to the knees in the broken ground, roots snaking round its legs.",
+           "VARIANT B - undermined: a burst of roots under the stone, the slabs crack and fold down low, dust jets out; the bear stumbles, legs caught in the crumbled earth."],
+    'fm': ["VARIANT A - glowing tips: the fire wraps the blades, their edges dull and only their split tips glow red-hot; heat pulses scorch the bear standing among them.",
+           "VARIANT B - forge heat: the blade cluster turns dull red like iron in a forge, heat shimmer and sparks rising, the bear flinching in the heat."],
+    'ea': ["VARIANT A - churning mud: the earth falls into the pool and the two churn into a thick brown-black mud with half-sunk flat slabs; the bear is stuck to the thighs, mud splashing.",
+           "VARIANT B - mud whirl: slabs of earth slide into the water and a low hollow whirlpool of mud forms round the bear's legs, holding it fast.",
+           "VARIANT C - quagmire: the whole pool sets into a heaving quagmire, ropes of mud curling up the bear's legs, sinking it; low and wide, no explosion."],
+    'mw': ["VARIANT A - shredded: a flash of steel and the long vines are chopped into short, low, sharp thorns all at once, cut ends flying; the bear is struck by the cut thorns.",
+           "VARIANT B - thorn bed: the vines fall in neat sections and their stubs stand up as a bed of short cut spikes stabbing the bear's legs."],
+    'af': ["VARIANT A - steam plumes: the water hits the flames, they break into wet black islands and sparse tall plumes of steam shoot up between them, scalding the bear.",
+           "VARIANT B - hissing burst: a violent hiss: the fire is split into steaming wet islands and a brief veil of steam wraps the bear's head.",
+           "VARIANT C - steam pillars: three or four separate pillars of white-grey steam rise from between the drowned coals, drifting with the water's flow."],
+    'wm': ["VARIANT A - severed fibres: the wood fibres strike the blades and are cut clean; short stubs fall on both sides; half the blades fall away too.",
+           "VARIANT B - snapped lash: the vine lash wraps the blades and snaps into pieces; the blade cluster stands, visibly halved."],
+    'fa': ["VARIANT A - snuffed: the flame tongue hits the water, folds flat and dies with a burst of hiss and black smoke; the pool remains, shrunken to half.",
+           "VARIANT B - drowned spark: the fireball plunges into the pool and goes out under the surface with a dark ripple; the pool half as big."],
+    'ew': ["VARIANT A - stuck slab: the stone slab is caught in the fork of the vines and stops dead, cracking; half the vines tear away, the rest hold.",
+           "VARIANT B - net catch: the vines catch the earth like a net and sag under it; half the net is torn."],
+    'mf': ["VARIANT A - blunted point: the steel point grinds into a short blunt stub against the flame, sparks dying; the fire half as tall.",
+           "VARIANT B - melted tip: the steel dart's tip melts and droops in the heat, dripping; the fire shrinks to half."],
+    'ae': ["VARIANT A - folded wave: the water's hooked wave hits the stone ring and folds sideways, short and spent, spray falling; half of the slabs crumble.",
+           "VARIANT B - dammed: the water slams into the slabs and spreads flat along them without passing; the stone ring stands at half its size."],
+}
+B8_SPELLS = {}
+B8_VARIANTS = {}
+for (a, c), (kind, name, cell) in _CELL.items():
+    key = _KEY[a] + _KEY[c]
+    B8_SPELLS[key] = ((a, c), _b8_text(a, c))
+    for i, v in enumerate(_V[key]):
+        B8_VARIANTS[key + '_' + 'abc'[i]] = (key, v)
+
+
+def prompt_b8(vid):
+    key, var = B8_VARIANTS[vid]
+    (a, c), text = B8_SPELLS[key]
+    ref = '--- THE ATTACHED PICTURES ---\n' + _B8_SCENE % _B8_PATCH[c]
+    return '\n\n'.join([HEAD, ref + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B8_OUT / f'{vid}.png')])
+
+
 def prompt_b7(vid):
     spell, var = B7_VARIANTS[vid]
     tmpl, text = B7_SPELLS[spell]
@@ -676,6 +820,8 @@ def prompt_b1(vid):
 
 
 def prompt(vid):
+    if vid in B8_VARIANTS:
+        return prompt_b8(vid)
     if vid in B7_VARIANTS:
         return prompt_b7(vid)
     if vid in B6_VARIANTS:
@@ -698,10 +844,13 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def out_of(vid):
-    return B7_OUT if vid in B7_VARIANTS else B6_OUT if vid in B6_VARIANTS else B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
+    return B8_OUT if vid in B8_VARIANTS else B7_OUT if vid in B7_VARIANTS else B6_OUT if vid in B6_VARIANTS else B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
 
 
 def game_of(vid):
+    if vid in B8_VARIANTS:
+        (a, c) = B8_SPELLS[B8_VARIANTS[vid][0]][0]
+        return Path(str(_B8_FRAME).format(a=a, c=c))
     if vid in B7_VARIANTS:
         tmpl = B7_SPELLS[B7_VARIANTS[vid][0]][0]
         return Path(str(_B7_FRAME).format(t=tmpl[:2], b=B7_GAME[tmpl]))
@@ -732,7 +881,7 @@ def recover(vid, started):
             if p.exists():
                 cand.append(p)
     # batch 5: never the newest-file guess (batch 4's son_a / nun_b took another variant's picture) - only a path this variant's own log printed
-    if not cand and GEN.exists() and vid not in B5_VARIANTS and vid not in B6_VARIANTS and vid not in B7_VARIANTS:
+    if not cand and GEN.exists() and vid not in B5_VARIANTS and vid not in B6_VARIANTS and vid not in B7_VARIANTS and vid not in B8_VARIANTS:
         cand = sorted([p for p in GEN.rglob('*.png') if p.stat().st_mtime >= started], key=lambda p: p.stat().st_mtime)[-1:]
         if cand:
             print('WARN newest-file recovery for', vid, cand[-1])
@@ -746,7 +895,7 @@ def recover(vid, started):
 def main():
     batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
     args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
-    pool = B7_VARIANTS if batch == 'b7' else B6_VARIANTS if batch == 'b6' else B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
+    pool = B8_VARIANTS if batch == 'b8' else B7_VARIANTS if batch == 'b7' else B6_VARIANTS if batch == 'b6' else B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
     vids = [v for v in pool if not args or v in args]
     for v in vids:
         out_of(v).mkdir(parents=True, exist_ok=True)

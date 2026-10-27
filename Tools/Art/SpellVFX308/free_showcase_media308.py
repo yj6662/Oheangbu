@@ -175,12 +175,50 @@ B7_SPELLS_T = [
     ('ung', 'R5_bridge4_b7_Water_red', '웅 · 수 · ㅜ 둘레 · 돌아온다 극치 — 물 고리가 퍼졌다 돌아오며 씻는다: 지난 자리의 적 장판을 지운다(상한 4, 다섯째는 남음), 내 잔존물은 젖음, 비전투는 오염 정화(실험실 = 기록만)'),
 ]
 B7_SPELLS = [(k, f, [B7_PICK.get(k, k + '_a.png')], t) for k, f, t in B7_SPELLS_T]
+# batch 8 (2026-10-27, D308-150 V12): --batch b8 -> free_showcase/batch8/<round>/ (the 25 reaction directions: the bare path of the acting body over an enemy patch of the
+# contacted body - the reaction, its product, the child's / the patch's end). Folders X0_on<contacted>_<acting>_red (react=1).
+_B8_BODIES = [('w', 'Wood', '목'), ('f', 'Fire', '화'), ('e', 'Earth', '토'), ('m', 'Metal', '금'), ('a', 'Water', '수')]
+_B8_DESC = {
+    'ww': '비화 — 목 경로가 적의 목 장판에 합쳐져 장판이 한 번 굵어진다(합 ×1.2, 수명 새로, 소유는 그대로 적)',
+    'ff': '비화 — 화 경로가 적의 불 장판에 합쳐져 한 번 굵어진다(합 ×1.2, 수명 새로, 적 소유 그대로)',
+    'ee': '비화 — 토 경로가 적의 흙 장판에 계단 한 층을 더한다(합 ×1.2, 수명 새로, 적 소유 그대로)',
+    'mm': '비화 — 금 경로가 적의 쇠 장판 옆에 날 한 겹을 더한다(합 ×1.2, 수명 새로, 적 소유 그대로)',
+    'aa': '비화 — 수 경로가 적의 물 장판을 한 겹 깊게 한다(합 ×1.2, 수명 새로, 적 소유 그대로)',
+    'wf': '먹임 — 목이 불을 먹인다: 둘 다 소비, 그 자리에 내 불 자식(합 ×½, 10초)',
+    'fe': '먹임 — 불이 흙을 먹인다: 둘 다 소비, 내 흙 자식(합 ×½, 10초)',
+    'em': '먹임 — 흙이 쇠를 먹인다: 둘 다 소비, 내 쇠 자식(합 ×½, 10초)',
+    'ma': '먹임 — 쇠가 물을 먹인다: 둘 다 소비, 내 물 자식(합 ×½, 10초)',
+    'aw': '먹임 — 물이 나무를 먹인다: 둘 다 소비, 내 목 자식(합 ×½, 10초)',
+    'fw': '들불 — 불이 적의 덩굴에 옮겨붙는다: 장판 소비, 내 불 자식이 덩굴 꼴로(합 ×½, 10초)',
+    'ef': '옮겨붙음 — 흙이 적의 불에 옮겨붙는다: 장판 소비, 내 흙 자식(합 ×½, 10초)',
+    'me': '옮겨붙음 — 쇠가 적의 흙에 옮겨붙는다: 장판 소비, 내 쇠 자식(합 ×½, 10초)',
+    'am': '옮겨붙음 — 물이 적의 쇠에 옮겨붙는다: 장판 소비, 내 물 자식(합 ×½, 10초)',
+    'wa': '옮겨붙음 — 나무가 적의 물에 옮겨붙는다: 장판 소비, 내 목 자식(합 ×½, 10초)',
+    'we': '뿌리 붕괴 — 목이 흙을 꺾는다: 장판 소비, 안의 적 2초 감속(이동 ×0.5)',
+    'fm': '달군 쇠 — 화가 금을 꺾는다: 장판 소비, 안의 적 2초 지속 피해(0.5초마다 4번)',
+    'ea': '진창 — 토가 수를 꺾는다: 장판 소비, 안의 적 3초 감속(이동 ×0.5), 피해 0',
+    'mw': '가시 — 금이 목을 꺾는다: 장판 소비, 안의 적 피해 1회',
+    'af': '김 — 수가 화를 꺾는다: 장판 소비, 안의 적 피해 1회 + 0.3초 가림',
+    'wm': '잘림 — 목이 금에 막힌다: 작용 소진, 적 쇠 장판은 반(×½)으로 남음',
+    'fa': '꺼짐 — 화가 수에 막힌다: 작용 소진, 적 물 장판은 반으로 남음',
+    'ew': '걸림 — 토가 목에 막힌다: 작용 소진, 적 덩굴 장판은 반으로 남음',
+    'mf': '무뎌짐 — 금이 화에 막힌다: 작용 소진, 적 불 장판은 반으로 남음',
+    'ae': '막힘 — 수가 토에 막힌다: 작용 소진, 적 흙 장판은 반으로 남음',
+}
+B8_PICK = {'ww': 'ww_b.png', 'ff': 'ff_a.png', 'ee': 'ee_b.png', 'mm': 'mm_a.png', 'aa': 'aa_a.png', 'wf': 'wf_b.png', 'fe': 'fe_a.png', 'em': 'em_b.png', 'ma': 'ma_b.png', 'aw': 'aw_a.png',
+           'fw': 'fw_c.png', 'ef': 'ef_a.png', 'me': 'me_a.png', 'am': 'am_a.png', 'wa': 'wa_a.png', 'we': 'we_a.png', 'fm': 'fm_b.png', 'ea': 'ea_c.png', 'mw': 'mw_a.png', 'af': 'af_a.png',
+           'wm': 'wm_a.png', 'fa': 'fa_a.png', 'ew': 'ew_b.png', 'mf': 'mf_b.png', 'ae': 'ae_a.png'}
+B8_SPELLS = []
+for _ka, _a, _ha in _B8_BODIES:
+    for _kc, _c, _hc in _B8_BODIES:
+        _k = _ka + _kc
+        B8_SPELLS.append((_k, 'X0_on%s_%s_red' % (_c, _a), [B8_PICK.get(_k, _k + '_a.png')], '%s>%s · %s' % (_ha, _hc, _B8_DESC[_k])))
 
 
 def b3_main(rnd, ages, cuts, only, batch='b3'):
     import imageio_ffmpeg
-    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch7' if batch == 'b7' else 'batch6' if batch == 'b6' else 'batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
-    spells = B7_SPELLS if batch == 'b7' else B6_SPELLS if batch == 'b6' else B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
+    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch8' if batch == 'b8' else 'batch7' if batch == 'b7' else 'batch6' if batch == 'b6' else 'batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
+    spells = B8_SPELLS if batch == 'b8' else B7_SPELLS if batch == 'b7' else B6_SPELLS if batch == 'b6' else B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
     if batch == 'b5' and '--demo' in sys.argv:
         # the expiry demos (seed=expire): the same glyphs, the _b5x folders, keys + 'x'
         spells = [(k + 'x', f.replace('_b5_', '_b5x_'), c, t.split(' — ')[0] + ' — 작동 없이 수명 끝(시연: 조건이 오지 않음)') for k, f, c, t in B5_SPELLS]
@@ -194,7 +232,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
         g.send(None)
         return g
 
-    combined_name = 'free_showcase_batch7_all.mp4' if batch == 'b7' else 'free_showcase_batch6_all.mp4' if batch == 'b6' else ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
+    combined_name = 'free_showcase_batch8_all.mp4' if batch == 'b8' else 'free_showcase_batch7_all.mp4' if batch == 'b7' else 'free_showcase_batch6_all.mp4' if batch == 'b6' else ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
     combined = None if only else open_writer(base / rnd / combined_name)
     for key, folder, cons, text in spells:
         if only and key not in only:
@@ -206,7 +244,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
             rs = [r for r in csv.DictReader(f) if r.get('video') == '1' and (d / ('f_%05d.jpg' % int(r['frame']))).exists()]
         if not rs:
             print('NO VIDEO FRAMES', key); continue
-        cut = cuts.get(key, 1.1 if batch == 'b5' else 1.0 if batch == 'b6' else (1.35 if folder.startswith('A5') else 1.0 if folder.startswith('P5') else 1.2) if batch == 'b7' else 1.8)
+        cut = cuts.get(key, 1.5 if batch == 'b8' else 1.1 if batch == 'b5' else 1.0 if batch == 'b6' else (1.35 if folder.startswith('A5') else 1.0 if folder.startswith('P5') else 1.2) if batch == 'b7' else 1.8)
         name = text.split(' — ')[0]
         # side by side at the asked ages
         for i, age in enumerate(ages.get(key, [1.2])):
@@ -253,7 +291,8 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
             if jumped:
                 b6msg = '   [시간 건너뜀: 실험실 대기 생략 → ' + ('고리 선 끝' if 'ring line' in jump_note or 'attachment' in jump_note else '벗김 끝') + ' 1.4 초 전부터]'
                 b7msg = '   [시간 건너뜀: 실험실 대기 생략 → 궤도 끝 1.4 초 전부터]'
-                sub += (b7msg if batch == 'b7' else b6msg if batch == 'b6' else '   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
+                b8msg = '   [시간 건너뜀: 실험실 대기 생략 → 자식 / 남은 장판 끝 1.4 초 전부터]'
+                sub += (b8msg if batch == 'b8' else b7msg if batch == 'b7' else b6msg if batch == 'b6' else '   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
                 jump_left -= 1
             if 'LAB-SIMULATED' in note:
                 sub += '   [' + note.replace('LAB-SIMULATED: ', '실험실 연출: ')[:60] + ']'
@@ -265,7 +304,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
                 phase = (' · 작동 0.5×' if slow else ' · 작동 뒤 1×') if fired else ' · 씨앗 대기 1×'
                 send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + phase, sub), 2 if slow else 1)
                 continue
-            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 돌아온 뒤 1×' if batch == 'b7' else ' · 벗김 · 남은 것 1×' if batch == 'b6' else ' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 반응 뒤 1×' if batch == 'b8' else ' · 돌아온 뒤 1×' if batch == 'b7' else ' · 벗김 · 남은 것 1×' if batch == 'b6' else ' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
         one.close()
         print('mp4', key, len(cast), 'cast frames +', len(rest), 'lasting frames')
     if combined is not None:
@@ -404,7 +443,7 @@ def title(concept, text, seconds=1.5, fps=60):
 
 
 def main():
-    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5', 'b6', 'b7'):
+    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5', 'b6', 'b7', 'b8'):
         b3_entry()
         return
     rnd = sys.argv[1]
