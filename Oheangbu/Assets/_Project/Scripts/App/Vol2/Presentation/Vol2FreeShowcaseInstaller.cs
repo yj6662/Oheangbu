@@ -137,6 +137,14 @@ namespace Oheangbu.App
             try
             {
                 if (v == null || _view == null || _view.Coordinator == null || !On || _kit == null || !_kit.Ok) return;
+                // 2026-10-27 weak-points pass: the reaction consumed the acting cast's moving shape (the engine's commit) - that cast's showcase look is spent there
+                // (a shot with no body ahead folds into the reaction instead of drawing its own end burst over it; Vol2FsRun.ShapeConsumed)
+                if (v.ActingIsShape && v.ActingEnd == Vol2MaterialEnd.Consumed)
+                {
+                    long now = _view.Coordinator.Services.Clock.NowUs;
+                    Vector3 at = (v.Where != null ? v.Where.Centre : v.Point) + Vector3.up * 0.6f;
+                    foreach (var rc in _recipes) { var run = rc.RunOf(v.ActingCast); if (run != null) { try { run.ShapeConsumed(at, now, "shape consumed by reaction #" + v.EventId + " " + Vol2FsB8.Han(v.ActingBody) + ">" + Vol2FsB8.Han(v.ContactedBody)); } catch (System.Exception e) { Debug.LogException(e); } } }
+                }
                 var look = Vol2FsB8.Make(v.ActingBody, v.ContactedBody);
                 look.Begin(_kit, _view.transform, _view.Coordinator, v);
                 _reacts.Add(look); ReactShown++;

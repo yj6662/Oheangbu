@@ -143,7 +143,23 @@ namespace Oheangbu.App
                 + (Dried ? " dried " + DryRel.ToString("0.0") + "s" : "") + (ContactSurvives ? " contact " + v.ContactReason : "") + (Dur > 0f ? " dur " + Dur.ToString("0.0") + "s" : "")
                 + (Occl > 0f ? " occl " + Occl.ToString("0.0") + "s" : "") + (Rec != null ? " bodies " + Rec.Affected + " slows " + Rec.SlowsApplied + " hits " + Rec.Hits : "") + (EnemyIgniter ? " ENEMY igniter" : "");
             try { OnBuild(); } catch (System.Exception e) { Debug.LogException(e); }
+            // 2026-10-27 weak-points pass: every 막힘 gets the common surviving-half layer (the lost share tears off and sinks, the kept share stands wounded),
+            // its share from the engine's remaining / initial amount of the contacted material (Blocked(half): x0.5)
+            if (Kind == R.Kind.Block && ContactSurvives && Patch != null && kit != null && kit.Ok)
+            {
+                float lost = 0.5f;
+                if (co != null && co.Materials.TryGet(new MaterialId(v.ContactId), out var bm) && bm != null && bm.Initial > 0m)
+                    lost = Mathf.Clamp01(1f - (float)(bm.Remaining / bm.Initial));
+                if (lost < 0.05f) lost = 0.5f;
+                Half = new Vol2FsRxHalf(kit, Patch, Root.transform, P, Ground, Radius, Dir, Contacted, lost, HalfAt, Seed);
+                Note += " | " + Half.Note;
+            }
         }
+
+        /// <summary>2026-10-27 weak-points pass: the common 막힘 half (null for the other relations).</summary>
+        protected Vol2FsRxHalf Half;
+        /// <summary>When the 막힘 cut tears the patch (the look's own block moment, s after the commit).</summary>
+        protected virtual float HalfAt => 0.15f;
 
         protected float Rel(long us) => V == null ? 0f : (float)((us - V.AtUs) / 1e6);
         protected Vector3 CamPos { get { var c = Camera.main; return c != null ? c.transform.position : P - Dir * 6f + Vector3.up * 2.2f; } }
@@ -201,7 +217,13 @@ namespace Oheangbu.App
             // a body that went away (the lab's teardown) is dropped from the look
             for (int i = Bodies.Count - 1; i >= 0; i--) if (Bodies[i].T == null) { Bodies[i].Data = null; }
             OnLive(t);
+            if (Half != null)
+            {
+                try { Half.Tick(t, ContactEndAt, CamPos); } catch (System.Exception e) { Debug.LogException(e); Half = null; }
+                if (Half != null && !_halfNoted && Half.Note.Contains("cut:")) { _halfNoted = true; Note += Half.Note.Substring(Half.Note.IndexOf(" | cut:", System.StringComparison.Ordinal)); }
+            }
         }
+        bool _halfNoted;
 
         void Hard(string why)
         {
@@ -256,6 +278,9 @@ namespace Oheangbu.App
         public Transform Pool, Form;
         /// <summary>The tallest part (m) - for looks that put things on top of the patch.</summary>
         public float Height = 0.5f;
+        /// <summary>2026-10-27 weak-points pass: pieces a cell animates itself (a snapped blade, a toppled slab) - the common 막힘 half layer leaves them alone.</summary>
+        public readonly HashSet<Transform> Claimed = new HashSet<Transform>();
+        public void Claim(Transform t) { if (t != null) Claimed.Add(t); }
         readonly List<Mesh> _own = new List<Mesh>();
 
         public static Vol2FsPatch Build(Vol2FsKit kit, Transform parent, Body body, Vector3 centre, float radius, long materialId, bool enemy)

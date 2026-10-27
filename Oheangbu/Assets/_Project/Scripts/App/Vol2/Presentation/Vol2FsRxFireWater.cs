@@ -9,6 +9,8 @@ namespace Oheangbu.App
     /// (the enemy's dark water) to the material's own end (Expired: it drains into the ground). Nothing is damaged, nothing is born.</summary>
     public sealed class Vol2FsRxFireWater : Vol2FsReact
     {
+        /// <summary>2026-10-27 weak-points pass: the common half tears as the fire goes out in the pool.</summary>
+        protected override float HalfAt => 0.2f;
         static readonly Color Orange = new Color(1f, 0.45f, 0.12f), Hot = new Color(1f, 0.85f, 0.55f);
         Mesh _bodyMesh, _coreMesh, _smokeMesh, _flatMesh, _scarMesh; Light _keep; Light _glow; float _lastT;
         readonly Vol2FsStrips _body = new Vol2FsStrips(), _core = new Vol2FsStrips(), _smoke = new Vol2FsStrips(), _flat = new Vol2FsStrips(), _scar = new Vol2FsStrips();
@@ -99,7 +101,7 @@ namespace Oheangbu.App
             if (Patch != null)
             {
                 float halve = Vol2Fs.Smooth(At + 0.1f, At + 0.45f, t);
-                float spread = Mathf.Lerp(1f, 0.71f, halve);
+                float spread = 1f + 0f * halve;      // 2026-10-27 weak-points pass: the half is the common tear now (Vol2FsRxHalf), not a x0.71 shrink
                 float drain = ContactEndAt >= 0f ? Vol2Fs.Smooth(ContactEndAt, ContactEndAt + 0.9f, t) : 0f;
                 Patch.Pose(1f, drain * 0.05f, Mathf.Max(0.02f, spread * (1f - drain)));
             }

@@ -92,6 +92,13 @@ namespace Oheangbu.App
         Vector3 Line(float s) => Vector3.Lerp(_from, _hitPoint, s) + Vector3.up * 4f * LobHeight * s * (1f - s);
         const float LobHeight = 0.9f;
 
+        /// <summary>2026-10-27 weak-points pass: a reaction consumed the spear's moving shape before it reached a body - it is spent there (folds into the reaction).</summary>
+        public override void ShapeConsumed(Vector3 at, long nowUs, string why)
+        {
+            if (Root == null || !_launched || _hit || _hasTarget) return;
+            Fold(at, Now(nowUs), 0.2f, why);
+        }
+
         float Frac(long nowUs) => _impactRel > LaunchRel ? Mathf.Clamp01((Now(nowUs) - LaunchRel) / (_impactRel - LaunchRel)) : 1f;
 
         void Place(long nowUs)
@@ -226,11 +233,17 @@ namespace Oheangbu.App
                 if (t >= LaunchRel - 1e-4f) Launch(nowUs);
                 else return;
             }
+            if (Folding) return;
             if (!_hit)
             {
                 Place(nowUs);
                 DrawSpear(t);
-                if (t >= _impactRel) Hit(nowUs);
+                if (t >= _impactRel)
+                {
+                    // 2026-10-27 weak-points pass: no body on the path - no predicted fireball at the path's end (the executor made no contact): the spear folds away there
+                    if (!_hasTarget) { Fold(_hitPoint, t, 0.3f, "miss: the head ran to its end, no contact"); return; }
+                    Hit(nowUs);
+                }
                 return;
             }
             DrawSpear(t);
@@ -277,6 +290,7 @@ namespace Oheangbu.App
         {
             if (Root == null) return true;
             float t = Now(nowUs);
+            if (Folding) return !Root.activeSelf || t > LaunchRel + 3f;
             if (!_hit) return t > LaunchRel + 3f;
             if (_endRel < 0f) return false;
             if (t > _endRel + 6f) return true;

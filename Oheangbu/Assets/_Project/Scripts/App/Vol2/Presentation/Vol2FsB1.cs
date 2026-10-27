@@ -394,12 +394,19 @@ namespace Oheangbu.App
                 OnCharge(t, k);
                 if (t >= LaunchRel - 1e-4f) { Launch(nowUs); _hadTarget = TargetT != null; } else return;
             }
+            if (Folding) return;
             if (!IsHit)
             {
                 float f = Frac(nowUs);
                 OnFly(t, f, LastFrac);
                 LastFrac = f;
-                if (t >= ImpactRel) { IsHit = true; HitAt = t; OnHit(nowUs); HitStop(t); }
+                if (t >= ImpactRel)
+                {
+                    // 2026-10-27 weak-points pass: no body on the path (the executor's contact never comes) - the head only ran to its end: no predicted impact
+                    // there (batch 8 r3: 마's rock / dust / ink burst stood at the path's end over every 토 reaction); the shot folds away where its head stopped
+                    if (!HasTarget) { Fold(HitPoint, t, 0.3f, "miss: the head ran to its end, no contact"); return; }
+                    IsHit = true; HitAt = t; OnHit(nowUs); HitStop(t);
+                }
                 else return;
             }
             bool ended = Inst.CastIsEnded || Inst.Log.Finished;
@@ -411,10 +418,19 @@ namespace Oheangbu.App
         {
             if (Root == null || Gone) return true;
             float t = Now(nowUs);
+            if (Folding) return Root == null || !Root.activeSelf || t > LaunchRel + 3f;
             if (!IsHit) return t > LaunchRel + 3f;
             if (EndRel < 0f) return false;
             if (t > EndRel + Linger) return true;
             return t > EndRel + MinLinger && !ParticlesAlive();
+        }
+
+        /// <summary>2026-10-27 weak-points pass: a reaction consumed this cast's moving shape before the shot reached a body - the shot is spent there (it folds
+        /// into the reaction), no impact of its own. A shot with a body ahead keeps flying: the executor still makes that contact.</summary>
+        public override void ShapeConsumed(Vector3 at, long nowUs, string why)
+        {
+            if (Root == null || !Launched || IsHit || HasTarget) return;
+            Fold(at, Now(nowUs), 0.2f, why);
         }
     }
 

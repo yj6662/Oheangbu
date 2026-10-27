@@ -19,6 +19,8 @@ namespace Oheangbu.App
         bool _cutDone; float _lastT;
         readonly List<Vol2FsRxBlockKit.Flyer> _snap = new List<Vol2FsRxBlockKit.Flyer>();
         bool _endFx;
+        /// <summary>2026-10-27 weak-points pass: the common half tears just after the cut (CutAt 0.07).</summary>
+        protected override float HalfAt => 0.12f;
 
         protected override void OnBuild()
         {
@@ -46,7 +48,7 @@ namespace Oheangbu.App
             _tail = _hit - Dir * 2.7f - Side * 0.75f + Vector3.up * 0.45f;      // r3: low and close to the patch
             _bow = Vector3.Lerp(_tail, _hit, 0.5f) - Side * 1.1f + Vector3.up * 0.35f;
             // half the blades (every other) snap at the cut
-            if (Patch != null) for (int i = 0; i < Patch.Props.Count; i += 2) _snap.Add(new Vol2FsRxBlockKit.Flyer { T = Patch.Props[i] });
+            if (Patch != null) for (int i = 0; i < Patch.Props.Count; i += 2) { _snap.Add(new Vol2FsRxBlockKit.Flyer { T = Patch.Props[i] }); Patch.Claim(Patch.Props[i]); }
             Note += " | cut wm_a: blades " + (Patch != null ? Patch.Props.Count : 0) + " snap " + _snap.Count;
         }
 
@@ -176,6 +178,8 @@ namespace Oheangbu.App
         {
             float life = Vol2Fs.Smooth(0.12f, 0.4f, t) * (endAt >= 0f ? 1f - Vol2Fs.Smooth(endAt, endAt + 0.6f, t) : 1f) * (expireRel > 0f ? Mathf.Lerp(0.55f, 1f, Mathf.Clamp01((expireRel - t) / 1.5f)) : 1f);
             if (life <= 0.01f) return;
+            // 2026-10-27 weak-points pass: the lost share is the common half's (Vol2FsRxHalf.LostAxis: the right of the incoming direction)
+            dir.y = 0f; if (dir.sqrMagnitude > 1e-6f) dir = Vol2FsRxHalf.LostAxis(dir.normalized);
             float lost0 = Mathf.Atan2(-dir.z, -dir.x) - Mathf.PI * 0.5f;
             for (int k = 0; k < 6; k++) Vol2FsB4A.GroundArc(s, p, ground + 0.02f, r * 1.18f, 0.1f, lost0 + k * (Mathf.PI / 6f) + 0.05f, Mathf.PI / 6f - 0.14f, life * 0.8f, 0.2f + 0.1f * k, cam, 6);
             Vol2FsB4A.GroundArc(s, p, ground + 0.025f, r * 1.06f, 0.22f, lost0 + Mathf.PI, Mathf.PI, life, 0.5f, cam, 30);

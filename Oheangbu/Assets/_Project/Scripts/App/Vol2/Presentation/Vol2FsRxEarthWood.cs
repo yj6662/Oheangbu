@@ -21,6 +21,8 @@ namespace Oheangbu.App
         ParticleSystem _rocks, _dust, _chips, _leaves, _splinters;
         bool _caughtDone, _torn, _broken;
         const float FlyEnd = 0.1f, TearAt = 0.38f, BreakAt = 0.6f;
+        /// <summary>2026-10-27 weak-points pass: the common half tears with the vines (TearAt).</summary>
+        protected override float HalfAt => 0.42f;
 
         protected override void OnBuild()
         {
@@ -143,12 +145,13 @@ namespace Oheangbu.App
             _scar.Clear(); if (Patch != null) { Vol2FsRxBlockKit.Survivor(_scar, P, Ground, Radius, Dir, t, ContactEndAt, ContactExpireRel, cam); Vol2FsRxBlockKit.KeepLightTick(_keep, P, t, ContactEndAt); }
             _crack.Write(_crackMesh); _trail.Write(_trailMesh); _scar.Write(_scarMesh);
             if (_glow != null) _glow.intensity = _broken ? Mathf.MoveTowards(_glow.intensity, 0f, Time.deltaTime * 20f) : t >= FlyEnd ? 4f + 4f * Vol2Fs.Smooth(FlyEnd, BreakAt, t) : 0f;
-            // the enemy's tangle: half of it goes (it settles at ~0.6 height, ~0.85 spread) after the tear; at its end it withers and sinks
+            // the enemy's tangle: the lost half tears off (the common Vol2FsRxHalf, 2026-10-27 weak-points pass - no longer a uniform shrink); the kept half sags a
+            // little after the tear; at its end it withers and sinks
             if (Patch != null)
             {
                 float halve = Vol2Fs.Smooth(TearAt, TearAt + 0.5f, t);
                 float end = ContactEndAt >= 0f ? Vol2Fs.Smooth(ContactEndAt, ContactEndAt + 0.8f, t) : 0f;
-                Patch.Pose(Mathf.Lerp(1f, 0.58f, halve) * (1f - end), end * 0.3f, Mathf.Lerp(1f, 0.82f, halve));
+                Patch.Pose(Mathf.Lerp(1f, 0.82f, halve) * (1f - end), end * 0.3f, 1f);
             }
         }
 

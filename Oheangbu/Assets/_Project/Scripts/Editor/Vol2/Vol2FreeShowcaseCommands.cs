@@ -45,6 +45,13 @@ namespace Oheangbu.EditorTools.Vol2
                     if (QualitySettings.GetQualityLevel() != q) QualitySettings.SetQualityLevel(q, true);
                     return "quality " + before + " -> " + QualitySettings.names[QualitySettings.GetQualityLevel()];
                 }
+                // 2026-10-27 weak-points pass: the showcase steel's diagnostic switch (FsMetal _FsMetalDiag, a shader global; 0 = normal) - for the cause stills only
+                if (c.StartsWith("metaldiag:", StringComparison.Ordinal))
+                {
+                    if (!float.TryParse(c.Substring(10).Trim(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float d)) return "REFUSED free:metaldiag: <0..5>";
+                    Shader.SetGlobalFloat("_FsMetalDiag", Mathf.Clamp(Mathf.Round(d), 0f, 5f));
+                    return "metaldiag " + Shader.GetGlobalFloat("_FsMetalDiag").ToString(System.Globalization.CultureInfo.InvariantCulture);
+                }
                 if (c.StartsWith("run:", StringComparison.Ordinal))
                 {
                     if (!EditorApplication.isPlaying) return "REFUSED free:run: not in Play (free:play first)";

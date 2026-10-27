@@ -18,6 +18,8 @@ namespace Oheangbu.App
         bool _hit, _toppled;
         readonly List<(Transform T, Quaternion R0, Vector3 P0, Vector3 Out)> _fall = new List<(Transform, Quaternion, Vector3, Vector3)>();
         const float HitAt = 0.08f;
+        /// <summary>2026-10-27 weak-points pass: the common half tears as the slabs start to topple (HitAt + 0.12).</summary>
+        protected override float HalfAt => 0.2f;
 
         protected override void OnBuild()
         {
@@ -44,7 +46,7 @@ namespace Oheangbu.App
                 {
                     var tr = Patch.Props[i]; if (tr == null) continue;
                     Vector3 o = tr.position - P; o.y = 0f; o = o.sqrMagnitude > 1e-4f ? o.normalized : Dir;
-                    _fall.Add((tr, tr.rotation, tr.position, o));
+                    _fall.Add((tr, tr.rotation, tr.position, o)); Patch.Claim(tr);
                 }
             Note += " | dammed ae_a topple " + _fall.Count;
         }

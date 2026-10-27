@@ -18,6 +18,8 @@ namespace Oheangbu.App
         Vector3 _tail, _point, _axis;
         bool _touched; float _flamesRate = -1f;
         const float In = 0.07f, MeltEnd = 0.7f, BackFrom = 0.75f;
+        /// <summary>2026-10-27 weak-points pass: the common half tears while the spear melts.</summary>
+        protected override float HalfAt => 0.25f;
 
         protected override void OnBuild()
         {
@@ -106,7 +108,8 @@ namespace Oheangbu.App
             {
                 float halve = Vol2Fs.Smooth(In + 0.05f, In + 0.5f, t);
                 float end = ContactEndAt >= 0f ? Vol2Fs.Smooth(ContactEndAt, ContactEndAt + 0.8f, t) : 0f;
-                Patch.Pose(Mathf.Lerp(1f, 0.55f, halve) * Mathf.Lerp(1f, 0.25f, end), 0f);
+                // 2026-10-27 weak-points pass: the lost half is the common tear (Vol2FsRxHalf); the kept coals only slump a little (r3 shrank the whole fire to 0.55)
+                Patch.Pose(Mathf.Lerp(1f, 0.85f, halve) * Mathf.Lerp(1f, 0.25f, end), 0f);
                 if (_flamesRate > 0f && Patch.Ps.Count > 0 && Patch.Ps[0] != null) { var em = Patch.Ps[0].emission; em.rateOverTime = _flamesRate * Mathf.Lerp(1f, 0.5f, halve) * (1f - end); }
             }
         }

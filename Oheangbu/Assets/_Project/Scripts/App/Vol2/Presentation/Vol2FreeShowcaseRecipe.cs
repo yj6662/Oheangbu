@@ -133,16 +133,73 @@ namespace Oheangbu.App
             foreach (var ps in Root.GetComponentsInChildren<ParticleSystem>()) { var m = ps.main; m.simulationSpeed = 0.04f; }
         }
 
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        // 2026-10-27 weak-points pass (the user: "묶음 6–8에서 반복된 공통 약점(강철 회색 · ㅏ 경로 원근 · 작용 글자 룩 겹침 · 막힘 반 잔액 약함)부터 다듬어 줘."):
+        //  * the ㅏ path read (Vol2FsPathRead): every look whose cast runs a path emitter gets the head's real run drawn for the shoulder camera;
+        //  * the fold: a look whose moving shape the executor spent elsewhere (a reaction consumed it, ShapeConsumed) or that met no body (the head ran to its
+        //    end, a miss) folds into that point and goes - instead of drawing a predicted impact the executor never made (Vol2FsShot / 나).
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        Vol2FsPathRead _pathRead; bool _pathChecked, _pathNoted;
+        float _foldAt = -1f, _foldDur; Vector3 _foldTo;
+        readonly List<(Light L, float I)> _foldLights = new List<(Light L, float I)>();
+        /// <summary>The look is folding away (spent / missed): the skeletons stop drawing their own beats.</summary>
+        public bool Folding => _foldAt >= 0f;
+
+        /// <summary>The installer relays a committed reaction whose acting side was this cast's moving shape (the reaction engine consumed it at <paramref name="at"/>).</summary>
+        public virtual void ShapeConsumed(Vector3 at, long nowUs, string why) { }
+
+        /// <summary>Folds the whole look into <paramref name="to"/> over <paramref name="seconds"/> (its particles stop emitting and die fast, its lights dim), then hides it.</summary>
+        protected void Fold(Vector3 to, float t, float seconds, string why)
+        {
+            if (_foldAt >= 0f || Root == null) return;
+            _foldAt = t; _foldDur = Mathf.Max(0.05f, seconds); _foldTo = to;
+            Note += " | fold (" + why + ") @" + t.ToString("0.00");
+            _stopUntil = -1f;
+            foreach (var ps in Root.GetComponentsInChildren<ParticleSystem>()) { ps.Stop(true, ParticleSystemStopBehavior.StopEmitting); var m = ps.main; m.simulationSpeed = 2.5f; }
+            foreach (var l in Root.GetComponentsInChildren<Light>()) if (l != null) _foldLights.Add((l, l.intensity));
+        }
+
+        void FoldTick(float t)
+        {
+            float k = Vol2Fs.Smooth(_foldAt, _foldAt + _foldDur, t);
+            float s = Mathf.Max(0.001f, (1f - k) * (1f - k));
+            var tr = Root.transform;
+            float ps = tr.parent != null ? Mathf.Max(1e-4f, tr.parent.lossyScale.x) : 1f;
+            tr.localScale = Vector3.one * (s / ps);
+            tr.position = _foldTo * (1f - s);           // every piece is written in world coordinates under a root at the origin: scale about _foldTo
+            foreach (var (l, i) in _foldLights) if (l != null) l.intensity = i * s;
+            if (k >= 0.999f) Root.SetActive(false);
+        }
+
+        /// <summary>Called by the recipe next to <see cref="Contact"/> (every contact record of the cast).</summary>
+        public void KitContact(Vol2ContactRecord rec)
+        {
+            if (_pathRead != null && Root != null) { var tr = rec != null ? TargetTransform(rec.TargetId) : null; _pathRead.Contact(rec, Now(rec.NowUs > 0 ? rec.NowUs : Inst.StartUs), tr != null ? BodyBounds(tr, tr.position, 0.5f).center : (Vector3?)null); }
+            else if (!_pathChecked && rec != null && rec.BudgetAccepted) _pendingContacts.Add(rec);      // only until the path read is decided (a non-path look keeps nothing)
+        }
+        readonly List<Vol2ContactRecord> _pendingContacts = new List<Vol2ContactRecord>();
+
         /// <summary>Called by the recipe after <see cref="Tick"/> every frame.</summary>
         public void KitTick(long nowUs)
         {
             if (Root == null || BodyGone || !Root.activeSelf) return;
             float t = Now(nowUs);
+            if (_foldAt >= 0f) { FoldTick(t); return; }
             if (_stopUntil > 0f && t >= _stopUntil)
             {
                 _stopUntil = -1f;
                 foreach (var ps in Root.GetComponentsInChildren<ParticleSystem>()) { var m = ps.main; m.simulationSpeed = 1f; }
             }
+            // the ㅏ path read (any cast that runs a path emitter)
+            if (!_pathChecked && t >= LaunchRel && (Inst.Path != null || t > LaunchRel + 0.5f || Inst.Log.Glyph.Frame != Frame.Path))
+            {
+                _pathChecked = true;
+                if (Inst.Log.Glyph.Frame == Frame.Path && Inst.Path != null && Inst.Log.Spec != null) _pathRead = new Vol2FsPathRead(Inst, Kit, LaunchRel);
+                if (_pathRead != null) { foreach (var rec in _pendingContacts) { var tr = TargetTransform(rec.TargetId); _pathRead.Contact(rec, t, tr != null ? BodyBounds(tr, tr.position, 0.5f).center : (Vector3?)null); } }
+                _pendingContacts.Clear();
+            }
+            if (_pathRead != null && _pathRead.Tick(Root.transform, t, CamPos)) HitStop(t, 0.06f);
+            if (_pathRead != null && !_pathNoted && _pathRead.Note.Length > 0) { _pathNoted = true; Note += " | path read: " + _pathRead.Note; }
             if (OwnSwingTrail || t > LaunchRel + 0.6f) { if (_swingMesh != null && _swingMesh.vertexCount > 0) { _swingMesh.Clear(); _phantomMesh.Clear(); } return; }
             _tipPath.Add((Tip(), t));
             if (_tipPath.Count > 90) _tipPath.RemoveAt(0);
@@ -254,7 +311,21 @@ namespace Oheangbu.App
         }
 
         public override void OnContact(Vol2VfxInstance inst, Vol2ContactRecord rec)
-        { if (_runs.TryGetValue(inst, out var r)) { try { r.Contact(rec); } catch (Exception e) { Debug.LogException(e); } } else Inner.OnContact(inst, rec); }
+        {
+            if (_runs.TryGetValue(inst, out var r))
+            {
+                try { r.Contact(rec); } catch (Exception e) { Debug.LogException(e); }
+                try { r.KitContact(rec); } catch (Exception e) { Debug.LogException(e); }      // 2026-10-27: the ㅏ path read's contact burst
+            }
+            else Inner.OnContact(inst, rec);
+        }
+
+        /// <summary>2026-10-27 weak-points pass: the showcase look of a cast (the installer relays a reaction that consumed its moving shape), else null.</summary>
+        public Vol2FsRun RunOf(CastId cast)
+        {
+            foreach (var kv in _runs) if (kv.Key != null && kv.Key.Log != null && kv.Key.Log.Cast == cast) return kv.Value;
+            return null;
+        }
 
         public override void OnMaterialCreated(Vol2VfxInstance inst, Vol2Material m)
         { if (_runs.TryGetValue(inst, out var r)) { try { r.MaterialCreated(m); } catch (Exception e) { Debug.LogException(e); } } else Inner.OnMaterialCreated(inst, m); }
