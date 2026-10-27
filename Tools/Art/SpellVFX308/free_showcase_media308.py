@@ -148,10 +148,39 @@ B6_SPELLS = [
 ]
 
 
+# batch 7 (2026-10-27, D308-150 V12): --batch b7 -> free_showcase/batch7/<round>/ (돌아온다: the trip out and back, the return hits, the shots, the peaks' carry / reflections /
+# drag / wash). Same streamed writer (cast 1x -> 0.5x -> the rest 1x; ㅓ's long orbit is JUMPed to 1.4 s before its end); folders carry ret=1 (_b7).
+B7_PICK = {'gang': 'gang_a.png', 'nang': 'nang_a.png', 'mang': 'mang_b.png', 'sang': 'sang_a.png', 'ang': 'ang_b.png', 'geong': 'geong_b.png', 'neong': 'neong_a.png', 'meong': 'meong_b.png', 'seong': 'seong_b.png', 'eong': 'eong_a.png',
+           'gong': 'gong_a.png', 'nong': 'nong_b.png', 'mong': 'mong_b.png', 'song': 'song_b.png', 'ong': 'ong_b.png', 'gung': 'gung_b.png', 'nung': 'nung_b.png', 'mung': 'mung_b.png', 'sung': 'sung_a.png', 'ung': 'ung_a.png'}      # the batch 7 pick
+B7_SPELLS_T = [
+    ('gang', 'P5_bridge4_b7_Wood_red', '강 · 목 · ㅏ 경로 · 돌아온다 — 덩굴이 12 m 끝까지 갔다 같은 길로 돌아온다: 갈 때 붙들고(2초) 올 때 ×0.5로 한 번 더, 궤도의 적 탄을 떨어뜨린다'),
+    ('nang', 'P5_bridge4_b7_Fire_red', '낭 · 화 · ㅏ 경로 · 돌아온다 — 불이 갔다 돌아온다: 갈 때 데우고(2초 화상) 올 때 ×0.5, 궤도의 적 탄을 떨어뜨린다'),
+    ('mang', 'P5_bridge4_b7_Earth_red', '망 · 토 · ㅏ 경로 · 돌아온다 — 흙이 갔다 돌아온다: 갈 때 밀치고(대피해) 올 때 ×0.5, 궤도의 적 탄을 떨어뜨린다'),
+    ('sang', 'P5_bridge4_b7_Metal_red', '상 · 금 · ㅏ 경로 · 돌아온다 — 쇠날이 갔다 돌아온다: 갈 때 베고 올 때 ×0.5, 궤도의 적 탄을 떨어뜨린다'),
+    ('ang', 'P5_bridge4_b7_Water_red', '앙 · 수 · ㅏ 경로 · 돌아온다 극치 — 물이 돌아올 때 내 잔존물(선돌) 하나를 시전자 앞 2 m로 날라 온다(수명 · 양 그대로), 귀환 ×0.75'),
+    ('geong', 'A5_bridge4_b7_Wood_red', '겅 · 목 · ㅓ 부착 · 돌아온다 — 덩굴이 내 몸 둘레를 돈다(6초, 1.6 m · 1초에 한 바퀴): 닿는 적을 붙들고 둘째 바퀴에 한 번 더, 적 탄을 떨어뜨린다'),
+    ('neong', 'A5_bridge4_b7_Fire_red', '넝 · 화 · ㅓ 부착 · 돌아온다 — 불이 내 몸 둘레를 돈다(6초): 닿는 적을 데우고 둘째 바퀴에 한 번 더, 적 탄을 떨어뜨린다'),
+    ('meong', 'A5_bridge4_b7_Earth_red', '멍 · 토 · ㅓ 부착 · 돌아온다 — 흙이 내 몸 둘레를 돈다(6초): 닿는 적을 밀친다(밀려난 적은 궤도 밖 = 둘째 접촉 없음), 적 탄을 떨어뜨린다'),
+    ('seong', 'A5_bridge4_b7_Metal_red', '성 · 금 · ㅓ 부착 · 돌아온다 — 쇠날이 내 몸 둘레를 돈다(6초): 닿는 적을 베고 둘째 바퀴에 한 번 더, 적 탄을 떨어뜨린다'),
+    ('eong', 'A5_bridge4_b7_Water_red', '엉 · 수 · ㅓ 부착 · 돌아온다 극치 — 도는 물이 적 탄을 되쏜다: 셋은 쏜 곰에게 돌아가 맞히고(빌린 위력 0.3씩, 합 0.9) 넷째는 떨어뜨리기만, 닿는 적은 젖는다'),
+    ('gong', 'F5_bridge4_b7_Wood_red', '공 · 목 · ㅗ 면 · 돌아온다 — 앞 부채꼴의 덩굴이 5 m 나갔다 돌아온다: 갈 때 면 안 전원을 붙들고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('nong', 'F5_bridge4_b7_Fire_red', '농 · 화 · ㅗ 면 · 돌아온다 — 앞 부채꼴의 불이 나갔다 돌아온다: 갈 때 데우고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('mong', 'F5_bridge4_b7_Earth_red', '몽 · 토 · ㅗ 면 · 돌아온다 — 앞 부채꼴의 흙이 나갔다 돌아온다: 갈 때 밀치고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('song', 'F5_bridge4_b7_Metal_red', '송 · 금 · ㅗ 면 · 돌아온다 — 앞 부채꼴의 쇠날이 나갔다 돌아온다: 갈 때 베고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('ong', 'F5_bridge4_b7_Water_red', '옹 · 수 · ㅗ 면 · 돌아온다 극치 — 큰물이 나갔다 돌아오며 적을 끌어온다(≤1.5초, 시전자 앞 1.5 m까지), 전원 젖음'),
+    ('gung', 'R5_bridge4_b7_Wood_red', '궁 · 목 · ㅜ 둘레 · 돌아온다 — 둘레 덩굴 고리가 2 m → 4 m로 퍼졌다 돌아온다: 갈 때 붙들고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('nung', 'R5_bridge4_b7_Fire_red', '눙 · 화 · ㅜ 둘레 · 돌아온다 — 둘레 불 고리가 퍼졌다 돌아온다: 갈 때 데우고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('mung', 'R5_bridge4_b7_Earth_red', '뭉 · 토 · ㅜ 둘레 · 돌아온다 — 둘레 흙 고리가 퍼졌다 돌아온다: 갈 때 밀치고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('sung', 'R5_bridge4_b7_Metal_red', '숭 · 금 · ㅜ 둘레 · 돌아온다 — 둘레 쇠날 고리가 퍼졌다 돌아온다: 갈 때 베고 올 때 ×0.5, 적 탄을 떨어뜨린다'),
+    ('ung', 'R5_bridge4_b7_Water_red', '웅 · 수 · ㅜ 둘레 · 돌아온다 극치 — 물 고리가 퍼졌다 돌아오며 씻는다: 지난 자리의 적 장판을 지운다(상한 4, 다섯째는 남음), 내 잔존물은 젖음, 비전투는 오염 정화(실험실 = 기록만)'),
+]
+B7_SPELLS = [(k, f, [B7_PICK.get(k, k + '_a.png')], t) for k, f, t in B7_SPELLS_T]
+
+
 def b3_main(rnd, ages, cuts, only, batch='b3'):
     import imageio_ffmpeg
-    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch6' if batch == 'b6' else 'batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
-    spells = B6_SPELLS if batch == 'b6' else B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
+    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch7' if batch == 'b7' else 'batch6' if batch == 'b6' else 'batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
+    spells = B7_SPELLS if batch == 'b7' else B6_SPELLS if batch == 'b6' else B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
     if batch == 'b5' and '--demo' in sys.argv:
         # the expiry demos (seed=expire): the same glyphs, the _b5x folders, keys + 'x'
         spells = [(k + 'x', f.replace('_b5_', '_b5x_'), c, t.split(' — ')[0] + ' — 작동 없이 수명 끝(시연: 조건이 오지 않음)') for k, f, c, t in B5_SPELLS]
@@ -165,7 +194,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
         g.send(None)
         return g
 
-    combined_name = 'free_showcase_batch6_all.mp4' if batch == 'b6' else ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
+    combined_name = 'free_showcase_batch7_all.mp4' if batch == 'b7' else 'free_showcase_batch6_all.mp4' if batch == 'b6' else ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
     combined = None if only else open_writer(base / rnd / combined_name)
     for key, folder, cons, text in spells:
         if only and key not in only:
@@ -177,7 +206,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
             rs = [r for r in csv.DictReader(f) if r.get('video') == '1' and (d / ('f_%05d.jpg' % int(r['frame']))).exists()]
         if not rs:
             print('NO VIDEO FRAMES', key); continue
-        cut = cuts.get(key, 1.1 if batch == 'b5' else 1.0 if batch == 'b6' else 1.8)
+        cut = cuts.get(key, 1.1 if batch == 'b5' else 1.0 if batch == 'b6' else (1.35 if folder.startswith('A5') else 1.0 if folder.startswith('P5') else 1.2) if batch == 'b7' else 1.8)
         name = text.split(' — ')[0]
         # side by side at the asked ages
         for i, age in enumerate(ages.get(key, [1.2])):
@@ -223,7 +252,8 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
             sub = 't = %s s' % r['ageSec']
             if jumped:
                 b6msg = '   [시간 건너뜀: 실험실 대기 생략 → ' + ('고리 선 끝' if 'ring line' in jump_note or 'attachment' in jump_note else '벗김 끝') + ' 1.4 초 전부터]'
-                sub += (b6msg if batch == 'b6' else '   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
+                b7msg = '   [시간 건너뜀: 실험실 대기 생략 → 궤도 끝 1.4 초 전부터]'
+                sub += (b7msg if batch == 'b7' else b6msg if batch == 'b6' else '   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
                 jump_left -= 1
             if 'LAB-SIMULATED' in note:
                 sub += '   [' + note.replace('LAB-SIMULATED: ', '실험실 연출: ')[:60] + ']'
@@ -235,7 +265,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
                 phase = (' · 작동 0.5×' if slow else ' · 작동 뒤 1×') if fired else ' · 씨앗 대기 1×'
                 send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + phase, sub), 2 if slow else 1)
                 continue
-            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 벗김 · 남은 것 1×' if batch == 'b6' else ' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 돌아온 뒤 1×' if batch == 'b7' else ' · 벗김 · 남은 것 1×' if batch == 'b6' else ' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
         one.close()
         print('mp4', key, len(cast), 'cast frames +', len(rest), 'lasting frames')
     if combined is not None:
@@ -374,7 +404,7 @@ def title(concept, text, seconds=1.5, fps=60):
 
 
 def main():
-    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5', 'b6'):
+    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5', 'b6', 'b7'):
         b3_entry()
         return
     rnd = sys.argv[1]

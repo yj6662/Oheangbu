@@ -528,6 +528,117 @@ B6_VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 7 (2026-10-27, D308-150 V12, the user's order "쇼케이스 방향이 낫다. 이 방식으로 다른 술식도 만들어 가자." / "잘 진행해둬"): the ㅇ book 돌아온다 - the element
+# goes OUT along its shape and COMES BACK the same way (a closed curve): what it touched going out it touches again coming back (weaker), and it knocks enemy shots
+# out of the air on its way. P5 강 낭 망 상 앙 · A5 겅 넝 멍 성 엉 (an orbit round the caster, 6 s) · F5 공 농 몽 송 옹 (the fan slides out and back) · R5 궁 눙 뭉 숭 웅
+# (the ring spreads 2 -> 4 m and back); peaks 앙 엉 옹 웅 = water (carry my stone home / turn the shots back at the shooter / drag the bears in / wash enemy pools away).
+# Picture 1 = the real gameplay frame of the template's own capture (batch7/r0 f_00000, capture option ret=1: the lab's slow enemy shots, 앙's stone, 엉's shooter,
+# 웅's pools; the water peaks use their own job's frame).
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b7 [--run] [--wave 6] [ids]
+B7_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch7/concepts'
+_B7_FRAME = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch7/r0/frames/{t}_bridge4_b7_{b}_red/f_00000.jpg'
+_B7_SCENE = """Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, %s. The small dark spheres are ENEMY SHOTS (dark ink projectiles fired at the caster). Paint the concept ON THIS VIEW: keep this camera height, angle and framing (you may raise the camera a little so the loop of the trip reads), the same ground and sky, the bears, the shots and the props at the places described. Picture 1 may already show a thin bright line or small flashes: capture artefacts of a placeholder effect - remove them. The scene keeps its muted Korean ink-wash painted look."""
+B7_REF = {
+    'P5': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs) on the spell's straight path: one about 4.6 metres straight ahead, the other about 8.5 metres ahead a little right; and about 10 metres ahead, at chest height on the path, one small dark enemy shot drifting toward the caster",
+    'P5m': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs) on the spell's straight path (about 4.6 and 8.5 metres ahead), about 6 metres ahead just RIGHT of the path a chest-high rough standing stone (a tall slab) that belongs to the CASTER (a stone the caster raised earlier), and about 10 metres ahead one small dark enemy shot at chest height",
+    'A5': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "ONE real enemy (a dark matted bear with crusted crystal growths on its back) VERY close, about 1.6 metres straight ahead, and two small dark enemy shots at chest height coming in toward the caster from the front-left and the front-right, about 2.3 metres away",
+    'A5m': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "ONE real enemy (a dark matted bear with crusted crystal growths on its back) VERY close, about 1.6 metres ahead; a second bear far ahead-right (about 7.5 metres) - the SHOOTER; and FOUR small dark enemy shots at chest height coming in toward the caster from the front, about 2.5 metres away",
+    'F5': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs) in the area in front: one about 3.4 metres ahead a little left, the other about 5.8 metres ahead on the right; and about 8 metres ahead one small dark enemy shot at chest height",
+    'R5': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs) ahead a little right, one about 2 metres away (on the 2-metre ring round the caster), the other about 3.8 metres away; and one small dark enemy shot about 3 metres ahead-left at chest height",
+    'R5m': '--- THE ATTACHED PICTURES ---\n' + _B7_SCENE % "TWO real enemies (dark matted bears) ahead a little right (about 2 and 3.8 metres away), one small dark enemy shot ahead-left, FIVE dark violet-black pools of enemy corruption lying on the ground around the front between 2.3 and 4.2 metres from the caster, and one rough standing stone (about 1 metre tall) of the CASTER's own about 3 metres ahead-right",
+}
+_RETURN = ("It is a 'COMES BACK' spell (돌아온다): the element goes OUT along its shape and COMES BACK the same way to the caster, like a boomerang, a reeled line or a tide. BOTH the going and the coming back must read AT A GLANCE in ONE picture: "
+           "(1) the element itself at the turn of its trip or already on its way back; "
+           "(2) the trip as a CLOSED CURVE - the outgoing trail and the returning trail together make one closed loop (in the air or on the ground), a ghost afterimage of the outgoing trail that the returning element travels back along; "
+           "(3) every bear it passes is struck TWICE - hard on the way out, and again, visibly weaker, on the way back (an echo of the first hit); "
+           "(4) the small dark enemy shot it passes is knocked out of the air (falling, broken). "
+           "Style of the motion (like a modern wuxia action game): very fast, sharp, a frozen instant of impact, sparks at each contact, a faint slow afterimage. NOT a slow cloud or an explosion - a TRIP OUT AND BACK.")
+B7_P5 = "It travels along a narrow straight PATH from the brush tip about 12 metres ahead and back to the brush along the same line: going out it strikes the near bear, then the far bear and the shot; at the far end it TURNS and coming back it strikes the far bear and then the near bear again, weaker, and returns into the brush. " + _RETURN
+B7_P5M = "THE PEAK: the water goes out along the path to its far end and on its way BACK it picks up the CASTER'S OWN standing stone at the side of the path and CARRIES it home, setting it down about 2 metres in front of the caster (a shield fetched back; the stone is moved, not broken); both bears are struck going and coming and drenched. " + _RETURN
+B7_A5 = "It does NOT fly away: the element ORBITS round the caster at chest height for 6 seconds (a circle about 1.6 metres round the caster, one turn a second, turning clockwise seen from above) like a guardian satellite - a closed circle; each time it comes round it strikes the very close bear (the second pass weaker) and knocks the incoming enemy shots out of the air; the great brush and the sleeve carry a small ring of the element. " + _RETURN
+B7_A5M = "THE PEAK: WATER orbits round the caster (1.6 metres, one turn a second, 6 seconds) and every enemy shot it meets is TURNED BACK: the shot flies back along a curve the way it came and hits the far bear who fired it (three shots are turned back, the fourth is only knocked down); the close bear it passes is soaked. " + _RETURN
+B7_F5 = "The whole FAN-shaped area in front (5 metres deep, about 4 metres wide at its far edge) SLIDES OUT another 5 metres like a sweeping tide and comes back to the caster: both bears in it are struck going out and again, weaker, coming back; the enemy shot is swept down. " + _RETURN
+B7_F5M = "THE PEAK: a great body of WATER fills the fan in front, rushes OUT 5 metres and then pulls BACK to the caster like a retreating riptide, DRAGGING both bears with it toward the caster (they slide back across the ground, soaked, to about 1.5 metres in front of the caster). " + _RETURN
+B7_R5 = "A hollow RING round the caster (a ring, not a filled disc - the caster stands in the empty middle) SPREADS OUT from 2 metres to 4 metres and SHRINKS BACK to 2 metres, like one breath or a ripple and its return; each bear the ring passes is struck going out and again, weaker, coming back; the enemy shot is swept down. " + _RETURN
+B7_R5M = "THE PEAK: a ring of clean WATER spreads out from the caster (2 metres to 4 metres) and shrinks back, WASHING the ground it passes: four of the five dark enemy pools are WASHED AWAY (dissolving into clean mist and spray, nothing left; the farthest one stays), the caster's own standing stone is left wet and glistening; the bears in its way are struck and soaked. " + _RETURN
+B7_SPELLS = {
+    'gang': ('P5', "THE SPELL 강 (WOOD, path, comes back): " + B7_P5 + " WOOD: a living vine, thorny tendrils, leaves, jade light; it BINDS each bear it first touches (held, slowed). NOT a thorn harpoon, NOT a cage of branches, NOT vine arches between bears, NOT a burr seed, NOT razor leaf blades rising out of the ground (other spells own those)."),
+    'nang': ('P5', "THE SPELL 낭 (FIRE, path, comes back): " + B7_P5 + " FIRE: flame, burning ink, embers, heat; the bears it touches BURN (2 seconds). NOT a comet fireball, NOT a burning charcoal tree, NOT a fire bird, NOT a fire seal stamp, NOT a molten cutting line in the ground (other spells own those)."),
+    'mang': ('P5', "THE SPELL 망 (EARTH, path, comes back): " + B7_P5 + " EARTH: rock, packed earth, grit and dust; each bear is SHOVED back hard. NOT a ramming boulder with a furrow, NOT a rock cliff, NOT a running fault line, NOT a falling slab, NOT a rolling slate wheel (other spells own those)."),
+    'sang': ('P5', "THE SPELL 상 (METAL, path, comes back): " + B7_P5 + " METAL: polished mirror steel, white-gold light, sparks; each bear is CUT, fast. NOT a thrown sword, NOT a thicket of blades, NOT steel lightning, NOT a hanging sword, NOT a single needle line of light (other spells own those)."),
+    'ang': ('P5m', "THE SPELL 앙 (WATER, path, comes back - the PEAK of this book): " + B7_P5M + " WATER: clear blue-green water with ink swirling inside, white foam and spray. NOT a water dome, NOT a coral fountain, NOT water rope arches, NOT a droplet seed, NOT a crescent water blade (other spells own those)."),
+    'geong': ('A5', "THE SPELL 겅 (WOOD, orbit, comes back): " + B7_A5 + " WOOD: vine, thorns, leaves, jade light; the bear it touches is BOUND. NOT a bamboo cross guard, NOT a vine band wound round the brush, NOT a seed pod, NOT a thorn saw along the brush (other spells own those)."),
+    'neong': ('A5', "THE SPELL 넝 (FIRE, orbit, comes back): " + B7_A5 + " FIRE: flame, burning ink, embers; the bear it touches BURNS. NOT a fire wheel opening into a peony, NOT a torch brush, NOT embers in the sleeve hem, NOT a flame sword (other spells own those)."),
+    'meong': ('A5', "THE SPELL 멍 (EARTH, orbit, comes back): " + B7_A5 + " EARTH: rock, grit, dust; the bear it touches is SHOVED back. NOT a stone slab wall, NOT a stone mace or gauntlet, NOT small pebbles on the brush shaft, NOT stone spikes round the feet, NOT a stone greatsword (other spells own those)."),
+    'seong': ('A5', "THE SPELL 성 (METAL, orbit, comes back): " + B7_A5 + " METAL: mirror steel, white-gold light, sparks; the bear it touches is CUT. NOT a crescent blade on the shaft, NOT a halberd of blades, NOT a thrown chakram, NOT a steel lotus, NOT a double-ended blade (other spells own those)."),
+    'eong': ('A5m', "THE SPELL 엉 (WATER, orbit, comes back - the PEAK of this book): " + B7_A5M + " WATER: clear blue-green water with ink swirling inside, foam, spray. NOT a whirlpool disc shield in front, NOT a water whip, NOT floating water beads (other spells own those)."),
+    'gong': ('F5', "THE SPELL 공 (WOOD, fan, comes back): " + B7_F5 + " WOOD: vines, leaves, jade light; the bears are BOUND. NOT a wave of bamboo shoots, NOT a growing forest, NOT creeping roots, NOT spore pods, NOT a fan of whipping jade lashes (other spells own those)."),
+    'nong': ('F5', "THE SPELL 농 (FIRE, fan, comes back): " + B7_F5 + " FIRE: flame, burning ink, embers; the bears BURN. NOT a flame fan with an ink wave edge, NOT burning reeds, NOT an overflowing flame flood, NOT fire seals on the ground, NOT fire claw rakes (other spells own those)."),
+    'mong': ('F5', "THE SPELL 몽 (EARTH, fan, comes back): " + B7_F5 + " EARTH: rock, earth, dust, grit; the bears are SHOVED back. NOT erupting slabs, NOT basalt columns, NOT plough furrows, NOT an earth giant, NOT a fan of slate cards (other spells own those)."),
+    'song': ('F5', "THE SPELL 송 (METAL, fan, comes back): " + B7_F5 + " METAL: mirror steel, white-gold light, sparks; the bears are CUT. NOT a fan of blade spokes, NOT stakes falling from the sky, NOT a spiral of iron dust, NOT caltrops, NOT standing steel edges (other spells own those)."),
+    'ong': ('F5', "THE SPELL 옹 (WATER, fan, comes back - the PEAK of this book): " + B7_F5M + " WATER: clear blue-green water with ink swirling inside, foam, spray. NOT a single curling breaking wave, NOT twisted water pillars, NOT a shallow overflow, NOT dew beads, NOT a water scythe (other spells own those)."),
+    'gung': ('R5', "THE SPELL 궁 (WOOD, ring, comes back): " + B7_R5 + " WOOD: vines, leaves, jade light; the bears are BOUND. NOT a crown of thorns, NOT a tree pavilion, NOT roots racing through the ground, NOT a circle of seeds, NOT a taut barbed vine (other spells own those)."),
+    'nung': ('R5', "THE SPELL 눙 (FIRE, ring, comes back): " + B7_R5 + " FIRE: flame, burning ink, embers; the bears BURN. NOT a standing wall of fire, NOT a ring of torches, NOT a fire fuse along vines, NOT a circle of embers, NOT a molten groove with a hot wire (other spells own those)."),
+    'mung': ('R5', "THE SPELL 뭉 (EARTH, ring, comes back): " + B7_R5 + " EARTH: earth, rock, grit, dust; the bears are SHOVED back. NOT a rolling earth mound ring, NOT standing stones, NOT radial fissures, NOT a stone rampart, NOT a grinding sand band (other spells own those)."),
+    'sung': ('R5', "THE SPELL 숭 (METAL, ring, comes back): " + B7_R5 + " METAL: mirror steel, white-gold light, sparks; the bears are CUT. NOT a spinning saw ring, NOT swords stuck upside down in a ring, NOT spokes of light, NOT a thin thread ring, NOT a ring blade buried edge-up (other spells own those)."),
+    'ung': ('R5m', "THE SPELL 웅 (WATER, ring, comes back - the PEAK of this book): " + B7_R5M + " WATER: clean clear blue-green water, white foam, fine mist. NOT a ring of water pillars, NOT a river with arching jets, NOT outward wave crests breaking, NOT a ring of beads, NOT a racing water channel (other spells own those)."),
+}
+B7_GAME = {'P5': 'Fire', 'P5m': 'Water', 'A5': 'Fire', 'A5m': 'Water', 'F5': 'Fire', 'R5': 'Fire', 'R5m': 'Water'}
+B7_VARIANTS = {
+    'gang_a': ('gang', "VARIANT A - vine yo-yo: a long jade-veined vine shoots from the brush tip low along the path, its head a coiled thorny knot; it has reached the far end and is snapping BACK along a second, parallel line, the two lines of the vine closing into one long loop; each bear is wrapped by a loop of vine (a thick one from the way out, a thinner second loop from the way back); the dark shot is shredded in leaves."),
+    'gang_b': ('gang', "VARIANT B - leaf boomerang: a big spinning boomerang of woven vine and razor leaves flies out along the path on a long narrow elliptical loop and is curving back toward the caster's raised brush, a trail of falling leaves and a jade afterimage tracing the closed loop; tendrils snag both bears where it passed."),
+    'nang_a': ('nang', "VARIANT A - fire boomerang: a spinning crescent of white-orange flame flies out along the path and curves back in a long narrow loop, a ribbon of fire and ink smoke tracing the whole closed loop in the air; both bears are burning where it passed twice; the enemy shot bursts in embers."),
+    'nang_b': ('nang', "VARIANT B - reeled fire serpent: a serpent of flame on a burning ink tether lunges out along the path, bites through both bears to the far end and is being reeled back into the brush tip, its body doubled back on itself in a loop of fire."),
+    'mang_a': ('mang', "VARIANT A - stone boomerang: a heavy chipped stone disc flies out along the path spinning edge-first, slams through both bears, and arcs back toward the caster trailing a looping ribbon of dust; dust rings mark where it hit each bear."),
+    'mang_b': ('mang', "VARIANT B - meteor hammer: a big rock on a chain of packed earth and ink swings out along the path like a meteor hammer, crashes into the bears, and is being yanked back to the brush, a curved dust trail tracing the out-and-back loop."),
+    'sang_a': ('sang', "VARIANT A - returning steel crescent: a thin bright steel crescent spins out along the path, cuts both bears, turns at the far end with a burst of sparks and flies back along a parallel line, the two lines of white-gold light closing into one long loop."),
+    'sang_b': ('sang', "VARIANT B - rope dart: a steel dart on a fine glinting chain shoots out along the path, flicks through both bears and is snapping back to the brush, the chain drawing a long closed loop of light in the air, sparks at every cut."),
+    'ang_a': ('ang', "VARIANT A - fetching tide: a long tongue of clear water shoots out along the path to the far end and is curling back; riding its returning crest is the caster's stone block, lifted off the ground and about to be set down 2 metres in front of the caster; both bears drenched; the looping wake of the trip shines on the ground."),
+    'ang_b': ('ang', "VARIANT B - water serpent fetch: a water serpent with ink swirling inside races out along the path, coils round the stone block on its way back and carries it home in its coils toward the caster; a looping wake of spray traces its trip."),
+    'ang_c': ('ang', "VARIANT C - water wheel: a spinning wheel of water rolls out along the path and back, scooping the stone block up in its rim as it returns, spray fanning from the rim; the bears soaked."),
+    'geong_a': ('geong', "VARIANT A - vine halo: a thick thorny vine ring with jade leaves whirls round the caster at chest height like a living halo, its leading head a coiled thorn knot; where it passes the close bear a loop of vine lashes its legs; the incoming dark shots are shredded into leaves."),
+    'geong_b': ('geong', "VARIANT B - orbiting leaf blade: a single giant spinning leaf-blade circles the caster with a long trail of leaves forming a ring of green afterimages; tendrils snag the close bear."),
+    'neong_a': ('neong', "VARIANT A - fire satellite: a ball of white-orange flame orbits the caster at chest height trailing a burning ring of fire and ink smoke right round the caster; the close bear catches fire where it passes; the enemy shots burst into embers on the ring."),
+    'neong_b': ('neong', "VARIANT B - fire fox: a small spirit of flame (a running fire fox) races in circles round the caster in the air, leaving a circular trail of flame; it bites the close bear as it passes."),
+    'meong_a': ('meong', "VARIANT A - orbiting boulder: a single heavy boulder (bigger than a head) orbits the caster at waist height on a ring of dust and ink, smashing the close bear back as it passes, the enemy shots shattering against it."),
+    'meong_b': ('meong', "VARIANT B - sand belt: a dense ring of whirling sand and grit spins round the caster like a narrow sandstorm belt with a stone tip leading it; the close bear is shoved back."),
+    'seong_a': ('seong', "VARIANT A - sword formation: three flying straight swords circle the caster point-first at chest height, chasing each other, a white-gold ring of light trailing them; the close bear is cut as they pass, sparks; the shots are sliced."),
+    'seong_b': ('seong', "VARIANT B - steel feather ring: a ring of thin steel feather-blades circles the caster like a spinning skirt of light; the close bear is cut."),
+    'eong_a': ('eong', "VARIANT A - mirror water ring: a ring of clear water circles the caster; each dark shot that touches it is swallowed and SHOT BACK along a curving watery arc to the far bear, which is hit with a splash; one shot is just dropped."),
+    'eong_b': ('eong', "VARIANT B - water dragon guard: a slim water dragon circles the caster; it catches the incoming shots in its jaws and flings them back at the far bear in bright arcs."),
+    'eong_c': ('eong', "VARIANT C - ricochet orbit: a fast orbiting water sphere strikes each shot and they ricochet back toward the shooter with long trails of spray."),
+    'gong_a': ('gong', "VARIANT A - vine net haul: a wide fan-shaped net of vines and leaves is flung out over the area, slides another 5 metres out and is now being hauled back toward the caster, snagging both bears twice."),
+    'gong_b': ('gong', "VARIANT B - leaf gust loop: a fan-shaped gust of razor leaves and vines blows out across the area and swirls back toward the caster in a closed loop, both bears bound."),
+    'nong_a': ('nong', "VARIANT A - fire tide: a fan-shaped tide of fire rolls out across the area and rolls back toward the caster, its returning edge curling over; both bears burning."),
+    'nong_b': ('nong', "VARIANT B - fire swallows: a flock of birds of flame flies out in a fan over the area, wheels round at the far edge and streams back to the brush, passing through both bears twice."),
+    'mong_a': ('mong', "VARIANT A - earth tide: the ground in the fan heaves into a rolling wave of earth that rolls out 5 metres and back, its crest of dust and rock passing under the bears twice, shoving them."),
+    'mong_b': ('mong', "VARIANT B - stone shoal: a shoal of flying stones (like a school of fish) sweeps out in a fan and swings back to the caster in a loop, battering both bears."),
+    'song_a': ('song', "VARIANT A - blade flock: a flock of small steel blades flies out in a fan like swallows, wheels at the far edge and streams back to the brush, cutting both bears twice, sparks."),
+    'song_b': ('song', "VARIANT B - steel ribbons: a fan of thin steel ribbons lashes out across the area and snaps back to the brush, cutting both bears."),
+    'ong_a': ('ong', "VARIANT A - riptide: a great rush of water has flooded out over the fan and is now pulling BACK like a retreating riptide, dragging both soaked bears back toward the caster, long drag furrows in the wet ground."),
+    'ong_b': ('ong', "VARIANT B - water hands: two huge hands of water reach out across the fan, grab both bears and haul them back toward the caster."),
+    'ong_c': ('ong', "VARIANT C - inward current: a fan-shaped whirl of water opens in front, its current flowing out along the edges and back down the middle toward the caster, sucking the bears in."),
+    'gung_a': ('gung', "VARIANT A - breathing vine ring: a ring of woven vines and leaves expands from the caster like a ripple to 4 metres and draws back in, lashing the bears as it passes; a ghost outline of its widest circle stays."),
+    'gung_b': ('gung', "VARIANT B - vine lotus: a ring of vine petals opens outward like a flower blooming to 4 metres and closes back."),
+    'nung_a': ('nung', "VARIANT A - fire breath ring: a hollow ring of flame and burning ink expands like a shockwave to 4 metres and contracts back, a ghost ring at its widest; the bears it passes burn."),
+    'nung_b': ('nung', "VARIANT B - fire spirits ring: a ring of small flame spirits dances outward to 4 metres and back in, trailing fire."),
+    'mung_a': ('mung', "VARIANT A - earth ripple: the ground ripples outward in a ring as if a great stone fell into water, the ring of heaved earth runs out to 4 metres and back, shoving the bears."),
+    'mung_b': ('mung', "VARIANT B - scatter and recall: a ring of flying rocks bursts outward from the caster to 4 metres and is pulled back in."),
+    'sung_a': ('sung', "VARIANT A - opening steel fan ring: a ring of overlapping steel blades opens outward like a folding fan to 4 metres and folds back in, cutting the bears."),
+    'sung_b': ('sung', "VARIANT B - orbiting swords spread: a ring of swords circling the caster spreads outward to 4 metres and pulls back in."),
+    'ung_a': ('ung', "VARIANT A - washing ring: a low clear ring of water sweeps outward over the ground like a broom of water, the dark pools it passes boil away into white mist, and it slides back in, leaving the ground clean and wet."),
+    'ung_b': ('ung', "VARIANT B - rain ring: a ring of falling rain spreads out and back, washing the pools away."),
+    'ung_c': ('ung', "VARIANT C - water lotus wash: a ring of clear water rises into a low curling lip, rolls outward washing the pools away and rolls back."),
+}
+
+
+def prompt_b7(vid):
+    spell, var = B7_VARIANTS[vid]
+    tmpl, text = B7_SPELLS[spell]
+    return '\n\n'.join([HEAD, B7_REF[tmpl] + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B7_OUT / f'{vid}.png')])
+
+
 def prompt_b6(vid):
     spell, var = B6_VARIANTS[vid]
     tmpl, text = B6_SPELLS[spell]
@@ -565,6 +676,8 @@ def prompt_b1(vid):
 
 
 def prompt(vid):
+    if vid in B7_VARIANTS:
+        return prompt_b7(vid)
     if vid in B6_VARIANTS:
         return prompt_b6(vid)
     if vid in B5_VARIANTS:
@@ -585,10 +698,13 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def out_of(vid):
-    return B6_OUT if vid in B6_VARIANTS else B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
+    return B7_OUT if vid in B7_VARIANTS else B6_OUT if vid in B6_VARIANTS else B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
 
 
 def game_of(vid):
+    if vid in B7_VARIANTS:
+        tmpl = B7_SPELLS[B7_VARIANTS[vid][0]][0]
+        return Path(str(_B7_FRAME).format(t=tmpl[:2], b=B7_GAME[tmpl]))
     if vid in B6_VARIANTS:
         tmpl = B6_SPELLS[B6_VARIANTS[vid][0]][0]
         return Path(str(_B6_FRAME).format(t=tmpl[:2], b=B6_GAME[tmpl]))
@@ -616,7 +732,7 @@ def recover(vid, started):
             if p.exists():
                 cand.append(p)
     # batch 5: never the newest-file guess (batch 4's son_a / nun_b took another variant's picture) - only a path this variant's own log printed
-    if not cand and GEN.exists() and vid not in B5_VARIANTS and vid not in B6_VARIANTS:
+    if not cand and GEN.exists() and vid not in B5_VARIANTS and vid not in B6_VARIANTS and vid not in B7_VARIANTS:
         cand = sorted([p for p in GEN.rglob('*.png') if p.stat().st_mtime >= started], key=lambda p: p.stat().st_mtime)[-1:]
         if cand:
             print('WARN newest-file recovery for', vid, cand[-1])
@@ -630,7 +746,7 @@ def recover(vid, started):
 def main():
     batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
     args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
-    pool = B6_VARIANTS if batch == 'b6' else B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
+    pool = B7_VARIANTS if batch == 'b7' else B6_VARIANTS if batch == 'b6' else B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
     vids = [v for v in pool if not args or v in args]
     for v in vids:
         out_of(v).mkdir(parents=True, exist_ok=True)

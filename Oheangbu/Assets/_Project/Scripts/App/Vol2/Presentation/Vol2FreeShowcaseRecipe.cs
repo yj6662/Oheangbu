@@ -242,7 +242,8 @@ namespace Oheangbu.App
                 // batch 4: the ㅓ 번진다 dresses the caster for its 6 s attachment and swings like 남긴다 (Self), as the bridge's own LegacyKind for an attachment
                 // batch 5: the ㅓ 심는다 plants its seed on the caster's own body (no parry window): Self too
                 // batch 6: the ㅓ 가른다 puts a 6 s blade on the caster (its swings cut; no parry window): Self too
-                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread || inst.Log.Glyph.Verb == Verb.Seed || inst.Log.Glyph.Verb == Verb.Split) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
+                // batch 7: the ㅓ 돌아온다 circles the caster for 6 s (an orbit, no parry window): Self too (the bridge's own LegacyKind for an attachment verb)
+                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread || inst.Log.Glyph.Verb == Verb.Seed || inst.Log.Glyph.Verb == Verb.Split || inst.Log.Glyph.Verb == Verb.Return) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
                 legacy.Swing(new Vol2LegacySwing
                 {
                     Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = kind,

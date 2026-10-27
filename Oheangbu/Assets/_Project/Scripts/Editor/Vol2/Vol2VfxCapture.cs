@@ -160,6 +160,10 @@ namespace Oheangbu.EditorTools.Vol2
             public bool PlantWood;
             /// <summary>batch 6 (split=1): LAB-SIMULATED earth walls (ahead, side, radius) staged before the cast as another cast's Disc materials.</summary>
             public readonly List<(float ahead, float side, float r)> Walls = new List<(float, float, float)>();
+            /// <summary>batch 7 (ret=1): LAB-SIMULATED enemy shots (start ahead / side, height, speed toward the caster's cast point, shooter = a dummy index or -1).</summary>
+            public readonly List<(float ahead, float side, float h, float speed, int shooter)> RetShots = new List<(float, float, float, float, int)>();
+            /// <summary>batch 7 (ret=1): LAB-SIMULATED materials staged before the cast (kind carry | enemy | mine, ahead, side, radius).</summary>
+            public readonly List<(string kind, float ahead, float side, float r)> RetMats = new List<(string, float, float, float)>();
             public readonly List<Step> Steps = new List<Step>();
             public List<(float ahead, float side)> Dummies = new List<(float, float)>();
             public string Name => Template + "_" + Variant + "_" + Body + "_" + Back;
@@ -213,7 +217,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
             _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; _spreadB4 = false; _seedB5 = ""; _seedHold = false; AdapterBodies.Clear(); BridgeBodies.Clear();
-            _splitB6 = false;
+            _splitB6 = false; _retB7 = false;
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
@@ -241,6 +245,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "seed") _seedB5 = v.Trim() == "1" ? "show" : v.Trim() == "expire" ? "expire" : "";    // batch 5 (opt-in): the 심는다 rows with a visible wait / the expiry branch (see Step4Job)
                 else if (k == "seedhold") _seedHold = v.Trim() == "1";      // batch 5 (opt-in): LAB-SIMULATED drawing for 0.8 s mid-wait (信)
                 else if (k == "split") _splitB6 = v.Trim() == "1";         // batch 6 (opt-in): the 가른다 rows with LAB-SIMULATED stand-in walls to cut, 삿's row of three, 솟's walker (see Step4Job)
+                else if (k == "ret") _retB7 = v.Trim() == "1";             // batch 7 (opt-in): the 돌아온다 rows with LAB-SIMULATED enemy shots, 앙's stone, 엉's shooter, 웅's enemy pools (see Step4Job)
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
@@ -526,6 +531,156 @@ namespace Oheangbu.EditorTools.Vol2
                 }
                 j.Variant += "_b6";
             }
+            // batch 7 free showcase (2026-10-27, opt-in ret=1, defaults unchanged): the 돌아온다 rows P5 / A5 / F5 / R5 with what the trip meets besides bodies -
+            // slow LAB-SIMULATED enemy shots in its way (every row: "궤도에 닿는 적 탄을 떨어뜨린다", registered in the executor's own shot hub, as Vol2ReturnLab does),
+            // 앙: one of MY materials on the path (a stone wall of another cast, Player; the returning head carries it home), 엉: a shooter bear and four shots from the
+            // front (three are turned back at it, the fourth only stopped), 웅: five enemy pools round the ring (four are wiped, the cap) and one of my stones in the band.
+            if (_retB7 && v == 5)
+            {
+                bool water = j.Body == Body.Water;
+                switch (f)
+                {
+                    case 'P':
+                        // r0b: the first bear a little left so 앙's stone (right of the axis, still in the corridor: 0.15 + 0.5 m) is not hidden behind it
+                        j.Dummies.Clear(); j.Dummies.Add((4.6f, -0.35f)); j.Dummies.Add((8.5f, 0.5f));
+                        j.RetShots.Add((10.5f, 0f, 1.1f, 0.3f, -1));
+                        // r0c: 앙's stone LEFT of the axis and the bears swapped round it (r0b: right of the axis the great brush's head covered it from the shoulder);
+                        // still in the corridor: 0.72 m < half path 0.15 + radius 0.6
+                        // r0d: left of the axis it stood behind the caster's own back; now a TALL standing stone right of the axis, the bears left of it
+                        if (j.Letter == '앙') { j.Dummies.Clear(); j.Dummies.Add((4.6f, -0.4f)); j.Dummies.Add((8.5f, -0.1f)); j.RetMats.Add(("carry", 6.0f, 0.6f, 0.55f)); }
+                        j.MaxAge = water ? 5.0 : 3.6; j.MinAge = j.MaxAge - 0.4;
+                        break;
+                    case 'A':
+                        j.Steps.RemoveAll(s => s.Name.StartsWith("JUMP", StringComparison.Ordinal));
+                        if (j.Letter == '엉')
+                        {
+                            j.Dummies.Add((7.0f, 2.8f)); int sh = j.Dummies.Count - 1;
+                            foreach (float deg in new[] { -48f, -14f, 20f, 54f }) { float a = deg * Mathf.Deg2Rad; j.RetShots.Add((2.5f * Mathf.Cos(a), 2.5f * Mathf.Sin(a), 1.1f, 0.6f, sh)); }
+                        }
+                        else { j.RetShots.Add((2.3f, -1.1f, 1.1f, 0.6f, -1)); j.RetShots.Add((2.2f, 1.3f, 1.1f, 0.6f, -1)); }
+                        JumpHost(2.6);
+                        j.MaxAge = 9; j.MinAge = 4.0;
+                        break;
+                    case 'F':
+                        j.Dummies.Clear(); j.Dummies.Add((3.4f, -0.6f)); j.Dummies.Add((5.8f, 0.9f));
+                        j.RetShots.Add((8.0f, -0.6f, 1.1f, 0.3f, -1));
+                        j.MaxAge = water ? 5.0 : 3.6; j.MinAge = j.MaxAge - 0.4;
+                        break;
+                    default:
+                        j.RetShots.Add((3.0f * Mathf.Cos(-0.3f), 3.0f * Mathf.Sin(-0.3f), 1.1f, 0.2f, -1));
+                        if (j.Letter == '웅')
+                        {
+                            (float, float) P(float r, float deg) { float a = deg * Mathf.Deg2Rad; return (r * Mathf.Cos(a), r * Mathf.Sin(a)); }
+                            // r0b: the pools in the camera's view (r0 had three outside it or behind the caster); the farthest (4.15 m) is the fifth - past the cap of four
+                            // r0c: all past the band's start (r0b: the two nearest overlapped the 2 m band at the launch and went at 0.00 s)
+                            foreach (var (r, deg) in new[] { (2.9f, -38f), (3.15f, 38f), (3.4f, -18f), (3.7f, 30f), (4.3f, 4f) }) { var p = P(r, deg); j.RetMats.Add(("enemy", p.Item1, p.Item2, 0.55f)); }
+                            var m = P(3.0f, 52f); j.RetMats.Add(("mine", m.Item1, m.Item2, 0.45f));
+                        }
+                        j.MaxAge = water ? 5.0 : 3.6; j.MinAge = j.MaxAge - 0.4;
+                        break;
+                }
+                j.Variant += "_b7";
+            }
+        }
+
+        // batch 7 (ret=1): see Step4Job
+        static bool _retB7;
+        static readonly List<(Vol2LabShot S, long At)> RetShotsLive = new List<(Vol2LabShot, long)>();
+        static readonly List<(Vol2Material M, GameObject Go, string Kind, Vector3 At)> RetMatsLive = new List<(Vol2Material, GameObject, string, Vector3)>();
+        static Vol2ReturnExecutor RetEx(Ctx c) => c != null && c.Coordinator != null && c.Coordinator.Verbs.TryGet(Verb.Return, out var e) ? e as Vol2ReturnExecutor : null;
+
+        /// <summary>ret=1 (LAB-SIMULATED): the shots and materials of the job, staged before the cast. Shots: Vol2LabShot registered in the executor's hub (the scene scan stays
+        /// as it is). Materials: another cast's (98201+), shown by stand-ins from the showcase kit - my stones as Vol2FsB6.WallProxy, enemy pools as Vol2FsB7.PoolProxy.</summary>
+        static void PlaceRet(Ctx c, Job j)
+        {
+            var ex = RetEx(c);
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            Vector3 At(float ahead, float side) => c.Origin + c.Forward * ahead + right * side;
+            long now = c.Services.Clock.NowUs;
+            int n = 0;
+            foreach (var s in j.RetShots)
+            {
+                Vector3 p = At(s.ahead, s.side) + Vector3.up * s.h;
+                Vector3 toward = c.Origin + Vector3.up * s.h - p; toward.y = 0f; toward = toward.sqrMagnitude > 1e-4f ? toward.normalized * s.speed : Vector3.zero;
+                var vit = s.shooter >= 0 && s.shooter < c.Dummies.Count && c.Dummies[s.shooter] != null ? c.Dummies[s.shooter].GetComponentInChildren<EnemyVitals>(true) : null;
+                var shot = Vol2LabShot.Create("ret" + n++, p, toward, 6f, vit);
+                if (ex != null) ex.Hub.Register(shot);
+                RetShotsLive.Add((shot, 0));
+            }
+            var installer = Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>();
+            var kit = installer != null && installer.Kit != null && installer.Kit.Ok ? installer.Kit : (_ownKit ?? (_ownKit = new Vol2FsKit()));
+            var mats = c.Coordinator.Materials; long life = Vol2Time.FromSeconds(14.0);
+            int k = 0;
+            foreach (var m in j.RetMats)
+            {
+                Vector3 at = At(m.ahead, m.side); at.y = c.Origin.y;
+                bool enemy = m.kind == "enemy";
+                var mat = mats.Create(new CastId(98201 + k), enemy ? '오' : '막', enemy ? Body.Water : Body.Earth, Vol2MaterialKind.Residue, 0.9m, life, Vol2Footprint.Disc(at, m.r), enemy ? 2 : 1,
+                    enemy ? Vol2Faction.Enemy : Vol2Faction.Player, true, now, 0, 0, enemy ? "lab-enemy-pool" : m.kind == "carry" ? "lab-carry" : "lab-mine");
+                k++;
+                if (mat == null) { Problems.Add(j.Name + ": " + m.kind + " material not made"); continue; }
+                GameObject go = null;
+                if (kit.Ok) go = enemy ? Vol2FsB7.PoolProxy(kit, "Vol2VfxPool_" + k, at, m.r, mat.Id.Value) : Vol2FsB7.StoneProxy(kit, "Vol2VfxStone_" + k, at, c.Origin - at, m.r, mat.Id.Value);
+                RetMatsLive.Add((mat, go, m.kind, at));
+            }
+            Finished.Add("  " + j.Name + ": LAB-SIMULATED ret staged: " + RetShotsLive.Count + " shots (hub " + (ex != null ? "registered" : "MISSING") + "), " + RetMatsLive.Count + " materials [" + string.Join(" ", RetMatsLive.Select(x => x.Kind + ":" + x.M.Id)) + "]");
+        }
+
+        /// <summary>ret=1: a stand-in goes the frame its material is moved (the look carries it from there: 앙) or ends (웅's wipe); 엉's turned shots leave the air (the look
+        /// draws them flying back), the others fall as they do.</summary>
+        static void UpdateRet(Ctx c)
+        {
+            foreach (var r in RetMatsLive)
+                if (r.Go != null && r.Go.activeSelf && (r.M == null || !r.M.Alive || r.M.MovedSerial > 0)) r.Go.SetActive(false);
+            var ex = RetEx(c);
+            var rep = ex != null && c.Log != null ? ex.ReportOf(c.Log.Cast) : null;
+            if (rep == null) return;
+            long now = c.Services.Clock.NowUs;
+            for (int i = 0; i < RetShotsLive.Count; i++) if (RetShotsLive[i].S != null && RetShotsLive[i].At == 0 && RetShotsLive[i].S.InterceptedBy != 0) RetShotsLive[i] = (RetShotsLive[i].S, now);
+            int turned = rep.Reflected, hidden = 0;
+            foreach (var s in RetShotsLive.Where(x => x.S != null && x.At > 0).OrderBy(x => x.At))
+            {
+                if (hidden >= turned) break;
+                if (s.S.gameObject.activeSelf) s.S.gameObject.SetActive(false);
+                hidden++;
+            }
+        }
+
+        static void ClearRet(Ctx c)
+        {
+            var ex = RetEx(c);
+            foreach (var s in RetShotsLive) if (s.S != null) { if (ex != null) ex.Hub.Unregister(s.S); Object.Destroy(s.S.gameObject); }
+            RetShotsLive.Clear();
+            if (c != null && c.Coordinator != null)
+                foreach (var r in RetMatsLive) if (r.M != null && r.M.Alive) c.Coordinator.Materials.TryEnd(r.M.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
+            foreach (var r in RetMatsLive) if (r.Go != null) Object.Destroy(r.Go);
+            RetMatsLive.Clear();
+        }
+
+        /// <summary>ret=1: the executor's facts of the cast for the capture text - contacts, the legs, the shots, the carry, the drags, the cleanse, the wet requests, the field notes.</summary>
+        static string ReturnFacts(Ctx c)
+        {
+            string Rel(long us) => us <= 0 ? "-" : ((us - c.Log.StartUs) / 1e6).ToString("0.00", Inv);
+            string Who(string n) => (n ?? "").Replace("Vol2VfxDummy_", "");
+            var sb = new StringBuilder();
+            sb.Append(" | contacts ").Append(string.Join(" ", c.Log.Contacts.Select(x => x.Kind + ":" + Who(x.TargetName) + ":" + x.Amount.ToString("0.###", Inv) + "@" + Rel(x.NowUs) + (x.BudgetAccepted ? "" : "(refused " + x.BudgetReason + ")") + (x.BodyEffect.Length > 0 ? "[" + x.BodyEffect + "]" : ""))));
+            var ex = RetEx(c);
+            var rep = ex != null ? ex.ReportOf(c.Log.Cast) : null;
+            if (rep != null)
+            {
+                sb.Append(" | legs out-end " + Rel(rep.OutEndUs) + " back " + Rel(rep.BackStartUs) + "-" + Rel(rep.BackEndUs) + " trip-end " + Rel(rep.TripEndUs) + " leg " + (rep.LegUs / 1e6).ToString("0.00", Inv) + "s");
+                if (c.Log.Emitter is Vol2PathEmitter pe) sb.Append(" head " + pe.HeadAlong.ToString("0.0", Inv) + "m (" + pe.EndReason + ")");
+                sb.Append(" | shots ").Append(string.Join(" ; ", rep.Intercepts.Select(i => i.Key + " " + i.Leg + " @" + Rel(i.AtUs) + (i.Reflected ? " reflected " + i.Borrowed.ToString("0.###", Inv) + " of " + i.Original.ToString("0.###", Inv) + " -> " + i.ShooterId : i.Reason.Length > 0 ? " " + i.Reason : ""))));
+                if (rep.CarriedId != 0 || rep.CarryNote.Length > 0) sb.Append(" | carry " + rep.CarryNote);
+                if (rep.Drags.Count > 0) sb.Append(" | drags ").Append(string.Join(" ; ", rep.Drags.Select(d => Who(d.Name) + " " + d.Meters.ToString("0.##", Inv) + "m " + (d.DurationUs / 1e6).ToString("0.##", Inv) + "s" + (d.Airborne ? " air" : "") + (d.Boss ? " boss" : "") + " [" + d.Sink + "]")));
+                if (rep.Cleansed.Count > 0) sb.Append(" | cleansed ").Append(string.Join(" ", rep.Cleansed));
+                if (rep.WetRequests.Count > 0) sb.Append(" | wet ").Append(string.Join(" ", rep.WetRequests));
+                if (rep.OrbitRevolutions > 0) sb.Append(" | orbit revs " + rep.OrbitRevolutions + " borrowed " + rep.BorrowedPaid.ToString("0.###", Inv) + " n=" + rep.Reflections);
+            }
+            if (c.Log.FieldNotes.Count > 0) sb.Append(" | field ").Append(string.Join(" / ", c.Log.FieldNotes));
+            if (RetMatsLive.Count > 0) sb.Append(" | staged ").Append(string.Join(" ", RetMatsLive.Select(r => r.Kind + ":" + (r.M != null ? r.M.Id + (r.M.Alive ? " alive" : " " + r.M.End + "@" + Rel(r.M.EndedUs)) + (r.M.MovedSerial > 0 ? " moved->(" + r.M.Footprint.Centre.x.ToString("0.0", Inv) + "," + r.M.Footprint.Centre.z.ToString("0.0", Inv) + ")" : "") + (r.M.Wet ? " wet" : "") : "?"))));
+            sb.Append(" | status " + c.Log.Status + " end @" + (c.Log.EndUs > 0 ? Rel(c.Log.EndUs) : "-"));
+            return sb.ToString();
         }
 
         // batch 6 (split=1): see Step4Job
@@ -1162,6 +1317,7 @@ namespace Oheangbu.EditorTools.Vol2
             Physics.SyncTransforms();
             if (j.PlantWood) PlantWood(c);
             if (j.Walls.Count > 0) PlaceWalls(c, j);
+            if (j.RetShots.Count > 0 || j.RetMats.Count > 0) PlaceRet(c, j);
             if (!MeasuredGround.Contains(j.Back)) MeasureGround(c, j.Back);
             c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f; _describe = 0;
             foreach (var s in _job.Steps) s.Done = false;
@@ -1318,6 +1474,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (Batchim(j.Template) && c.Presenter.Legacy != null && (_describe == 0 && age >= 1.0 || _describe == 1 && age >= 2.2)) { _describe++; Finished.Add("  parts at " + age.ToString("0.00", Inv) + " s: " + c.Presenter.Legacy.Describe()); }
             bool lateKey = j.Keys && j.Template == "P1" && j.Body == Body.Wood && age >= 1.70 && age <= 1.74;       // 각 cages its body for 1.5 s: the residue stands after that
             if (Walls.Count > 0) UpdateWalls();
+            if (RetShotsLive.Count > 0 || RetMatsLive.Count > 0) UpdateRet(c);
             if (j.Video || keyWindow || lateKey) SaveFrame(c, age, stepUs, j.Video, keyWindow || lateKey);
             _note = "";
             bool retired = !c.Presenter.Model.TryGet(c.Log.Cast, out _);
@@ -1428,10 +1585,13 @@ namespace Oheangbu.EditorTools.Vol2
             }
             // batch 6 (split=): the executor's facts of this cast (contacts, splits, strip book, 날붓, field notes)
             if (_splitB6 && c.Log != null) summary += SplitFacts(c);
+            // batch 7 (ret=): the executor's facts of this cast (contacts, legs, shots, carry, drags, cleanse, wet, field notes)
+            if (_retB7 && c.Log != null) summary += ReturnFacts(c);
             if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }
             foreach (var m in Planted) if (m != null && m.Alive) c.Coordinator.Materials.TryEnd(m.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
             Planted.Clear();
             ClearWalls(c);
+            ClearRet(c);
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : "") + (_strokeFeed ? BodyCount() : ""));
             _rip?.CancelAll(); _ripSlot = null;
             var stage = c.Presenter.Legacy;
@@ -1495,6 +1655,7 @@ namespace Oheangbu.EditorTools.Vol2
                 catch (Exception) { }
             }
             try { ClearWalls(_ctx); } catch (Exception) { Walls.Clear(); }
+            try { ClearRet(_ctx); } catch (Exception) { RetShotsLive.Clear(); RetMatsLive.Clear(); }
             _ownKit?.Dispose(); _ownKit = null;
             _ctx = null; _onDecided = null; _onBegan = null;
             if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }      // batch 5 seedhold: never leave the scope "drawing"

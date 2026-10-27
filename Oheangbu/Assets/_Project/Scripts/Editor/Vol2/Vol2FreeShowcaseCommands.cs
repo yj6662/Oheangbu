@@ -32,6 +32,18 @@ namespace Oheangbu.EditorTools.Vol2
                     case "strike:on": return Vol2FsEnemyStrike.Arm(true);
                     case "strike:off": return Vol2FsEnemyStrike.Arm(false);
                     case "strike:status": return Vol2FsEnemyStrike.Status();
+                    // batch 7: the editor's quality level for a capture (in memory only, never saved): quality:PC before, quality:<the prior name> after
+                    case "quality": return "quality " + QualitySettings.names[QualitySettings.GetQualityLevel()] + " (" + string.Join(",", QualitySettings.names) + ")";
+                }
+                if (c.StartsWith("quality:", StringComparison.Ordinal))
+                {
+                    string want = c.Substring(8).Trim();
+                    int q = Array.IndexOf(QualitySettings.names, want);
+                    if (q < 0 && int.TryParse(want, out int qi)) q = qi;
+                    if (q < 0 || q >= QualitySettings.names.Length) return "REFUSED free:quality: " + want + " (" + string.Join(",", QualitySettings.names) + ")";
+                    string before = QualitySettings.names[QualitySettings.GetQualityLevel()];
+                    if (QualitySettings.GetQualityLevel() != q) QualitySettings.SetQualityLevel(q, true);
+                    return "quality " + before + " -> " + QualitySettings.names[QualitySettings.GetQualityLevel()];
                 }
                 if (c.StartsWith("run:", StringComparison.Ordinal))
                 {
@@ -41,7 +53,7 @@ namespace Oheangbu.EditorTools.Vol2
                     if (inst.Kit == null || !inst.Kit.Ok) return "REFUSED free:run: kit not ok: " + (inst.Kit != null ? inst.Kit.Problem : "null");
                     return Vol2VfxCommands.Run("run:" + c.Substring(4)) + " | " + Status();
                 }
-                return "REFUSED free: on | off | auto | status | play | strike:on|off|status | run:<vfx9a spec>";
+                return "REFUSED free: on | off | auto | status | play | strike:on|off|status | quality[:name] | run:<vfx9a spec>";
             }
             catch (Exception e) { return "REFUSED free:" + c + ": " + e.GetType().Name + " " + e.Message; }
         }
@@ -65,7 +77,8 @@ namespace Oheangbu.EditorTools.Vol2
             // batch 4: every glyph's last note (the spread looks note their hops / marks / ends)
             // batch 5: + the 심는다 20 (plant / fire / strike / end reasons)
             // batch 6: + the 가른다 20 (contacts / splits / strips / 솟's metal)
-            var notes = inst.Recipes.SelectMany(r => r.Notes).Where(kv => "간난만산안건넌먼선언곤논몬손온군눈문순운감남맘삼암검넘멈섬엄곰놈몸솜옴굼눔뭄숨움갓낫맛삿앗것넛멋섯엇곳놋못솟옷굿눗뭇숫웃".IndexOf(kv.Key) >= 0).Select(kv => kv.Key + ": " + kv.Value);
+            // batch 7: + the 돌아온다 20 (legs / return hits / shots / carry / drags / cleanse)
+            var notes = inst.Recipes.SelectMany(r => r.Notes).Where(kv => "간난만산안건넌먼선언곤논몬손온군눈문순운감남맘삼암검넘멈섬엄곰놈몸솜옴굼눔뭄숨움갓낫맛삿앗것넛멋섯엇곳놋못솟옷굿눗뭇숫웃강낭망상앙겅넝멍성엉공농몽송옹궁눙뭉숭웅".IndexOf(kv.Key) >= 0).Select(kv => kv.Key + ": " + kv.Value);
             if (notes.Any()) s += "\nnotes:\n" + string.Join("\n", notes);
             return s;
         }

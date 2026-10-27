@@ -84,6 +84,11 @@ namespace Oheangbu.App
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Split).Kind, p.transform, ('것', () => new Vol2FsGeot()), ('넛', () => new Vol2FsNeot()), ('멋', () => new Vol2FsMeot()), ('섯', () => new Vol2FsSeot()), ('엇', () => new Vol2FsEot()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Split).Kind, p.transform, ('곳', () => new Vol2FsGot()), ('놋', () => new Vol2FsNot()), ('못', () => new Vol2FsMot()), ('솟', () => new Vol2FsSot()), ('옷', () => new Vol2FsOt()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Split).Kind, p.transform, ('굿', () => new Vol2FsGut()), ('눗', () => new Vol2FsNut()), ('뭇', () => new Vol2FsMut()), ('숫', () => new Vol2FsSut()), ('웃', () => new Vol2FsUt()));
+                // batch 7 (2026-10-27): 돌아온다 - P5 강 낭 망 상 앙 · A5 겅 넝 멍 성 엉 · F5 공 농 몽 송 옹 · R5 궁 눙 뭉 숭 웅 (Vol2FsBack: the trip's legs, the return hits, the shots, 앙's carry, 엉's reflections, 옹's drags, 웅's cleanse)
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Return).Kind, p.transform, ('강', () => new Vol2FsGang()), ('낭', () => new Vol2FsNang()), ('망', () => new Vol2FsMang()), ('상', () => new Vol2FsSang()), ('앙', () => new Vol2FsAng()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Return).Kind, p.transform, ('겅', () => new Vol2FsGeong()), ('넝', () => new Vol2FsNeong()), ('멍', () => new Vol2FsMeong()), ('성', () => new Vol2FsSeong()), ('엉', () => new Vol2FsEong()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Return).Kind, p.transform, ('공', () => new Vol2FsGong()), ('농', () => new Vol2FsNong()), ('몽', () => new Vol2FsMong()), ('송', () => new Vol2FsSong()), ('옹', () => new Vol2FsOng()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Return).Kind, p.transform, ('궁', () => new Vol2FsGung()), ('눙', () => new Vol2FsNung()), ('뭉', () => new Vol2FsMung()), ('숭', () => new Vol2FsSung()), ('웅', () => new Vol2FsUng()));
                 if (_view == null) _view = p;
             }
             BindRecovery();
