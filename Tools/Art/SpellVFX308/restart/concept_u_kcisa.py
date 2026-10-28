@@ -3,6 +3,7 @@
 concepts of 우 (water ring) drawn with the KCISA traditional pattern pack (Assets/KoreanTraditionalPattern_Effect) instead of realistic water.
 
   python Tools/Art/SpellVFX308/restart/concept_u_kcisa.py            # writes the prompts
+  python Tools/Art/SpellVFX308/restart/concept_u_kcisa.py --simple --run   # the simplified uk_a levels (uks_1 .. 3)
   python Tools/Art/SpellVFX308/restart/concept_u_kcisa.py --run      # codex exec per variant (parallel), recovers from ~/.codex/generated_images
 
 Pictures: the real R0 game frame, the caster/brush, the chosen water concept u_a (composition only), and the pattern sheet
@@ -41,6 +42,17 @@ VARIANTS = {
     'uk_b': "VARIANT B - pattern whirl ring: on the ground around the caster a large circular ornament of the patterns flashes open (a ring of curling waves with wave-scales between, like picture 4's roundels, 4 m wide), and from that circle a whirling wall of pattern rises - three-armed whirls, swirl roundels and cloud scrolls spinning around the caster like a vortex of carved ornament, layered in depth, white and pale blue-green line art on translucent indigo; where it meets the bear the pattern bursts into a crown of wave-scale spray and cloud scrolls and the bear is drenched.",
 }
 
+# 2026-10-29 the user picked uk_a: "문양을 활용하는 방법이 우리 게임에는 더 맞는 거 같아. 특히 A안으로, 더 단순화해서." (D308-153b)
+# Simplified variants: picture 3 is uk_a itself (the chosen look) and the brief is how far to strip it down.
+UKA = OUT / 'uk_a.png'
+SIMPLE = """--- SIMPLIFY ---
+Picture 3 is now the director's CHOSEN concept for this spell: a ring wave made of traditional Korean pattern (overlapping wave scales, curling scroll crests, small swirl roundels, black ink ribbons). Keep its idea, palette (deep indigo, white and pale blue-green line art, black ink) and composition, but make it MUCH SIMPLER and CLEANER: fewer kinds of elements, fewer small bits, bigger and clearer shapes, a strong readable silhouette, calm empty space around it. It must read in a fast action game in half a second: a CIRCLE of patterned water around the caster, hitting the bear."""
+SIMPLE_VARIANTS = {
+    'uks_1': "LEVEL 1 - trimmed: the same wall of overlapping wave scales rising in a ring and curling over into scroll crests, but only ONE layer of wall, no loose floating roundels or confetti, no realistic white splash; just two or three long black ink strokes sweeping along the ring; at the bear one clean burst of a few large curling scroll crests. Flat, even indigo fills with crisp white line art.",
+    'uks_2': "LEVEL 2 - woodblock print: draw the ring wave like a Korean folk painting / woodblock print come alive in 3D: a band of big, bold wave-scale arcs with thick clean white outlines on flat deep indigo, its top edge a row of large curling scroll crests (like the cloud/wave scrolls of Korean ornament), absolutely no realistic water, spray or droplets; at the bear the crest rears up into one big scroll that crashes over it. Very few, large shapes; one black ink brush stroke riding the crest.",
+    'uks_3': "LEVEL 3 - minimal: just ONE clean ring band of wave-scale pattern, about waist high, rising out of the ground all around the caster (a thin glowing white outline at its top edge), and at the bear a single tall curling scroll crest of the same pattern that breaks over it. Around the ring on the ground only a few thin concentric ripple lines. Nothing else: no droplets, no extra ornaments, no ink ribbons. Elegant and spare.",
+}
+
 TAIL = """3. Save the image unchanged (PNG) as: %s
 4. Print the saved file path and stop."""
 
@@ -48,6 +60,8 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def prompt(v):
+    if v in SIMPLE_VARIANTS:
+        return '\n\n'.join([HEAD, re.sub(r'Picture 3 is the director.*\n', 'Picture 3: see SIMPLIFY below.\n', REF), STYLE, SIMPLE, SPELL + '\n' + SIMPLE_VARIANTS[v], TAIL % (OUT / f'{v}.png')])
     return '\n\n'.join([HEAD, REF, STYLE, SPELL + '\n' + VARIANTS[v], TAIL % (OUT / f'{v}.png')])
 
 
@@ -64,7 +78,8 @@ def recover(v):
 
 
 def main():
-    vids = [v for v in VARIANTS if not [a for a in sys.argv[1:] if not a.startswith('--')] or v in sys.argv]
+    pool = SIMPLE_VARIANTS if '--simple' in sys.argv else VARIANTS
+    vids = [v for v in pool if not [a for a in sys.argv[1:] if not a.startswith('--')] or v in sys.argv]
     OUT.mkdir(parents=True, exist_ok=True)
     for v in vids:
         (OUT / f'{v}.prompt.txt').write_text(prompt(v), encoding='utf-8')
@@ -73,7 +88,7 @@ def main():
     procs = []
     for v in vids:
         if recover(v): continue
-        cmd = ['codex', 'exec', '--skip-git-repo-check', '-s', 'workspace-write', '-C', str(OUT), '-i', str(GAME), '-i', str(BRUSH), '-i', str(UA), '-i', str(PAT)]
+        cmd = ['codex', 'exec', '--skip-git-repo-check', '-s', 'workspace-write', '-C', str(OUT), '-i', str(GAME), '-i', str(BRUSH), '-i', str(UKA if v in SIMPLE_VARIANTS else UA), '-i', str(PAT)]
         log = open(OUT / f'{v}.log.txt', 'w', encoding='utf-8')
         procs.append((v, subprocess.Popen(cmd, stdin=open(OUT / f'{v}.prompt.txt', 'rb'), stdout=log, stderr=subprocess.STDOUT, shell=True)))
         time.sleep(2)
