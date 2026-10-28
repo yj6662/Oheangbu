@@ -258,6 +258,45 @@ pre.log{margin:0;background:#07080c;border:2px solid var(--edge);padding:8px;fon
 .conf{position:absolute;width:6px;height:6px;pointer-events:none;z-index:5;animation:conf 1.3s ease-out forwards}
 @keyframes conf{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
 .empty{color:var(--dim);font-family:var(--f9);padding:12px;text-align:center}
+/* order */
+.btn.primary{background:#3a3150;color:var(--gold);border-color:var(--edge);box-shadow:inset 0 -3px 0 var(--gold)}
+.btn.go{background:#2f6b3a}.btn.danger{background:#8a2b2b}
+.btn:disabled{opacity:.45;cursor:default}
+.osheet{width:min(760px,94vw);max-height:88vh;overflow:auto;background:var(--panel);padding:16px 18px;position:relative;display:flex;flex-direction:column;gap:10px}
+.osheet h2{margin:0;font:16px var(--f11);color:var(--gold)}
+.osheet .sub{color:var(--dim);font-family:var(--f9)}
+.osheet textarea,.osheet input[type=text],.osheet select{width:100%;background:#0f1117;color:var(--ink);border:2px solid var(--edge);padding:8px;font:12px/1.5 var(--f11);resize:vertical}
+.osheet textarea{min-height:110px}
+.orow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.orow label{font-family:var(--f9);color:var(--dim);white-space:nowrap}
+.orow .grow{flex:1;min-width:160px}
+.sug{display:flex;gap:12px;align-items:center;background:#151821;border:2px solid var(--edge);padding:8px 10px;min-height:58px}
+.sug .av svg{width:44px;height:44px;display:block;shape-rendering:crispEdges}
+.sug b{color:var(--gold);font-weight:normal}
+.sug small{display:block;color:var(--dim);font-family:var(--f9)}
+.conf-box{background:#2a1f12;border:2px solid #b8862f;padding:10px 12px;display:none;flex-direction:column;gap:6px}
+.conf-box.on{display:flex}
+.conf-box b{color:var(--gold);font-weight:normal}
+.conf-box .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.conf-box .grid div{background:#151821;border:2px solid var(--edge);padding:4px 6px;font-family:var(--f9)}
+.conf-box .grid em{display:block;font:14px var(--f11);font-style:normal;color:var(--ink)}
+.ostat{font-family:var(--f9);color:var(--dim);min-height:16px}
+.ostat.err{color:var(--red)}
+.ctl{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ctl input{flex:1;min-width:140px;background:#0f1117;color:var(--ink);border:2px solid var(--edge);padding:4px 6px;font:11px var(--f11)}
+pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;font:11px/1.5 var(--f11);color:var(--ink);max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+/* usage */
+.usage{padding:6px 10px 8px;display:flex;flex-direction:column;gap:6px}
+.ug{display:flex;flex-direction:column;gap:3px}
+.ug .who{display:flex;justify-content:space-between;font-family:var(--f9);font-size:10px;color:var(--dim)}
+.ug .who b{font:11px var(--f11);color:var(--ink);font-weight:normal}
+.ug.stale .who b::after{content:" · 오래된 값";color:var(--orange);font-family:var(--f9);font-size:9px}
+.um{display:grid;grid-template-columns:62px 1fr 74px;gap:6px;align-items:center;font-family:var(--f9);font-size:10px}
+.um .bar{height:10px;background:#11131a;border:2px solid var(--edge);position:relative;overflow:hidden}
+.um .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--green)}
+.um .bar i.mid{background:var(--gold)} .um .bar i.hi{background:var(--red);animation:pulse 1.2s infinite}
+.um .pc{text-align:right;color:var(--ink)} .um .pc small{color:var(--dim)}
+.ug .none{font-family:var(--f9);font-size:10px;color:var(--dim)}
 .snapflag{background:#5a3b8a;border:2px solid var(--edge);padding:2px 8px;font-family:var(--f9)}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#363c52;border:2px solid var(--panel)}::-webkit-scrollbar-track{background:transparent}
 @media (max-width:1100px){
@@ -276,6 +315,7 @@ pre.log{margin:0;background:#07080c;border:2px solid var(--edge);padding:8px;fon
     <div class="lanes" id="lanes"></div>
     <div class="tools">
       <span id="snapflag"></span>
+      <button class="btn primary" id="orderBtn" style="display:none" title="글로 일을 시킨다 — 자동 배정 또는 직접 고르기">📝 업무 지시</button>
       <button class="btn" id="snd" title="완료 · 실패 때 효과음">🔕 소리</button>
       <div class="live" id="live" title="2초마다 기록을 다시 읽는다"></div>
       <div class="clock" id="clock">--:--:--</div>
@@ -298,6 +338,10 @@ pre.log{margin:0;background:#07080c;border:2px solid var(--edge);padding:8px;fon
       <div class="feed" id="feed"></div>
     </div>
     <div class="card px">
+      <h3>⛽ 사용 한도 <small>Claude · ChatGPT</small></h3>
+      <div class="usage" id="usage"></div>
+    </div>
+    <div class="card px">
       <h3>🏆 오늘의 성과 <small>완료 · 근무 시간</small></h3>
       <div id="mvp"></div>
       <div class="stats" id="stats"></div>
@@ -307,9 +351,22 @@ pre.log{margin:0;background:#07080c;border:2px solid var(--edge);padding:8px;fon
 
 <div class="modal" id="modal"><div class="sheet px" style="position:relative" id="sheet"></div></div>
 <div id="toasts"></div>
+<div class="modal" id="omodal"><div class="osheet px">
+  <button class="btn x" onclick="closeOrder()">닫기 ✕</button>
+  <h2>📝 업무 지시</h2>
+  <div class="sub">글로 일을 쓰면 Haiku가 배정표를 보고 맡을 직원을 고른다. 고른 직원이 실제로 일하고, 진행은 자리 말풍선에 뜬다.</div>
+  <textarea id="otext" placeholder="예) Tools/AgentBoard 폴더 파일 목록과 각 파일이 하는 일을 정리해 줘&#10;예) 도깨비 장승 3D 모델 시안 하나&#10;예) 우 문양 시안 두 장을 97점 기준으로 채점"></textarea>
+  <div class="orow"><label>제목</label><input type="text" id="otitle" class="grow" placeholder="비우면 배정 담당이 붙인다"><label>묶음</label><input type="text" id="olane" list="olanes" style="width:110px"><datalist id="olanes"></datalist></div>
+  <div class="orow"><label>맡을 직원</label><select id="omodel" class="grow"></select><button class="btn" id="oroute">🤖 배정 미리 보기</button></div>
+  <div class="sug" id="osug"><div class="sub">'자동 배정'이면 지시할 때 Haiku가 고른다. 직원을 직접 골라도 된다.</div></div>
+  <div class="orow"><label><input type="checkbox" id="owrite"> 파일 수정 허용</label><span class="sub">끄면 읽기 · 조사 · 답변만(Claude: Read·Grep·Glob·웹 / Codex: read-only). Bash는 언제나 막힘.</span></div>
+  <div class="conf-box" id="oconf"></div>
+  <div class="orow"><span class="ostat" id="ostat"></span><span style="flex:1"></span><button class="btn go" id="ogo">지시하기 ▶</button></div>
+</div></div>
 
 <script>
 const SNAP = /*__SNAPSHOT__*/null;
+const TOKEN = /*__TOKEN__*/"";     // 서버가 넣어 준다. 스냅샷 · 파일로 열면 비어서 지시 단추가 숨는다
 const QUIET = 20 * 60;            // 진행 중인데 이만큼 기록이 없으면 '조는 중'
 const RECENT = 30 * 60;           // 끝난 작업을 자리에 남겨 두는 시간
 const $ = s => document.querySelector(s);
@@ -342,6 +399,8 @@ const OVER = {   // 모델마다 얹는 소품(넥타이 · 안경 · 헤드폰 
   haiku: {0: '....KKKKKKKK....', 1: '...KKKKKKKKKK...', 2: '..KKKKKKKKKKKKKK', 3: '..HH........HHKK'},
   'gpt-6-astra': {0: '..BBBBBBBBBB....', 1: '.BBBBBBBBBBBB...', 2: '..BBBBBBBBBBB...', 13: '..XX............', 14: '..X..........YY.'},
   'gpt-6.1-sol': {2: '..YYYYYYYYYYYYYY', 3: '..HH........HHYY', 4: '..............Y.'},
+  meshy: {5: '..VVVVVVVVVVVV..', 6: '..VVVVVVVVVVVV..', 12: '.....QQQQQQ.....', 13: '.....Q....Q.....', 14: '.....QQQQQQ.....'},
+  recraft: {0: '...BBBBBBBBBB...', 1: '..BBBBBBBBBBBB..', 2: '..BBBBBBBBBBBB..', 3: '..............YY', 4: '.............YY.', 5: '............KY..'},
 };
 const PAL = {
   opus:  {H: '#33263f', S: '#f2c9a0', C: '#7d5cc4', D: '#5e43a0', T: '#ffd76a', W: '#ffffff'},
@@ -351,6 +410,8 @@ const PAL = {
   'gpt-6-astra': {H: '#1f1f26', S: '#f5d3b0', C: '#f07f96', D: '#d4627b', B: '#c83a52', X: '#4ab0ff', Y: '#ffd76a'},
   'gpt-6.1-sol': {H: '#6a4a2a', S: '#e0ac80', C: '#e3b23f', D: '#c4952a', Y: '#ff7a3d'},
   tool:  {M: '#9aa1b0', K: '#18202c', L: '#6dff9b', N: '#3dbb6b', A: '#ff6b6b', C: '#6c7383'},
+  meshy: {H: '#1d3b3a', S: '#e8b98f', C: '#5fd3c4', D: '#3fb0a2', V: '#17324a', Q: '#e9f7f5'},
+  recraft: {H: '#3b2a20', S: '#f5d3b0', C: '#ff9ed8', D: '#e57fbf', B: '#5a3fa0', Y: '#ffcf3d', K: '#333'},
   guest: {H: '#555', S: '#f2c9a0', C: '#9a9a9a', D: '#7a7a7a'},
 };
 const COMMON = {E: '#1b1b24', M: '#b5654f'};
@@ -386,7 +447,7 @@ function sprite(model) {
   const g = BASE.map(r => r.split(''));
   const ov = OVER[model] || {};
   for (const y in ov) ov[y].split('').forEach((c, x) => { if (c !== '.') g[y][x] = c; });
-  return _spr[model] = grid2svg(g.map(r => r.join('')), PAL[model] || PAL.guest);
+  return _spr[model] = grid2svg(g.map(r => r.join('')), PAL[model] || Object.assign({}, PAL.guest, S ? {C: colorOf(model), D: colorOf(model)} : {}));
 }
 const item = (k, size) => { const it = ITEMS[k]; return it ? grid2svg(it.g, it.p).replace('<svg ', `<svg width="${size}" height="${size}" `) : ''; };
 
@@ -509,7 +570,7 @@ function renderFeed() {
   const items = S.feed.filter(f => lane === '전체' || f.lane === lane).slice(0, 50);
   const verb = {start: '착수', note: '메모', done: '완료', fail: '실패'};
   $('#feed').innerHTML = items.length ? items.map(f => { const ro = rosterOf(f.model);
-    return `<div class="fi" data-model="${esc(f.model)}" data-id="${esc(f.id)}"><time>${hm(f.ts)}</time><div class="av">${sprite(f.model in PAL ? f.model : 'guest')}</div>
+    return `<div class="fi" data-model="${esc(f.model)}" data-id="${esc(f.id)}"><time>${hm(f.ts)}</time><div class="av">${sprite(f.model)}</div>
       <div class="tx"><b style="color:${ro.color}">${esc(ro.short)}</b><span class="v ${f.ev}">${verb[f.ev] || f.ev}</span>${esc(f.text)} <span class="q">· ${esc(f.lane)}</span></div></div>`; }).join('')
     : '<div class="empty">아직 기록이 없다 — board.py start 로 일을 맡기면 여기 뜬다</div>';
 }
@@ -532,12 +593,24 @@ function renderStats(rows) {
   const list = keys.map(k => st[k] || {model: k, done: 0, fail: 0, run: 0, secs: 0});
   const max = Math.max(1, ...list.map(o => o.secs));
   const best = [...list].sort((a, b) => b.done - a.done || b.secs - a.secs)[0];
-  $('#mvp').innerHTML = best && best.done ? `<div class="mvp"><div class="av">${sprite(best.model in PAL ? best.model : 'guest')}</div><div><b><span class="crown">👑</span> 오늘의 MVP · ${esc(rosterOf(best.model).short)}</b>
+  $('#mvp').innerHTML = best && best.done ? `<div class="mvp"><div class="av">${sprite(best.model)}</div><div><b><span class="crown">👑</span> 오늘의 MVP · ${esc(rosterOf(best.model).short)}</b>
       <small>완료 ${best.done}건 · 근무 ${fmtHM(best.secs)} · ${esc(rosterOf(best.model).title)}</small></div></div>` : '';
   $('#stats').innerHTML = list.map(o => { const ro = rosterOf(o.model);
-    return `<div class="sr" data-model="${esc(o.model)}" style="--c:${ro.color}" title="${esc(ro.name)} — 오늘 근무 ${fmtHM(o.secs)}"><div class="av">${sprite(o.model in PAL ? o.model : 'guest')}</div>
+    return `<div class="sr" data-model="${esc(o.model)}" style="--c:${ro.color}" title="${esc(ro.name)} — 오늘 근무 ${fmtHM(o.secs)}"><div class="av">${sprite(o.model)}</div>
       <div class="nm">${esc(ro.short)}</div><div class="bar"><i style="width:${o.secs / max * 100}%"></i></div>
       <div class="num">${o.run ? `▶${o.run} ` : ''}<em>✓${o.done}</em>${o.fail ? ` <span class="x">✗${o.fail}</span>` : ''}</div></div>`; }).join('');
+}
+
+/* ── usage ─────────────────────────────────────────────── */
+function renderUsage() {
+  const t = nowT(), list = S.usage || [];
+  const rel = s => { if (!s) return '?'; const d = s - t; if (d <= 0) return '곧'; const h = Math.floor(d / 3600), m = Math.floor(d % 3600 / 60);
+    return h >= 24 ? `${Math.floor(h / 24)}일 ${h % 24}시간` : h ? `${h}시간 ${m}분` : `${m}분`; };
+  $('#usage').innerHTML = list.map(u => { const age = u.asof ? Math.floor((t - u.asof) / 60) : null, stale = age === null || age > 30;
+    return `<div class="ug ${stale ? 'stale' : ''}" title="출처: ${esc(u.source)}"><div class="who"><b>${esc(u.who)}</b><span>${age === null ? '값 없음' : age < 1 ? '방금' : age + '분 전'}${u.extra ? ' · ' + esc(u.extra) : ''}</span></div>
+      ${u.windows.length ? u.windows.map(w => `<div class="um" title="초기화 ${w.resets_at ? new Date(w.resets_at * 1000).toLocaleString('ko-KR') : '?'}"><span>${esc(w.label)}</span>
+        <div class="bar"><i class="${w.pct >= 85 ? 'hi' : w.pct >= 60 ? 'mid' : ''}" style="width:${Math.min(100, w.pct)}%"></i></div>
+        <span class="pc">${Math.round(w.pct)}% <small>${rel(w.resets_at)}</small></span></div>`).join('') : `<div class="none">${esc(u.source)}</div>`}</div>`; }).join('');
 }
 
 /* ── timeline ──────────────────────────────────────────── */
@@ -588,7 +661,7 @@ function detect() {
 function toast(kind, r, word) {
   const ro = rosterOf(r.model), el = document.createElement('div');
   el.className = 'toast ' + kind;
-  el.innerHTML = `${sprite(r.model in PAL ? r.model : 'guest')}<div><b>${esc(ro.short)} ${word}</b><small>${esc(r.task)}</small>${lastNote(r) && kind !== 'start' ? `<small>› ${esc(lastNote(r))}</small>` : ''}</div>`;
+  el.innerHTML = `${sprite(r.model)}<div><b>${esc(ro.short)} ${word}</b><small>${esc(r.task)}</small>${lastNote(r) && kind !== 'start' ? `<small>› ${esc(lastNote(r))}</small>` : ''}</div>`;
   $('#toasts').prepend(el); setTimeout(() => el.remove(), 7000);
   while ($('#toasts').children.length > 4) $('#toasts').lastChild.remove();
 }
@@ -621,7 +694,7 @@ async function openDetail(model, id) {
   const pick = mine.find(r => r.id === id) || mine[0];
   detail = {model, id: pick && pick.id};
   $('#sheet').innerHTML = `<button class="btn x" onclick="closeDetail()">닫기 ✕</button>
-    <div class="prof"><div class="big">${sprite(model in PAL ? model : 'guest')}</div><h2>${esc(ro.short)}</h2><div class="t">${esc(ro.title)} · ${esc(ro.name)}</div>
+    <div class="prof"><div class="big">${sprite(model)}</div><h2>${esc(ro.short)}</h2><div class="t">${esc(ro.title)} · ${esc(ro.name)}</div>
       <div class="card2"><div>진행<b>${st.run}</b></div><div>오늘 완료<b>${st.done}</b></div><div>근무<b>${fmtHM(st.secs)}</b></div></div>
       <div class="what">${esc(ro.what)}</div></div>
     <div class="jobs"><h4><span>맡은 일 (${mine.length})</span></h4>
@@ -630,22 +703,119 @@ async function openDetail(model, id) {
           <div>${esc(r.task || r.id)}</div><span class="meta">${esc(r.lane)} · ${hm(r.start)} · ${fmtDur((r.end || nowT()) - r.start)}</span></div>`; }).join('') || '<div class="empty">맡은 일 기록이 없다</div>'}</div>
       <div id="jd"></div></div>`;
   $('#modal').classList.add('on');
-  if (!pick) return;
+  if (!pick) { if (TOKEN && !S.snapshot && ro.kind) $('#jd').innerHTML = `<div class="ctl"><button class="btn primary" onclick="openOrder('${esc(model)}')">📝 ${esc(ro.short)}에게 지시</button></div>`; return; }
   let full = pick;
   if (!S.snapshot) { try { full = await (await fetch('/api/task?id=' + encodeURIComponent(pick.id), {cache: 'no-store'})).json() || pick; } catch (e) {} }
   if (!detail || detail.id !== pick.id) return;
-  $('#jd').innerHTML = `<h4><span>기록 · ${esc(pick.id)}</span><small style="color:var(--dim)">${full.note_count ?? full.notes.length}개</small></h4>
+  const can = TOKEN && !S.snapshot;
+  const ctl = can ? `<div class="ctl">${ro.kind ? `<button class="btn primary" onclick="openOrder('${esc(model)}')">📝 ${esc(ro.short)}에게 지시</button>` : ''}
+      ${pick.state === 'run' ? `<button class="btn danger" onclick="stopJob('${esc(pick.id)}')">⏹ 중지</button>` : ''}
+      ${pick.state === 'run' ? `<input id="mnote" placeholder="이 작업에 메모 남기기(사장님 메모로 기록)"><button class="btn" onclick="sendNote('${esc(pick.id)}')">남기기</button>` : ''}</div>` : '';
+  $('#jd').innerHTML = ctl + `<h4><span>기록 · ${esc(pick.id)}</span><small style="color:var(--dim)">${full.note_count ?? full.notes.length}개</small></h4>
     <div class="notes">${full.notes.length ? full.notes.slice().reverse().map(([t, x]) => `<div><time>${hm(t)}</time>${esc(x)}</div>`).join('') : '<div class="empty">메모가 없다</div>'}</div>
-    ${full.log ? `<h4><span>로그 끝</span><small style="color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${esc(full.log)}</small></h4><pre class="log">${esc((full.log_tail || []).join('\n')) || '(비어 있음)'}</pre>` : ''}`;
+    ${full.log ? `<h4><span>로그 끝</span><small style="color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${esc(full.log)}</small></h4><pre class="log">${esc((full.log_tail || []).join('\n')) || '(비어 있음)'}</pre>` : ''}
+    ${full.result ? `<h4><span>결과</span><small style="color:var(--dim)">results/${esc(pick.id)}.md</small></h4><pre class="result">${esc(full.result)}</pre>` : ''}`;
 }
-function deepLink() { const m = new URLSearchParams(location.search).get('detail'); if (m) openDetail(m, new URLSearchParams(location.search).get('id')); }  // ?detail=opus[&id=작업]
+function deepLink() {   // ?detail=opus[&id=작업] · ?order=meshy&text=…[&ask=1 — 확인창까지만, 크레딧 안 씀]
+  const q = new URLSearchParams(location.search);
+  if (q.get('detail')) openDetail(q.get('detail'), q.get('id'));
+  if (q.get('order') && TOKEN) { openOrder(q.get('order'), q.get('text') || ''); if (q.get('ask') === '1') doOrder(false); }
+}
+/* ── 업무 지시 ───────────────────────────────────────────── */
+async function api(url, body) {
+  const r = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Office-Token': TOKEN}, body: JSON.stringify(body)});
+  let j = null; try { j = await r.json(); } catch (e) {}
+  return {status: r.status, body: j || {}};
+}
+function ostat(t, err) { const el = $('#ostat'); el.textContent = t || ''; el.className = 'ostat' + (err ? ' err' : ''); }
+function showSug(model, reason, by) {
+  const ro = rosterOf(model);
+  $('#osug').innerHTML = `<div class="av">${sprite(model)}</div><div><b>${esc(ro.short)}</b> <span class="sub">${esc(ro.title)}${ro.paid ? ' · 유료' : ''}</span>
+    <small>${esc(reason || ro.what)}${by ? ` · ${by === 'haiku' ? 'Haiku 배정' : '열쇠말 배정'}` : ''}</small></div>`;
+  $('#owrite').disabled = !(ro.kind === 'claude' || ro.kind === 'codex');
+}
+function openOrder(model, text) {
+  closeDetail();
+  const staff = S.roster.filter(r => r.kind);
+  $('#omodel').innerHTML = `<option value="auto">🤖 자동 배정 (Haiku가 고름)</option>` +
+    staff.map(r => `<option value="${esc(r.key)}">${esc(r.short)} — ${esc(r.title)}${r.paid ? ' (유료)' : ''}</option>`).join('');
+  $('#omodel').value = model && staff.some(r => r.key === model) ? model : 'auto';
+  $('#olanes').innerHTML = [...new Set(S.rows.map(r => r.lane))].map(l => `<option value="${esc(l)}">`).join('');
+  if (!$('#olane').value && lane !== '전체') $('#olane').value = lane;
+  if (text) $('#otext').value = text;
+  $('#oconf').classList.remove('on'); ostat('');
+  if ($('#omodel').value === 'auto') { $('#osug').innerHTML = `<div class="sub">'자동 배정'이면 지시할 때 Haiku가 고른다. 직원을 직접 골라도 된다.</div>`; $('#owrite').disabled = false; }
+  else showSug($('#omodel').value);
+  $('#omodal').classList.add('on'); setTimeout(() => $('#otext').focus(), 30);
+}
+function closeOrder() { $('#omodal').classList.remove('on'); }
+async function doRoute() {
+  const text = $('#otext').value.trim(); if (!text) { ostat('지시 글을 먼저 쓴다', true); return null; }
+  ostat('🤖 Haiku가 배정 중… (몇 초)'); $('#oroute').disabled = $('#ogo').disabled = true;
+  try {
+    const r = await api('/api/route', {text});
+    if (r.status !== 200) { ostat('배정 실패 ' + r.status, true); return null; }
+    $('#omodel').value = r.body.model; showSug(r.body.model, r.body.reason, r.body.by);
+    if (!$('#otitle').value) $('#otitle').value = r.body.title || '';
+    ostat(''); return r.body.model;
+  } finally { $('#oroute').disabled = $('#ogo').disabled = false; }
+}
+async function doOrder(confirm) {
+  const text = $('#otext').value.trim(); if (!text) { ostat('지시 글을 먼저 쓴다', true); return; }
+  let model = $('#omodel').value;
+  if (model === 'auto') { model = await doRoute(); if (!model) return; }
+  $('#ogo').disabled = true; ostat(confirm ? '생성 요청 중…' : '지시 보내는 중…');
+  try {
+    const r = await api('/api/order', {model, text, title: $('#otitle').value.trim(), lane: $('#olane').value.trim(), write: $('#owrite').checked && !$('#owrite').disabled, confirm});
+    const b = r.body;
+    if (b.need_confirm || r.status === 409) { showConfirm(b, r.status === 409); ostat(r.status === 409 ? b.error : '유료 요청 — 아래 내용을 확인하고 누른다', r.status === 409); return; }
+    if (r.status !== 200) { ostat(b.error || ('실패 ' + r.status), true); return; }
+    closeOrder(); $('#otext').value = $('#otitle').value = '';
+    toast('start', {model, task: '지시 접수 · ' + b.id, notes: []}, '에게 지시함');
+  } catch (e) { ostat('서버에 닿지 않음', true); }
+  finally { $('#ogo').disabled = false; }
+}
+function showConfirm(b, blocked) {
+  const v = b.vendor === 'meshy' ? 'Meshy 3D preview' : 'Recraft 그림';
+  $('#oconf').innerHTML = `<b>💳 ${v} — 크레딧이 나간다</b>
+    <div class="grid"><div>이번 예상<em>${b.estimate} ${esc(b.unit)}</em></div><div>잔액<em>${b.balance ?? '?'}</em></div>
+      <div>이번 달(사무실)<em>${b.month_spent}</em></div><div>한 달 상한<em>${b.month_cap}</em></div></div>
+    <div class="sub">한 달 상한은 이 사무실 원장(vendor-ledger.json)만 센다 — MeshyRuns 스크립트 원장은 따로다. 실패해도 자동 재시도는 없다.</div>
+    <div class="sub">프롬프트: ${esc(b.prompt)}</div>
+    <div class="orow"><span style="flex:1"></span><button class="btn" onclick="$('#oconf').classList.remove('on');ostat('')">취소</button>
+      <button class="btn danger" ${blocked ? 'disabled' : ''} onclick="doOrder(true)">크레딧 쓰고 생성 ▶</button></div>`;
+  $('#oconf').classList.add('on');
+}
+async function stopJob(id) {
+  if (!confirm('이 작업을 멈출까? 일꾼 프로세스를 끝내고 실패로 기록한다.')) return;
+  const r = await api('/api/stop', {id}); toast(r.status === 200 ? 'fail' : 'fail', {model: (S.rows.find(x => x.id === id) || {}).model, task: id, notes: []}, r.status === 200 ? '중지함' : '중지 실패');
+  closeDetail();
+}
+async function sendNote(id) {
+  const t = $('#mnote').value.trim(); if (!t) return;
+  const r = await api('/api/note', {id, text: t}); if (r.status === 200) $('#mnote').value = '';
+}
 function closeDetail() { $('#modal').classList.remove('on'); detail = null; }
 
 /* ── loop ──────────────────────────────────────────────── */
 function render() {
   const rows = laneRows();
-  renderHeader(rows); renderWindow(); renderRooms(rows); renderFeed(); renderStats(rows); renderTimeline(rows);
+  renderHeader(rows); renderWindow(); renderRooms(rows); renderFeed(); renderUsage(); renderStats(rows); renderTimeline(rows); fitFloor();
 }
+let fitKey = '';
+function fitFloor(force) {   // 방이 많아도 사무실 전체가 한 화면에 들어오는 가장 큰 배율(0.66 – 1)을 찾는다
+  const f = $('.floor'), r = $('#rooms'); if (!f) return;
+  if (innerWidth <= 1100) { r.style.zoom = 1; return; }
+  const key = r.querySelectorAll('.seat').length + ':' + innerWidth + 'x' + innerHeight;
+  if (key === fitKey && !force) return; fitKey = key;
+  const avail = f.clientHeight - $('#window').offsetHeight - 4;
+  const fits = z => { r.style.zoom = z; return r.getBoundingClientRect().height <= avail; };
+  if (fits(1)) return;
+  let lo = .66, hi = 1;
+  for (let i = 0; i < 6; i++) { const m = (lo + hi) / 2; if (fits(m)) lo = m; else hi = m; }
+  r.style.zoom = lo;
+}
+addEventListener('resize', () => S && fitFloor(true));
 function tick() {
   const t = nowT(), d = new Date(t * 1000);
   $('#clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -665,7 +835,13 @@ document.addEventListener('click', e => {
   if (e.target.id === 'modal') { closeDetail(); return; }
   const h = e.target.closest('.seat,.fi,.sr,.tl-bar,.job'); if (h && S) openDetail(h.dataset.model, h.dataset.id);
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(); closeOrder(); } if (e.key === 'Enter' && e.ctrlKey && $('#omodal').classList.contains('on')) doOrder(false); });
+$('#orderBtn').style.display = TOKEN && !SNAP ? '' : 'none';
+$('#orderBtn').onclick = () => openOrder();
+$('#oroute').onclick = () => doRoute();
+$('#ogo').onclick = () => doOrder(false);
+$('#omodel').onchange = () => { $('#oconf').classList.remove('on'); if ($('#omodel').value === 'auto') $('#owrite').disabled = false; else showSug($('#omodel').value); };
+$('#omodal').addEventListener('click', e => { if (e.target.id === 'omodal') closeOrder(); });
 $('#snd').onclick = () => { sound = !sound; store.set('ab.sound', sound ? '1' : '0'); $('#snd').textContent = sound ? '🔔 소리' : '🔕 소리'; if (sound) chime(true); };
 $('#snd').textContent = sound ? '🔔 소리' : '🔕 소리';
 setInterval(tick, 1000);
