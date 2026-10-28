@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,13 +25,41 @@ namespace Oheangbu.EditorTools.Vol2
         const string Root = "Assets/_Project/Art/SpellVFX308/Restart";
         const string GDir = Root + "/U/G";
         const string SpriteDir = GDir + "/sprites";
-        const string SourceGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_ring.vfx";
-        const string RingGraph = GDir + "/VFX_U_G.vfx";
-        const string HitGraph = GDir + "/VFX_U_G_hit.vfx";
         const float RingRadius = 2.2f, HitRadius = 0.3f;
 
-        // block fileIDs inside VFX_V308_na_ring.vfx (read from the YAML): FlipbookPlayer (update), random texIndex (init), AttributeFromMap texIndex (init)
-        static readonly string[] TexIndexBlocks = { "8926484042661614742", "8926484042661614795", "8926484042661614963" };
+        /// <summary>One source graph and what has to be edited in its copy. Block fileIDs and literals were read from the source YAML.</summary>
+        sealed class GraphBase
+        {
+            public string Source;
+            /// <summary>Regex (group 1 = everything up to the z value) for the emitter centre's z, which is moved to 0.</summary>
+            public string CentreRegex;
+            /// <summary>Blocks switched off (m_Disabled 1).</summary>
+            public string[] Disable;
+            /// <summary>Plain {from, to} text replacements (done when "from" is present).</summary>
+            public string[][] Literal;
+        }
+
+        // G  = VFX_V308_na_ring: arc-circle (0, 0.1, 6) r 2.3, Set Pivot, Set Scale, brush-variant texIndex map.
+        //   disabled: FlipbookPlayer (update) 742, random texIndex 795, AttributeFromMap texIndex 963, and - round 2 (the sprites rendered as thin vertical streaks) - Set Scale 953
+        //   (random 0.6 - 1.4 PER COMPONENT: the one geometry block the smoke graphs do not have; the quad is then exactly size x size, the sprite is made square in SpriteAsset).
+        static readonly GraphBase RingBase = new GraphBase
+        {
+            Source = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_ring.vfx",
+            CentreRegex = "(\"y\":0\\.10000000149011612,\"z\":)6\\.0",
+            Disable = new[] { "8926484042661614742", "8926484042661614795", "8926484042661614963", "8926484042661614953" },
+            Literal = new string[0][],
+        };
+
+        // G2 = VFX_V308_na_wash (round 2 second opinion: the same family, but made for one sprite per particle - texIndex fixed 0 - and without Set Scale / Set Pivot /
+        //   Velocity Spherical): arc-circle (0, 0.6, 6.4) r 1.9, octagon quads (cropFactor 0.293 -> 0 = the full square), Turbulence (disabled: sprites must not jitter).
+        //   disabled: FlipbookPlayer 742, random texIndex 795, Turbulence 941.
+        static readonly GraphBase WashBase = new GraphBase
+        {
+            Source = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_wash.vfx",
+            CentreRegex = "(\"y\":0\\.6000000238418579,\"z\":)6\\.400000095367432",
+            Disable = new[] { "8926484042661614742", "8926484042661614795", "8926484042661614941" },
+            Literal = new[] { new[] { "m_SerializableObject: 0.293\n", "m_SerializableObject: 0\n" } },
+        };
 
         public static string Run(string command)
         {
@@ -53,43 +82,48 @@ namespace Oheangbu.EditorTools.Vol2
             Directory.CreateDirectory(Full(SpriteDir));
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
-            // ---- graphs ----
-            string err = EnsureGraph(RingGraph, RingRadius, log);
-            if (err != null) return "REFUSED setup:g: " + err;
-            err = EnsureGraph(HitGraph, HitRadius, log);
-            if (err != null) return "REFUSED setup:g: " + err;
-            var ringAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(RingGraph);
-            var hitAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(HitGraph);
-            if (ringAsset == null || hitAsset == null) return "REFUSED setup:g: the graph copies did not import (" + log + ")";
-            log.Append("graph asset type ").Append(ringAsset.GetType().Name).Append("; ");
-
-            // ---- sprites ----
+            // ---- sprites (once; the two variants share them) ----
             var mound = SpriteAsset("mound", log); var crest = SpriteAsset("crest", log); var claw = SpriteAsset("claw", log); var ink = SpriteAsset("ink", log); var splash = SpriteAsset("splash", log);
 
-            // ---- prefab ----
-            var prefab = Prefab(Root + "/U/U_G.prefab", 1.8f, go =>
+            // ---- variants: G (ring graph copy) and G2 (wash graph copy) ----
+            var built = new System.Collections.Generic.Dictionary<string, GameObject>();
+            foreach (var spec in new[] { new KeyValuePair<string, GraphBase>("G", RingBase), new KeyValuePair<string, GraphBase>("G2", WashBase) })
             {
-                var player = go.GetComponent<SpellFxPlayer>();
-                var pso = new SerializedObject(player); pso.FindProperty("tailSeconds").floatValue = 1.0f; pso.ApplyModifiedPropertiesWithoutUndo();      // a hit late in the life still plays its burst
-                var part = go.AddComponent<SpellFxVfxWavePart>();
-                var so = new SerializedObject(part);
-                so.FindProperty("ringGraph").objectReferenceValue = ringAsset;
-                so.FindProperty("hitGraph").objectReferenceValue = hitAsset;
-                so.FindProperty("moundTex").objectReferenceValue = mound;
-                so.FindProperty("crestTex").objectReferenceValue = crest;
-                so.FindProperty("inkTex").objectReferenceValue = ink;
-                so.FindProperty("clawTex").objectReferenceValue = claw;
-                so.FindProperty("splashTex").objectReferenceValue = splash;
-                so.FindProperty("bakedRadius").floatValue = RingRadius;
-                so.ApplyModifiedPropertiesWithoutUndo();
-            });
-            log.Append("G prefab ok; ");
+                string tag = spec.Key;
+                string ringPath = GDir + "/VFX_U_" + tag + ".vfx", hitPath = GDir + "/VFX_U_" + tag + "_hit.vfx";
+                string err = EnsureGraph(spec.Value, ringPath, RingRadius, log);
+                if (err == null) err = EnsureGraph(spec.Value, hitPath, HitRadius, log);
+                if (err != null) { log.Append(tag).Append(" REFUSED: ").Append(err).Append("; "); continue; }
+                var ringAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(ringPath);
+                var hitAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(hitPath);
+                if (ringAsset == null || hitAsset == null) { log.Append(tag).Append(" REFUSED: the graph copies did not import; "); continue; }
+                log.Append(tag).Append(" graph asset type ").Append(ringAsset.GetType().Name).Append("; ");
 
-            // ---- catalogue: MERGE - only 우/G is replaced ----
+                built[tag] = Prefab(Root + "/U/U_" + tag + ".prefab", 1.8f, go =>
+                {
+                    var player = go.GetComponent<SpellFxPlayer>();
+                    var pso = new SerializedObject(player); pso.FindProperty("tailSeconds").floatValue = 1.0f; pso.ApplyModifiedPropertiesWithoutUndo();      // a hit late in the life still plays its burst
+                    var part = go.AddComponent<SpellFxVfxWavePart>();
+                    var so = new SerializedObject(part);
+                    so.FindProperty("ringGraph").objectReferenceValue = ringAsset;
+                    so.FindProperty("hitGraph").objectReferenceValue = hitAsset;
+                    so.FindProperty("moundTex").objectReferenceValue = mound;
+                    so.FindProperty("crestTex").objectReferenceValue = crest;
+                    so.FindProperty("inkTex").objectReferenceValue = ink;
+                    so.FindProperty("clawTex").objectReferenceValue = claw;
+                    so.FindProperty("splashTex").objectReferenceValue = splash;
+                    so.FindProperty("bakedRadius").floatValue = RingRadius;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                });
+                log.Append(tag).Append(" prefab ok; ");
+            }
+            if (built.Count == 0) return "REFUSED setup:g: no variant built (" + log + ")";
+
+            // ---- catalogue: MERGE - only 우/G and 우/G2 are replaced ----
             var cat = AssetDatabase.LoadAssetAtPath<SpellFxCatalog>(SpellFxCatalog.AssetPath);
             if (cat == null) { cat = ScriptableObject.CreateInstance<SpellFxCatalog>(); AssetDatabase.CreateAsset(cat, SpellFxCatalog.AssetPath); }
-            var list = (cat.entries ?? new SpellFxCatalog.Entry[0]).Where(e => e != null && !(e.letter == "우" && e.variant == "G")).ToList();
-            list.Add(new SpellFxCatalog.Entry { letter = "우", variant = "G", prefab = prefab });
+            var list = (cat.entries ?? new SpellFxCatalog.Entry[0]).Where(e => e != null && !(e.letter == "우" && built.ContainsKey(e.variant))).ToList();
+            foreach (var kv in built) list.Add(new SpellFxCatalog.Entry { letter = "우", variant = kv.Key, prefab = kv.Value });
             cat.entries = list.ToArray();
             EditorUtility.SetDirty(cat); AssetDatabase.SaveAssetIfDirty(cat);
             log.Append("catalogue: " + string.Join(", ", cat.entries.Select(e => e.letter + "/" + e.variant)));
@@ -99,12 +133,13 @@ namespace Oheangbu.EditorTools.Vol2
         // ------------------------------------------------------------------ graph copy + text edit
         /// <summary>Copies the source graph to <paramref name="dst"/> once, then applies the edits. Every edit is counted: a pattern that is not there (already edited, or the source
         /// changed) is reported in the log, never forced. Returns an error text, or null.</summary>
-        static string EnsureGraph(string dst, float radius, StringBuilder log)
+        static string EnsureGraph(GraphBase b, string dst, float radius, StringBuilder log)
         {
-            if (!File.Exists(Full(SourceGraph))) return SourceGraph + " missing";
+            string sourceGraph = b.Source;
+            if (!File.Exists(Full(sourceGraph))) return sourceGraph + " missing";
             if (!File.Exists(Full(dst)))
             {
-                if (!AssetDatabase.CopyAsset(SourceGraph, dst)) return "CopyAsset " + SourceGraph + " -> " + dst + " failed";
+                if (!AssetDatabase.CopyAsset(sourceGraph, dst)) return "CopyAsset " + sourceGraph + " -> " + dst + " failed";
                 AssetDatabase.ImportAsset(dst, ImportAssetOptions.ForceSynchronousImport);
             }
             string full = Full(dst);
@@ -113,7 +148,7 @@ namespace Oheangbu.EditorTools.Vol2
             int n;
 
             // 1. the emitter centre: arc-circle position and spherical-velocity centre were (0, 0.1, 6) = six metres ahead of the effect; now the effect's own origin
-            var reCentre = new Regex("(\"y\":0\\.10000000149011612,\"z\":)6\\.0");
+            var reCentre = new Regex(b.CentreRegex);
             n = reCentre.Matches(text).Count; text = reCentre.Replace(text, "${1}0.0");
             log.Append(name).Append(" centre z6->0: ").Append(n).Append("; ");
 
@@ -139,8 +174,9 @@ namespace Oheangbu.EditorTools.Vol2
 
             // 5. texIndex: the flipbook player, the random index and the brush-variant map are switched off (one sprite per quad, index 0)
             int off = 0;
-            foreach (var id in TexIndexBlocks) { bool did; text = DisableBlock(text, id, out did); if (did) off++; }
-            log.Append("texIndex blocks off x").Append(off).Append("; ");
+            foreach (var id in b.Disable) { bool did; text = DisableBlock(text, id, out did); if (did) off++; }
+            log.Append("blocks off x").Append(off).Append("; ");
+            foreach (var pair in b.Literal) { bool had = text.Contains(pair[0]); text = text.Replace(pair[0], pair[1]); log.Append("literal ").Append(had ? "1" : "0").Append("; "); }
 
             if (!string.Equals(text, orig, StringComparison.Ordinal))
             {
@@ -185,6 +221,7 @@ namespace Oheangbu.EditorTools.Vol2
                 origin = "placeholder";
             }
             if (bytes == null) { log.Append(name).Append(": no source; "); return null; }
+            bytes = Squared(bytes, name != "ink", log, name);      // the graph's quad is size x size: a wide / tall sprite is padded to a square (transparent), standing on the bottom edge
             string full = Full(assetPath);
             if (!File.Exists(full) || !File.ReadAllBytes(full).SequenceEqual(bytes))
             {
@@ -193,6 +230,35 @@ namespace Oheangbu.EditorTools.Vol2
             }
             log.Append(name).Append(" <- ").Append(origin).Append("; ");
             return Import(assetPath);
+        }
+
+        /// <summary>Pads a PNG to a square canvas (side = the longer edge), content centred across and either bottom-aligned or centred down. Already square, or unreadable: returned as it is.</summary>
+        static byte[] Squared(byte[] png, bool bottom, StringBuilder log, string name)
+        {
+            var t = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!t.LoadImage(png)) return png;
+                int w = t.width, h = t.height;
+                if (w == h) return png;
+                int side = Mathf.Max(w, h);
+                var src = t.GetPixels32();
+                var dst = new Color32[side * side];
+                var clear = new Color32(8, 12, 25, 0);        // transparent, ink-dark rgb: no pale fringe when the edge is filtered
+                for (int i = 0; i < dst.Length; i++) dst[i] = clear;
+                int ox = (side - w) / 2, oy = bottom ? 0 : (side - h) / 2;
+                for (int y = 0; y < h; y++)
+                    Array.Copy(src, y * w, dst, (y + oy) * side + ox, w);
+                var sq = new Texture2D(side, side, TextureFormat.RGBA32, false);
+                try
+                {
+                    sq.SetPixels32(dst); sq.Apply(false);
+                    log.Append(name).Append(" squared ").Append(w).Append("x").Append(h).Append("->").Append(side).Append("; ");
+                    return sq.EncodeToPNG();
+                }
+                finally { UnityEngine.Object.DestroyImmediate(sq); }
+            }
+            finally { UnityEngine.Object.DestroyImmediate(t); }
         }
 
         /// <summary>No painted sprite yet: mound / crest from the KCISA masks (R line, G fill, B silhouette) painted indigo / cream / ink, claw / ink from the ink stroke, splash a soft dot.</summary>

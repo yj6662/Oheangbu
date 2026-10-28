@@ -51,7 +51,7 @@ namespace Oheangbu.App.SpellFx
             switch (kind)
             {
                 case Kind.Mound:    // the body of the wall: many mounds rise round the ring, swell, sink
-                    return new Recipe { T0 = 0f, T1 = 0.28f, Rate = 90f, Life = 1.6f, Vel = new Vector3(0f, 1.4f, 0f), Div = 0.15f, Force = new Vector3(0f, -0.9f, 0f), Drag = 0.8f, Angle = new Vector2(-6f, 6f), S0 = 0.9f, S1 = 1.7f, S2 = 1.3f, Tint = Paint };
+                    return new Recipe { T0 = 0f, T1 = 0.28f, Rate = 70f, Life = 1.6f, Vel = new Vector3(0f, 1.0f, 0f), Div = 0.15f, Force = new Vector3(0f, -0.7f, 0f), Drag = 0.8f, Angle = new Vector2(-4f, 4f), S0 = 2.0f, S1 = 3.2f, S2 = 2.6f, Tint = Paint };      // the sprite is a wide band on a square canvas (SpellFxSetupG pads it): size = its width
                 case Kind.Crest:    // hooked crests stand higher, a little later
                     return new Recipe { T0 = 0.12f, T1 = 0.40f, Rate = 30f, Life = 1.5f, Vel = new Vector3(0f, 2.2f, 0f), Div = 0.1f, Force = new Vector3(0f, -1.8f, 0f), Drag = 0.4f, Angle = new Vector2(-12f, 12f), S0 = 1.1f, S1 = 2.0f, S2 = 1.6f, Tint = Paint };
                 case Kind.Ink:      // black strokes sweeping along the walls
