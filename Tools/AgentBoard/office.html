@@ -313,6 +313,11 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
 .ncyc div b{font-weight:normal;color:var(--gold)}
 .ncyc div small{display:block;color:var(--dim);font-family:var(--f9)}
 pre.report{margin:0;background:#151821;border:2px solid var(--edge);padding:10px;font:12px/1.6 var(--f11);color:var(--ink);max-height:52vh;overflow:auto;white-space:pre-wrap;word-break:break-all}
+.edbox{align-self:flex-end;background:#1a1d24;border:3px solid var(--edge);padding:5px 7px;display:flex;flex-direction:column;gap:3px;min-width:104px;font-family:var(--f9);font-size:10px}
+.edbox b{font:11px var(--f11);color:var(--green);font-weight:normal}
+.edbox small{color:var(--dim);display:block}
+.edbox.warn{border-color:#b8862f}.edbox .why{color:var(--orange)}
+.edbox .btn{padding:2px 6px;font-size:10px}
 .snapflag{background:#5a3b8a;border:2px solid var(--edge);padding:2px 8px;font-family:var(--f9)}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#363c52;border:2px solid var(--panel)}::-webkit-scrollbar-track{background:transparent}
 @media (max-width:1100px){
@@ -378,7 +383,11 @@ pre.report{margin:0;background:#151821;border:2px solid var(--edge);padding:10px
   <div class="orow"><label>제목</label><input type="text" id="otitle" class="grow" placeholder="비우면 배정 담당이 붙인다"><label>묶음</label><input type="text" id="olane" list="olanes" style="width:110px"><datalist id="olanes"></datalist></div>
   <div class="orow"><label>맡을 직원</label><select id="omodel" class="grow"></select><button class="btn" id="oroute">🤖 배정 미리 보기</button></div>
   <div class="sug" id="osug"><div class="sub">'자동 배정'이면 지시할 때 Haiku가 고른다. 직원을 직접 골라도 된다.</div></div>
-  <div class="orow"><label><input type="checkbox" id="owrite"> 파일 수정 허용</label><span class="sub">끄면 읽기 · 조사 · 답변만(Claude: Read·Grep·Glob·웹 / Codex: read-only). Bash는 언제나 막힘.</span></div>
+  <div class="orow"><label>일하는 방식</label><select id="omode" class="grow">
+    <option value="full">이 세션처럼 — auto 권한 · Bash · Unity 편집기(Play 검증) · 로컬 커밋</option>
+    <option value="write">파일 수정만 — Edit · Write, Bash · Unity 없음</option>
+    <option value="read">읽기 전용 — 조사 · 정리 · 답변만</option></select></div>
+  <div class="sub" style="margin-top:-4px">'이 세션처럼'은 데스크톱 메인 세션과 같은 자동 판정기로 돈다. 삭제 · push · 유료 API는 하지 않는다. 편집기 재시작이 필요하면 요청만 남긴다(렌더팜의 Unity 재시작 단추).</div>
   <div class="conf-box" id="oconf"></div>
   <div class="orow"><span class="ostat" id="ostat"></span><span style="flex:1"></span><button class="btn go" id="ogo">지시하기 ▶</button></div>
 </div></div>
@@ -539,9 +548,19 @@ function seatsFor(model, rows, dept) {
 }
 
 function racksHtml() {
-  const p = S.procs || {}, names = [['blender.exe', 'Blender'], ['codex.exe', 'Codex'], ['unity.exe', 'Unity']];
+  const p = S.procs || {}, names = [['blender.exe', 'Blender'], ['codex.exe', 'Codex'], ['unity.exe', 'Unity']], e = S.editor || {};
+  const ed = e.running === undefined || e.running === null ? '' : `<div class="edbox ${e.reason ? 'warn' : ''}" title="${esc(e.title || '')}">
+      <b>Unity</b> ${e.running ? `${e.private_gb} GB` : '꺼짐'}<small>RAM 여유 ${e.free_gb} GB · 커밋 ${e.commit_pct}%</small>
+      ${e.reason ? `<small class="why">⚠ ${esc(e.reason)}</small>` : ''}
+      ${TOKEN && !SNAP ? `<button class="btn" onclick="event.stopPropagation();restartEditor()">↻ 재시작</button>` : ''}</div>`;
   return `<div class="racks">${names.map(([k, n]) => { const c = p[k] || 0;
-    return `<div class="rack" title="${n} 프로세스 ${c}개">${Array.from({length: 6}, (_, i) => `<div class="u ${i < c ? 'on' : ''}"><i></i><i></i></div>`).join('')}<label>${n} <em>${c ? '×' + c : ''}</em></label></div>`; }).join('')}</div>`;
+    return `<div class="rack" title="${n} 프로세스 ${c}개">${Array.from({length: 6}, (_, i) => `<div class="u ${i < c ? 'on' : ''}"><i></i><i></i></div>`).join('')}<label>${n} <em>${c ? '×' + c : ''}</em></label></div>`; }).join('')}${ed}</div>`;
+}
+async function restartEditor() {
+  if (!confirm('Unity 편집기를 재시작할까? 닫기 → 다시 띄우기(1 – 2분). 저장 안 한 씬이 있으면 대화상자가 떠서 멈춘다(강제 종료는 안 함).')) return;
+  toast('start', {model: 'tool', task: 'Unity 편집기 재시작 중 — 1 – 2분', notes: []}, '편집기');
+  const r = await api('/api/editor/restart', {});
+  toast(r.status === 200 ? 'done' : 'fail', {model: 'tool', task: (r.body.out || '').split('\n').slice(-1)[0] || '', notes: []}, r.status === 200 ? '편집기 재시작 완료' : '편집기 재시작 실패');
 }
 
 function renderRooms(rows) {
@@ -665,46 +684,56 @@ function renderNightBtn() {
 const seenReport = id => store.get('ab.nightSeen', '') === id;
 function openNight(refresh) {
   const n = S.night, el = $('#nsheet');
-  const cyc = n ? (n.cycles || []).map(c => `<div data-model="${esc(c.assignee)}" data-id="${esc(c.job)}"><b>${c.n}. ${esc(c.title)}</b> · ${esc(rosterOf(c.assignee).short)} · ${c.ok ? '성공' : '실패'}${c.write ? ' · 수정' : ''}${c.commit ? ' · 커밋 ' + esc(c.commit) : ''}<small>${esc(c.summary || '')}</small></div>`).join('') : '';
+  const modeKo = m => ({full: '이 세션처럼', branch: '별도 브랜치', draft: '초안만'})[m] || m;
+  const cyc = n ? (n.cycles || []).map(c => `<div data-model="${esc(c.assignee)}" data-id="${esc(c.job)}"><b>${c.n}. ${esc(c.title)}</b> · ${esc(rosterOf(c.assignee).short)} · ${c.ok ? '성공' : '실패'}${c.commit ? ' · 커밋 ' + esc(c.commit) : ''}<small>${esc(c.summary || '')}</small>${c.verified ? `<small>검증: ${esc(c.verified)}</small>` : ''}</div>`).join('') : '';
+  const extra = n ? [(n.restarts || []).length ? `편집기 재시작 ${(n.restarts || []).length}번` : '', n.waits ? `한도 대기 ${n.waits}번` : '', n.session_id ? `세션 ${esc(n.session_id.slice(0, 8))}…` : ''].filter(Boolean).join(' · ') : '';
   if (nightRunning()) {
     el.innerHTML = `<button class="btn x" onclick="closeNight()">닫기 ✕</button><h2>🌙 야간 근무 중 — ${esc(n.id)}</h2>
-      <div class="sub">${hm(n.started)} 시작 · ${hm(n.until)}까지 · 모드 ${n.mode === 'branch' ? '별도 브랜치 ' + esc(n.branch) : '초안만'} · ${n.cycles.length}/${n.max_cycles}바퀴 · Claude 환산 $${(n.spent || 0).toFixed(2)} / $${n.budget}${n.status === 'reporting' ? ' · 아침 보고서 쓰는 중' : ''}</div>
+      <div class="sub">${hm(n.started)} 시작 · ${new Date(n.until * 1000).toLocaleString('ko-KR', {month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'})}까지 · 모드 ${modeKo(n.mode)}${n.branch ? ' ' + esc(n.branch) : ''} · ${n.cycles.length}바퀴 · Claude 환산 $${(n.spent || 0).toFixed(2)}${n.budget ? ' / $' + n.budget : ''}${extra ? ' · ' + extra : ''}${n.status === 'reporting' ? ' · 아침 보고서 쓰는 중' : ''}</div>
       <div class="sub">지시: ${esc(n.instruction)}</div>
-      <div class="ncyc">${cyc || '<div><small>첫 바퀴 — Opus가 다음 일을 고르는 중</small></div>'}</div>
-      <div class="orow"><span class="ostat" id="nstat"></span><span style="flex:1"></span><button class="btn danger" onclick="stopNight()">⏹ 지금 바퀴 마치고 보고서 쓰기</button></div>`;
+      <div class="ncyc">${cyc || '<div><small>1바퀴 진행 중 — Opus가 상태판을 읽고 일을 고르는 중</small></div>'}</div>
+      <div class="orow"><span class="ostat" id="nstat"></span><span style="flex:1"></span>
+        <button class="btn" onclick="stopNight(false)">⏸ 지금 바퀴 마치고 보고서</button><button class="btn danger" onclick="stopNight(true)">⏹ 즉시 중지 + 보고서</button></div>`;
   } else if (refresh) { return; }
   else {
-    const last = n && n.report ? `<h2 style="margin-top:6px">📋 지난 야간 보고 — ${esc(n.id)}</h2><pre class="report">${esc(n.report)}</pre>${cyc ? `<div class="ncyc">${cyc}</div>` : ''}` : '';
-    const d = new Date(nowT() * 1000);
+    const last = n && (n.report || n.session_id) ? `<h2 style="margin-top:6px">📋 지난 야간 보고 — ${esc(n.id)}${extra ? ` <small class="sub">${extra}</small>` : ''}</h2>
+      ${n.session_id ? `<div class="orow"><button class="btn primary" onclick="openNightApp()">💬 그 세션을 데스크톱 앱에서 열어 이어서 대화</button><span class="sub">또는 터미널: <code>claude --resume ${esc(n.session_id)}</code></span></div>` : ''}
+      ${n.report ? `<pre class="report">${esc(n.report)}</pre>` : ''}${cyc ? `<div class="ncyc">${cyc}</div>` : ''}` : '';
+    const tm = new Date(nowT() * 1000); tm.setDate(tm.getDate() + 1); tm.setHours(7, 30, 0, 0);
+    const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
     el.innerHTML = `<button class="btn x" onclick="closeNight()">닫기 ✕</button><h2>🌙 야간 근무</h2>
-      <div class="sub">자는 동안 정한 시각까지 반복한다: Opus가 상태판 · 인계 · 작업판을 읽고 다음 권장 작업 하나를 고름 → 맞는 직원이 실행 → 기록. 끝나면 아침 보고서.</div>
+      <div class="sub">정한 시각까지 반복한다. '이 세션처럼'이면 Opus 세션 하나가 밤새 이어서 일한다 — 상태판 · 인계 · 작업판을 보고 다음 권장 작업을 골라 구현 · 컴파일 · Play 검증 · 로컬 커밋까지. 끝나면 같은 세션이 아침 보고서를 쓴다.</div>
       <textarea id="ninst">나 자러 갈 테니 질문 없이 권장안대로 작업을 계속 진행하고, 돌아왔을 때 자는 동안 한 일을 정리해서 보고해.</textarea>
       <div class="grid2">
-        <label>끝낼 시각<input type="time" id="nuntil" value="07:30"></label>
-        <label>작업 범위<select id="nmode"><option value="draft">초안만 — 리포는 안 고치고 결과를 야간 폴더에 (안전)</option><option value="branch">별도 브랜치에서 실제 수정 · 바퀴마다 커밋</option></select></label>
-        <label>최대 바퀴<input type="number" id="ncycles" value="12" min="1" max="40"></label>
-        <label>Claude 환산 예산($ — 일꾼이 보고한 비용 합)<input type="number" id="nbudget" value="30" min="1" max="500"></label>
-        <label>Codex 5시간 사용률 상한(%)<input type="number" id="ncodex" value="85" min="10" max="100"></label>
+        <label>끝낼 때<input type="datetime-local" id="nuntil" value="${iso(tm)}"></label>
+        <label>빠르게<div class="orow">${[1, 2, 3].map(k => `<button class="btn" onclick="nightDays(${k})">+${k}일 07:30</button>`).join('')}</div></label>
+        <label>일하는 방식<select id="nmode"><option value="full">이 세션처럼 — 한 세션 이어서 · auto · Bash · Unity · 커밋 (권장)</option><option value="branch">별도 브랜치 — 워크트리에서만 수정 · Bash · Unity 없음</option><option value="draft">초안만 — 리포 안 고침</option></select></label>
+        <label>최대 바퀴<input type="number" id="ncycles" value="300" min="1" max="2000"></label>
+        <label>Claude 환산 예산($, 0 = 제한 없음)<input type="number" id="nbudget" value="0" min="0" max="5000"></label>
+        <label>Codex 5시간 사용률 상한(%, 100 = 제한 없음)<input type="number" id="ncodex" value="100" min="10" max="100"></label>
       </div>
-      <div class="warn">⚠ 일꾼은 Bash · git · Unity 편집기 · Blender를 못 쓴다 — 컴파일 · Play 검증 없이 진행된다. 유료 API · LOCKED 변경 · 설계 결정 · 삭제 · push는 하지 않는다.<br>
-        별도 브랜치 모드는 <code>C:/Users/yj666/Oheangbu-night/&lt;id&gt;</code> 워크트리에서만 고쳐 지금 작업 폴더와 다른 세션은 건드리지 않는다(추적 파일만 · Docs 없음).<br>
-        Claude 한도는 직접 못 읽어 비용 합계 · 한도 오류로 멈춘다. 도는 동안 PC는 절전에 들어가지 않는다(화면은 꺼져도 됨) — 사무실 창은 닫아도 계속 돈다.</div>
+      <div class="warn">'이 세션처럼'은 데스크톱 메인 세션과 같은 auto 권한으로 돈다. 남기는 것: 삭제 · git push · 유료 API 금지, 큰 축 유지, 같은 실패 6번이면 중지, 인증 오류(401)면 중지.<br>
+        한도에 걸리면 30분씩 기다렸다 같은 바퀴를 다시 한다. 바퀴 사이에 편집기가 30 GB를 넘거나 메모리가 바닥이거나 꺼져 있거나 일꾼이 요청하면 감독이 Unity를 재시작한다(저장 안 한 씬 대화상자가 뜨면 죽이지 않고 넘어감).<br>
+        도는 동안 PC는 절전에 들어가지 않는다(화면은 꺼져도 됨). 사무실 창은 닫아도 계속 돈다. 주간 한도를 다 쓰면 낮 작업도 초기화까지 막힌다.</div>
       <div class="orow"><span class="ostat" id="nstat"></span><span style="flex:1"></span><button class="btn go" onclick="startNight()">🌙 야간 근무 시작</button></div>${last}`;
     if (n && n.report) store.set('ab.nightSeen', n.id);
   }
   $('#nmodal').classList.add('on');
 }
+function nightDays(k) { const d = new Date(nowT() * 1000); d.setDate(d.getDate() + k); d.setHours(7, 30, 0, 0);
+  $('#nuntil').value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T07:30`; }
 function closeNight() { $('#nmodal').classList.remove('on'); }
 async function startNight() {
   const r = await api('/api/night/start', {instruction: $('#ninst').value.trim(), until: $('#nuntil').value, mode: $('#nmode').value,
     cycles: $('#ncycles').value, budget: $('#nbudget').value, codex_cap: $('#ncodex').value});
   if (r.status !== 200) { $('#nstat').textContent = r.body.error || ('실패 ' + r.status); $('#nstat').className = 'ostat err'; return; }
-  closeNight(); toast('start', {model: 'opus', task: '야간 근무 시작 — ' + $('#nuntil').value + '까지', notes: []}, '야간 근무');
+  closeNight(); toast('start', {model: 'opus', task: '야간 근무 시작 — ' + $('#nuntil').value.replace('T', ' ') + '까지', notes: []}, '야간 근무');
 }
-async function stopNight() {
-  if (!confirm('야간 근무를 멈출까? 지금 바퀴를 마치고 아침 보고서를 쓴 뒤 끝난다.')) return;
-  const r = await api('/api/night/stop', {}); $('#nstat').textContent = r.status === 200 ? '멈추는 중 — 지금 바퀴가 끝나면 보고서를 쓴다' : (r.body.error || '실패');
+async function stopNight(now) {
+  if (!confirm(now ? '지금 도는 일꾼도 끊고 바로 보고서를 쓸까?' : '지금 바퀴를 마치고 아침 보고서를 쓴 뒤 끝낼까?')) return;
+  const r = await api('/api/night/stop', {now}); $('#nstat').textContent = r.status === 200 ? (now ? '끊는 중 — 곧 보고서를 쓴다' : '멈추는 중 — 지금 바퀴가 끝나면 보고서를 쓴다') : (r.body.error || '실패');
 }
+async function openNightApp() { const r = await api('/api/night/open', {}); $('#nstat') && ($('#nstat').textContent = r.status === 200 ? '데스크톱 앱에서 여는 중' : (r.body.error || '실패')); }
 function renderStale() {
   const bar = $('#stalebar'); if (S.snapshot) { bar.classList.remove('on'); return; }
   let msg = '';
@@ -813,7 +842,7 @@ function showSug(model, reason, by) {
   const ro = rosterOf(model);
   $('#osug').innerHTML = `<div class="av">${sprite(model)}</div><div><b>${esc(ro.short)}</b> <span class="sub">${esc(ro.title)}${ro.paid ? ' · 유료' : ''}</span>
     <small>${esc(reason || ro.what)}${by ? ` · ${by === 'haiku' ? 'Haiku 배정' : '열쇠말 배정'}` : ''}</small></div>`;
-  $('#owrite').disabled = !(ro.kind === 'claude' || ro.kind === 'codex');
+  $('#omode').disabled = !(ro.kind === 'claude' || ro.kind === 'codex');
 }
 function openOrder(model, text) {
   closeDetail();
@@ -825,7 +854,7 @@ function openOrder(model, text) {
   if (!$('#olane').value && lane !== '전체') $('#olane').value = lane;
   if (text) $('#otext').value = text;
   $('#oconf').classList.remove('on'); ostat('');
-  if ($('#omodel').value === 'auto') { $('#osug').innerHTML = `<div class="sub">'자동 배정'이면 지시할 때 Haiku가 고른다. 직원을 직접 골라도 된다.</div>`; $('#owrite').disabled = false; }
+  if ($('#omodel').value === 'auto') { $('#osug').innerHTML = `<div class="sub">'자동 배정'이면 지시할 때 Haiku가 고른다. 직원을 직접 골라도 된다.</div>`; $('#omode').disabled = false; }
   else showSug($('#omodel').value);
   $('#omodal').classList.add('on'); setTimeout(() => $('#otext').focus(), 30);
 }
@@ -847,7 +876,7 @@ async function doOrder(confirm) {
   if (model === 'auto') { model = await doRoute(); if (!model) return; }
   $('#ogo').disabled = true; ostat(confirm ? '생성 요청 중…' : '지시 보내는 중…');
   try {
-    const r = await api('/api/order', {model, text, title: $('#otitle').value.trim(), lane: $('#olane').value.trim(), write: $('#owrite').checked && !$('#owrite').disabled, confirm});
+    const r = await api('/api/order', {model, text, title: $('#otitle').value.trim(), lane: $('#olane').value.trim(), mode: $('#omode').disabled ? 'read' : $('#omode').value, write: !$('#omode').disabled && $('#omode').value !== 'read', confirm});
     const b = r.body;
     if (b.need_confirm || r.status === 409) { showConfirm(b, r.status === 409); ostat(r.status === 409 ? b.error : '유료 요청 — 아래 내용을 확인하고 누른다', r.status === 409); return; }
     if (r.status !== 200) { ostat(b.error || ('실패 ' + r.status), true); return; }
@@ -923,7 +952,7 @@ $('#nightBtn').onclick = () => openNight();
 $('#nmodal').addEventListener('click', e => { if (e.target.id === 'nmodal') closeNight(); });
 $('#oroute').onclick = () => doRoute();
 $('#ogo').onclick = () => doOrder(false);
-$('#omodel').onchange = () => { $('#oconf').classList.remove('on'); if ($('#omodel').value === 'auto') $('#owrite').disabled = false; else showSug($('#omodel').value); };
+$('#omodel').onchange = () => { $('#oconf').classList.remove('on'); if ($('#omodel').value === 'auto') $('#omode').disabled = false; else showSug($('#omodel').value); };
 $('#omodal').addEventListener('click', e => { if (e.target.id === 'omodal') closeOrder(); });
 $('#snd').onclick = () => { sound = !sound; store.set('ab.sound', sound ? '1' : '0'); $('#snd').textContent = sound ? '🔔 소리' : '🔕 소리'; if (sound) chime(true); };
 $('#snd').textContent = sound ? '🔔 소리' : '🔕 소리';

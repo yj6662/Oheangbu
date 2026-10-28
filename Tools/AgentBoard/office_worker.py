@@ -3,10 +3,13 @@
 
   python Tools/AgentBoard/office_worker.py Art/AgentBoard/jobs/<id>.json
 
-일 파일(job): {id, model, role, task, lane, prompt, write, runner:{kind, model?, argv?, estimate?}}
+일 파일(job): {id, model, role, task, lane, prompt, mode(read|write|full), runner:{kind, model?, argv?, estimate?}, cwd?, resume?, max_turns?}
 - 지시문은 argv가 아니라 stdin으로 넘긴다(cmd.exe가 & | > % 를 해석하지 않게).
-- claude: 읽기 모드 = Read · Grep · Glob · 웹만, 수정 모드 = + Edit · Write(acceptEdits). Bash는 둘 다 막는다.
-- codex: 읽기 모드 = -s read-only, 수정 모드 = -s workspace-write.
+- claude: read = Read · Grep · Glob · 웹만 / write = + Edit · Write(acceptEdits), Bash 없음 /
+  full('이 세션처럼', 사용자 2026-10-29) = --permission-mode auto(데스크톱 메인 세션과 같은 자동 판정기) + Bash + Unity MCP(Oheangbu/.mcp.json),
+  git push만 규칙으로 막고 삭제 · 유료 API 금지는 지시문으로. resume=세션 id면 그 세션을 이어 간다(야간 근무).
+- codex: read = -s read-only, write · full = -s workspace-write.
+- 편집기 재시작은 일꾼이 직접 하지 않는다 — RESTART_EDITOR 요청 파일을 쓰면 야간 감독(또는 사무실 단추)이 life.ps1로 한다.
 - meshy · recraft(유료): office.py가 확인 · 상한을 본 뒤에만 일 파일을 만든다. 여기서는 원장에 먼저 적고 POST, 자동 재시도 없음.
 결과: Art/AgentBoard/results/<id>.md(+ 받은 파일), 로그: Art/AgentBoard/logs/<id>.log
 """
@@ -25,6 +28,21 @@ LEDGER = ROOT / 'vendor-ledger.json'
 SYSTEM = ('너는 미적 스튜디오(오행부 개발) 작업판 사무실에서 업무 지시를 받은 일꾼이다. 한국어로 답한다. '
           '같은 리포를 다른 세션이 동시에 쓰고 있으니 git 명령 · 대량 수정 · 지시 범위 밖 파일 수정은 하지 않는다. '
           '끝에 결과를 세 줄 이내로 요약한다.')
+RESTART_REQ = ROOT / 'RESTART_EDITOR'
+SYSTEM_FULL = ('너는 미적 스튜디오(오행부 개발) 작업판 사무실에서 업무 지시를 받은 일꾼이다. 사용자가 데스크톱 앱에서 쓰는 메인 세션처럼 일한다 — '
+               '같은 권한(auto), Bash, Unity 편집기 MCP(ai-game-developer)를 쓸 수 있다. 한국어로 답한다. CLAUDE.md와 자동 메모리 규칙을 따른다.\n'
+               '지켜야 할 것(사용자 2026-10-29): 파일 삭제 금지(필요하면 보고서에 제안만) · git push 금지(로컬 커밋은 일반 커밋으로, git add -A 금지) · '
+               '유료 API(Meshy · Recraft · Suno) 금지 · 큰 축(스토리 구조 · vol.2 · EA · 오의 한 획) 유지. 결정이 필요하면 권장안으로 진행하고 그렇게 했다고 기록한다.\n'
+               '같은 리포 · 같은 Unity 편집기를 다른 세션이 쓸 수 있다. GPU를 많이 쓰는 단계(Play · 캡처 · Blender)는 '
+               '`python Tools/resource_guard.py --gpu-run <라벨> -- <명령>`으로 하나씩.\n'
+               'Unity 편집기를 직접 닫거나 죽이지 않는다. 재시작이 필요하면(전용 메모리 30 GB 초과 · 크래시 · 메모리 부족) '
+               '파일 %s 에 이유를 한 줄 쓰고 이번 일을 마친다 — 감독이 바퀴 사이에 재시작한다(사용자 허락 2026-10-29).\n'
+               '끝에 결과를 세 줄 이내로 요약하고, 검증하지 못한 것은 미검증이라고 쓴다.' % RESTART_REQ)
+MCP_CONFIG = REPO / 'Oheangbu' / '.mcp.json'
+
+
+def job_mode(job):
+    return job.get('mode') or ('write' if job.get('write') else 'read')
 
 
 def note(job, text):
@@ -60,12 +78,19 @@ def env_key(name):
 
 # ------------------------------------------------------------------ claude
 def run_claude(job, log):
-    tools = ['Read', 'Grep', 'Glob', 'WebSearch', 'WebFetch'] + (['Edit', 'Write'] if job.get('write') else [])
-    sysf = RESULTS / (job['id'] + '.system.txt'); sysf.write_text(SYSTEM, encoding='utf-8')   # 한글은 .cmd 인자로 넘기지 않는다
-    cmd = [exe('claude'), '-p', '--model', job['runner']['model'], '--output-format', 'stream-json', '--verbose',
-           '--append-system-prompt-file', str(sysf), '--allowedTools', *tools, '--disallowedTools', 'Bash', 'NotebookEdit']
-    if job.get('write'):
-        cmd[cmd.index('--allowedTools'):cmd.index('--allowedTools')] = ['--permission-mode', 'acceptEdits']
+    mode = job_mode(job)
+    sysf = RESULTS / (job['id'] + '.system.txt')   # 한글은 .cmd 인자로 넘기지 않는다
+    sysf.write_text(SYSTEM_FULL if mode == 'full' else SYSTEM, encoding='utf-8')
+    cmd = [exe('claude'), '-p', '--model', job['runner']['model'], '--output-format', 'stream-json', '--verbose', '--append-system-prompt-file', str(sysf)]
+    if mode == 'full':
+        cmd += ['--permission-mode', 'auto', '--disallowedTools', 'Bash(git push:*)']
+        if MCP_CONFIG.exists():
+            cmd += ['--mcp-config', str(MCP_CONFIG)]
+    else:
+        tools = ['Read', 'Grep', 'Glob', 'WebSearch', 'WebFetch'] + (['Edit', 'Write'] if mode == 'write' else [])
+        cmd += (['--permission-mode', 'acceptEdits'] if mode == 'write' else []) + ['--allowedTools', *tools, '--disallowedTools', 'Bash', 'NotebookEdit']
+    if job.get('resume'):
+        cmd += ['--resume', job['resume']]
     if job.get('max_turns'):
         cmd += ['--max-turns', str(int(job['max_turns']))]
     p = subprocess.Popen(cmd, cwd=job.get('cwd') or REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=clean_env())
@@ -77,6 +102,8 @@ def run_claude(job, log):
             ev = json.loads(line)
         except ValueError:
             log.write(line + '\n'); log.flush(); continue
+        if ev.get('type') == 'system' and ev.get('subtype') == 'init' and ev.get('session_id'):
+            job.setdefault('_meta', {})['session_id'] = ev['session_id']
         if ev.get('type') == 'assistant':
             for c in ev.get('message', {}).get('content', []):
                 if c.get('type') == 'tool_use':
@@ -89,8 +116,9 @@ def run_claude(job, log):
                     log.write(c['text'].strip() + '\n'); log.flush()
         elif ev.get('type') == 'result':
             result, ok = ev.get('result') or '', not ev.get('is_error') and ev.get('subtype') == 'success'
-            job['_meta'] = {'cost_usd': ev.get('total_cost_usd'), 'api_error_status': ev.get('api_error_status'), 'subtype': ev.get('subtype'),
-                            'num_turns': ev.get('num_turns')}   # 야간 감독이 예산 · 한도 오류를 본다
+            job.setdefault('_meta', {}).update(cost_usd=ev.get('total_cost_usd'), api_error_status=ev.get('api_error_status'), subtype=ev.get('subtype'),
+                                               num_turns=ev.get('num_turns'), session_id=ev.get('session_id') or job.get('_meta', {}).get('session_id'))
+            # 야간 감독이 예산 · 한도 오류 · 이어 갈 세션 id를 본다
     code = p.wait()
     return ok and code == 0, result or '(결과 글 없음 — 종료 코드 %d)' % code
 
@@ -99,7 +127,7 @@ def run_claude(job, log):
 def run_codex(job, log):
     out = RESULTS / (job['id'] + '.md')
     cwd = job.get('cwd') or REPO
-    cmd = [exe('codex'), 'exec', '-m', job['runner']['model'], '-s', 'workspace-write' if job.get('write') else 'read-only',
+    cmd = [exe('codex'), 'exec', '-m', job['runner']['model'], '-s', 'workspace-write' if job_mode(job) in ('write', 'full') else 'read-only',
            '-C', str(cwd), '--skip-git-repo-check', '-o', str(out), '-']
     p = subprocess.Popen(cmd, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=clean_env())
     p.stdin.write((SYSTEM + '\n\n' + job['prompt']).encode('utf-8')); p.stdin.close()
@@ -245,7 +273,8 @@ def main():
     log_path = LOGS / (job['id'] + '.log')
     board.append({'ev': 'start', 'id': job['id'], 'lane': job.get('lane', ''), 'model': job['model'], 'role': job.get('role', ''),
                   'task': job['task'], 'pid': os.getpid(), 'log': str(log_path)})
-    note(job, '지시 받음' + (' · 파일 수정 허용' if job.get('write') else ' · 읽기 전용'))
+    note(job, '지시 받음 · ' + {'read': '읽기 전용', 'write': '파일 수정 허용', 'full': '이 세션처럼(auto · Bash · Unity)'}[job_mode(job)]
+         + (' · 세션 이어 감' if job.get('resume') else ''))
     with open(log_path, 'w', encoding='utf-8') as log:
         log.write('지시: %s\n\n' % job['prompt'])
         try:

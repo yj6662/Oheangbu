@@ -45,9 +45,9 @@ STAFF_JSON = HERE / 'staff.json'
 JOBS = board.BOARD.parent / 'jobs'
 RESULTS = board.BOARD.parent / 'results'
 TOKEN = secrets.token_urlsafe(18)
-VERSION = '2026-10-29.5'          # 화면은 이 값이 서버와 다르거나 없으면 '다시 켜라' 띠를 띄운다
+VERSION = '2026-10-29.6'          # 화면은 이 값이 서버와 다르거나 없으면 '다시 켜라' 띠를 띄운다
 STARTED = time.time()
-CODE_FILES = [HERE / 'office.py', HERE / 'office_worker.py', HERE / 'office_night.py', HERE / 'staff.json']
+CODE_FILES = [HERE / 'office.py', HERE / 'office_worker.py', HERE / 'office_night.py', HERE / 'office_editor.py', HERE / 'staff.json']
 USAGE_CLAUDE = board.BOARD.parent / 'usage_claude.json'
 CODEX_SESSIONS = Path.home() / '.codex' / 'sessions'
 LOOKBACK = 36 * 3600           # 이보다 오래 끝난 작업은 사무실에 안 그린다(진행 중은 항상)
@@ -235,12 +235,29 @@ def usage():
     return _usage['v']
 
 
+_editor = {'t': 0.0, 'v': None}
+
+
+def editor_state():
+    import office_editor
+    if time.time() - _editor['t'] > 15:
+        _editor.update(t=time.time(), v=office_editor.status())
+    return _editor['v']
+
+
+def editor_restart():
+    import office_editor
+    ok, out = office_editor.restart('사무실 단추')
+    _editor['t'] = 0
+    return (200 if ok else 500), {'ok': ok, 'out': out[-400:]}
+
+
 def night_state():
     import office_night   # 늦게 가져온다(office_night가 이 파일을 가져오므로)
     d = office_night.latest()
     if not d:
         return None
-    d['cycles'] = [{k: c.get(k) for k in ('n', 'title', 'assignee', 'ok', 'job', 'write', 'commit', 'summary')} for c in d.get('cycles', [])]
+    d['cycles'] = [{k: c.get(k) for k in ('n', 'title', 'assignee', 'ok', 'job', 'write', 'commit', 'summary', 'verified')} for c in d.get('cycles', [])]
     return d
 
 
@@ -267,6 +284,7 @@ def state(path=board.BOARD, detail=False):
         'usage': usage(),
         'version': VERSION,
         'night': night_state(),
+        'editor': editor_state(),
         'code_changed': any(f.exists() and f.stat().st_mtime > STARTED + 1 for f in CODE_FILES),
     }
 
@@ -336,7 +354,9 @@ def order(body, launch=True):
     jid = 'o_%s_%s' % (time.strftime('%m%d_%H%M%S'), secrets.token_hex(2))
     job = {'id': jid, 'model': model, 'role': body.get('role') or next((r['role'] for r in roster() if r['key'] == model), ''),
            'task': str(body.get('title') or text.splitlines()[0])[:80], 'lane': str(body.get('lane') or '').strip()[:20],
-           'prompt': text, 'write': bool(body.get('write')) and run['kind'] in ('claude', 'codex'), 'runner': run}
+           'prompt': text, 'write': bool(body.get('write')) and run['kind'] in ('claude', 'codex'), 'runner': run,
+           'mode': (body.get('mode') if body.get('mode') in ('read', 'write', 'full') else ('write' if body.get('write') else 'read'))
+                   if run['kind'] in ('claude', 'codex') else 'read'}
     JOBS.mkdir(parents=True, exist_ok=True)
     jf = JOBS / (jid + '.json')
     jf.write_text(json.dumps(job, ensure_ascii=False, indent=1), encoding='utf-8')
@@ -406,7 +426,10 @@ def make_handler(path):
                 self.send_error(403); return
             fn = {'/api/route': lambda b: (200, route(str(b.get('text', '')))), '/api/order': order,
                   '/api/stop': lambda b: stop(b, path), '/api/note': lambda b: note(b, path),
-                  '/api/night/start': lambda b: __import__('office_night').spawn(b), '/api/night/stop': lambda b: __import__('office_night').request_stop()}.get(urlparse(self.path).path)
+                  '/api/night/start': lambda b: __import__('office_night').spawn(b),
+                  '/api/night/stop': lambda b: __import__('office_night').request_stop(bool(b.get('now'))),
+                  '/api/night/open': lambda b: __import__('office_night').open_in_app(),
+                  '/api/editor/restart': lambda b: editor_restart()}.get(urlparse(self.path).path)
             if not fn:
                 self.send_error(404); return
             try:
