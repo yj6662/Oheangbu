@@ -32,6 +32,8 @@ namespace Oheangbu.App
         public Vol2DebugPresenter Presenter { get; private set; }
         /// <summary>S5-b slice 9a: the vol.2 spell look (null when no catalogue / shader). The debug presenter skips the casts it covers.</summary>
         public Vol2VfxPresenter Vfx { get; private set; }
+        /// <summary>D308-153: the restart plumbing's director (null in a fixture runtime, or when its install failed).</summary>
+        public SpellFx.SpellFxDirector Fx { get; private set; }
 
         Vol2ShapeRuntime(Vol2CastCoordinator coordinator, IVol2Caster caster, Vol2InkPoolSpender poolInk)
         { Coordinator = coordinator; Caster = caster; PoolInk = poolInk; }
@@ -67,6 +69,10 @@ namespace Oheangbu.App
             runtime.Vfx = Vol2VfxPresenter.Attach(runtime.Coordinator, go.transform, null, runtime.Presenter, HideFlags.None, wiring);      // slice 9a (+ D308-150 V9 legacy bridge)
             // D308-150 V13: the cast camera (A softened, the default of every vol.2 scope) lives with the scope; presentation only, Play only
             if (runtime.Vfx != null && Application.isPlaying) Vol2CastCameraDirector.Ensure(go.transform);
+            // D308-153 (SPEC-SPELL-FX-RESTART-308): the restart plumbing. It covers only the letters its catalogue has a playable prefab for (none until the catalogue asset exists); a
+            // failure here never stops a cast. The director also asks the old looks (Vol2VfxModel) to keep off the letters it covers - see SpellFxSilencer.
+            try { runtime.Fx = SpellFx.SpellFxDirector.Attach(runtime.Coordinator, go.transform); }
+            catch (Exception e) { Debug.LogException(e); }
             // TE-S3-6 (D308-150 V9, TEST, the user decides on return): the old feel launches a waiting cast at the swing's apex. ON in the spell lab scope only (the only
             // scene a Vol2 scope runs in today: Vol2LabRequestFile); the apex seconds are the live swing profile's (single / area), so the two never drift apart.
             var tuning = runtime.Coordinator.Tuning;

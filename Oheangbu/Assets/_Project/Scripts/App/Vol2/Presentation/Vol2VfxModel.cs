@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Oheangbu.App.SpellFx;
 using Oheangbu.Vol2.Rules;
 using UnityEngine;
 
@@ -248,6 +249,9 @@ namespace Oheangbu.App
                 var tmpl = Catalogue.Template(new Vol2TemplateId(log.Glyph.Frame, log.Glyph.Verb));
                 var look = Catalogue.Look(log.Glyph.Body);
                 if (tmpl == null || !tmpl.filled || look == null || !Recipes.TryGet(tmpl.recipe, out var recipe)) return;
+                // D308-153: a letter the new spell-fx catalogue covers is drawn by the SpellFxDirector only - this cast gets a recipe that draws nothing, so neither the legacy
+                // bridge nor the free showcase (which wraps it) ever sees it. The instance itself stays (Covers / SpawnedCount / the cast camera are untouched).
+                if (SpellFxSilencer.IsCovered(log.Glyph.Letter)) recipe = new SpellFxSilentRecipe(tmpl.recipe);
                 var inst = new Vol2VfxInstance(this, log, tmpl, look, recipe, _c.Tuning.ChestHeight);
                 _byCast[log.Cast.Value] = inst; _list.Add(inst);
                 SpawnedCount++;
