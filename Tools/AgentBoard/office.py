@@ -16,6 +16,7 @@ office.html이 2초마다 받아 부서 방 · 자리 · 생각풍선 · 게시�
   python Tools/AgentBoard/office.py selftest              # 창 없이 접기 · API · 토큰 · 스냅샷 검사(일꾼은 띄우지 않음)
   python Tools/AgentBoard/office.py usage                 # Claude · ChatGPT(Codex) 사용 한도를 터미널에
   <get_usage 결과 JSON> | python Tools/AgentBoard/office.py usage-set-claude   # Claude 한도 캐시 갱신(데스크톱 앱 세션이)
+  python Tools/AgentBoard/office_night.py start|stop|status   # 야간 근무(사무실 '🌙 야간 근무' 단추와 같음)
   python Tools/AgentBoard/office.py statusline            # Claude Code CLI 상태줄 명령으로 쓰면 한 줄 표시 + 캐시 자동 갱신
 
 사용 한도(사용자 2026-10-29: "chatgpt랑 너의 사용한도 체크하는 기능도"):
@@ -44,9 +45,9 @@ STAFF_JSON = HERE / 'staff.json'
 JOBS = board.BOARD.parent / 'jobs'
 RESULTS = board.BOARD.parent / 'results'
 TOKEN = secrets.token_urlsafe(18)
-VERSION = '2026-10-29.4'          # 화면은 이 값이 서버와 다르거나 없으면 '다시 켜라' 띠를 띄운다
+VERSION = '2026-10-29.5'          # 화면은 이 값이 서버와 다르거나 없으면 '다시 켜라' 띠를 띄운다
 STARTED = time.time()
-CODE_FILES = [HERE / 'office.py', HERE / 'office_worker.py', HERE / 'staff.json']
+CODE_FILES = [HERE / 'office.py', HERE / 'office_worker.py', HERE / 'office_night.py', HERE / 'staff.json']
 USAGE_CLAUDE = board.BOARD.parent / 'usage_claude.json'
 CODEX_SESSIONS = Path.home() / '.codex' / 'sessions'
 LOOKBACK = 36 * 3600           # 이보다 오래 끝난 작업은 사무실에 안 그린다(진행 중은 항상)
@@ -234,6 +235,15 @@ def usage():
     return _usage['v']
 
 
+def night_state():
+    import office_night   # 늦게 가져온다(office_night가 이 파일을 가져오므로)
+    d = office_night.latest()
+    if not d:
+        return None
+    d['cycles'] = [{k: c.get(k) for k in ('n', 'title', 'assignee', 'ok', 'job', 'write', 'commit', 'summary')} for c in d.get('cycles', [])]
+    return d
+
+
 def state(path=board.BOARD, detail=False):
     evs = board.read_events(path)
     rows = board.fold(evs)
@@ -256,6 +266,7 @@ def state(path=board.BOARD, detail=False):
         'procs': procs(),
         'usage': usage(),
         'version': VERSION,
+        'night': night_state(),
         'code_changed': any(f.exists() and f.stat().st_mtime > STARTED + 1 for f in CODE_FILES),
     }
 
@@ -394,7 +405,8 @@ def make_handler(path):
             if self.headers.get('X-Office-Token') != TOKEN or (origin and origin not in ('http://127.0.0.1:%d' % port, 'http://localhost:%d' % port)):
                 self.send_error(403); return
             fn = {'/api/route': lambda b: (200, route(str(b.get('text', '')))), '/api/order': order,
-                  '/api/stop': lambda b: stop(b, path), '/api/note': lambda b: note(b, path)}.get(urlparse(self.path).path)
+                  '/api/stop': lambda b: stop(b, path), '/api/note': lambda b: note(b, path),
+                  '/api/night/start': lambda b: __import__('office_night').spawn(b), '/api/night/stop': lambda b: __import__('office_night').request_stop()}.get(urlparse(self.path).path)
             if not fn:
                 self.send_error(404); return
             try:

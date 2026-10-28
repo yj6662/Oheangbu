@@ -66,7 +66,9 @@ def run_claude(job, log):
            '--append-system-prompt-file', str(sysf), '--allowedTools', *tools, '--disallowedTools', 'Bash', 'NotebookEdit']
     if job.get('write'):
         cmd[cmd.index('--allowedTools'):cmd.index('--allowedTools')] = ['--permission-mode', 'acceptEdits']
-    p = subprocess.Popen(cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=clean_env())
+    if job.get('max_turns'):
+        cmd += ['--max-turns', str(int(job['max_turns']))]
+    p = subprocess.Popen(cmd, cwd=job.get('cwd') or REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=clean_env())
     p.stdin.write(job['prompt'].encode('utf-8')); p.stdin.close()
     result, ok, last = '', False, 0.0
     for raw in p.stdout:
@@ -87,6 +89,8 @@ def run_claude(job, log):
                     log.write(c['text'].strip() + '\n'); log.flush()
         elif ev.get('type') == 'result':
             result, ok = ev.get('result') or '', not ev.get('is_error') and ev.get('subtype') == 'success'
+            job['_meta'] = {'cost_usd': ev.get('total_cost_usd'), 'api_error_status': ev.get('api_error_status'), 'subtype': ev.get('subtype'),
+                            'num_turns': ev.get('num_turns')}   # 야간 감독이 예산 · 한도 오류를 본다
     code = p.wait()
     return ok and code == 0, result or '(결과 글 없음 — 종료 코드 %d)' % code
 
@@ -94,9 +98,10 @@ def run_claude(job, log):
 # ------------------------------------------------------------------ codex
 def run_codex(job, log):
     out = RESULTS / (job['id'] + '.md')
+    cwd = job.get('cwd') or REPO
     cmd = [exe('codex'), 'exec', '-m', job['runner']['model'], '-s', 'workspace-write' if job.get('write') else 'read-only',
-           '-C', str(REPO), '--skip-git-repo-check', '-o', str(out), '-']
-    p = subprocess.Popen(cmd, cwd=REPO, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=clean_env())
+           '-C', str(cwd), '--skip-git-repo-check', '-o', str(out), '-']
+    p = subprocess.Popen(cmd, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=clean_env())
     p.stdin.write((SYSTEM + '\n\n' + job['prompt']).encode('utf-8')); p.stdin.close()
     tail, last = '', 0.0
     for raw in p.stdout:
@@ -251,6 +256,7 @@ def main():
     res = RESULTS / (job['id'] + '.md')
     if job['runner']['kind'] != 'codex' or not res.exists():
         res.write_text(text, encoding='utf-8')
+    (RESULTS / (job['id'] + '.meta.json')).write_text(json.dumps(dict(job.get('_meta') or {}, ok=ok), ensure_ascii=False), encoding='utf-8')
     first = next((l for l in text.splitlines() if l.strip()), '')
     finish(job, ok, first[:200])
 

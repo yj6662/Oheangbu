@@ -301,6 +301,18 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
   box-shadow:4px 4px 0 rgba(0,0,0,.4);padding:6px 14px;font:12px var(--f11);display:none}
 .stale-bar.on{display:block}
 .stale-bar code{font-family:var(--fm);background:rgba(0,0,0,.3);padding:0 5px}
+/* night */
+.btn.night{background:#26305a;color:#cfd8ff;box-shadow:inset 0 -3px 0 #8fa3ff}
+.btn.night.on{background:#3b2f6b;color:var(--gold);animation:pulse 2.4s infinite}
+.nsheet .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nsheet .grid2 label{display:flex;flex-direction:column;gap:3px;font-family:var(--f9);color:var(--dim)}
+.nsheet .grid2 input,.nsheet .grid2 select{width:100%;background:#0f1117;color:var(--ink);border:2px solid var(--edge);padding:6px;font:12px var(--f11)}
+.nsheet .warn{background:#2a1f12;border:2px solid #b8862f;padding:8px 10px;font-family:var(--f9);font-size:10px;line-height:1.6;color:#e8d7b0}
+.ncyc{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow:auto}
+.ncyc div{background:#151821;border:2px solid var(--edge);padding:5px 8px;font-size:11px;cursor:pointer}
+.ncyc div b{font-weight:normal;color:var(--gold)}
+.ncyc div small{display:block;color:var(--dim);font-family:var(--f9)}
+pre.report{margin:0;background:#151821;border:2px solid var(--edge);padding:10px;font:12px/1.6 var(--f11);color:var(--ink);max-height:52vh;overflow:auto;white-space:pre-wrap;word-break:break-all}
 .snapflag{background:#5a3b8a;border:2px solid var(--edge);padding:2px 8px;font-family:var(--f9)}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#363c52;border:2px solid var(--panel)}::-webkit-scrollbar-track{background:transparent}
 @media (max-width:1100px){
@@ -320,6 +332,7 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
     <div class="tools">
       <span id="snapflag"></span>
       <button class="btn primary" id="orderBtn" style="display:none" title="글로 일을 시킨다 — 자동 배정 또는 직접 고르기">📝 업무 지시</button>
+      <button class="btn night" id="nightBtn" style="display:none" title="자는 동안 정한 시각까지 권장 작업을 이어서 하고 아침 보고서를 남긴다">🌙 야간 근무</button>
       <button class="btn" id="snd" title="완료 · 실패 때 효과음">🔕 소리</button>
       <div class="live" id="live" title="2초마다 기록을 다시 읽는다"></div>
       <div class="clock" id="clock">--:--:--</div>
@@ -356,6 +369,7 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
 <div class="modal" id="modal"><div class="sheet px" style="position:relative" id="sheet"></div></div>
 <div id="toasts"></div>
 <div class="stale-bar" id="stalebar"></div>
+<div class="modal" id="nmodal"><div class="osheet nsheet px" id="nsheet"></div></div>
 <div class="modal" id="omodal"><div class="osheet px">
   <button class="btn x" onclick="closeOrder()">닫기 ✕</button>
   <h2>📝 업무 지시</h2>
@@ -639,6 +653,58 @@ function renderTimeline(rows) {
 }
 
 /* ── header ────────────────────────────────────────────── */
+/* ── 야간 근무 ───────────────────────────────────────────── */
+const nightRunning = () => S.night && ['running', 'reporting'].includes(S.night.status);
+function renderNightBtn() {
+  const b = $('#nightBtn'); if (!TOKEN || SNAP) { b.style.display = 'none'; return; } b.style.display = '';
+  const n = S.night;
+  if (nightRunning()) { b.classList.add('on'); b.textContent = `🌙 야간 근무 중 · ${n.cycles.length}/${n.max_cycles} · ${hm(n.until)}까지`; }
+  else { b.classList.remove('on'); b.textContent = n && n.status === 'done' && n.report && !seenReport(n.id) ? '🌙 야간 보고 도착' : '🌙 야간 근무'; }
+  if ($('#nmodal').classList.contains('on') && nightRunning()) openNight(true);
+}
+const seenReport = id => store.get('ab.nightSeen', '') === id;
+function openNight(refresh) {
+  const n = S.night, el = $('#nsheet');
+  const cyc = n ? (n.cycles || []).map(c => `<div data-model="${esc(c.assignee)}" data-id="${esc(c.job)}"><b>${c.n}. ${esc(c.title)}</b> · ${esc(rosterOf(c.assignee).short)} · ${c.ok ? '성공' : '실패'}${c.write ? ' · 수정' : ''}${c.commit ? ' · 커밋 ' + esc(c.commit) : ''}<small>${esc(c.summary || '')}</small></div>`).join('') : '';
+  if (nightRunning()) {
+    el.innerHTML = `<button class="btn x" onclick="closeNight()">닫기 ✕</button><h2>🌙 야간 근무 중 — ${esc(n.id)}</h2>
+      <div class="sub">${hm(n.started)} 시작 · ${hm(n.until)}까지 · 모드 ${n.mode === 'branch' ? '별도 브랜치 ' + esc(n.branch) : '초안만'} · ${n.cycles.length}/${n.max_cycles}바퀴 · Claude 환산 $${(n.spent || 0).toFixed(2)} / $${n.budget}${n.status === 'reporting' ? ' · 아침 보고서 쓰는 중' : ''}</div>
+      <div class="sub">지시: ${esc(n.instruction)}</div>
+      <div class="ncyc">${cyc || '<div><small>첫 바퀴 — Opus가 다음 일을 고르는 중</small></div>'}</div>
+      <div class="orow"><span class="ostat" id="nstat"></span><span style="flex:1"></span><button class="btn danger" onclick="stopNight()">⏹ 지금 바퀴 마치고 보고서 쓰기</button></div>`;
+  } else if (refresh) { return; }
+  else {
+    const last = n && n.report ? `<h2 style="margin-top:6px">📋 지난 야간 보고 — ${esc(n.id)}</h2><pre class="report">${esc(n.report)}</pre>${cyc ? `<div class="ncyc">${cyc}</div>` : ''}` : '';
+    const d = new Date(nowT() * 1000);
+    el.innerHTML = `<button class="btn x" onclick="closeNight()">닫기 ✕</button><h2>🌙 야간 근무</h2>
+      <div class="sub">자는 동안 정한 시각까지 반복한다: Opus가 상태판 · 인계 · 작업판을 읽고 다음 권장 작업 하나를 고름 → 맞는 직원이 실행 → 기록. 끝나면 아침 보고서.</div>
+      <textarea id="ninst">나 자러 갈 테니 질문 없이 권장안대로 작업을 계속 진행하고, 돌아왔을 때 자는 동안 한 일을 정리해서 보고해.</textarea>
+      <div class="grid2">
+        <label>끝낼 시각<input type="time" id="nuntil" value="07:30"></label>
+        <label>작업 범위<select id="nmode"><option value="draft">초안만 — 리포는 안 고치고 결과를 야간 폴더에 (안전)</option><option value="branch">별도 브랜치에서 실제 수정 · 바퀴마다 커밋</option></select></label>
+        <label>최대 바퀴<input type="number" id="ncycles" value="12" min="1" max="40"></label>
+        <label>Claude 환산 예산($ — 일꾼이 보고한 비용 합)<input type="number" id="nbudget" value="30" min="1" max="500"></label>
+        <label>Codex 5시간 사용률 상한(%)<input type="number" id="ncodex" value="85" min="10" max="100"></label>
+      </div>
+      <div class="warn">⚠ 일꾼은 Bash · git · Unity 편집기 · Blender를 못 쓴다 — 컴파일 · Play 검증 없이 진행된다. 유료 API · LOCKED 변경 · 설계 결정 · 삭제 · push는 하지 않는다.<br>
+        별도 브랜치 모드는 <code>C:/Users/yj666/Oheangbu-night/&lt;id&gt;</code> 워크트리에서만 고쳐 지금 작업 폴더와 다른 세션은 건드리지 않는다(추적 파일만 · Docs 없음).<br>
+        Claude 한도는 직접 못 읽어 비용 합계 · 한도 오류로 멈춘다. 도는 동안 PC는 절전에 들어가지 않는다(화면은 꺼져도 됨) — 사무실 창은 닫아도 계속 돈다.</div>
+      <div class="orow"><span class="ostat" id="nstat"></span><span style="flex:1"></span><button class="btn go" onclick="startNight()">🌙 야간 근무 시작</button></div>${last}`;
+    if (n && n.report) store.set('ab.nightSeen', n.id);
+  }
+  $('#nmodal').classList.add('on');
+}
+function closeNight() { $('#nmodal').classList.remove('on'); }
+async function startNight() {
+  const r = await api('/api/night/start', {instruction: $('#ninst').value.trim(), until: $('#nuntil').value, mode: $('#nmode').value,
+    cycles: $('#ncycles').value, budget: $('#nbudget').value, codex_cap: $('#ncodex').value});
+  if (r.status !== 200) { $('#nstat').textContent = r.body.error || ('실패 ' + r.status); $('#nstat').className = 'ostat err'; return; }
+  closeNight(); toast('start', {model: 'opus', task: '야간 근무 시작 — ' + $('#nuntil').value + '까지', notes: []}, '야간 근무');
+}
+async function stopNight() {
+  if (!confirm('야간 근무를 멈출까? 지금 바퀴를 마치고 아침 보고서를 쓴 뒤 끝난다.')) return;
+  const r = await api('/api/night/stop', {}); $('#nstat').textContent = r.status === 200 ? '멈추는 중 — 지금 바퀴가 끝나면 보고서를 쓴다' : (r.body.error || '실패');
+}
 function renderStale() {
   const bar = $('#stalebar'); if (S.snapshot) { bar.classList.remove('on'); return; }
   let msg = '';
@@ -733,6 +799,7 @@ async function openDetail(model, id) {
 function deepLink() {   // ?detail=opus[&id=작업] · ?order=meshy&text=…[&ask=1 — 확인창까지만, 크레딧 안 씀]
   const q = new URLSearchParams(location.search);
   if (q.get('detail')) openDetail(q.get('detail'), q.get('id'));
+  if (q.get('night') && TOKEN) openNight();
   if (q.get('order') && TOKEN) { openOrder(q.get('order'), q.get('text') || ''); if (q.get('ask') === '1') doOrder(false); }
 }
 /* ── 업무 지시 ───────────────────────────────────────────── */
@@ -814,7 +881,7 @@ function closeDetail() { $('#modal').classList.remove('on'); detail = null; }
 /* ── loop ──────────────────────────────────────────────── */
 function render() {
   const rows = laneRows();
-  renderStale(); renderHeader(rows); renderWindow(); renderRooms(rows); renderFeed(); renderUsage(); renderStats(rows); renderTimeline(rows); fitFloor();
+  renderStale(); renderNightBtn(); renderHeader(rows); renderWindow(); renderRooms(rows); renderFeed(); renderUsage(); renderStats(rows); renderTimeline(rows); fitFloor();
 }
 let fitKey = '';
 function fitFloor(force) {   // 사무실 전체가 한 화면에 들어오는 가장 큰 배율(0.66 – 1.7) — 작은 창은 줄이고 큰 화면은 키운다
@@ -847,11 +914,13 @@ async function load() {
 document.addEventListener('click', e => {
   const l = e.target.closest('.lane'); if (l) { lane = l.dataset.lane; store.set('ab.lane', lane); render(); return; }
   if (e.target.id === 'modal') { closeDetail(); return; }
-  const h = e.target.closest('.seat,.fi,.sr,.tl-bar,.job'); if (h && S) openDetail(h.dataset.model, h.dataset.id);
+  const h = e.target.closest('.seat,.fi,.sr,.tl-bar,.job,.ncyc div'); if (h && S) { closeNight(); openDetail(h.dataset.model, h.dataset.id); }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(); closeOrder(); } if (e.key === 'Enter' && e.ctrlKey && $('#omodal').classList.contains('on')) doOrder(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(); closeOrder(); closeNight(); } if (e.key === 'Enter' && e.ctrlKey && $('#omodal').classList.contains('on')) doOrder(false); });
 $('#orderBtn').style.display = TOKEN && !SNAP ? '' : 'none';
 $('#orderBtn').onclick = () => openOrder();
+$('#nightBtn').onclick = () => openNight();
+$('#nmodal').addEventListener('click', e => { if (e.target.id === 'nmodal') closeNight(); });
 $('#oroute').onclick = () => doRoute();
 $('#ogo').onclick = () => doOrder(false);
 $('#omodel').onchange = () => { $('#oconf').classList.remove('on'); if ($('#omodel').value === 'auto') $('#owrite').disabled = false; else showSug($('#omodel').value); };
