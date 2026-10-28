@@ -53,25 +53,38 @@ namespace Oheangbu.App
     /// as a foam wash over the wet ground inside the ring. The crests stand over the executor's band (RingRadius 2 m, the one instant strike); the drawn water
     /// is bigger than the band (outer foot to R + 1.2, inward lip / wash to R - 0.6 .. R - 1.8) but never moves where the contact landed. The near arc (toward
     /// the shoulder camera) stays low and fades within 2.5 m of the lens. The shared ink layer's ring enso is off for this look (it would draw a second ring
-    /// under the wall); its swing, splash and contact ink stay.</summary>
+    /// under the wall); its swing, splash and contact ink stay.
+    /// r4 (the user, 10-28: "시안대로면 물이 바닥에서 솟을 뿐만 아니라 강하게 회오리치는 걸로 보여"): the ring is a whirlpool - the wall comes up as a sweep running
+    /// round the ring, its crests are breakers chasing each other with the flow (steep leading side, lip toppling forward), the water's texture and the ink
+    /// ribbons travel round fast and ease to a churn, spray is flung off tangentially, foam streaks spiral in over the wet ground and the wash collapses
+    /// inward with a twist. The flow direction is the seed's.</summary>
     public sealed class Vol2FsU : Vol2FsRing
     {
         static readonly Color Foam = new Color(0.93f, 0.95f, 0.94f);
         protected override bool OwnFrameGesture => true;
 
-        const int NU = 132, NV = 16, NF = 14;
+        const int NU = 132, NV = 16, NF = 14, Lobes = 5, Arms = 7;
         const float RiseSeconds = 0.32f, CurlFrom = 0.16f, CurlTo = 0.55f, WashFrom = 1.05f, WashTo = 1.7f, FadeFrom = 1.6f, FadeTo = 2.4f;
+        const float SweepSeconds = 0.22f, SpinFast = 5.5f, SpinSlow = 1.6f, SpinTau = 0.9f;
         protected override float LookSeconds => ExpandSeconds + 2.6f;
 
         ParticleSystem _spray, _foam, _sheets, _inkDrops, _mist, _drip; Light _light;
-        Mesh _waterMesh, _foamMesh, _inkMesh, _wetMesh, _glintMesh;
+        Mesh _waterMesh, _foamMesh, _inkMesh, _wetMesh, _glintMesh, _swirlMesh;
         readonly Vol2FsSheet _water = new Vol2FsSheet(), _foamSheet = new Vol2FsSheet();
-        readonly Vol2FsStrips _ink = new Vol2FsStrips(), _wet = new Vol2FsStrips(), _glint = new Vol2FsStrips();
+        readonly Vol2FsStrips _ink = new Vol2FsStrips(), _wet = new Vol2FsStrips(), _glint = new Vol2FsStrips(), _swirl = new Vol2FsStrips();
         struct Rib { public float Th, Span, VA, VB, W, Rnd, At; public int Row; }
         readonly List<Rib> _ribs = new List<Rib>();
         readonly Vector3[] _pos = new Vector3[NU * NV], _fpos = new Vector3[NU * NF];
-        readonly float[] _al = new float[NU * NV], _fal = new float[NU * NF], _u = new float[NU], _v = new float[NV], _fv = new float[NF], _sh = new float[NU * NV];
-        float _lastA = -1f, _sheetClock;
+        readonly float[] _al = new float[NU * NV], _fal = new float[NU * NF], _u = new float[NU], _v = new float[NV], _fv = new float[NF], _sh = new float[NU * NV],
+                                _fu = new float[NU], _fvs = new float[NF];
+        float _lastA = -1f, _sheetClock, _spin = 1f;
+
+        static float Frac(float x) => x - Mathf.Floor(x);
+        float Since(float a) => Mathf.Max(0f, a - ExpandSeconds * 0.5f);
+        /// <summary>How far the flow has turned (radians, signed) by look time a: fast as the wall comes up, easing to a steady churn.</summary>
+        float Phase(float a) { float x = Since(a); return _spin * (SpinSlow * x + (SpinFast - SpinSlow) * SpinTau * (1f - Mathf.Exp(-x / SpinTau))); }
+        /// <summary>The flow's angular speed (rad/s, signed) at look time a.</summary>
+        float Omega(float a) => _spin * (SpinSlow + (SpinFast - SpinSlow) * Mathf.Exp(-Since(a) / SpinTau));
 
         Vol2FsMat M(string tex, Color tint, float intensity, float addMix) => Vol2FsB1.M(tex, tint, intensity, addMix);
 
@@ -79,11 +92,14 @@ namespace Oheangbu.App
         {
             var root = Root.transform;
             // r2: the body is deep translucent teal (u_a), white only at the crest (r1: the water ramp sheet read as a white wall)
+            // r4: the texture travels round with the flow through the grid's u (OnRing), so the material scrolls only upward
             var body = M("fs_water", new Color(0.30f, 0.40f, 0.42f), 1.1f, 0.12f); body.Opacity = 0.8f; body.Soft = 0.12f; body.NoiseAmt = 0.3f; body.NoiseScale = 1.3f; body.Erode = 0.15f;
-            body.Edge = new Color(0.8f, 0.9f, 0.9f) * 0.45f; body.EdgeWidth = 0.1f; body.Scroll = new Vector2(-0.6f, 0.15f);
+            body.Edge = new Color(0.8f, 0.9f, 0.9f) * 0.45f; body.EdgeWidth = 0.1f; body.Scroll = new Vector2(0f, 0.15f);
             Vol2Fs.MeshObject(root, "WaveWall", Kit.Mat(body), out _waterMesh);
-            var foam = M("fs_splash", Foam, 1.25f, 0.15f); foam.Opacity = 0.9f; foam.Erode = 0.3f; foam.NoiseAmt = 0.65f; foam.NoiseScale = 1.9f; foam.Soft = 0.06f; foam.Scroll = new Vector2(-0.5f, 0.25f);
+            var foam = M("fs_splash", Foam, 1.25f, 0.15f); foam.Opacity = 0.9f; foam.Erode = 0.3f; foam.NoiseAmt = 0.65f; foam.NoiseScale = 1.9f; foam.Soft = 0.06f; foam.Scroll = new Vector2(0f, 0.25f);
             var fr = Vol2Fs.MeshObject(root, "FoamCap", Kit.Mat(foam), out _foamMesh); fr.sortingOrder = 1;
+            var swirl = M("fs_splash", Foam, 1.1f, 0.1f); swirl.Opacity = 0.75f; swirl.Erode = 0.35f; swirl.NoiseAmt = 0.55f; swirl.NoiseScale = 1.6f; swirl.Soft = 0.05f; swirl.Scroll = new Vector2(-1.4f, 0f);
+            var sr = Vol2Fs.MeshObject(root, "SwirlFoam", Kit.Mat(swirl), out _swirlMesh); sr.sortingOrder = 1;
             Vol2Fs.MeshObject(root, "WaveInk", Kit.InkSolid("fs_sumi_stroke", Vol2FsInkStage.InkC, new Color(0.22f, 0.24f, 0.25f), 0.30f, 0.42f, 0.30f, 3.5f), out _inkMesh);
             var wet = M("fs_wet", new Color(0.05f, 0.04f, 0.035f, 1f), 1f, 0f); wet.Soft = 0.02f; wet.Opacity = 0.55f; wet.NoiseAmt = 0.25f; wet.Scroll = Vector2.zero;
             Vol2Fs.MeshObject(root, "WetGround", Kit.Mat(wet), out _wetMesh);
@@ -91,14 +107,15 @@ namespace Oheangbu.App
             var gr = Vol2Fs.MeshObject(root, "WetGlint", Kit.Mat(glint), out _glintMesh); gr.sortingOrder = 1;
             _spray = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(M("fs_dot", new Color(0.92f, 0.97f, 1f), 2.0f, 0.5f)), Life0 = 0.5f, Life1 = 1.15f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.015f, Size1 = 0.045f,
                 Gravity = 1.6f, Drag = 0.2f, Stretch = true, StretchVel = 0.02f, StretchLen = 1.0f, Max = 2400 }, root, "Spray");
-            var puff = M("fs_puff", Foam, 1.3f, 0.2f); puff.Opacity = 0.7f; puff.Erode = 0.5f; puff.NoiseAmt = 0.65f;
-            _foam = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(puff), Life0 = 0.4f, Life1 = 0.85f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.18f, Size1 = 0.42f, Drag = 1.2f, Gravity = 0.4f, Tiles = 2,
+            // r5: smaller, thinner puffs (r4 - r5 read as cotton balls over the wall)
+            var puff = M("fs_puff", Foam, 1.3f, 0.2f); puff.Opacity = 0.5f; puff.Erode = 0.55f; puff.NoiseAmt = 0.7f;
+            _foam = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(puff), Life0 = 0.4f, Life1 = 0.85f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.12f, Size1 = 0.3f, Drag = 1.2f, Gravity = 0.4f, Tiles = 2,
                 SizeStart = 0.6f, SizePeak = 1.1f, SizeEnd = 1.4f, Max = 900 }, root, "Foam");
             var sheet = M("fs_splash", Foam, 1.2f, 0.2f); sheet.Opacity = 0.75f; sheet.Erode = 0.35f; sheet.NoiseAmt = 0.4f;
             _sheets = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(sheet), Life0 = 0.35f, Life1 = 0.6f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.8f, Size1 = 1.5f, Gravity = 1.2f, Tiles = 2,
                 SizeStart = 0.4f, SizePeak = 1.1f, SizePeakAt = 0.35f, SizeEnd = 1.25f, Spin = 40f, Max = 90 }, root, "SplashSheets");
             _inkDrops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.InkSolid("fs_sumi_drops", Vol2FsInkStage.InkC, Color.black, 0.05f, 0.1f, 0.35f, 1f), Life0 = 0.6f, Life1 = 1.2f, Speed0 = 0f, Speed1 = 0.1f,
-                Size0 = 0.03f, Size1 = 0.09f, Gravity = 1.4f, Tiles = 4, Stretch = true, StretchVel = 0.07f, StretchLen = 1.4f, Max = 400, NoFlip = true }, root, "InkBeads");
+                Size0 = 0.025f, Size1 = 0.06f, Gravity = 1.4f, Tiles = 4, Stretch = true, StretchVel = 0.04f, StretchLen = 1.0f, Max = 400, NoFlip = true }, root, "InkBeads");
             var mist = M("fs_puff", new Color(0.82f, 0.88f, 0.9f, 1f), 1.1f, 0.2f); mist.Opacity = 0.3f; mist.Erode = 0.4f;
             _mist = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(mist), Life0 = 1.0f, Life1 = 1.8f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 1.0f, Size1 = 1.8f, Drag = 1.5f, Tiles = 2, Max = 120, SortFudge = 8 }, root, "Mist");
             var drip = Vol2FsB1.Water(Kit, 1.6f, 0.3f, "fs_splash");
@@ -108,22 +125,19 @@ namespace Oheangbu.App
             _light = Vol2Fs.PointLight(root, "WaterLight", new Color(0.7f, 0.88f, 0.95f), 7f);
             for (int iu = 0; iu < NU; iu++) _u[iu] = iu / (NU - 1f) * 10f;
             for (int iv = 0; iv < NV; iv++) _v[iv] = iv / (NV - 1f);
-            for (int iv = 0; iv < NF; iv++) _fv[iv] = iv / (NF - 1f);
+            for (int iv = 0; iv < NF; iv++) { _fv[iv] = iv / (NF - 1f); _fvs[iv] = 2.5f * _fv[iv]; }
         }
 
         protected override void OnLaunch(long nowUs)
         {
-            // the ink ribbons on the wave faces: 14 strokes, each 30 - 60 degrees of ring, sinuous over the upper face, hooking up into the crest
-            // (r2: on the side the shoulder camera sees - r1's low strokes on the outer face sat behind the sheet)
-            for (int k = 0; k < 18; k++)
-            {
-                float th = Vol2FsB2.Angle(k, 18, Seed + 31, 0.8f);
-                if (Back(th) > 0.7f) continue;
-                _ribs.Add(new Rib { Th = th, Span = Mathf.Lerp(0.5f, 1.0f, Vol2Fs.Hash(Seed, k + 300)) * (Vol2Fs.Hash(Seed, k + 301) < 0.5f ? 1f : -1f),
-                    VA = Mathf.Lerp(0.42f, 0.6f, Vol2Fs.Hash(Seed, k + 302)), VB = Mathf.Lerp(0.85f, 0.98f, Vol2Fs.Hash(Seed, k + 303)),
+            _spin = Vol2Fs.Hash(Seed, 911) < 0.5f ? 1f : -1f;
+            // the ink ribbons on the wave faces, sinuous over the upper face, hooking up into the crest (r2: on the side the shoulder camera sees - r1's low
+            // strokes on the outer face sat behind the sheet). r4: every ribbon runs with the flow (its head leads), longer, and travels round with the water
+            for (int k = 0; k < 24; k++)
+                _ribs.Add(new Rib { Th = Vol2FsB2.Angle(k, 24, Seed + 31, 0.8f), Span = Mathf.Lerp(1.0f, 1.8f, Vol2Fs.Hash(Seed, k + 300)),
+                    VA = Mathf.Lerp(0.5f, 0.65f, Vol2Fs.Hash(Seed, k + 302)), VB = Mathf.Lerp(0.8f, 0.95f, Vol2Fs.Hash(Seed, k + 303)),
                     W = Mathf.Lerp(0.3f, 0.55f, Vol2Fs.Hash(Seed, k + 304)), Rnd = Vol2Fs.Hash(Seed, k + 305), At = CurlFrom + 0.15f * Vol2Fs.Hash(Seed, k + 306),
                     Row = Vol2Fs.Hash(Seed, k + 307) < 0.5f ? 1 : 3 });
-            }
             _light.transform.position = Apex + F * R + Vector3.up * 1.4f;
             for (int k = 0; k < 24; k++) { float th = Random.Range(-Mathf.PI, Mathf.PI); if (Back(th) < 0.6f) Vol2FsB1.Emit(_mist, OnBand(th, R) + Vector3.up * 0.6f, 1); }
         }
@@ -136,9 +150,15 @@ namespace Oheangbu.App
         {
             float k = Mathf.Abs(th) / Mathf.PI;
             float hmax = Mathf.Lerp(2.3f, 1.3f, Vol2Fs.Smooth(0.15f, 0.6f, k)) * (1f - 0.78f * Back(th));
-            float sd = Seed * 0.37f;
-            float bump = 0.72f + 0.18f * Mathf.Sin(3f * th + 2.2f * a + sd) + 0.12f * Mathf.Sin(7f * th - 3.1f * a + 2f * sd) + 0.08f * Mathf.Sin(13f * th + 5f * a);
-            float rise = Vol2Fs.EaseOutBack(Mathf.Clamp01((a - ExpandSeconds * 0.5f) / RiseSeconds));
+            float sd = Seed * 0.37f, ph = th - Phase(a);
+            // r4: the crests are breakers chasing round the ring - each lobe swells slowly behind and stands steep at its leading side, and the pattern
+            // travels with the flow
+            float s = Frac(_spin * ph * Lobes / (2f * Mathf.PI) + 0.31f * sd);
+            float lobe = s < 0.78f ? Vol2Fs.Smooth(0f, 0.78f, s) : 1f - Vol2Fs.Smooth(0.78f, 1f, s);
+            float bump = 0.5f + 0.42f * lobe + 0.1f * Mathf.Sin(7f * ph + 2f * sd) + 0.06f * Mathf.Sin(13f * ph + 5f * a);
+            // the wall comes up as a sweep round the ring, starting in front and running with the flow
+            float lag = Frac(_spin * th / (2f * Mathf.PI)) * SweepSeconds;
+            float rise = Vol2Fs.EaseOutBack(Mathf.Clamp01((Since(a) - lag) / RiseSeconds));
             return Mathf.Max(0f, hmax * bump * rise);
         }
 
@@ -170,7 +190,9 @@ namespace Oheangbu.App
             y *= 1f - 0.9f * wash;
             dr -= wash * 1.3f * Vol2Fs.Smooth(0.35f, 1f, v);
             dr += wash * 0.35f * (1f - Vol2Fs.Smooth(0f, 0.3f, v));
-            Vector3 q = Apex + Dir(th) * Mathf.Max(0.15f, R + dr); q.y = Ground + Mathf.Max(0.02f, y);
+            // r4: the upper face leans forward with the flow (taller crests topple further), and the wash twists as it runs in
+            float lean = _spin * ((0.12f + 0.2f * curl) * Mathf.Clamp01(h / 1.6f) * Vol2Fs.Smooth(0.4f, 1f, v) + 0.55f * wash * Vol2Fs.Smooth(0.3f, 1f, v));
+            Vector3 q = Apex + Dir(th + lean) * Mathf.Max(0.15f, R + dr); q.y = Ground + Mathf.Max(0.02f, y);
             return q;
         }
 
@@ -194,6 +216,8 @@ namespace Oheangbu.App
             _water.Clear(); _foamSheet.Clear();
             if (life > 0.01f && a > ExpandSeconds * 0.5f)
             {
+                float uShift = Phase(a) / (2f * Mathf.PI) * 10f;      // r4: the water's texture travels round with the flow
+                for (int iu = 0; iu < NU; iu++) { _u[iu] = iu / (NU - 1f) * 10f - uShift; _fu[iu] = 0.35f * _u[iu]; }
                 for (int iu = 0; iu < NU; iu++)
                 {
                     float th = (iu / (NU - 1f) * 2f - 1f) * Mathf.PI;
@@ -218,7 +242,7 @@ namespace Oheangbu.App
                     }
                 }
                 _water.Grid(NU, NV, _pos, _al, _u, _v, 0.29f, _sh);
-                _foamSheet.Grid(NU, NF, _fpos, _fal, _u, _fv, 0.61f);
+                _foamSheet.Grid(NU, NF, _fpos, _fal, _fu, _fvs, 0.61f);      // r4: the lace stretched along the flow (streaks, not blobs)
             }
             _water.Write(_waterMesh); _foamSheet.Write(_foamMesh);
 
@@ -232,15 +256,20 @@ namespace Oheangbu.App
                 for (int j = 0; j < n; j++)
                 {
                     float u = j / (n - 1f) * g;
-                    float th = r.Th + r.Span * u + 0.15f * a * Mathf.Sign(r.Span);
-                    float v = Mathf.Lerp(r.VA, r.VB, Mathf.Pow(u, 1.6f)) + 0.08f * Mathf.Sin(u * Mathf.PI * 2.2f + r.Rnd * 6f);
+                    float th = r.Th + 0.85f * Phase(a) + _spin * r.Span * (u - g);
+                    float v = Mathf.Lerp(r.VA, r.VB, Mathf.Pow(u, 1.6f)) + 0.05f * Mathf.Sin(u * Mathf.PI * 2.2f + r.Rnd * 6f);
                     var p = Surface(th, v, a, out _);
                     var nrm = FaceNormal(th, v, a);
                     pts[j] = p + nrm * 0.07f;
                     var pv = Surface(th, Mathf.Min(1f, v + 0.05f), a, out _);
                     sd[j] = (pv - p).normalized;
-                    w[j] = r.W * (0.25f + 0.75f * Mathf.Sin(Mathf.Clamp01(u / Mathf.Max(0.01f, g)) * Mathf.PI)) * (1f - 0.6f * dry);
-                    al[j] = (1f - dry) * CamFade(p);
+                    // r6: where the ring runs away from the lens (the side walls) a ribbon is foreshortened to its width - a black slab; it thins and fades there
+                    Vector3 run = Vector3.Cross(Vector3.up, Dir(th)), look = (p - cam).normalized;
+                    float across = Vol2Fs.Smooth(0.25f, 0.65f, Vector3.Cross(run, look).magnitude);
+                    w[j] = r.W * (0.25f + 0.75f * Mathf.Sin(Mathf.Clamp01(u / Mathf.Max(0.01f, g)) * Mathf.PI)) * (1f - 0.6f * dry) * Mathf.Lerp(0.3f, 1f, across);
+                    // r5: a face seen edge-on turns the ribbon into a black slab - it fades there
+                    float face = Vol2Fs.Smooth(0.15f, 0.45f, Mathf.Abs(Vector3.Dot(nrm, (cam - p).normalized))) * Mathf.Lerp(0.35f, 1f, across);
+                    al[j] = (1f - dry) * CamFade(p) * (1f - 0.7f * Back(th)) * face;
                 }
                 float v0 = (3 - r.Row) * 0.25f + 0.012f, v1 = (4 - r.Row) * 0.25f - 0.012f;
                 _ink.Strip(pts, w, sd, Color.white, al, r.Rnd, cam, 0f, g, v0, v1);
@@ -259,10 +288,10 @@ namespace Oheangbu.App
                     var c = Surface(th, 0.7f, a, out float h);
                     if (h < 0.25f || CamFade(c) < 0.5f) continue;
                     Vector3 outw = Dir(th), tang = Vector3.Cross(Vector3.up, outw);
-                    float hk = Mathf.Clamp01(h / 2f);
-                    for (int q = 0; q < 2; q++) Vol2FsB1.EmitV(_spray, c + Random.insideUnitSphere * 0.15f, Vector3.up * Random.Range(1.5f, 4.5f) * (0.5f + hk) + outw * Random.Range(-1.5f, 1.8f) + tang * Random.Range(-1.2f, 1.2f), -1f, -1f);
-                    if (Random.value < 0.45f) Vol2FsB1.EmitV(_foam, c + Random.insideUnitSphere * 0.2f, Vector3.up * Random.Range(0.4f, 1.4f) - outw * Random.Range(0.2f, 0.9f), -1f, -1f);
-                    if (Random.value < 0.12f) Vol2FsB1.EmitV(_inkDrops, c, Vector3.up * Random.Range(2f, 5f) + outw * Random.Range(-1f, 1.5f), -1f, -1f);
+                    float hk = Mathf.Clamp01(h / 2f), flow = Omega(a) * R;      // r4: everything off the crest is flung along with the flow
+                    for (int q = 0; q < 2; q++) Vol2FsB1.EmitV(_spray, c + Random.insideUnitSphere * 0.15f, Vector3.up * Random.Range(1.5f, 4.5f) * (0.5f + hk) + outw * Random.Range(-1.0f, 1.8f) + tang * (flow * Random.Range(0.3f, 0.65f) + Random.Range(-0.6f, 0.6f)), -1f, -1f);
+                    if (Random.value < 0.45f) Vol2FsB1.EmitV(_foam, c + Random.insideUnitSphere * 0.2f, Vector3.up * Random.Range(0.4f, 1.4f) - outw * Random.Range(0.2f, 0.9f) + tang * flow * Random.Range(0.25f, 0.5f), -1f, -1f);
+                    if (Random.value < 0.12f) Vol2FsB1.EmitV(_inkDrops, c, Vector3.up * Random.Range(2f, 5f) + outw * Random.Range(-1f, 1.5f) + tang * flow * Random.Range(0.1f, 0.25f), -1f, -1f);
                     if (h > best) { best = h; bestP = c; bestOut = outw; }
                 }
                 _sheetClock += dt;
@@ -273,9 +302,30 @@ namespace Oheangbu.App
                         float th = Random.Range(-Mathf.PI, Mathf.PI);
                         var p = Surface(th, 1f, a, out _); p.y = Ground + 0.05f;
                         if (CamFade(p) < 0.5f) continue;
-                        Vol2FsB1.EmitV(_foam, p, -Dir(th) * Random.Range(0.4f, 1.4f) + Vector3.up * 0.3f, -1f, -1f);
+                        Vol2FsB1.EmitV(_foam, p, -Dir(th) * Random.Range(0.4f, 1.4f) + Vector3.up * 0.3f + Vector3.Cross(Vector3.up, Dir(th)) * Omega(a) * R * 0.3f, -1f, -1f);
                     }
             }
+
+            // r4: foam streaks spiralling in over the wet ground (each arm runs with the flow and curls inward; its head is the inner end)
+            _swirl.Clear();
+            float sg = Vol2Fs.Smooth(0.22f, 0.5f, a) * (1f - Vol2Fs.Smooth(FadeFrom, FadeTo + 0.4f, a));
+            if (sg > 0.01f)
+                for (int k = 0; k < Arms; k++)
+                {
+                    float hk = Vol2Fs.Hash(Seed, k + 500), th0 = (k + 0.4f * hk) / Arms * 2f * Mathf.PI, inward = 0.8f + 0.5f * Vol2Fs.Hash(Seed, k + 501);
+                    const int n = 24; var pts = new Vector3[n]; var w = new float[n]; var al = new float[n]; var sd = new Vector3[n];
+                    for (int j = 0; j < n; j++)
+                    {
+                        float u = j / (n - 1f), th = th0 + 0.8f * Phase(a) + _spin * 1.5f * u, rr = Mathf.Lerp(R - 0.1f, R - inward - 0.4f * wash, u);
+                        var p = Apex + Dir(th) * rr; p.y = Ground + 0.035f;
+                        pts[j] = p;
+                        w[j] = Mathf.Lerp(0.26f, 0.06f, u) * (0.6f + 0.4f * hk);
+                        al[j] = sg * Mathf.Sin(Mathf.Clamp01(u * 1.15f) * Mathf.PI) * (1f - 0.6f * Back(th)) * CamFade(p);
+                    }
+                    for (int j = 0; j < n; j++) sd[j] = Vector3.Cross(Vector3.up, (pts[Mathf.Min(n - 1, j + 1)] - pts[Mathf.Max(0, j - 1)]).normalized).normalized;
+                    _swirl.Strip(pts, w, sd, Color.white, al, hk, cam, 0f, 3f, 0f, 1f);
+                }
+            _swirl.Write(_swirlMesh);
 
             // the wet ground inside the ring (the water runs in with the wash) and its sheen
             _wet.Clear(); _glint.Clear();
