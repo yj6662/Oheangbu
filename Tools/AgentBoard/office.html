@@ -297,6 +297,10 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
 .um .bar i.mid{background:var(--gold)} .um .bar i.hi{background:var(--red);animation:pulse 1.2s infinite}
 .um .pc{text-align:right;color:var(--ink)} .um .pc small{color:var(--dim)}
 .ug .none{font-family:var(--f9);font-size:10px;color:var(--dim)}
+.stale-bar{position:fixed;left:50%;top:6px;transform:translateX(-50%);z-index:80;background:#8a2b2b;color:#fff;border:3px solid var(--edge);
+  box-shadow:4px 4px 0 rgba(0,0,0,.4);padding:6px 14px;font:12px var(--f11);display:none}
+.stale-bar.on{display:block}
+.stale-bar code{font-family:var(--fm);background:rgba(0,0,0,.3);padding:0 5px}
 .snapflag{background:#5a3b8a;border:2px solid var(--edge);padding:2px 8px;font-family:var(--f9)}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#363c52;border:2px solid var(--panel)}::-webkit-scrollbar-track{background:transparent}
 @media (max-width:1100px){
@@ -351,6 +355,7 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
 
 <div class="modal" id="modal"><div class="sheet px" style="position:relative" id="sheet"></div></div>
 <div id="toasts"></div>
+<div class="stale-bar" id="stalebar"></div>
 <div class="modal" id="omodal"><div class="osheet px">
   <button class="btn x" onclick="closeOrder()">닫기 ✕</button>
   <h2>📝 업무 지시</h2>
@@ -366,7 +371,8 @@ pre.result{margin:0;background:#151821;border:2px solid var(--edge);padding:8px;
 
 <script>
 const SNAP = /*__SNAPSHOT__*/null;
-const TOKEN = /*__TOKEN__*/"";     // 서버가 넣어 준다. 스냅샷 · 파일로 열면 비어서 지시 단추가 숨는다
+const TOKEN = /*__TOKEN__*/"";
+const VERSION = /*__VERSION__*/"";   // 서버가 넣어 준다. 옛 서버면 비어 있다     // 서버가 넣어 준다. 스냅샷 · 파일로 열면 비어서 지시 단추가 숨는다
 const QUIET = 20 * 60;            // 진행 중인데 이만큼 기록이 없으면 '조는 중'
 const RECENT = 30 * 60;           // 끝난 작업을 자리에 남겨 두는 시간
 const $ = s => document.querySelector(s);
@@ -604,6 +610,7 @@ function renderStats(rows) {
 /* ── usage ─────────────────────────────────────────────── */
 function renderUsage() {
   const t = nowT(), list = S.usage || [];
+  if (!list.length) { $('#usage').innerHTML = '<div class="none" style="font-family:var(--f9);color:var(--dim)">서버가 한도 정보를 안 보낸다(옛 서버?)</div>'; return; }
   const rel = s => { if (!s) return '?'; const d = s - t; if (d <= 0) return '곧'; const h = Math.floor(d / 3600), m = Math.floor(d % 3600 / 60);
     return h >= 24 ? `${Math.floor(h / 24)}일 ${h % 24}시간` : h ? `${h}시간 ${m}분` : `${m}분`; };
   $('#usage').innerHTML = list.map(u => { const age = u.asof ? Math.floor((t - u.asof) / 60) : null, stale = age === null || age > 30;
@@ -632,6 +639,13 @@ function renderTimeline(rows) {
 }
 
 /* ── header ────────────────────────────────────────────── */
+function renderStale() {
+  const bar = $('#stalebar'); if (S.snapshot) { bar.classList.remove('on'); return; }
+  let msg = '';
+  if (!S.version || !VERSION || S.version !== VERSION) msg = '옛 버전 서버에 붙어 있다 — 업무 지시 · 사용 한도가 안 나온다. 이 창을 닫고 <code>python Tools/AgentBoard/office.py</code> 를 다시 실행한다.';
+  else if (S.code_changed) msg = '작업판 코드가 바뀌었다 — 새 기능을 쓰려면 이 창을 닫고 <code>python Tools/AgentBoard/office.py</code> 를 다시 실행한다.';
+  bar.innerHTML = '⚠ ' + msg; bar.classList.toggle('on', !!msg);
+}
 function renderHeader(rows) {
   const m0 = midnight(), run = rows.filter(r => r.state === 'run');
   const zz = run.filter(r => quietOf(r) > QUIET).length;
@@ -800,18 +814,18 @@ function closeDetail() { $('#modal').classList.remove('on'); detail = null; }
 /* ── loop ──────────────────────────────────────────────── */
 function render() {
   const rows = laneRows();
-  renderHeader(rows); renderWindow(); renderRooms(rows); renderFeed(); renderUsage(); renderStats(rows); renderTimeline(rows); fitFloor();
+  renderStale(); renderHeader(rows); renderWindow(); renderRooms(rows); renderFeed(); renderUsage(); renderStats(rows); renderTimeline(rows); fitFloor();
 }
 let fitKey = '';
-function fitFloor(force) {   // 방이 많아도 사무실 전체가 한 화면에 들어오는 가장 큰 배율(0.66 – 1)을 찾는다
+function fitFloor(force) {   // 사무실 전체가 한 화면에 들어오는 가장 큰 배율(0.66 – 1.7) — 작은 창은 줄이고 큰 화면은 키운다
   const f = $('.floor'), r = $('#rooms'); if (!f) return;
   if (innerWidth <= 1100) { r.style.zoom = 1; return; }
   const key = r.querySelectorAll('.seat').length + ':' + innerWidth + 'x' + innerHeight;
   if (key === fitKey && !force) return; fitKey = key;
   const avail = f.clientHeight - $('#window').offsetHeight - 4;
-  const fits = z => { r.style.zoom = z; return r.getBoundingClientRect().height <= avail; };
-  if (fits(1)) return;
-  let lo = .66, hi = 1;
+  const fits = z => { r.style.zoom = z; return r.getBoundingClientRect().height <= avail && r.scrollWidth <= r.clientWidth + 2; };
+  let lo, hi;
+  if (fits(1)) { lo = 1; hi = 1.7; if (fits(hi)) return; } else { lo = .66; hi = 1; }
   for (let i = 0; i < 6; i++) { const m = (lo + hi) / 2; if (fits(m)) lo = m; else hi = m; }
   r.style.zoom = lo;
 }

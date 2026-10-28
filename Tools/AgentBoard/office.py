@@ -11,6 +11,7 @@ office.html이 2초마다 받아 부서 방 · 자리 · 생각풍선 · 게시�
 
   python Tools/AgentBoard/office.py                       # 사무실 창(127.0.0.1 서버 + Edge 앱 창)
   python Tools/AgentBoard/office.py --no-open [--port N]  # 서버만(주소를 브라우저에 직접 넣는다)
+        # 켤 때 먼저 켜져 있던 사무실 서버를 끈다(옛 코드 서버에 새 창이 붙지 않게). 남기려면 --keep-old
   python Tools/AgentBoard/office.py snapshot [out.html]   # 지금 모습을 데이터 내장 HTML 한 장으로(메일 · 기록용, 지시 불가)
   python Tools/AgentBoard/office.py selftest              # 창 없이 접기 · API · 토큰 · 스냅샷 검사(일꾼은 띄우지 않음)
   python Tools/AgentBoard/office.py usage                 # Claude · ChatGPT(Codex) 사용 한도를 터미널에
@@ -43,6 +44,9 @@ STAFF_JSON = HERE / 'staff.json'
 JOBS = board.BOARD.parent / 'jobs'
 RESULTS = board.BOARD.parent / 'results'
 TOKEN = secrets.token_urlsafe(18)
+VERSION = '2026-10-29.4'          # 화면은 이 값이 서버와 다르거나 없으면 '다시 켜라' 띠를 띄운다
+STARTED = time.time()
+CODE_FILES = [HERE / 'office.py', HERE / 'office_worker.py', HERE / 'staff.json']
 USAGE_CLAUDE = board.BOARD.parent / 'usage_claude.json'
 CODEX_SESSIONS = Path.home() / '.codex' / 'sessions'
 LOOKBACK = 36 * 3600           # 이보다 오래 끝난 작업은 사무실에 안 그린다(진행 중은 항상)
@@ -251,6 +255,8 @@ def state(path=board.BOARD, detail=False):
         'feed': feed[:80],
         'procs': procs(),
         'usage': usage(),
+        'version': VERSION,
+        'code_changed': any(f.exists() and f.stat().st_mtime > STARTED + 1 for f in CODE_FILES),
     }
 
 
@@ -258,6 +264,7 @@ def page(snapshot=None):
     html = PAGE.read_text(encoding='utf-8')
     data = 'null' if snapshot is None else json.dumps(snapshot, ensure_ascii=False).replace('</', '<\\/')
     html = html.replace('/*__SNAPSHOT__*/null', data, 1)
+    html = html.replace('/*__VERSION__*/""', json.dumps(VERSION), 1)
     return html.replace('/*__TOKEN__*/""', '""' if snapshot is not None else json.dumps(TOKEN), 1)
 
 
@@ -423,8 +430,27 @@ def open_window(url):
     webbrowser.open(url)
 
 
+def stop_old_servers():
+    """먼저 켜 둔 사무실 서버(옛 코드일 수 있다)를 끈다 — 같은 포트를 쥐고 있으면 새 창이 옛 서버에 붙는다. 일꾼(office_worker)은 건드리지 않는다."""
+    if os.name != 'nt':
+        return []
+    ps = ("Get-CimInstance Win32_Process -Filter \"Name like 'python%%'\" | Where-Object { $_.CommandLine -match 'office\\.py' "
+          "-and $_.CommandLine -notmatch 'office_worker|selftest|snapshot|usage|statusline' -and $_.ProcessId -ne %d } | "
+          "ForEach-Object { Stop-Process -Id $_.ProcessId -Force; $_.ProcessId }" % os.getpid())
+    try:
+        out = subprocess.run(['powershell', '-NoProfile', '-Command', ps], capture_output=True, text=True, timeout=20).stdout
+    except Exception:
+        return []
+    return [x for x in out.split() if x.isdigit()]
+
+
 def cmd_serve(a):
     port = int(a[a.index('--port') + 1]) if '--port' in a else 8765
+    if '--keep-old' not in a:
+        old = stop_old_servers()
+        if old:
+            print('먼저 켜져 있던 사무실 서버를 껐다:', ', '.join(old), '(그 창들은 닫아도 된다)')
+            time.sleep(0.5)
     srv = serve(port)
     url = 'http://127.0.0.1:%d/' % srv.server_address[1]
     print('작업판 사무실:', url, '  (기록: %s · 끝내려면 Ctrl+C)' % board.BOARD)
