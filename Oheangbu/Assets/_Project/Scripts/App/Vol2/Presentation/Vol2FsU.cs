@@ -77,9 +77,14 @@ namespace Oheangbu.App
         const int MainWall = 1;
         protected override float LookSeconds => ExpandSeconds + 2.6f;
 
-        ParticleSystem _spray, _foam, _sheets, _inkDrops, _mist, _drip; Light _light;
-        Mesh _waterMesh, _foamMesh, _inkMesh, _wetMesh, _glintMesh, _swirlMesh;
-        readonly Vol2FsSheet _water = new Vol2FsSheet(), _foamSheet = new Vol2FsSheet();
+        ParticleSystem _spray, _foam, _sheets, _inkDrops, _mist, _drip, _beads; Light _light;
+        Mesh _waterMesh, _foamMesh, _inkMesh, _wetMesh, _glintMesh, _swirlMesh, _crownMesh;
+        readonly Vol2FsSheet _water = new Vol2FsSheet(), _foamSheet = new Vol2FsSheet(), _crown = new Vol2FsSheet();
+        // r10 (the user, 10-28: "하얀 물보라를 시안처럼"): every crest tears upward into a crown of white jets breaking into droplets (fs_spray_fan),
+        // plume bursts at the peaks (fs_spray_plume) and glassy beads flung clear (fs_bead)
+        const int NC = 6;
+        readonly Vector3[] _cpos = new Vector3[NU * NC];
+        readonly float[] _cal = new float[NU * NC], _cv = new float[NC], _cu = new float[NU];
         readonly Vol2FsStrips _ink = new Vol2FsStrips(), _wet = new Vol2FsStrips(), _glint = new Vol2FsStrips(), _swirl = new Vol2FsStrips();
         struct Rib { public float Th, Span, VA, VB, W, Rnd, At; public int Row, L; }
         readonly List<Rib> _ribs = new List<Rib>();
@@ -120,9 +125,15 @@ namespace Oheangbu.App
             var puff = M("fs_puff", Foam, 1.3f, 0.2f); puff.Opacity = 0.5f; puff.Erode = 0.55f; puff.NoiseAmt = 0.7f;
             _foam = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(puff), Life0 = 0.4f, Life1 = 0.85f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.12f, Size1 = 0.3f, Drag = 1.2f, Gravity = 0.4f, Tiles = 2,
                 SizeStart = 0.6f, SizePeak = 1.1f, SizeEnd = 1.4f, Max = 900 }, root, "Foam");
-            var sheet = M("fs_splash", Foam, 1.2f, 0.2f); sheet.Opacity = 0.75f; sheet.Erode = 0.35f; sheet.NoiseAmt = 0.4f;
-            _sheets = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(sheet), Life0 = 0.35f, Life1 = 0.6f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.8f, Size1 = 1.5f, Gravity = 1.2f, Tiles = 2,
-                SizeStart = 0.4f, SizePeak = 1.1f, SizePeakAt = 0.35f, SizeEnd = 1.25f, Spin = 40f, Max = 90 }, root, "SplashSheets");
+            var crown = M("fs_spray_fan", Foam, 1.3f, 0.2f); crown.Opacity = 0.85f; crown.Erode = 0.25f; crown.NoiseAmt = 0.25f; crown.NoiseScale = 2.2f; crown.Soft = 0.03f; crown.Scroll = Vector2.zero;
+            var cr = Vol2Fs.MeshObject(root, "CrestCrown", Kit.Mat(crown), out _crownMesh); cr.sortingOrder = 2;
+            // r10: the splash sheets are upright plume bursts (r1 - r9: round foam blobs, spinning)
+            var sheet = M("fs_spray_plume", Foam, 1.3f, 0.2f); sheet.Opacity = 0.7f; sheet.Erode = 0.35f; sheet.NoiseAmt = 0.3f;
+            _sheets = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(sheet), Life0 = 0.35f, Life1 = 0.65f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.6f, Size1 = 1.2f, Gravity = 0.8f, Tiles = 2,
+                SizeStart = 0.45f, SizePeak = 1.1f, SizePeakAt = 0.35f, SizeEnd = 1.3f, Spin = 0f, RandRot = 22f, Max = 160 }, root, "SplashSheets");
+            var bead = M("fs_bead", Color.white, 1.25f, 0.1f); bead.Opacity = 1f; bead.Erode = 0f; bead.NoiseAmt = 0f; bead.Soft = 0f;
+            _beads = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.Mat(bead), Life0 = 0.6f, Life1 = 1.2f, Speed0 = 0f, Speed1 = 0.1f, Size0 = 0.03f, Size1 = 0.075f, Gravity = 1.5f, Drag = 0.1f,
+                AlphaHoldTo = 0.8f, Max = 600 }, root, "Beads");
             _inkDrops = Vol2Fs.Build(new Vol2FsPs { Mat = Kit.InkSolid("fs_sumi_drops", Vol2FsInkStage.InkC, Color.black, 0.05f, 0.1f, 0.35f, 1f), Life0 = 0.6f, Life1 = 1.2f, Speed0 = 0f, Speed1 = 0.1f,
                 Size0 = 0.025f, Size1 = 0.06f, Gravity = 1.4f, Tiles = 4, Stretch = true, StretchVel = 0.04f, StretchLen = 1.0f, Max = 400, NoFlip = true }, root, "InkBeads");
             var mist = M("fs_puff", new Color(0.82f, 0.88f, 0.9f, 1f), 1.1f, 0.2f); mist.Opacity = 0.3f; mist.Erode = 0.4f;
@@ -130,7 +141,8 @@ namespace Oheangbu.App
             var drip = Vol2FsB1.Water(Kit, 1.6f, 0.3f, "fs_splash");
             _drip = Vol2Fs.Build(new Vol2FsPs { Mat = drip, Rate = 0f, Loop = true, Life0 = 0.4f, Life1 = 0.8f, Speed0 = 0f, Speed1 = 0.4f, Size0 = 0.1f, Size1 = 0.22f, Radius = 0.5f, Gravity = 2f, Tiles = 2,
                 Stretch = true, StretchVel = 0.08f, Max = 300 }, root, "Drip");
-            foreach (var ps in new[] { _spray, _foam, _sheets, _inkDrops, _mist, _drip }) ps.Play(false);
+            foreach (var ps in new[] { _spray, _foam, _sheets, _inkDrops, _mist, _drip, _beads }) ps.Play(false);
+            for (int iv = 0; iv < NC; iv++) _cv[iv] = iv / (NC - 1f);
             _light = Vol2Fs.PointLight(root, "WaterLight", new Color(0.7f, 0.88f, 0.95f), 7f);
             for (int iu = 0; iu < NU; iu++) _u[iu] = iu / (NU - 1f) * 10f;
             for (int iv = 0; iv < NV; iv++) _v[iv] = iv / (NV - 1f);
@@ -155,11 +167,13 @@ namespace Oheangbu.App
 
         // ------------------------------------------------------------------------------------------------ the wave
         /// <summary>The crest height of wall L at ring angle th and look time a (0 before the rise).</summary>
+        /// <summary>Wall L's tallest crest at ring angle th (front tall, sides lower, the near arc low).</summary>
+        float HMax(float th, int L) => Mathf.Lerp(2.3f, 1.3f, Vol2Fs.Smooth(0.15f, 0.6f, Mathf.Abs(th) / Mathf.PI)) * (1f - 0.78f * Back(th)) * Layers[L].HK;
+
         float Height(float th, float a, int L)
         {
             var ly = Layers[L];
-            float k = Mathf.Abs(th) / Mathf.PI;
-            float hmax = Mathf.Lerp(2.3f, 1.3f, Vol2Fs.Smooth(0.15f, 0.6f, k)) * (1f - 0.78f * Back(th)) * ly.HK;
+            float hmax = HMax(th, L);
             float sd = Seed * 0.37f, ph = th - Phase(a) * ly.SpinK;
             // r4: the crests are breakers chasing round the ring - each lobe swells slowly behind and stands steep at its leading side, and the pattern
             // travels with the flow
@@ -224,7 +238,8 @@ namespace Oheangbu.App
             float life = 1f - Vol2Fs.Smooth(FadeFrom, FadeTo, a);
             float wash = Vol2Fs.Smooth(WashFrom, WashTo, a);
             // the wall and its foam cap
-            _water.Clear(); _foamSheet.Clear();
+            _water.Clear(); _foamSheet.Clear(); _crown.Clear();
+            float curlNow = Vol2Fs.Smooth(CurlFrom, CurlTo, a);
             if (life > 0.01f && a > ExpandSeconds * 0.5f)
             {
                 for (int L = 0; L < Layers.Length; L++)
@@ -255,11 +270,31 @@ namespace Oheangbu.App
                             _fal[k] = h < 0.05f ? 0f : life * Mathf.Clamp01(0.42f + 0.58f * crest) * (1f - 0.5f * wash) * CamFade(p) * Vol2Fs.Smooth(0f, 0.12f, _fv[iv] + 0.05f) * ly.Alpha;
                         }
                     }
+                    // r10: the crest crown - white jets torn up off the lip, tallest at the peaks of the lobes, thrown inward and along the flow
+                    for (int iu = 0; iu < NU; iu++)
+                    {
+                        float th = (iu / (NU - 1f) * 2f - 1f) * Mathf.PI;
+                        _cu[iu] = 0.6f * _u[iu];
+                        var b = Surface(th, 0.86f, a, out float h, L);
+                        float q = h / Mathf.Max(0.05f, HMax(th, L));
+                        float str = (0.3f + 0.7f * Vol2Fs.Smooth(0.5f, 0.92f, q)) * Vol2Fs.Smooth(0.15f, 0.45f, h);
+                        float flick = 0.8f + 0.2f * Mathf.Sin(9f * th + 11f * a + L) + 0.12f * Mathf.Sin(23f * th - 17f * a);
+                        float hc = (0.3f + 0.45f * h) * str * flick;
+                        Vector3 up = (Vector3.up - Dir(th) * (0.15f + 0.3f * curlNow) + Vector3.Cross(Vector3.up, Dir(th)) * (_spin * 0.3f)).normalized;
+                        for (int iv = 0; iv < NC; iv++)
+                        {
+                            int k = iu * NC + iv;
+                            var p = b + up * hc * _cv[iv] - Dir(th) * 0.06f;
+                            _cpos[k] = p;
+                            _cal[k] = h < 0.1f ? 0f : life * str * (1f - 0.75f * wash) * CamFade(p) * ly.Alpha * (1f - 0.25f * _cv[iv]);
+                        }
+                    }
+                    _crown.Grid(NU, NC, _cpos, _cal, _cu, _cv, 0.37f + 0.19f * L);
                     _water.Grid(NU, NV, _pos, _al, _u, _v, 0.29f + 0.17f * L, _sh);
                     _foamSheet.Grid(NU, NF, _fpos, _fal, _fu, _fvs, 0.61f + 0.13f * L);      // r4: the lace stretched along the flow (streaks, not blobs)
                 }
             }
-            _water.Write(_waterMesh); _foamSheet.Write(_foamMesh);
+            _water.Write(_waterMesh); _foamSheet.Write(_foamMesh); _crown.Write(_crownMesh);
 
             // the ink ribbons on the faces (drawn in along the wave as it curls, dried away with the wash)
             _ink.Clear();
@@ -308,6 +343,11 @@ namespace Oheangbu.App
                     for (int q = 0; q < 2; q++) Vol2FsB1.EmitV(_spray, c + Random.insideUnitSphere * 0.15f, Vector3.up * Random.Range(1.5f, 4.5f) * (0.5f + hk) + outw * Random.Range(-1.0f, 1.8f) + tang * (flow * Random.Range(0.3f, 0.6f) + Random.Range(-0.6f, 0.6f)), -1f, Random.Range(0.35f, 0.8f));      // r8: shorter flight (r8 strewed the ground like snow)
                     if (Random.value < 0.45f) Vol2FsB1.EmitV(_foam, c + Random.insideUnitSphere * 0.2f, Vector3.up * Random.Range(0.4f, 1.4f) - outw * Random.Range(0.2f, 0.9f) + tang * flow * Random.Range(0.25f, 0.5f), -1f, -1f);
                     if (Random.value < 0.12f) Vol2FsB1.EmitV(_inkDrops, c, Vector3.up * Random.Range(2f, 5f) + outw * Random.Range(-1f, 1.5f) + tang * flow * Random.Range(0.1f, 0.25f), -1f, -1f);
+                    // r10: glassy beads flung clear, and a plume burst off any crest near its peak (r1 - r9: one blob at the tallest crest only)
+                    // r11: no beads off the near arc (big rings floating at the lens)
+                    if (Back(th) < 0.45f && CamFade(c) > 0.9f && Random.value < 0.3f) Vol2FsB1.EmitV(_beads, c + Random.insideUnitSphere * 0.2f, Vector3.up * Random.Range(2f, 4.5f) * (0.5f + hk) + outw * Random.Range(-1f, 1.5f) + tang * flow * Random.Range(0.2f, 0.45f), -1f, -1f);
+                    if (wash < 0.5f && h > 0.75f * HMax(th, L) && Random.value < 0.035f)
+                        Vol2FsB1.EmitV(_sheets, c + Vector3.up * 0.15f, Vector3.up * Random.Range(0.5f, 1.5f) + tang * flow * 0.25f, -1f, -1f);
                     if (h > best) { best = h; bestP = c; bestOut = outw; }
                 }
                 _sheetClock += dt;
@@ -365,7 +405,8 @@ namespace Oheangbu.App
                     s.Started = true;
                     for (int k = 0; k < 140; k++) Vol2FsB1.EmitV(_spray, c + Vector3.up * Random.Range(0.6f, 1.8f) + Random.insideUnitSphere * 0.5f, Vector3.down * Random.Range(1f, 4f) + Random.insideUnitSphere * 1.5f, -1f, Random.Range(0.4f, 0.9f));
                     for (int k = 0; k < 40; k++) Vol2FsB1.EmitV(_foam, FeetNow(s) + Random.insideUnitSphere * 0.5f, Random.insideUnitSphere * 1.2f + Vector3.up * 0.8f, -1f, -1f);
-                    for (int k = 0; k < 3; k++) Vol2FsB1.EmitV(_sheets, c + Random.insideUnitSphere * 0.4f, Vector3.up * Random.Range(1f, 2f), -1f, -1f);
+                    for (int k = 0; k < 4; k++) Vol2FsB1.EmitV(_sheets, c + Random.insideUnitSphere * 0.4f, Vector3.up * Random.Range(1f, 2f), -1f, -1f);
+                    for (int k = 0; k < 40; k++) Vol2FsB1.EmitV(_beads, c + Random.insideUnitSphere * 0.5f, Vector3.up * Random.Range(1.5f, 4f) + Random.insideUnitSphere * 2f, -1f, -1f);
                     var em = _drip.emission; em.rateOverTime = 45f;
                 }
                 _drip.transform.position = c + Vector3.up * 0.3f;

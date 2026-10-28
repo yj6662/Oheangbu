@@ -496,6 +496,83 @@ def ink():
     save('fs_ramp_water_w.png', np.dstack([np.repeat(ramp[None], 4, 0), np.ones((4, 256))]))
 
 
+def spray():
+    """2026-10-28 우 white spray (the user: "하얀 물보라를 시안처럼" - concept u_a's crests tear upward into feathered jets of white water that break
+    into droplets, with glassy beads flung clear). Only these are written (--spray):
+      fs_spray_fan    1024 x 512, tileable in u: a crest crown - fine jets rising from a dense foam base (v = 0 at the bottom row), each solid
+                      low, beading into droplets toward its tip, plus loose droplets above
+      fs_spray_plume  512 x 512 = 2 x 2 bursts: jets fanning up from the bottom centre of each cell, droplets at the tips
+      fs_bead         128 x 128 a glassy water drop: pale see-through body, bright rim, a hard highlight, a darker lower crescent"""
+    from PIL import ImageDraw, ImageFilter
+    S = 2      # drawn at 2x and filtered down (soft edges)
+
+    def jets(draw, w, h, n, seed, origin, spread, hmin, hmax, wrap):
+        r = np.random.default_rng(seed)
+        for _ in range(n):
+            x0 = origin(r)
+            ang = r.uniform(-spread, spread)
+            ln = r.uniform(hmin, hmax) * h
+            r0 = r.uniform(0.0035, 0.009) * w
+            bead_from = r.uniform(0.4, 0.65)
+            curve = r.uniform(-0.25, 0.25)
+            steps = int(ln / max(1.0, r0 * 0.5))
+            for i in range(steps):
+                t = i / steps
+                a = ang + curve * t
+                x = x0 + np.sin(a) * ln * t
+                y = h - 1 - np.cos(a) * ln * t
+                rad = r0 * (1 - 0.65 * t)
+                if t > bead_from:
+                    if r.random() > 0.16 * (1 - t) + 0.03: continue      # the jet breaks into a chain of drops
+                    rad *= r.uniform(0.6, 1.15)
+                for dx in ((-w, 0, w) if wrap else (0,)):
+                    draw.ellipse([x + dx - rad, y - rad, x + dx + rad, y + rad], fill=255)
+            for _ in range(r.integers(2, 6)):      # loose droplets off the tip
+                t = r.uniform(0.75, 1.15)
+                x = x0 + np.sin(ang + curve) * ln * t + r.normal(0, 0.02 * w); y = h - 1 - np.cos(ang + curve) * ln * t + r.normal(0, 0.02 * h)
+                rad = r.uniform(0.35, 0.9) * r0
+                for dx in ((-w, 0, w) if wrap else (0,)):
+                    draw.ellipse([x + dx - rad, y - rad, x + dx + rad, y + rad], fill=255)
+
+    # ---- the crest crown (tileable in u) ----
+    W, H = 1024 * S, 512 * S
+    img = Image.new('L', (W, H), 0); d = ImageDraw.Draw(img)
+    jets(d, W, H, 150, 4101, lambda r: r.uniform(0, W), 0.28, 0.25, 0.95, True)
+    a = np.asarray(img.filter(ImageFilter.GaussianBlur(1.2 * S)).resize((1024, 512), Image.LANCZOS)) / 255.0
+    yy = np.linspace(0, 1, 512)[:, None]        # 0 top .. 1 bottom
+    base = np.clip((yy - 0.72) / 0.22, 0, 1) * (0.55 + 0.45 * np.tile(fbm(512, 8, 4, 4102), (1, 2)))      # dense foam at the foot
+    a = np.clip(np.maximum(a, base) * (0.75 + 0.25 * np.tile(fbm(512, 16, 3, 4103), (1, 2))), 0, 1)
+    save('fs_spray_fan.png', rgba(a))
+
+    # ---- plume bursts (2 x 2) ----
+    cells = []
+    for k in range(4):
+        C = 256 * S
+        img = Image.new('L', (C, C), 0); d = ImageDraw.Draw(img)
+        jets(d, C, C, 55, 4110 + k, lambda r: C / 2 + r.normal(0, 0.05 * C), 0.62, 0.35, 0.9, False)
+        c = np.asarray(img.filter(ImageFilter.GaussianBlur(1.0 * S)).resize((256, 256), Image.LANCZOS)) / 255.0
+        yy, xx = np.mgrid[0:256, 0:256] / 255.0
+        foot = 0.7 * np.clip(1 - np.hypot((xx - 0.5) / 0.2, (yy - 0.86) / 0.1), 0, 1) ** 1.2
+        # r10: the foot fades out before the cell's bottom edge (a flat cut base read as a stamped tuft)
+        c = np.maximum(c, foot) * np.clip((0.97 - np.hypot(xx - 0.5, yy - 1.0) * 0.95) * 6, 0, 1) * np.clip((0.99 - yy) / 0.14, 0, 1) ** 1.5
+        cells.append(rgba(np.clip(c, 0, 1)))
+    save('fs_spray_plume.png', sheet(cells))
+
+    # ---- a glassy bead ----
+    B = 128
+    x, y = grid(B); rr = np.hypot(x, y)
+    disc = np.clip((0.92 - rr) * 30, 0, 1)
+    rim = np.clip(1 - np.abs(rr - 0.84) / 0.1, 0, 1)
+    hi = np.clip(1 - np.hypot(x + 0.33, y + 0.38) / 0.17, 0, 1) ** 0.8
+    low = np.clip((y - 0.15) * 1.6, 0, 1) * np.clip((0.85 - rr) * 4, 0, 1)
+    lum = np.clip(0.82 + 0.18 * rim + hi - 0.45 * low, 0, 1)
+    alpha = disc * np.clip(0.28 + 0.6 * rim + hi + 0.35 * low, 0, 1)
+    save('fs_bead.png', np.dstack([lum * 0.96, lum * 0.99, lum, alpha]))
+
+
+if '--spray' in __import__('sys').argv:
+    spray()
+    raise SystemExit(0)
 if '--ink' in __import__('sys').argv:
     ink()
     raise SystemExit(0)
