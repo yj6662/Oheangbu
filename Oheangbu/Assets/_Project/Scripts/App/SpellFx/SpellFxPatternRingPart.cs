@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace Oheangbu.App.SpellFx
 {
-    /// <summary>D308-153b route P (SPEC-SPELL-FX-RESTART-308 section 7) for 우: the water ring drawn as Korean traditional pattern, not as water. One band round the caster painted with
-    /// seigaiha scales by Oheangbu/SpellFx/Pattern (mode 0), cloud-scroll crest cards standing on its top and curling, 2 - 3 black brush ribbons sweeping along it, and a burst of big
-    /// crests + thrown roundels where a contact lands. Everything is built every tick from the scope-clock age (no coroutine, no Time call, no Physics); the meshes are laid in
-    /// WORLD space under children at the world origin. The look only: never moves a gameplay object.</summary>
+    /// <summary>D308-153b route P (SPEC-SPELL-FX-RESTART-308 section 7) for 우: the water ring drawn as Korean traditional pattern, not as water. r5: one band round the caster painted with
+    /// seigaiha scales by Oheangbu/SpellFx/Pattern (mode 0) that is made of WAVES - it swells into 7 peaks whose upper part curls inward and over like a breaking lip, the scales following the
+    /// curling surface; a small cloud-scroll card sits at each lip tip as the foam curl; 2 - 3 black brush ribbons sweep along the surface; where a contact lands the wall itself rears up and
+    /// crashes over it (a per-hit bump through the same height / curl functions), with thrown tumbling roundels. Everything is built every tick from the scope-clock age (no coroutine, no Time
+    /// call, no Physics); the meshes are laid in WORLD space under children at the world origin. The look only: never moves a gameplay object.</summary>
     public sealed class SpellFxPatternRingPart : MonoBehaviour, ISpellFxPart
     {
         [SerializeField] Shader patternShader;
@@ -17,47 +18,76 @@ namespace Oheangbu.App.SpellFx
 
         // ---- tunables (metres / seconds on the 1.8 s base timeline; lifeSeconds stretches the whole timeline) ----
         const float BaseLife = 1.8f;
-        const int NU = 200, NV = 3;                                   // wall columns round the circle, rows up the band
-        const float ScaleR = 0.32f;      // r4: bigger scales (r3 at .22 read as fine lace at game distance)                                   // seigaiha scale radius (the shader's _ScaleR)
+        const int NU = 200, NV = 16;                                  // wall columns round the circle, rows up the (curling) band
+        const float ScaleR = 0.32f;                                   // seigaiha scale radius (the shader's _ScaleR)
         const float Sink = 0.25f;                                     // the band reaches this far below the cast point (uneven ground)
-        const float LeanDeg = 7f;                                     // the band leans outward by this much
-        const float HFront = 1.6f, HSide = 1.3f, HBack = 0.5f;        // wall height in front of / beside / behind (camera side) the caster
+        const float LeanDeg = 7f;                                     // the straight part of the band leans outward by this much
+        const float HFront = 1.6f, HSide = 1.3f, HBack = 0.5f;        // base wall height in front of / beside / behind (camera side) the caster
         const float RiseEnd = 0.35f;                                  // rise with ease-back 0 .. RiseEnd
         const float ErodeA = 1.0f, ErodeB = 1.75f;                    // scales vanish between these moments
         const float SinkA = 1.0f, SinkB = 1.6f, SinkTo = 0.4f;        // the band sinks to 40 % by SinkB
-        const float SpinRate = 0.16f;                                 // rad/s the pattern and the swell turn round the ring
-        const int CapCount = 10, CapRows = 6;                         // crest cards on the wall top
-        const float CapArc = 2.45f;                                   // cards spread over theta = -CapArc .. +CapArc (the front 3/4, none on the low arc behind)
+        const float SpinRate = 0.16f;                                 // rad/s the pattern, the swell and the crest peaks turn round the ring
+
+        // ---- r5 crest peaks (curling waves) ----
+        const int PeakCount = 7;                                      // crest peaks round the ring
+        const float PeakArc = 2.45f;                                  // peaks spread over theta = -PeakArc .. +PeakArc (front 3/4; none on the low camera-side arc)
+        const float PeakAmpMin = 0.5f, PeakAmpMax = 0.8f;             // extra height of a peak over the base wall (m); fades toward the camera-side arc
+        const float PeakHalfWMinDeg = 13f, PeakHalfWMaxDeg = 17f;     // half width of a peak (full width 26 - 34 deg)
+        const float PeakHeightPow = 1.5f;                             // peak profile = (1 - |d|/halfW)^this : 1 = a triangle, bigger = a sharper tip
+        const float PeakPhiMinDeg = 95f, PeakPhiMaxDeg = 125f;        // total inward turning of the band at its lip (> 90 = the lip hangs down)
+        const float CurlPow = 3.0f;                                   // turning angle ~ g^CurlPow along the band (g 0 bottom .. 1 top): bigger = straighter below, a sharper lip on top
+        const float CurlA = 0.08f, CurlB = 0.45f;                     // the curl grows from 0 to full between these moments (after the wall's own rise lag)
+        const float CapSizeMin = 0.42f, CapSizeMax = 0.6f;            // the one cloud-scroll card at each lip tip (m)
+        const float CapBackFrac = 0.15f;                              // the card starts this fraction of its size back along the lip (overlaps the sheet), then runs beyond the tip
+        const float CapExtraCurlDeg = 24f;                            // the card keeps turning the way the lip turns
+
+        // ---- r5 hit wave ----
+        const int MaxBursts = 2, MinOrbs = 5, MaxOrbs = 7;
+        const float BurstLife = 1.1f, Gravity = 7.5f;
+        const float HitHeight = 2.8f;                                 // the wall rears up to this above the cast point at the hit angle (overrides the low camera-side arc too)
+        const float HitHalfDeg = 25f;                                 // half width of the hit wave (+-25 deg), a flat-ish crown with falling flanks
+        const float HitRise = 0.25f;                                  // seconds to rear up (ease-back)
+        const float HitPhiDeg = 165f, HitPow = 2.2f;                  // the hit lip curls this far inward: right over the target
+        const float HitCollA = 0.5f, HitCollB = 0.95f;                // seconds after the hit: the wave collapses between these moments
+        const float HitErA = 0.45f, HitErB = 0.95f;                   // its scales erode locally between these moments (on top of the global erosion)
+        const float HitCapSize = 0.8f;                                // the cloud-scroll card on the big lip tip
+        const float OrbSizeMin = 0.12f, OrbSizeMax = 0.22f;           // thrown roundels
+
+        // ---- ink ribbons ----
         const int InkCount = 3, InkSegs = 26;
         const float InkBack = 0.6f;                                   // a ribbon is not drawn where the wall is the low camera-side arc
-        const int MaxBursts = 2, BigCrests = 3, MinOrbs = 5, MaxOrbs = 7;
-        const float BurstLife = 1.1f, Gravity = 7.5f;
+        const float InkInset = 0.07f;                                 // ribbons sit this far in front of the sheet (toward the ring centre)
+
+        const int CapRows = 6;
 
         static readonly int ModeId = Shader.PropertyToID("_Mode"), TexId = Shader.PropertyToID("_MainTex"), ScaleRId = Shader.PropertyToID("_ScaleR"), CellsId = Shader.PropertyToID("_Cells"),
             ErodeId = Shader.PropertyToID("_Erode"), SrcId = Shader.PropertyToID("_SrcBlend"), DstId = Shader.PropertyToID("_DstBlend"), ZWriteId = Shader.PropertyToID("_ZWrite");
 
         // ---- state ----
         Vector3 _o, _f, _r;
-        float _spin = 1f, _R = 2.2f, _tScale = 1f, _tanLean;
+        float _spin = 1f, _R = 2.2f, _tScale = 1f;
         int _cells;
         bool _dead;
         Mesh _wallMesh, _inkMesh;
         Material _wallMat, _inkMat;
         Batch _crest, _orbA, _orbB;
-        Cap[] _caps;
+        Peak[] _peaks;
         Rib[] _ribs;
         readonly List<Burst> _bursts = new List<Burst>();
+        readonly Vector3[] _pp = new Vector3[NV];              // scratch: the profile points of one column
+        readonly float[] _colH = new float[NU + 1];
         // scratch for the wall and the ribbons
         readonly List<Vector3> _v = new List<Vector3>(), _n = new List<Vector3>();
         readonly List<Vector2> _uv = new List<Vector2>(), _uv1 = new List<Vector2>();
         readonly List<Color> _c = new List<Color>();
         readonly List<int> _t = new List<int>();
 
-        struct Cap { public float Th, Size, Curl, Rnd; }
+        struct Peak { public float Th0, Amp, HalfW, Phi, Size, Rnd; }
         struct Rib { public float Th0, Span, Width, At, YF, Lift; }
-        struct Crest { public Vector3 Pos, Face; public float Size, Delay, Curl, Rnd; }
-        struct Orb { public Vector3 Pos0, Vel; public float Spin, Size, Rnd; public bool A; }
-        sealed class Burst { public float T0; public Vector3 Face; public Crest[] Crests; public Orb[] Orbs; }
+        struct Orb { public Vector3 Pos0, Vel, Axis; public float Spin, Size, Rnd; public bool A; }
+        sealed class Burst { public float T0, ThH; public Vector3 Face; public Orb[] Orbs; public float CapRnd; }
+        /// <summary>The state of one wall column: apex height above the cast point, total inward turning of its lip, the turning exponent, local erosion 0..1.</summary>
+        struct Col { public float H, Phi, Pow, Er; }
 
         /// <summary>One mesh + one material for all the cards that share a texture.</summary>
         sealed class Batch
@@ -86,8 +116,8 @@ namespace Oheangbu.App.SpellFx
         float Rot(float t) => _spin * SpinRate * t;
         float WallLag(float th) => 0.06f * Sm(0.1f, 1f, Mathf.Abs(th) / Mathf.PI);
 
-        /// <summary>The wall's height above the cast point at angle th (0 = the aim) and time t: front 1.6, side 1.3, the camera-side arc 0.5; a 5- and 8-lobe swell that turns round the
-        /// ring (integer lobes: the seam closes); rise with ease-back, then the sink.</summary>
+        /// <summary>The base wall's height above the cast point at angle th (0 = the aim) and time t: front 1.6, side 1.3, the camera-side arc 0.5; a 5- and 8-lobe swell that turns round the
+        /// ring (integer lobes: the seam closes); rise with ease-back, then the sink. (The crest peaks and the hit wave are added in Eval.)</summary>
         float Height(float th, float t)
         {
             float a = Mathf.Abs(th) / Mathf.PI;
@@ -99,6 +129,88 @@ namespace Oheangbu.App.SpellFx
             return Mathf.Max(0f, hmax * swell * rise * sink);
         }
 
+        /// <summary>Everything that shapes column th at time t: the base height + the crest peaks (+ their curl) + the per-hit waves (rear up, curl strongly, collapse, erode). Periodic in th.</summary>
+        Col Eval(float th, float t)
+        {
+            float lag = WallLag(th), back = Back(th);
+            float rise = Mathf.Max(0f, EaseBack((t - lag) / RiseEnd));
+            float sink = 1f - (1f - SinkTo) * Sm(SinkA, SinkB, t);
+            float h = Height(th, t), phi = 0f, pw = CurlPow, er = 0f;
+            float grow = Sm(CurlA, CurlB, t - lag);
+            float rot = Rot(t);
+            for (int i = 0; i < _peaks.Length; i++)
+            {
+                float b = 1f - Mathf.Abs(Wrap(th - (_peaks[i].Th0 + rot))) / _peaks[i].HalfW;
+                if (b <= 0f) continue;
+                float fade = 1f - 0.6f * back;
+                h += _peaks[i].Amp * fade * Mathf.Pow(b, PeakHeightPow) * rise * sink;
+                phi = Mathf.Max(phi, _peaks[i].Phi * Sm(0.05f, 0.8f, b) * grow * (1f - 0.5f * back));
+            }
+            for (int k = 0; k < _bursts.Count; k++)
+            {
+                var bu = _bursts[k];
+                float a = t - bu.T0;
+                if (a < 0f || a > BurstLife) continue;
+                float b = 1f - Mathf.Abs(Wrap(th - bu.ThH)) / (HitHalfDeg * Mathf.Deg2Rad);
+                if (b <= 0f) continue;
+                float wt = Sm(0f, 0.65f, b);
+                float coll = 1f - Sm(HitCollA, HitCollB, a);
+                float ramp = Mathf.Min(1.08f, EaseBack(a / HitRise));
+                float target = HitHeight * sink;
+                h += Mathf.Max(0f, target - h) * wt * ramp * coll;                   // overrides the low arc too: the target does not depend on the base height
+                float kh = wt * Sm(0.02f, 0.3f, a) * coll;
+                phi = Mathf.Lerp(phi, HitPhiDeg * Mathf.Deg2Rad, kh);
+                pw = Mathf.Lerp(pw, HitPow, kh);
+                er = Mathf.Max(er, Sm(HitErA, HitErB, a) * Sm(0.05f, 0.4f, b));
+            }
+            return new Col { H = h, Phi = phi, Pow = pw, Er = er };
+        }
+
+        /// <summary>The band's turning angle at row fraction g (0 bottom .. 1 top): leans outward at the foot, turns inward (toward the ring centre) by c.Phi in total, mostly near the top.</summary>
+        static float PhiAt(in Col c, float g) => -LeanDeg * Mathf.Deg2Rad + c.Phi * Mathf.Pow(g, c.Pow);
+
+        /// <summary>Lays the column's profile into _pp[0..NV-1] (world positions, uniform in arc length) and returns the arc length S. The curve starts at the foot (R, -Sink) and turns by PhiAt;
+        /// S is chosen so that its highest point is exactly the column's apex height H (the curled lip is longer than the height).</summary>
+        float Prof(float th, in Col c)
+        {
+            const int seg = NV - 1;
+            Vector3 nin = -Dir(th);
+            float y = 0f, apex = 0f;
+            for (int j = 0; j < seg; j++) { y += Mathf.Cos(PhiAt(c, (j + 0.5f) / seg)) / seg; if (y > apex) apex = y; }
+            float S = (c.H + Sink) / Mathf.Max(apex, 0.3f);
+            Vector3 p = _o + Dir(th) * _R; p.y = _o.y - Sink;
+            _pp[0] = p;
+            float step = S / seg;
+            for (int j = 1; j <= seg; j++)
+            {
+                float ph = PhiAt(c, (j - 0.5f) / seg);
+                p += (Vector3.up * Mathf.Cos(ph) + nin * Mathf.Sin(ph)) * step;
+                _pp[j] = p;
+            }
+            return S;
+        }
+
+        /// <summary>The surface point at row fraction g (needs Prof to have just run for this column), the inward-facing surface normal there, and the tangent up the sheet.</summary>
+        void Surf(float th, in Col c, float g, out Vector3 pos, out Vector3 nrm, out Vector3 tng)
+        {
+            float x = Mathf.Clamp01(g) * (NV - 1);
+            int j = Mathf.Min((int)x, NV - 2);
+            pos = Vector3.Lerp(_pp[j], _pp[j + 1], x - j);
+            float ph = PhiAt(c, g);
+            Vector3 nin = -Dir(th);
+            tng = Vector3.up * Mathf.Cos(ph) + nin * Mathf.Sin(ph);
+            nrm = nin * Mathf.Cos(ph) - Vector3.up * Mathf.Sin(ph);
+        }
+
+        /// <summary>The lip tip of column th: position, direction the sheet is heading there, and the normal on the side it keeps turning toward. False when the column is too low.</summary>
+        bool Lip(float th, float t, out Vector3 tip, out Vector3 tng, out Vector3 nrm)
+        {
+            var c = Eval(th, t);
+            Prof(th, c);
+            Surf(th, c, 1f, out tip, out nrm, out tng);
+            return c.H >= 0.05f;
+        }
+
         // ---------------------------------------------------------------- ISpellFxPart
         public void OnBegin(SpellFxCast cast)
         {
@@ -106,7 +218,6 @@ namespace Oheangbu.App.SpellFx
             _spin = (cast.CastId & 1) == 0 ? 1f : -1f;
             _R = cast.Radius > 0.5f ? cast.Radius : radius;
             _tScale = BaseLife / Mathf.Max(0.3f, lifeSeconds);
-            _tanLean = Mathf.Tan(LeanDeg * Mathf.Deg2Rad);
             _cells = Mathf.Max(8, Mathf.RoundToInt(2f * Mathf.PI * _R / (2f * ScaleR)));      // a whole number of scales round the ring: the seam closes
             var sh = patternShader != null ? patternShader : Shader.Find("Oheangbu/SpellFx/Pattern");
             if (sh == null) { Debug.LogWarning("SpellFxPatternRingPart: shader Oheangbu/SpellFx/Pattern not found; nothing is drawn."); _dead = true; return; }
@@ -120,12 +231,19 @@ namespace Oheangbu.App.SpellFx
             _crest = MakeBatch("Crests", sh, crestTex); _orbA = MakeBatch("RoundelsA", sh, burstTexA != null ? burstTexA : crestTex); _orbB = MakeBatch("RoundelsB", sh, burstTexB != null ? burstTexB : crestTex);
 
             var rnd = new System.Random((int)(cast.CastId * 7919 + 31));
-            _caps = new Cap[CapCount];
-            for (int i = 0; i < CapCount; i++)
+            _peaks = new Peak[PeakCount];
+            for (int i = 0; i < PeakCount; i++)
             {
-                float th = Mathf.Lerp(-CapArc, CapArc, (i + 0.5f) / CapCount) + ((float)rnd.NextDouble() - 0.5f) * 0.16f;
-                float size = Mathf.Clamp(Mathf.Lerp(1.15f, 0.75f, Mathf.Abs(th) / CapArc) * (0.9f + 0.2f * (float)rnd.NextDouble()), 0.7f, 1.2f);      // r4: bigger caps (r3: small badges)
-                _caps[i] = new Cap { Th = th, Size = size, Curl = Mathf.Lerp(15f, 30f, (float)rnd.NextDouble()) * Mathf.Deg2Rad, Rnd = (float)rnd.NextDouble() };
+                float th = Mathf.Lerp(-PeakArc, PeakArc, (i + 0.5f) / PeakCount) + ((float)rnd.NextDouble() - 0.5f) * 0.16f;
+                _peaks[i] = new Peak
+                {
+                    Th0 = th,
+                    Amp = Mathf.Lerp(PeakAmpMin, PeakAmpMax, (float)rnd.NextDouble()),
+                    HalfW = Mathf.Lerp(PeakHalfWMinDeg, PeakHalfWMaxDeg, (float)rnd.NextDouble()) * Mathf.Deg2Rad,
+                    Phi = Mathf.Lerp(PeakPhiMinDeg, PeakPhiMaxDeg, (float)rnd.NextDouble()) * Mathf.Deg2Rad,
+                    Size = Mathf.Lerp(CapSizeMin, CapSizeMax, (float)rnd.NextDouble()),
+                    Rnd = (float)rnd.NextDouble(),
+                };
             }
             _ribs = new Rib[InkCount];
             float[] starts = { -1.9f, -0.1f, 1.5f };
@@ -157,28 +275,26 @@ namespace Oheangbu.App.SpellFx
         {
             if (_dead || _crest == null || _bursts.Count >= MaxBursts) return;
             Vector3 feet = hit.Feet.sqrMagnitude > 1e-6f ? hit.Feet : new Vector3(hit.Position.x, _o.y, hit.Position.z);
-            Vector3 face = _o - feet; face.y = 0f;
-            face = face.sqrMagnitude > 1e-4f ? face.normalized : -_f;                  // the cards face the caster (the camera side)
+            Vector3 rel = feet - _o; rel.y = 0f;
+            float thH = Mathf.Atan2(Vector3.Dot(rel, _r), Vector3.Dot(rel, _f));            // the hit angle round the cast origin (Dir(th) = f cos + r sin)
+            Vector3 face = -rel;
+            face = face.sqrMagnitude > 1e-4f ? face.normalized : -_f;                  // the roundels face the caster (the camera side)
             var rnd = new System.Random((int)(cast.CastId * 104729 + (_bursts.Count + 1) * 977));
-            var b = new Burst { T0 = Mathf.Max(0f, cast.AgeAt(hit.NowUs) * _tScale), Face = face, Crests = new Crest[BigCrests] };
-            for (int i = 0; i < BigCrests; i++)
-            {
-                float phi = (i - (BigCrests - 1) * 0.5f) * 40f;                        // a fan: -40, 0, +40 degrees
-                Vector3 fi = Quaternion.AngleAxis(phi, Vector3.up) * face;
-                float size = Mathf.Lerp(1.7f, 2.2f, (float)rnd.NextDouble()) * (i == 1 ? 1f : 0.85f);      // r4: taller than the 1.6 m wall
-                b.Crests[i] = new Crest { Face = fi, Pos = feet + fi * 0.35f + Vector3.down * 0.05f, Size = size, Delay = 0.05f * i, Curl = Mathf.Lerp(32f, 45f, (float)rnd.NextDouble()) * Mathf.Deg2Rad, Rnd = (float)rnd.NextDouble() };
-            }
+            var b = new Burst { T0 = Mathf.Max(0f, cast.AgeAt(hit.NowUs) * _tScale), ThH = thH, Face = face, CapRnd = (float)rnd.NextDouble() };
             int n = rnd.Next(MinOrbs, MaxOrbs + 1);
             b.Orbs = new Orb[n];
             for (int i = 0; i < n; i++)
             {
                 float ang = (float)rnd.NextDouble() * Mathf.PI * 2f, sp = Mathf.Lerp(1.2f, 2.8f, (float)rnd.NextDouble());
+                Vector3 ax = new Vector3((float)rnd.NextDouble() - 0.5f, (float)rnd.NextDouble() - 0.5f, (float)rnd.NextDouble() - 0.5f);
+                ax = ax.sqrMagnitude > 1e-4f ? ax.normalized : Vector3.up;
                 b.Orbs[i] = new Orb
                 {
                     Pos0 = feet + Vector3.up * 0.5f + new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * 0.15f,
                     Vel = new Vector3(Mathf.Cos(ang) * sp, Mathf.Lerp(2.5f, 4.5f, (float)rnd.NextDouble()), Mathf.Sin(ang) * sp),
-                    Spin = Mathf.Lerp(4f, 9f, (float)rnd.NextDouble()) * (rnd.NextDouble() < 0.5 ? -1f : 1f),
-                    Size = Mathf.Lerp(0.15f, 0.30f, (float)rnd.NextDouble()), Rnd = (float)rnd.NextDouble(), A = rnd.NextDouble() < 0.5,
+                    Axis = ax,
+                    Spin = Mathf.Lerp(7f, 14f, (float)rnd.NextDouble()) * (rnd.NextDouble() < 0.5 ? -1f : 1f),      // a tumble (rad/s) about a random axis: the card turns edge-on, never a flat sticker
+                    Size = Mathf.Lerp(OrbSizeMin, OrbSizeMax, (float)rnd.NextDouble()), Rnd = (float)rnd.NextDouble(), A = rnd.NextDouble() < 0.5,
                 };
             }
             _bursts.Add(b);
@@ -225,28 +341,41 @@ namespace Oheangbu.App.SpellFx
             {
                 float L = _cells * 2f * ScaleR;                 // metres round the ring = a whole number of scales
                 float shift = Rot(t) * _R;                        // the pattern turns with the swell
-                float lean = LeanDeg * Mathf.Deg2Rad;
                 for (int iu = 0; iu <= NU; iu++)
                 {
                     float f = iu / (float)NU, th = (f * 2f - 1f) * Mathf.PI;
-                    float h = Height(th, t), tot = h + Sink;
-                    Vector3 dir = Dir(th);
-                    Vector3 nrm = (-dir * Mathf.Cos(lean) + Vector3.up * Mathf.Sin(lean)).normalized;
+                    var c = Eval(th, t);
+                    float S = Prof(th, c);
+                    _colH[iu] = c.H;
                     float u = f * L - shift;
                     for (int iv = 0; iv < NV; iv++)
                     {
-                        float g = iv / (NV - 1f), up = g * tot;
-                        Vector3 p = _o + dir * (_R + up * _tanLean); p.y = _o.y - Sink + up;
-                        _v.Add(p); _n.Add(nrm); _uv.Add(new Vector2(u, up)); _uv1.Add(new Vector2(tot, 0f));
+                        float g = iv / (NV - 1f);
+                        Surf(th, c, g, out Vector3 sp, out Vector3 sn, out _);
+                        _v.Add(_pp[iv]); _n.Add(sn);                                        // _n holds the analytic normal for now; refined below from the real surface
+                        _uv.Add(new Vector2(u, g * S));                                      // v = arc length up the curved surface: the scales follow the curl without stretching
+                        _uv1.Add(new Vector2(S, c.Er));                                      // x = the band's total length (top clip + cream rim), y = local erosion (hit waves)
+                    }
+                }
+                // normals from the actual surface (cross of the two finite differences); the analytic one only picks the side and is the fallback
+                for (int iu = 0; iu <= NU; iu++)
+                {
+                    int u0 = Mathf.Max(0, iu - 1), u1 = Mathf.Min(NU, iu + 1);
+                    for (int iv = 0; iv < NV; iv++)
+                    {
+                        int v0 = Mathf.Max(0, iv - 1), v1 = Mathf.Min(NV - 1, iv + 1);
+                        Vector3 du = _v[u1 * NV + iv] - _v[u0 * NV + iv], dv = _v[iu * NV + v1] - _v[iu * NV + v0];
+                        Vector3 nn = Vector3.Cross(du, dv), rf = _n[iu * NV + iv];
+                        if (nn.sqrMagnitude > 1e-12f) { nn.Normalize(); if (Vector3.Dot(nn, rf) < 0f) nn = -nn; _n[iu * NV + iv] = nn; }
                     }
                 }
                 for (int iu = 0; iu < NU; iu++)
                 {
-                    if (_v[iu * NV + NV - 1].y - _o.y < 0.02f && _v[(iu + 1) * NV + NV - 1].y - _o.y < 0.02f) continue;
+                    if (_colH[iu] < 0.02f && _colH[iu + 1] < 0.02f) continue;
                     for (int iv = 0; iv < NV - 1; iv++)
                     {
-                        int a = iu * NV + iv, a1 = a + 1, c = a + NV, d = c + 1;
-                        _t.Add(a); _t.Add(c); _t.Add(a1); _t.Add(a1); _t.Add(c); _t.Add(d);
+                        int a = iu * NV + iv, a1 = a + 1, c2 = a + NV, d = c2 + 1;
+                        _t.Add(a); _t.Add(c2); _t.Add(a1); _t.Add(a1); _t.Add(c2); _t.Add(d);
                     }
                 }
             }
@@ -258,24 +387,22 @@ namespace Oheangbu.App.SpellFx
             _c.Clear();
         }
 
-        // ---------------------------------------------------------------- crest caps on the wall top
+        // ---------------------------------------------------------------- one cloud-scroll card at each lip tip
         void BuildCaps(float t)
         {
-            foreach (var cap in _caps)
+            float rot = Rot(t);
+            foreach (var pk in _peaks)
             {
-                float lag = WallLag(cap.Th);
-                float p = EaseBack((t - 0.1f - lag) / 0.3f);
+                float th = Wrap(pk.Th0 + rot);
+                float lag = WallLag(th);
+                float p = EaseBack((t - lag - 0.2f) / 0.3f);         // after the curl has started to form
                 if (p < 0.02f) continue;
-                float er = Sm(ErodeA + 0.12f * cap.Rnd, ErodeB - 0.05f, t);
+                float er = Sm(ErodeA + 0.12f * pk.Rnd, ErodeB - 0.05f, t);
                 if (er >= 0.995f) continue;
-                float hc = Height(cap.Th, t);
-                if (hc < 0.05f) continue;
-                float size = cap.Size * p;
-                float curl = cap.Curl * Sm(0.1f, 0.9f, t - lag);       // tips forward (toward the caster) as it curls
-                Vector3 dir = Dir(cap.Th);
-                float rtop = _R + (hc + Sink) * _tanLean - 0.03f;
-                Vector3 b = _o + dir * rtop; b.y = _o.y + hc - 0.42f * size;      // r2: sunk well into the wall top (r1 at -0.14: floating badges)
-                AddCard(_crest, b, Tan(cap.Th), Vector3.up, -dir, size, size * 0.95f, curl, new Color(er, cap.Rnd, 0f, 1f));
+                if (!Lip(th, t, out Vector3 tip, out Vector3 tng, out Vector3 nrm)) continue;
+                float size = pk.Size * p;
+                float curl = CapExtraCurlDeg * Mathf.Deg2Rad * Sm(0.1f, 0.9f, t - lag);
+                AddCard(_crest, tip - tng * (CapBackFrac * size) + nrm * 0.02f, Tan(th), tng, nrm, size, size * 0.95f, curl, new Color(er, pk.Rnd, 0f, 1f));
             }
         }
 
@@ -295,15 +422,16 @@ namespace Oheangbu.App.SpellFx
                     {
                         float s = j / (InkSegs - 1f);                      // 0 = tail, 1 = the growing head
                         float th = Wrap(rib.Th0 + drift + _spin * rib.Span * g * s);
-                        float h = Height(th, t);
-                        if (h < 0.2f || Back(th) > InkBack) { prev = -1; continue; }
-                        float y = h * rib.YF + 0.15f + rib.Lift * s * s * g;
-                        float rad = _R + (y + Sink) * _tanLean - 0.06f;    // just inside the wall face
-                        Vector3 c = _o + Dir(th) * rad; c.y = _o.y + y;
+                        var col = Eval(th, t);
+                        if (col.H < 0.2f || Back(th) > InkBack) { prev = -1; continue; }
+                        Prof(th, col);
+                        float gf = Mathf.Clamp(rib.YF + 0.3f * rib.Lift * s * s * g, 0.2f, 0.78f);      // about mid height of the sheet, the head rising a little
+                        Surf(th, col, gf, out Vector3 sp, out Vector3 sn, out Vector3 st);
+                        Vector3 c = sp + sn * InkInset;                    // just in front of the sheet (its inward-facing side)
                         float wd = rib.Width * 0.5f * (0.35f + 0.65f * Sm(0f, 0.2f, s));
                         float a = fade * Sm(0f, 0.08f, s);
                         int k0 = _v.Count;
-                        _v.Add(c - Vector3.up * wd); _v.Add(c + Vector3.up * wd);
+                        _v.Add(c - st * wd); _v.Add(c + st * wd);
                         _uv.Add(new Vector2(1f - s, 0f)); _uv.Add(new Vector2(1f - s, 1f));      // the wet head of the stroke (u = 0 of the texture) leads
                         _c.Add(new Color(1f, 1f, 1f, a)); _c.Add(new Color(1f, 1f, 1f, a));
                         if (prev >= 0) { _t.Add(prev); _t.Add(k0); _t.Add(prev + 1); _t.Add(prev + 1); _t.Add(k0); _t.Add(k0 + 1); }
@@ -315,22 +443,23 @@ namespace Oheangbu.App.SpellFx
             _c.Clear();
         }
 
-        // ---------------------------------------------------------------- the burst where a contact lands
+        // ---------------------------------------------------------------- the burst where a contact lands (the wave itself is in Eval; this adds its lip card and the roundels)
         void BuildBursts(float t)
         {
             foreach (var b in _bursts)
             {
                 float a = t - b.T0;
                 if (a < 0f || a > BurstLife) continue;
-                foreach (var cr in b.Crests)
+                // the big lip tip
                 {
-                    float ca = a - cr.Delay;
-                    float p = EaseBack(ca / 0.3f);
-                    float er = Sm(0.6f, 1.05f, a);
-                    if (p < 0.02f || er >= 0.995f) continue;
-                    float size = cr.Size * p;
-                    float curl = cr.Curl * Sm(0.05f, 0.35f, ca);             // rises, then curls over the target (the card stands behind it, leaning toward the caster)
-                    AddCard(_crest, cr.Pos - Vector3.up * 0.1f * size, Vector3.Cross(Vector3.up, cr.Face), Vector3.up, cr.Face, size, size * 0.95f, curl, new Color(er, cr.Rnd, 0f, 1f));
+                    float p = EaseBack((a - 0.1f) / 0.25f);
+                    float er = Sm(HitErA + 0.05f, HitErB, a);
+                    if (p >= 0.02f && er < 0.995f && Lip(b.ThH, t, out Vector3 tip, out Vector3 tng, out Vector3 nrm))
+                    {
+                        float size = HitCapSize * p;
+                        float curl = CapExtraCurlDeg * Mathf.Deg2Rad * 1.4f * Sm(0.05f, 0.4f, a);
+                        AddCard(_crest, tip - tng * (CapBackFrac * size) + nrm * 0.02f, Tan(b.ThH), tng, nrm, size, size * 0.95f, curl, new Color(er, b.CapRnd, 0f, 1f));
+                    }
                 }
                 Vector3 tan = Vector3.Cross(Vector3.up, b.Face);
                 foreach (var o in b.Orbs)
@@ -340,14 +469,15 @@ namespace Oheangbu.App.SpellFx
                     Vector3 pos = o.Pos0 + o.Vel * a + 0.5f * a * a * Vector3.down * Gravity;
                     float size = o.Size * Sm(0f, 0.06f, a);
                     if (size < 0.01f) continue;
-                    AddQuad(o.A ? _orbA : _orbB, pos, tan, Vector3.up, b.Face, size, o.Spin * a + o.Rnd * 6.28f, new Color(er, o.Rnd, 0f, 1f));
+                    Quaternion q = Quaternion.AngleAxis((o.Spin * a + o.Rnd * 6.28f) * Mathf.Rad2Deg, o.Axis);
+                    AddQuad(o.A ? _orbA : _orbB, pos, q * tan, q * Vector3.up, q * b.Face, size, new Color(er, o.Rnd, 0f, 1f));
                 }
             }
         }
 
         // ---------------------------------------------------------------- card geometry
-        /// <summary>A card standing at <paramref name="basePos"/> (the middle of its lower edge), <paramref name="w"/> wide along <paramref name="tan"/>, <paramref name="h"/> tall; as a strip it bends
-        /// toward <paramref name="face"/> by up to <paramref name="curl"/> radians at the tip (the curl grows toward the top).</summary>
+        /// <summary>A card standing at <paramref name="basePos"/> (the middle of its lower edge), <paramref name="w"/> wide along <paramref name="tan"/>, <paramref name="h"/> long along <paramref name="up"/>;
+        /// as a strip it bends toward <paramref name="face"/> by up to <paramref name="curl"/> radians at the tip (the curl grows toward the top).</summary>
         static void AddCard(Batch b, Vector3 basePos, Vector3 tan, Vector3 up, Vector3 face, float w, float h, float curl, Color col)
         {
             const int rows = CapRows;
@@ -364,11 +494,10 @@ namespace Oheangbu.App.SpellFx
             }
         }
 
-        /// <summary>A flat square card rolled by <paramref name="roll"/> radians about its normal (<paramref name="face"/>).</summary>
-        static void AddQuad(Batch b, Vector3 centre, Vector3 tan, Vector3 up, Vector3 face, float size, float roll, Color col)
+        /// <summary>A flat square card with the given in-plane axes (<paramref name="ax"/> across, <paramref name="ay"/> up the texture) and normal <paramref name="face"/>, centred at <paramref name="centre"/>.</summary>
+        static void AddQuad(Batch b, Vector3 centre, Vector3 ax, Vector3 ay, Vector3 face, float size, Color col)
         {
-            float cs = Mathf.Cos(roll) * size * 0.5f, sn = Mathf.Sin(roll) * size * 0.5f;
-            Vector3 ax = tan * cs + up * sn, ay = -tan * sn + up * cs;
+            ax *= size * 0.5f; ay *= size * 0.5f;
             int b0 = b.V.Count;
             b.V.Add(centre - ax - ay); b.V.Add(centre + ax - ay); b.V.Add(centre - ax + ay); b.V.Add(centre + ax + ay);
             for (int i = 0; i < 4; i++) { b.N.Add(face); b.C.Add(col); }

@@ -1,5 +1,6 @@
 // D308-153b route P (SPEC-SPELL-FX-RESTART-308 section 7): the u (water) ring drawn as Korean traditional pattern instead of water. One unlit URP shader, three modes (_Mode):
-//   0 WALL   procedural seigaiha (청해파) scales on the ring band. uv0 = (u metres along the ring, v metres up from the wall's bottom), uv1.x = the band's current height H.
+//   0 WALL   procedural seigaiha (청해파) scales on the ring band. uv0 = (u metres along the ring, v metres of ARC LENGTH up the (curling) band from its foot), uv1.x = the band's total arc length H,
+//            uv1.y = local erosion 0..1 (r5: max'ed with _Erode; 0 from an older part).
 //            With w = v - H (<= 0, metres below the wall top) the scales are laid out from the TOP down: row k has its circle centres at w = -R - k*R/2 and is shifted by R on odd rows
 //            (circle radius R = _ScaleR, a scale every 2R along u). A pixel belongs to the FRONT-most circle that covers it (larger k = lower row = in front). A pixel no circle of
 //            rows k >= 0 covers is clipped: that makes the band's top edge the scalloped arcs of the top row (never a straight cut). The cream rim is "covered here but not 4 cm higher".
@@ -98,10 +99,11 @@ Shader "Oheangbu/SpellFx/Pattern"
             col = 0;
             float u = i.uv.x, w = i.uv.y - i.uv1.x;
             float px = max(length(float2(fwidth(u), fwidth(w))), 1e-4);       // pixel size in metres on the wall (computed before any branch)
+            float er = max(_Erode, i.uv1.y);                                    // r5: uv1.y = a local erosion from the part (a hit wave comes apart on its own); 0 elsewhere
             float d; float2 cell;
-            if (!ScaleAt(u, w, _Erode, d, cell)) return false;
+            if (!ScaleAt(u, w, er, d, cell)) return false;
             float dUp; float2 cellUp;
-            bool coveredUp = ScaleAt(u, w + _RimW, _Erode, dUp, cellUp);      // 4 cm higher: if nothing is there, this pixel is on the silhouette rim
+            bool coveredUp = ScaleAt(u, w + _RimW, er, dUp, cellUp);          // 4 cm higher: if nothing is there, this pixel is on the silhouette rim
 
             float R = _ScaleR;
             float aa = px / R;                                                  // one pixel in d units
@@ -111,7 +113,7 @@ Shader "Oheangbu/SpellFx/Pattern"
             float lw = max(0.035, 0.35 * aaR);      // r3: thinner at game size                                   // thin line, never thinner than ~1.5 px
             float lineM = (ring > 0.55 && ring < 2.45) ? 1.0 - smoothstep(lw, lw + aaR, rf) : 0.0;
             lineM *= saturate(1.6 - aaR * 2.5);                                 // r4: far / small scales drop their inner lines (indigo + cream outline only)
-            float ow = max(0.045, 1.2 * aa) * (1.0 + 1.5 * _Erode);             // the cream outline of a scale (thicker while the wall comes apart)
+            float ow = max(0.045, 1.2 * aa) * (1.0 + 1.5 * er);           // the cream outline of a scale (thicker while the wall comes apart)
             float outM = smoothstep(1.0 - ow - aa, 1.0 - ow, d);
 
             float hs = Hash21(cell + 17.0);

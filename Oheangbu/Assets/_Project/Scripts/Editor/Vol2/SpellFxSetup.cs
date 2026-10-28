@@ -44,9 +44,9 @@ namespace Oheangbu.EditorTools.Vol2
             var log = new System.Text.StringBuilder();
             var cardShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxCard.shader");
             var waterShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxWater.shader");
-            var patternShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxPattern.shader");
+            var patternShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxPatternWave.shader");      // Fable rebuild from uks_1 (2026-10-29): the wave-screen shader
             if (!onlyP && (cardShader == null || waterShader == null)) return "REFUSED setup:u: shaders missing under " + Root + "/Shaders";
-            if (patternShader == null) return "REFUSED setup:u: " + Root + "/Shaders/SpellFxPattern.shader missing";
+            if (patternShader == null) return "REFUSED setup:u: " + Root + "/Shaders/SpellFxPatternWave.shader missing";
 
             // ---- B: the two stills ----
             Texture2D bFar = onlyP ? null : Still(UDir + "/B/u_b_far.png"), bNear = onlyP ? null : Still(UDir + "/B/u_b_near.png");
@@ -112,22 +112,18 @@ namespace Oheangbu.EditorTools.Vol2
                 log.Append("C ok; ");
             }
 
-            // ---- P: the pattern ring (D308-153b) ----
-            var crest = PatternMask(UDir + "/P/p_232.png"); var burstA = PatternMask(UDir + "/P/p_226.png"); var burstB = PatternMask(UDir + "/P/p_247.png");
+            // ---- P: the pattern wave screen (D308-153b; Fable rebuild from uks_1, 2026-10-29: SpellFxPatternWavesPart - the silhouette is cut in the shader, only the ink stroke is a texture) ----
             var ink = InkStroke(UDir + "/P/ink_stroke.png");
             GameObject pP = null;
-            if (crest != null && burstA != null && burstB != null && ink != null)
+            if (ink != null)
             {
                 pP = Prefab(UDir + "/U_P.prefab", 1.8f, go =>
                 {
                     var player = go.GetComponent<SpellFxPlayer>();
-                    var pso = new SerializedObject(player); pso.FindProperty("tailSeconds").floatValue = 1.2f; pso.ApplyModifiedPropertiesWithoutUndo();      // a hit late in the life still plays its burst
-                    var part = go.AddComponent<SpellFxPatternRingPart>();
+                    var pso = new SerializedObject(player); pso.FindProperty("tailSeconds").floatValue = 1.2f; pso.ApplyModifiedPropertiesWithoutUndo();      // a hit late in the life still plays its wave
+                    var part = go.AddComponent<SpellFxPatternWavesPart>();
                     var so = new SerializedObject(part);
                     so.FindProperty("patternShader").objectReferenceValue = patternShader;
-                    so.FindProperty("crestTex").objectReferenceValue = crest;
-                    so.FindProperty("burstTexA").objectReferenceValue = burstA;
-                    so.FindProperty("burstTexB").objectReferenceValue = burstB;
                     so.FindProperty("inkTex").objectReferenceValue = ink;
                     so.FindProperty("radius").floatValue = 2.2f;
                     so.FindProperty("lifeSeconds").floatValue = 1.8f;
@@ -135,7 +131,7 @@ namespace Oheangbu.EditorTools.Vol2
                 });
                 log.Append("P ok; ");
             }
-            else log.Append("P: textures missing under " + UDir + "/P (p_232 / p_226 / p_247 / ink_stroke); ");
+            else log.Append("P: texture missing under " + UDir + "/P (ink_stroke); ");
 
             // ---- catalogue: MERGE - only the variants built in this run are replaced, every other 우 variant (and every other letter) stays ----
             var cat = AssetDatabase.LoadAssetAtPath<SpellFxCatalog>(SpellFxCatalog.AssetPath);
