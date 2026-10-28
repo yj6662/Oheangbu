@@ -14,6 +14,11 @@
   python Tools/AgentBoard/board.py run   <id> --model gpt-6-astra --role 시안 --task "..." [--log 파일] -- <명령 ...>
         # 명령을 실행하며 시작 · pid · 끝 · 종료 코드 · 출력 마지막 줄을 자동으로 적는다(codex exec · blender 래핑용)
   python Tools/AgentBoard/board.py selftest                                 # 창을 띄우지 않고 접기 · 표 그리기만 검사
+
+묶음(--lane): start · run에 `--lane 맵`처럼 붙이면 작업이 그 묶음에 들어간다. 없으면 VFX(작업판을 처음 쓴 묶음).
+창 위쪽의 묶음 단추로 전체 / 묶음별로 걸러 본다. 맵 작업 id는 `map_` 로 시작한다(다른 세션의 `main` 등과 겹치지 않게).
+  python Tools/AgentBoard/board.py start map_j1 --lane 맵 --model haiku --role 점검 --task "J-1 적로 던전 의존 표"
+  python Tools/AgentBoard/board.py list [맵]                               # 묶음 하나만
 """
 import ctypes, json, os, subprocess, sys, time
 from pathlib import Path
@@ -33,6 +38,7 @@ ROSTER = [
 ]
 COLOR = {'opus': '#c9a0ff', 'fable': '#ffb86b', 'sonnet': '#7fd0ff', 'haiku': '#9be89b', 'gpt-6-astra': '#ff8fa3', 'gpt-6.1-sol': '#ffd27f', 'tool': '#b8b8b8'}
 STATE_KO = {'run': '진행', 'done': '완료', 'fail': '실패', 'lost': '끊김'}
+DEFAULT_LANE = 'VFX'          # 묶음 없이 적힌 옛 기록은 술식 VFX 작업이다
 
 
 def now():
@@ -83,10 +89,10 @@ def fold(events):
         i = e.get('id')
         if not i:
             continue
-        r = rows.setdefault(i, {'id': i, 'model': '', 'role': '', 'task': '', 'state': 'run', 'start': e['ts'], 'end': None, 'pid': None, 'log': None, 'notes': []})
+        r = rows.setdefault(i, {'id': i, 'lane': DEFAULT_LANE, 'model': '', 'role': '', 'task': '', 'state': 'run', 'start': e['ts'], 'end': None, 'pid': None, 'log': None, 'notes': []})
         k = e.get('ev')
         if k == 'start':
-            r.update({k2: e[k2] for k2 in ('model', 'role', 'task', 'pid', 'log') if e.get(k2) is not None})
+            r.update({k2: e[k2] for k2 in ('lane', 'model', 'role', 'task', 'pid', 'log') if e.get(k2)})
             r.update(state='run', start=e['ts'], end=None)
         elif k == 'note':
             r['notes'].append((e['ts'], e.get('text', '')))
@@ -130,7 +136,7 @@ def opt(args, name, default=None):
 
 
 def cmd_start(a):
-    append({'ev': 'start', 'id': a[0], 'model': opt(a, '--model', ''), 'role': opt(a, '--role', ''), 'task': opt(a, '--task', ''),
+    append({'ev': 'start', 'id': a[0], 'lane': opt(a, '--lane', ''), 'model': opt(a, '--model', ''), 'role': opt(a, '--role', ''), 'task': opt(a, '--task', ''),
             'pid': int(opt(a, '--pid')) if opt(a, '--pid') else None, 'log': opt(a, '--log')})
 
 
@@ -141,17 +147,17 @@ def cmd_run(a):
     Path(log).parent.mkdir(parents=True, exist_ok=True)
     with open(log, 'w', encoding='utf-8') as lf:
         p = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT, shell=os.name == 'nt')
-        append({'ev': 'start', 'id': head[0], 'model': opt(head, '--model', ''), 'role': opt(head, '--role', ''), 'task': opt(head, '--task', ''), 'pid': p.pid, 'log': log})
+        append({'ev': 'start', 'id': head[0], 'lane': opt(head, '--lane', ''), 'model': opt(head, '--model', ''), 'role': opt(head, '--role', ''), 'task': opt(head, '--task', ''), 'pid': p.pid, 'log': log})
         code = p.wait()
     tail = [l for l in Path(log).read_text(encoding='utf-8', errors='replace').splitlines() if l.strip()][-1:] or ['']
     append({'ev': 'done' if code == 0 else 'fail', 'id': head[0], 'text': ('종료 %d · ' % code) + tail[0][:160]})
     sys.exit(code)
 
 
-def cmd_list(_):
-    rows = fold(read_events())
+def cmd_list(a):
+    rows = [r for r in fold(read_events()) if not a or r['lane'] == a[0]]
     for r in rows:
-        print('%-4s %-12s %-5s %-8s %-40s %s' % (STATE_KO[r['state']], r['model'], r['role'], dur(r), r['task'][:40], last_note(r)[:60]))
+        print('%-4s %-4s %-12s %-5s %-8s %-40s %s' % (STATE_KO[r['state']], r['lane'], r['model'], r['role'], dur(r), r['task'][:40], last_note(r)[:60]))
     u = untracked_procs()
     if u:
         print('실행 중 프로세스:', ', '.join('%s ×%d' % kv for kv in u.items()))
@@ -172,10 +178,12 @@ def build_ui(root, path=BOARD):
         b.grid(row=0, column=i, padx=3, sticky='nsew'); top.columnconfigure(i, weight=1)
         tip = tk.Label(top, text=what, bg='#1e2430', fg='#9aa3b5', font=('Malgun Gothic', 8), wraplength=150, justify='center')
         tip.grid(row=1, column=i, padx=3, sticky='n'); badges[key] = (b, name, role)
-    cols = ('state', 'model', 'role', 'time', 'task', 'note')
-    heads = ('상태', '모델', '역할', '경과', '작업', '최근 기록')
+    bar = tk.Frame(root, bg='#1e2430'); bar.pack(fill='x', padx=8, pady=(2, 4))
+    lane_sel = tk.StringVar(root, '전체')
+    cols = ('state', 'lane', 'model', 'role', 'time', 'task', 'note')
+    heads = ('상태', '묶음', '모델', '역할', '경과', '작업', '최근 기록')
     tv = ttk.Treeview(root, columns=cols, show='headings', height=14)
-    for c, h, w in zip(cols, heads, (60, 130, 60, 70, 380, 460)):
+    for c, h, w in zip(cols, heads, (60, 60, 130, 60, 70, 360, 420)):
         tv.heading(c, text=h); tv.column(c, width=w, anchor='w' if c in ('task', 'note') else 'center')
     for s, fg in (('run', '#ffffff'), ('done', '#8f9bb0'), ('fail', '#ff7b7b'), ('lost', '#ffb36b')):
         tv.tag_configure(s, foreground=fg)
@@ -183,7 +191,23 @@ def build_ui(root, path=BOARD):
     detail = tk.Text(root, height=8, bg='#161b24', fg='#d0d6e2', font=('Malgun Gothic', 9), relief='flat', wrap='word')
     detail.pack(fill='x', padx=8, pady=(4, 0))
     foot = tk.Label(root, text='', bg='#1e2430', fg='#9aa3b5', font=('Malgun Gothic', 9), anchor='w'); foot.pack(fill='x', padx=8, pady=4)
-    state = {'rows': {}, 'sel': None}
+    state = {'rows': {}, 'sel': None, 'lanes': None}
+
+    def lane_buttons(rows):
+        """묶음 단추: 전체 + 기록에 나온 묶음마다 하나(진행 중 수 표시)."""
+        lanes = sorted({r['lane'] for r in rows}, key=lambda x: (x != DEFAULT_LANE, x))
+        counts = {l: sum(r['lane'] == l and r['state'] == 'run' for r in rows) for l in lanes}
+        key = (tuple(lanes), tuple(counts.values()))
+        if key == state['lanes']:
+            return
+        state['lanes'] = key
+        for w in bar.winfo_children():
+            w.destroy()
+        for l in ['전체'] + lanes:
+            n = sum(counts.values()) if l == '전체' else counts[l]
+            tk.Radiobutton(bar, text='%s%s' % (l, ' · 진행 %d' % n if n else ''), value=l, variable=lane_sel, indicatoron=False,
+                           command=lambda: refresh(False), bg='#262d3b', fg='#e6e6e6', selectcolor='#34405a', activebackground='#34405a',
+                           activeforeground='#ffd76a', font=('Malgun Gothic', 9, 'bold'), padx=10, pady=2, relief='flat').pack(side='left', padx=3)
 
     def show_detail(_=None):
         sel = tv.selection()
@@ -200,12 +224,14 @@ def build_ui(root, path=BOARD):
             lines += ['  ── 로그 끝(%s)' % r['log']] + ['  ' + l[:200] for l in tail]
         detail.insert('end', '\n'.join(lines))
 
-    def refresh():
-        rows = fold(read_events(path))
+    def refresh(again=True):
+        every = fold(read_events(path))
+        lane_buttons(every)
+        rows = [r for r in every if lane_sel.get() in ('전체', r['lane'])]
         state['rows'] = {r['id']: r for r in rows}
         tv.delete(*tv.get_children())
         for r in rows:
-            tv.insert('', 'end', iid=r['id'], values=(STATE_KO[r['state']], r['model'], r['role'], dur(r), r['task'], last_note(r)), tags=(r['state'],))
+            tv.insert('', 'end', iid=r['id'], values=(STATE_KO[r['state']], r['lane'], r['model'], r['role'], dur(r), r['task'], last_note(r)), tags=(r['state'],))
         if state['sel'] in state['rows']:
             tv.selection_set(state['sel'])
         busy = {}
@@ -216,11 +242,12 @@ def build_ui(root, path=BOARD):
             n = busy.get(key, 0)
             b.configure(text='%s\n%s%s' % (name, role, ' · 작업 %d' % n if n else ' · 대기'), bg='#34405a' if n else '#262d3b')
         u = untracked_procs()
-        foot.configure(text='진행 %d · 완료 %d · 실패/끊김 %d   |   실행 중 프로세스: %s   |   %s  (2초마다 갱신)' % (
-            sum(r['state'] == 'run' for r in rows), sum(r['state'] == 'done' for r in rows), sum(r['state'] in ('fail', 'lost') for r in rows),
+        foot.configure(text='[%s] 진행 %d · 완료 %d · 실패/끊김 %d   |   실행 중 프로세스: %s   |   %s  (2초마다 갱신)' % (
+            lane_sel.get(), sum(r['state'] == 'run' for r in rows), sum(r['state'] == 'done' for r in rows), sum(r['state'] in ('fail', 'lost') for r in rows),
             ', '.join('%s ×%d' % kv for kv in u.items()) or '없음', path))
         show_detail()
-        root.after(2000, refresh)
+        if again:
+            root.after(2000, refresh)
 
     tv.bind('<<TreeviewSelect>>', show_detail)
     refresh()
@@ -240,17 +267,23 @@ def cmd_selftest(_):
            {'ev': 'note', 'id': 'a', 'text': '컴파일 통과', 'ts': t0 + 60},
            {'ev': 'done', 'id': 'a', 'text': '끝', 'ts': t0 + 120},
            {'ev': 'start', 'id': 'b', 'model': 'gpt-6-astra', 'role': '시안', 'task': '시안', 'pid': 999999, 'ts': t0 + 10},
-           {'ev': 'start', 'id': 'c', 'model': 'haiku', 'role': '점검', 'task': '점검', 'pid': os.getpid(), 'ts': t0 + 20}]
+           {'ev': 'start', 'id': 'c', 'lane': '맵', 'model': 'haiku', 'role': '점검', 'task': '점검', 'pid': os.getpid(), 'ts': t0 + 20}]
     p.write_text('\n'.join(json.dumps(e, ensure_ascii=False) for e in evs) + '\n', encoding='utf-8')
     rows = {r['id']: r for r in fold(read_events(p))}
     assert rows['a']['state'] == 'done' and rows['a']['notes'][0][1] == '컴파일 통과', rows['a']
     assert rows['b']['state'] == 'lost', rows['b']       # dead pid
     assert rows['c']['state'] == 'run', rows['c']        # our own pid is alive
+    assert rows['a']['lane'] == DEFAULT_LANE and rows['c']['lane'] == '맵', (rows['a']['lane'], rows['c']['lane'])
     root = tk.Tk(); root.withdraw()                      # never shown (no focus change)
     tv = build_ui(root, p); root.update()
     assert len(tv.get_children()) == 3
+    bar = [w for w in root.winfo_children() if any(isinstance(b, tk.Radiobutton) for b in w.winfo_children())][0]
+    names = [b.cget('text') for b in bar.winfo_children()]
+    assert names[0].startswith('전체') and names[1] == DEFAULT_LANE and names[2].startswith('맵'), names
+    bar.winfo_children()[2].invoke(); root.update()      # 맵 단추 → 맵 한 줄만
+    assert list(tv.get_children()) == ['c'], tv.get_children()
     root.destroy()
-    print('selftest ok: fold · pid · table (3 rows)')
+    print('selftest ok: fold · pid · lane · table (3 rows, 맵 거르기 1)')
 
 
 def main():

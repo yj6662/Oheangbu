@@ -9,6 +9,7 @@ Capture camera (Vol2VfxCapture.Shoot, pitch 0): eye = origin + (0.7 right, 2.25 
 import sys, os, math, random
 import bpy, bmesh
 from mathutils import Vector
+from mathutils import noise as mnoise
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 OUT = os.path.abspath(argv[0] if argv else 'u_ring')
@@ -80,7 +81,7 @@ def mat(name, base, rough, trans=0.0, emit=0.0):
     return m, b
 
 # water: glassy teal, foam from the vertex attribute 'foam' x animated noise -> white rough; 'life' fades to transparent
-water, wb = mat('Water', (0.07, 0.20, 0.22), 0.1, 0.35)      # t2: deep glassy teal (t1 read as white plastic)
+water, wb = mat('Water', (0.03, 0.075, 0.085), 0.12, 0.12)      # r5: dark grey-teal, little transmission (r4 read as clear cyan glass)
 for k, v in (('Coat Weight', 0.2), ('Coat Roughness', 0.05), ('Specular IOR Level', 0.6)):      # r4b: less lacquer
     if k in wb.inputs: wb.inputs[k].default_value = v
 nt = water.node_tree
@@ -88,16 +89,18 @@ out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
 attr_f = nt.nodes.new('ShaderNodeAttribute'); attr_f.attribute_name = 'foam'
 attr_l = nt.nodes.new('ShaderNodeAttribute'); attr_l.attribute_name = 'life'
 noise = nt.nodes.new('ShaderNodeTexNoise'); noise.noise_dimensions = '4D'; noise.inputs['Scale'].default_value = 26.0; noise.inputs['Detail'].default_value = 12.0
-noise.inputs['Roughness'].default_value = 0.65
+noise.inputs['Roughness'].default_value = 0.7; noise.inputs['Distortion'].default_value = 0.6      # r5b: torn lace
 wdrv = noise.inputs['W']
-ramp = nt.nodes.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].position = 0.98; ramp.color_ramp.elements[1].position = 1.06
+ramp = nt.nodes.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].position = 0.92; ramp.color_ramp.elements[1].position = 0.98      # r5b: lace with a white core (r5: snow slabs, r4: thin lace)
 mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY'
-foamb = nt.nodes.new('ShaderNodeBsdfPrincipled'); foamb.inputs['Base Color'].default_value = (0.95, 0.96, 0.95, 1); foamb.inputs['Roughness'].default_value = 0.45
+foamb = nt.nodes.new('ShaderNodeBsdfPrincipled'); foamb.inputs['Base Color'].default_value = (0.95, 0.96, 0.95, 1); foamb.inputs['Roughness'].default_value = 0.6
 mix = nt.nodes.new('ShaderNodeMixShader'); transp = nt.nodes.new('ShaderNodeBsdfTransparent'); mix2 = nt.nodes.new('ShaderNodeMixShader')
 add = nt.nodes.new('ShaderNodeMath'); add.operation = 'ADD'
 nt.links.new(noise.outputs['Fac'], add.inputs[0]); nt.links.new(attr_f.outputs['Fac'], add.inputs[1])
 nt.links.new(add.outputs[0], ramp.inputs['Fac'])
-nt.links.new(ramp.outputs['Color'], mul.inputs[0]); nt.links.new(attr_f.outputs['Fac'], mul.inputs[1])
+fboost = nt.nodes.new('ShaderNodeMath'); fboost.operation = 'MULTIPLY'; fboost.use_clamp = True; fboost.inputs[1].default_value = 1.8
+nt.links.new(attr_f.outputs['Fac'], fboost.inputs[0])
+nt.links.new(ramp.outputs['Color'], mul.inputs[0]); nt.links.new(fboost.outputs[0], mul.inputs[1])
 nt.links.new(mul.outputs[0], mix.inputs['Fac']); nt.links.new(wb.outputs[0], mix.inputs[1]); nt.links.new(foamb.outputs[0], mix.inputs[2])
 nt.links.new(attr_l.outputs['Fac'], mix2.inputs['Fac']); nt.links.new(transp.outputs[0], mix2.inputs[1]); nt.links.new(mix.outputs[0], mix2.inputs[2])
 nt.links.new(mix2.outputs[0], out.inputs['Surface'])
@@ -109,6 +112,15 @@ nt.links.new(bn2.outputs['Fac'], bmix.inputs[0]); nt.links.new(bn1.outputs['Fac'
 bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.8; bump.inputs['Distance'].default_value = 0.05
 nt.links.new(bmix.outputs[0], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], wb.inputs['Normal']); nt.links.new(bump.outputs['Normal'], foamb.inputs['Normal'])
 WDRV2 = (bn1.inputs['W'], bn2.inputs['W'])
+attr_i = nt.nodes.new('ShaderNodeAttribute'); attr_i.attribute_name = 'ink'
+inkw = nt.nodes.new('ShaderNodeBsdfPrincipled'); inkw.inputs['Base Color'].default_value = (0.006, 0.007, 0.009, 1); inkw.inputs['Roughness'].default_value = 1.0
+if 'Specular IOR Level' in inkw.inputs: inkw.inputs['Specular IOR Level'].default_value = 0.05      # black, not a sky mirror
+nt.links.new(bump.outputs['Normal'], inkw.inputs['Normal'])
+mixi = nt.nodes.new('ShaderNodeMixShader'); nt.links.new(attr_i.outputs['Fac'], mixi.inputs['Fac']); nt.links.new(wb.outputs[0], mixi.inputs[1]); nt.links.new(inkw.outputs[0], mixi.inputs[2])
+nt.links.new(mixi.outputs[0], mix.inputs[1])
+noti = nt.nodes.new('ShaderNodeMath'); noti.operation = 'SUBTRACT'; noti.inputs[0].default_value = 1.0; nt.links.new(attr_i.outputs['Fac'], noti.inputs[1])
+fcut = nt.nodes.new('ShaderNodeMath'); fcut.operation = 'MULTIPLY'; nt.links.new(mul.outputs[0], fcut.inputs[0]); nt.links.new(noti.outputs[0], fcut.inputs[1])
+nt.links.new(fcut.outputs[0], mix.inputs['Fac'])
 
 ink, inkb = mat('Ink', (0.008, 0.008, 0.01), 0.85)      # t3: matte (t2's 0.35 mirrored the sky into grey)
 # r4: a real brush stroke - the sumi stroke sheet's broad dry-brush row as the ribbon's alpha (r3: flat black bands)
@@ -120,10 +132,11 @@ try:
     _int.links.new(_uv.outputs['UV'], _tex.inputs['Vector'])
     _tr = _int.nodes.new('ShaderNodeBsdfTransparent'); _mx = _int.nodes.new('ShaderNodeMixShader')
     _o = next(n for n in _int.nodes if n.type == 'OUTPUT_MATERIAL')
-    _int.links.new(_tex.outputs['Alpha'], _mx.inputs['Fac']); _int.links.new(_tr.outputs[0], _mx.inputs[1]); _int.links.new(inkb.outputs[0], _mx.inputs[2]); _int.links.new(_mx.outputs[0], _o.inputs['Surface'])
+    _ab = _int.nodes.new('ShaderNodeMath'); _ab.operation = 'MULTIPLY'; _ab.use_clamp = True; _ab.inputs[1].default_value = 1.7
+    _int.links.new(_tex.outputs['Alpha'], _ab.inputs[0]); _int.links.new(_ab.outputs[0], _mx.inputs['Fac']); _int.links.new(_tr.outputs[0], _mx.inputs[1]); _int.links.new(inkb.outputs[0], _mx.inputs[2]); _int.links.new(_mx.outputs[0], _o.inputs['Surface'])
 except Exception as e:
     print('[u_ring] ink texture skipped', e)
-spray, sb = mat('Spray', (0.95, 0.97, 0.98), 0.25, 0.25)
+spray, sb = mat('Spray', (0.92, 0.94, 0.94), 0.6, 0.0)      # r5c: opaque white specks (glass drops vanished on the sky, rice on the ground)
 bead, _ = mat('Bead', (0.9, 0.95, 0.96), 0.02, 0.95)
 
 world = bpy.data.worlds.new('W'); sc.world = world; world.use_nodes = True
@@ -166,7 +179,7 @@ def mesh_obj(name, m):
 def build_wave(t, near):
     """All layers' sheets for one pass: faces whose centre is behind the caster (y < -0.35) go to the near pass."""
     life = 1 - sm(FADE0, FADE1, t)
-    verts, faces, foam_v, life_v = [], [], [], []
+    verts, faces, foam_v, life_v, ink_v = [], [], [], [], []
     for L in range(len(LAYERS)):
         base = len(verts)
         for iu in range(NU):
@@ -174,10 +187,20 @@ def build_wave(t, near):
             for iv in range(NV):
                 v = iv / (NV - 1)
                 p, h = surface(th, v, t, L)
+                tear = sm(0.55, 1.0, v) * min(1.0, h / 1.2)
+                if tear > 0.001:
+                    q = Vector((th * 6.0, v * 8.0, t * 1.5 + L * 3.1))
+                    p = p + (mnoise.noise_vector(q) * 0.13 + mnoise.noise_vector(q * 3.1) * 0.04) * tear      # r5c: torn, churning crests
                 verts.append(p)
+                # r5c: ink marbled into the water, on the inner face (v > .5, the one the camera sees) - ridged noise stretched along the flow (r4/r5 ribbons read as rock panels)
+                fl = th - phase(t) * LAYERS[L][3] * 0.85
+                iq = Vector((fl * 1.6, v * 6.0, t * 0.5 + L * 7.3)); iq = iq + mnoise.noise_vector(iq * 0.5) * 0.6
+                vein = sm(0.74, 0.9, 1 - abs(mnoise.noise(iq)))
+                ink_v.append(vein * sm(0.45, 0.6, v) * (1 - sm(0.9, 0.98, v)) * min(1.0, h / 0.6) * (1 - sm(WASH0, WASH1, t)))
                 # t2: foam only on the crest and the lip (+ the wash), lace elsewhere through the noise threshold (t1 whitened the whole sheet)
-                crest = max(0.0, 1 - abs(v - 0.82) / 0.2)
-                foam_v.append(min(1.0, 0.55 * crest + 0.15 * sm(0.7, 1.0, v) + 0.05 * sm(WASH0, WASH1, t)) * (1 if h > 0.05 else 0))      # t3: lace, not slabs (r2: wash foam .5 -> .2)
+                crest = max(0.0, 1 - abs(v - 0.86) / 0.28)
+                foot = 1 - sm(0.04, 0.28, v)
+                foam_v.append(min(1.0, 0.55 * crest + 0.38 * foot + 0.2 * sm(0.7, 1.0, v) + 0.05 * sm(WASH0, WASH1, t)) * (1 if h > 0.05 else 0))      # r5: white lips + churned feet      # t3: lace, not slabs (r2: wash foam .5 -> .2)
                 # life: 1 = visible; the foot and the dead crest fade out, everything fades at the end
                 vis = (1 if h > 0.03 else 0) * life * sm(0, 0.1, v) * (0.75 + 0.25 * (1 - back(th)))
                 life_v.append(vis)
@@ -192,13 +215,14 @@ def build_wave(t, near):
     me.from_pydata([tuple(v) for v in verts], [], faces)
     fa = me.attributes.new('foam', 'FLOAT', 'POINT'); la = me.attributes.new('life', 'FLOAT', 'POINT')
     fa.data.foreach_set('value', foam_v); la.data.foreach_set('value', life_v)
+    ia = me.attributes.new('ink', 'FLOAT', 'POINT'); ia.data.foreach_set('value', ink_v)
     for poly in me.polygons: poly.use_smooth = True
     return o
 
 RIBS = []
-for k in range(32):
-    RIBS.append(dict(th=(k + 0.5) / 32 * 2 * math.pi - math.pi + rng.uniform(-0.1, 0.1), span=rng.uniform(1.0, 1.9), va=rng.uniform(0.45, 0.65), vb=rng.uniform(0.8, 0.95),
-                     w=rng.uniform(0.12, 0.26), at=CURL0 + 0.15 * rng.random(), L=2 if rng.random() < 0.3 else 1, rnd=rng.random()))
+for k in range(40):
+    RIBS.append(dict(th=(k + 0.5) / 40 * 2 * math.pi - math.pi + rng.uniform(-0.1, 0.1), span=rng.uniform(1.0, 1.9), va=rng.uniform(0.45, 0.65), vb=rng.uniform(0.8, 0.95),
+                     w=rng.uniform(0.18, 0.34), at=CURL0 + 0.15 * rng.random(), L=2 if rng.random() < 0.3 else 1, rnd=rng.random()))
 
 def build_ink(t, near):
     verts, faces, uvs = [], [], []
@@ -226,7 +250,8 @@ def build_ink(t, near):
             if row[j] is None or row[j + 1] is None: continue
             b0 = len(verts); verts += [row[j][0], row[j][1], row[j + 1][1], row[j + 1][0]]; faces.append((b0, b0 + 1, b0 + 2, b0 + 3))
             # the stroke's wet head (u = 0 in the sheet) rides the ribbon's head; the sheet's broad bottom row (v .012 .. .238)
-            uvs += [(1 - row[j][2], 0.012), (1 - row[j][2], 0.238), (1 - row[j + 1][2], 0.238), (1 - row[j + 1][2], 0.012)]
+            ua, ub = 0.02 + 0.58 * (1 - row[j][2]), 0.02 + 0.58 * (1 - row[j + 1][2])      # r5: the sheet's row is ink only in its left 60 %
+            uvs += [(ua, 0.012), (ua, 0.238), (ub, 0.238), (ub, 0.012)]
     o = mesh_obj('Ink', ink); o.data.from_pydata([tuple(v) for v in verts], [], faces)
     if faces:
         uvl = o.data.uv_layers.new(name='UVMap')
@@ -237,7 +262,7 @@ def build_ink(t, near):
 P = []   # [pos, vel, radius, kind, age, life]
 def step_spray(t, dt):
     if t > 0.06 and t < WASH1:
-        for _ in range(int(6000 * dt * (1 - 0.6 * sm(WASH0, WASH1, t)))):      # r4: ~200 a frame (t2: ~100)
+        for _ in range(int(12000 * dt * (1 - 0.6 * sm(WASH0, WASH1, t)))):      # r5: ~400 a frame, finer (r4: rice grains)
             L = rng.choice((0, 1, 1, 2)); th = rng.uniform(-math.pi, math.pi)
             c, h = surface(th, 0.75, t, L)
             if h < 0.35 * LAYERS[L][1] or back(th) > 0.6: continue
@@ -246,7 +271,7 @@ def step_spray(t, dt):
             flow = (2.4 + 5.6 * math.exp(-t / 0.9)) * SPIN * (R + LAYERS[L][0])
             vel = Vector((0, 0, rng.uniform(1.5, 4.5) * (0.5 + min(1, h / 2)))) + outw * rng.uniform(-1.2, 1.8) + tang * (flow * rng.uniform(0.3, 0.6) + rng.uniform(-0.6, 0.6))
             kind = 1 if rng.random() < 0.1 else 0
-            P.append([c + Vector((rng.uniform(-.1, .1), rng.uniform(-.1, .1), rng.uniform(-.05, .1))), vel, rng.uniform(0.008, 0.022) if kind == 0 else rng.uniform(0.025, 0.05), kind, 0.0, rng.uniform(0.4, 1.0)])
+            P.append([c + Vector((rng.uniform(-.1, .1), rng.uniform(-.1, .1), rng.uniform(-.05, .1))), vel, rng.uniform(0.004, 0.012) if kind == 0 else rng.uniform(0.02, 0.04), kind, 0.0, rng.uniform(0.4, 1.0)])
         # r4: crest plumes - the tallest crest points throw fans of white water straight up (the concept's spray crowns)
         if t < WASH0:
             for L in (0, 1):
@@ -255,12 +280,12 @@ def step_spray(t, dt):
                 for q_, th in best:
                     if q_ < 0.8: continue
                     c, h = surface(th, 0.9, t, L)
-                    for _ in range(18):
+                    for _ in range(50):
                         vel = Vector((rng.uniform(-0.8, 0.8), rng.uniform(-0.8, 0.8), rng.uniform(2.5, 5.5))) - dirv(th) * rng.uniform(0.2, 1.2)
-                        P.append([c + Vector((rng.uniform(-.15, .15), rng.uniform(-.15, .15), 0)), vel, rng.uniform(0.006, 0.018), 0, 0.0, rng.uniform(0.5, 1.0)])
+                        P.append([c + Vector((rng.uniform(-.15, .15), rng.uniform(-.15, .15), 0)), vel, rng.uniform(0.003, 0.01), 0, 0.0, rng.uniform(0.5, 1.0)])
     for q in P:
         q[1].z -= 9.8 * 0.55 * dt; q[1] *= (1 - 0.25 * dt); q[0] += q[1] * dt; q[4] += dt
-    P[:] = [q for q in P if q[4] < q[5] and q[0].z > 0.0][-7000:]
+    P[:] = [q for q in P if q[4] < q[5] and q[0].z > 0.0][-16000:]
 
 def build_drops(kind, near):
     bm = bmesh.new()
@@ -272,7 +297,7 @@ def build_drops(kind, near):
         v = q[1]; sp = v.length
         rot = v.to_track_quat('Z', 'Y').to_matrix().to_4x4() if sp > 1e-3 else mathutils.Matrix.Identity(4)
         st = mathutils.Matrix.Diagonal((0.7, 0.7, 1.0 + min(2.5, sp * 0.3), 1.0)) if kind == 0 else mathutils.Matrix.Identity(4)      # r4c: thinner, shorter (r4b: rice grains)
-        bmesh.ops.create_icosphere(bm, subdivisions=2, radius=r, matrix=mathutils.Matrix.Translation(q[0]) @ rot @ st)
+        bmesh.ops.create_icosphere(bm, subdivisions=1 if kind == 0 else 2, radius=r, matrix=mathutils.Matrix.Translation(q[0]) @ rot @ st)
     me = bpy.data.meshes.new('D'); bm.to_mesh(me); bm.free()
     o = bpy.data.objects.new('Drops%d' % kind, me); sc.collection.objects.link(o); me.materials.append(spray if kind == 0 else bead)
     for p in me.polygons: p.use_smooth = True
@@ -325,7 +350,7 @@ for f in range(frames):
     if ONLY >= 0 and f != ONLY: continue
     wdrv.default_value = t * 0.8
     for _w in WDRV2: _w.default_value = t * 1.6
-    objs = [build_wave(t, None), build_ink(t, None), build_drops(0, None), build_drops(1, None)]
+    objs = [build_wave(t, None), build_drops(0, None), build_drops(1, None)]      # r5c: ink lives in the water material; ribbons off
     render_pass('col', f)
     render_pass('dep', f)
     clear(objs)
