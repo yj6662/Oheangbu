@@ -20,8 +20,8 @@ rng = random.Random(7)
 # ------------------------------------------------------------------ the wave (same law as the design: rising sweep, chasing crests, curl, inward wash)
 R = 2.2
 SPIN = 1.0
-NU, NV = 180, 20
-CURL0, CURL1, WASH0, WASH1, FADE0, FADE1 = 0.16, 0.55, 1.05, 1.7, 1.4, 2.2      # r2: fades earlier (r1 ended in a white disc)
+NU, NV = 320, 34      # r4: finer sheet (r3 read as smooth plastic)
+CURL0, CURL1, WASH0, WASH1, FADE0, FADE1 = 0.16, 0.55, 1.05, 1.7, 1.3, 2.0      # r2: fades earlier (r1 ended in a white disc)
 LAYERS = [  # radial offset, height scale, lobe phase, flow speed, rise lag, lobes, shade
     (0.8, 0.75, 0.5, 0.8, 0.07, 6),
     (0.0, 1.0, 0.0, 1.0, 0.0, 5),
@@ -80,8 +80,8 @@ def mat(name, base, rough, trans=0.0, emit=0.0):
     return m, b
 
 # water: glassy teal, foam from the vertex attribute 'foam' x animated noise -> white rough; 'life' fades to transparent
-water, wb = mat('Water', (0.07, 0.20, 0.22), 0.05, 0.35)      # t2: deep glassy teal (t1 read as white plastic)
-for k, v in (('Coat Weight', 0.6), ('Coat Roughness', 0.02), ('Specular IOR Level', 0.7)):
+water, wb = mat('Water', (0.07, 0.20, 0.22), 0.1, 0.35)      # t2: deep glassy teal (t1 read as white plastic)
+for k, v in (('Coat Weight', 0.2), ('Coat Roughness', 0.05), ('Specular IOR Level', 0.6)):      # r4b: less lacquer
     if k in wb.inputs: wb.inputs[k].default_value = v
 nt = water.node_tree
 out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
@@ -101,8 +101,28 @@ nt.links.new(ramp.outputs['Color'], mul.inputs[0]); nt.links.new(attr_f.outputs[
 nt.links.new(mul.outputs[0], mix.inputs['Fac']); nt.links.new(wb.outputs[0], mix.inputs[1]); nt.links.new(foamb.outputs[0], mix.inputs[2])
 nt.links.new(attr_l.outputs['Fac'], mix2.inputs['Fac']); nt.links.new(transp.outputs[0], mix2.inputs[1]); nt.links.new(mix.outputs[0], mix2.inputs[2])
 nt.links.new(mix2.outputs[0], out.inputs['Surface'])
+# r4: ripples - two animated noises bump the sheet (r3's smooth normals read as plastic)
+bn1 = nt.nodes.new('ShaderNodeTexNoise'); bn1.noise_dimensions = '4D'; bn1.inputs['Scale'].default_value = 14.0; bn1.inputs['Detail'].default_value = 6.0
+bn2 = nt.nodes.new('ShaderNodeTexNoise'); bn2.noise_dimensions = '4D'; bn2.inputs['Scale'].default_value = 55.0; bn2.inputs['Detail'].default_value = 4.0
+bmix = nt.nodes.new('ShaderNodeMath'); bmix.operation = 'MULTIPLY_ADD'; bmix.inputs[1].default_value = 0.35
+nt.links.new(bn2.outputs['Fac'], bmix.inputs[0]); nt.links.new(bn1.outputs['Fac'], bmix.inputs[2])
+bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.8; bump.inputs['Distance'].default_value = 0.05
+nt.links.new(bmix.outputs[0], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], wb.inputs['Normal']); nt.links.new(bump.outputs['Normal'], foamb.inputs['Normal'])
+WDRV2 = (bn1.inputs['W'], bn2.inputs['W'])
 
-ink, _ = mat('Ink', (0.008, 0.008, 0.01), 0.85)      # t3: matte (t2's 0.35 mirrored the sky into grey)
+ink, inkb = mat('Ink', (0.008, 0.008, 0.01), 0.85)      # t3: matte (t2's 0.35 mirrored the sky into grey)
+# r4: a real brush stroke - the sumi stroke sheet's broad dry-brush row as the ribbon's alpha (r3: flat black bands)
+try:
+    _img = bpy.data.images.load(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..', 'Oheangbu', 'Assets', '_Project', 'Art', 'SpellVFX308', 'Vol2Vfx', 'FreeShowcase', 'Resources', 'FreeShowcase', 'fs_sumi_stroke.png')))
+    _int = ink.node_tree
+    _tex = _int.nodes.new('ShaderNodeTexImage'); _tex.image = _img
+    _uv = _int.nodes.new('ShaderNodeUVMap')
+    _int.links.new(_uv.outputs['UV'], _tex.inputs['Vector'])
+    _tr = _int.nodes.new('ShaderNodeBsdfTransparent'); _mx = _int.nodes.new('ShaderNodeMixShader')
+    _o = next(n for n in _int.nodes if n.type == 'OUTPUT_MATERIAL')
+    _int.links.new(_tex.outputs['Alpha'], _mx.inputs['Fac']); _int.links.new(_tr.outputs[0], _mx.inputs[1]); _int.links.new(inkb.outputs[0], _mx.inputs[2]); _int.links.new(_mx.outputs[0], _o.inputs['Surface'])
+except Exception as e:
+    print('[u_ring] ink texture skipped', e)
 spray, sb = mat('Spray', (0.95, 0.97, 0.98), 0.25, 0.25)
 bead, _ = mat('Bead', (0.9, 0.95, 0.96), 0.02, 0.95)
 
@@ -157,7 +177,7 @@ def build_wave(t, near):
                 verts.append(p)
                 # t2: foam only on the crest and the lip (+ the wash), lace elsewhere through the noise threshold (t1 whitened the whole sheet)
                 crest = max(0.0, 1 - abs(v - 0.82) / 0.2)
-                foam_v.append(min(1.0, 0.55 * crest + 0.15 * sm(0.7, 1.0, v) + 0.2 * sm(WASH0, WASH1, t)) * (1 if h > 0.05 else 0))      # t3: lace, not slabs (r2: wash foam .5 -> .2)
+                foam_v.append(min(1.0, 0.55 * crest + 0.15 * sm(0.7, 1.0, v) + 0.05 * sm(WASH0, WASH1, t)) * (1 if h > 0.05 else 0))      # t3: lace, not slabs (r2: wash foam .5 -> .2)
                 # life: 1 = visible; the foot and the dead crest fade out, everything fades at the end
                 vis = (1 if h > 0.03 else 0) * life * sm(0, 0.1, v) * (0.75 + 0.25 * (1 - back(th)))
                 life_v.append(vis)
@@ -176,12 +196,12 @@ def build_wave(t, near):
     return o
 
 RIBS = []
-for k in range(24):
-    RIBS.append(dict(th=(k + 0.5) / 24 * 2 * math.pi - math.pi + rng.uniform(-0.1, 0.1), span=rng.uniform(1.0, 1.8), va=rng.uniform(0.5, 0.65), vb=rng.uniform(0.8, 0.95),
-                     w=rng.uniform(0.07, 0.14), at=CURL0 + 0.15 * rng.random(), L=2 if rng.random() < 0.3 else 1, rnd=rng.random()))
+for k in range(32):
+    RIBS.append(dict(th=(k + 0.5) / 32 * 2 * math.pi - math.pi + rng.uniform(-0.1, 0.1), span=rng.uniform(1.0, 1.9), va=rng.uniform(0.45, 0.65), vb=rng.uniform(0.8, 0.95),
+                     w=rng.uniform(0.12, 0.26), at=CURL0 + 0.15 * rng.random(), L=2 if rng.random() < 0.3 else 1, rnd=rng.random()))
 
 def build_ink(t, near):
-    verts, faces = [], []
+    verts, faces, uvs = [], [], []
     dry = sm(WASH0 - 0.1, WASH0 + 0.5, t)
     for r in RIBS:
         g = min(1, max(0, (t - r['at']) / 0.35))
@@ -201,17 +221,23 @@ def build_ink(t, near):
             wd = r['w'] * (0.25 + 0.75 * math.sin(min(1, u / max(0.01, g)) * math.pi)) * (1 - 0.7 * dry)
             c = p + nrm * 0.03
             if near is not None and ((c.y < -0.35) != near): row.append(None); continue
-            row.append((c - side * wd, c + side * wd))
+            row.append((c - side * wd, c + side * wd, u / max(0.01, g)))
         for j in range(n - 1):
             if row[j] is None or row[j + 1] is None: continue
             b0 = len(verts); verts += [row[j][0], row[j][1], row[j + 1][1], row[j + 1][0]]; faces.append((b0, b0 + 1, b0 + 2, b0 + 3))
-    o = mesh_obj('Ink', ink); o.data.from_pydata([tuple(v) for v in verts], [], faces); return o
+            # the stroke's wet head (u = 0 in the sheet) rides the ribbon's head; the sheet's broad bottom row (v .012 .. .238)
+            uvs += [(1 - row[j][2], 0.012), (1 - row[j][2], 0.238), (1 - row[j + 1][2], 0.238), (1 - row[j + 1][2], 0.012)]
+    o = mesh_obj('Ink', ink); o.data.from_pydata([tuple(v) for v in verts], [], faces)
+    if faces:
+        uvl = o.data.uv_layers.new(name='UVMap')
+        for li, loop in enumerate(o.data.loops): uvl.data[li].uv = uvs[loop.vertex_index]
+    return o
 
 # spray: ballistic drops thrown off the crests along the flow; beads: fewer, bigger, glassy
 P = []   # [pos, vel, radius, kind, age, life]
 def step_spray(t, dt):
     if t > 0.06 and t < WASH1:
-        for _ in range(int(3000 * dt * (1 - 0.6 * sm(WASH0, WASH1, t)))):      # t2: ~100 a frame (t1: 7)
+        for _ in range(int(6000 * dt * (1 - 0.6 * sm(WASH0, WASH1, t)))):      # r4: ~200 a frame (t2: ~100)
             L = rng.choice((0, 1, 1, 2)); th = rng.uniform(-math.pi, math.pi)
             c, h = surface(th, 0.75, t, L)
             if h < 0.35 * LAYERS[L][1] or back(th) > 0.6: continue
@@ -221,6 +247,17 @@ def step_spray(t, dt):
             vel = Vector((0, 0, rng.uniform(1.5, 4.5) * (0.5 + min(1, h / 2)))) + outw * rng.uniform(-1.2, 1.8) + tang * (flow * rng.uniform(0.3, 0.6) + rng.uniform(-0.6, 0.6))
             kind = 1 if rng.random() < 0.1 else 0
             P.append([c + Vector((rng.uniform(-.1, .1), rng.uniform(-.1, .1), rng.uniform(-.05, .1))), vel, rng.uniform(0.008, 0.022) if kind == 0 else rng.uniform(0.025, 0.05), kind, 0.0, rng.uniform(0.4, 1.0)])
+        # r4: crest plumes - the tallest crest points throw fans of white water straight up (the concept's spray crowns)
+        if t < WASH0:
+            for L in (0, 1):
+                cand = [rng.uniform(-math.pi, math.pi) for _ in range(40)]
+                best = sorted(((height(th, t, L) / max(0.05, hmax(th, L)), th) for th in cand if back(th) < 0.5), reverse=True)[:3]
+                for q_, th in best:
+                    if q_ < 0.8: continue
+                    c, h = surface(th, 0.9, t, L)
+                    for _ in range(18):
+                        vel = Vector((rng.uniform(-0.8, 0.8), rng.uniform(-0.8, 0.8), rng.uniform(2.5, 5.5))) - dirv(th) * rng.uniform(0.2, 1.2)
+                        P.append([c + Vector((rng.uniform(-.15, .15), rng.uniform(-.15, .15), 0)), vel, rng.uniform(0.006, 0.018), 0, 0.0, rng.uniform(0.5, 1.0)])
     for q in P:
         q[1].z -= 9.8 * 0.55 * dt; q[1] *= (1 - 0.25 * dt); q[0] += q[1] * dt; q[4] += dt
     P[:] = [q for q in P if q[4] < q[5] and q[0].z > 0.0][-7000:]
@@ -230,7 +267,12 @@ def build_drops(kind, near):
     for q in P:
         if q[3] != kind or (near is not None and (q[0].y < -0.35) != near): continue
         r = q[2] * (1 - 0.5 * (q[4] / q[5]))
-        bmesh.ops.create_icosphere(bm, subdivisions=1 if kind == 0 else 2, radius=r, matrix=__import__('mathutils').Matrix.Translation(q[0]))
+        # r4b: a drop is stretched along its velocity (streaks, as a camera sees flying water; r4 drew polka dots)
+        import mathutils
+        v = q[1]; sp = v.length
+        rot = v.to_track_quat('Z', 'Y').to_matrix().to_4x4() if sp > 1e-3 else mathutils.Matrix.Identity(4)
+        st = mathutils.Matrix.Diagonal((0.7, 0.7, 1.0 + min(2.5, sp * 0.3), 1.0)) if kind == 0 else mathutils.Matrix.Identity(4)      # r4c: thinner, shorter (r4b: rice grains)
+        bmesh.ops.create_icosphere(bm, subdivisions=2, radius=r, matrix=mathutils.Matrix.Translation(q[0]) @ rot @ st)
     me = bpy.data.meshes.new('D'); bm.to_mesh(me); bm.free()
     o = bpy.data.objects.new('Drops%d' % kind, me); sc.collection.objects.link(o); me.materials.append(spray if kind == 0 else bead)
     for p in me.polygons: p.use_smooth = True
@@ -282,6 +324,7 @@ for f in range(frames):
     step_spray(t, dt)
     if ONLY >= 0 and f != ONLY: continue
     wdrv.default_value = t * 0.8
+    for _w in WDRV2: _w.default_value = t * 1.6
     objs = [build_wave(t, None), build_ink(t, None), build_drops(0, None), build_drops(1, None)]
     render_pass('col', f)
     render_pass('dep', f)
