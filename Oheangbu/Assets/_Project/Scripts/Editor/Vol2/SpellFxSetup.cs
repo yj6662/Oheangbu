@@ -10,9 +10,10 @@ namespace Oheangbu.EditorTools.Vol2
     /// <summary>D308-153: builds the 우 comparison assets of the restart - the catalogue, and one prefab per route:
     ///   A = Cycles-rendered frame sequences (far / near) as Texture2DArrays on cards (SpellFxCardsPart, pitch 0),
     ///   B = the concept u_a cut into two painted stills on cards (SpellFxCardsPart, pitch 17.4 - the concept looks down),
-    ///   C = the live in-engine wave ring (SpellFxRingWavePart + Oheangbu/SpellFx/Water).
-    /// Queue: python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.SpellFxSetupCommands Run "setup:u[:a=<frames dir with far/ near/>]"
-    /// No dialogs. Saves only the assets it writes (AssetDatabase.SaveAssetIfDirty per asset).</summary>
+    ///   C = the live in-engine wave ring (SpellFxRingWavePart + Oheangbu/SpellFx/Water),
+    ///   P = the pattern ring (SpellFxPatternRingPart + Oheangbu/SpellFx/Pattern, D308-153b): seigaiha wall, crest cards, ink ribbons, a burst on contact. A is record-only now.
+    /// Queue: python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.SpellFxSetupCommands Run "setup:u[:a=<frames dir with far/ near/>]"   or   "setup:u:p" (only P)
+    /// The catalogue is MERGED: only the variants built in the run are replaced. No dialogs. Saves only the assets it writes (AssetDatabase.SaveAssetIfDirty per asset).</summary>
     public static class SpellFxSetupCommands
     {
         const string Root = "Assets/_Project/Art/SpellVFX308/Restart";
@@ -23,27 +24,35 @@ namespace Oheangbu.EditorTools.Vol2
             try
             {
                 var c = (command ?? "").Trim();
-                if (!c.StartsWith("setup:u", StringComparison.Ordinal)) return "REFUSED setup: setup:u[:a=<dir>]";
-                string aDir = null;
-                foreach (var part in c.Split(':').Skip(2)) if (part.StartsWith("a=", StringComparison.Ordinal)) aDir = part.Substring(2);
-                return SetupU(aDir);
+                if (!c.StartsWith("setup:u", StringComparison.Ordinal)) return "REFUSED setup: setup:u[:a=<dir>] | setup:u:p";
+                // setup:u           builds B, C and P (A only with a=<dir>: A is record-only now) and MERGES them into the catalogue
+                // setup:u:p         builds only P
+                // setup:u:a=<dir>   the rest of the string is the path (it may hold a drive colon)
+                string rest = c.Substring("setup:u".Length).TrimStart(':');
+                bool onlyP = string.Equals(rest, "p", StringComparison.OrdinalIgnoreCase);
+                string aDir = rest.StartsWith("a=", StringComparison.OrdinalIgnoreCase) ? rest.Substring(2) : null;
+                if (rest.Length > 0 && !onlyP && aDir == null) return "REFUSED setup: unknown option '" + rest + "' (setup:u[:a=<dir>] | setup:u:p)";
+                return SetupU(aDir, onlyP);
             }
             catch (Exception e) { return "EXCEPTION " + e.GetType().Name + " " + e.Message; }
         }
 
-        static string SetupU(string aDir)
+        static string SetupU(string aDir, bool onlyP)
         {
-            Directory.CreateDirectory(UDir + "/A"); Directory.CreateDirectory(UDir + "/B"); Directory.CreateDirectory(UDir + "/C");
+            Directory.CreateDirectory(UDir + "/A"); Directory.CreateDirectory(UDir + "/B"); Directory.CreateDirectory(UDir + "/C"); Directory.CreateDirectory(UDir + "/P");
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             var log = new System.Text.StringBuilder();
             var cardShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxCard.shader");
             var waterShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxWater.shader");
-            if (cardShader == null || waterShader == null) return "REFUSED setup:u: shaders missing under " + Root + "/Shaders";
+            var patternShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/SpellFxPattern.shader");
+            if (!onlyP && (cardShader == null || waterShader == null)) return "REFUSED setup:u: shaders missing under " + Root + "/Shaders";
+            if (patternShader == null) return "REFUSED setup:u: " + Root + "/Shaders/SpellFxPattern.shader missing";
 
             // ---- B: the two stills ----
-            Texture2D bFar = Still(UDir + "/B/u_b_far.png"), bNear = Still(UDir + "/B/u_b_near.png");
+            Texture2D bFar = onlyP ? null : Still(UDir + "/B/u_b_far.png"), bNear = onlyP ? null : Still(UDir + "/B/u_b_near.png");
             GameObject pB = null;
-            if (bFar != null && bNear != null)
+            if (onlyP) { }
+            else if (bFar != null && bNear != null)
             {
                 pB = Prefab(UDir + "/U_B.prefab", 2.6f, go =>
                 {
@@ -63,7 +72,8 @@ namespace Oheangbu.EditorTools.Vol2
             // ---- A: the rendered sequences ----
             GameObject pA = null;
             // r2: one colour card + its depth (the render's view depth per pixel; the card tests it against the scene) - r1's far/near cards hid the bear
-            if (!string.IsNullOrEmpty(aDir) && Directory.Exists(Path.Combine(aDir, "col")))
+            if (onlyP) { }
+            else if (!string.IsNullOrEmpty(aDir) && Directory.Exists(Path.Combine(aDir, "col")))
             {
                 var col = Sequence(Path.Combine(aDir, "col"), UDir + "/A/u_a_col.asset", false);
                 var dep = Sequence(Path.Combine(aDir, "dep"), UDir + "/A/u_a_dep.asset", true);
@@ -89,22 +99,54 @@ namespace Oheangbu.EditorTools.Vol2
             else log.Append("A: skipped (no a=<dir>); ");
 
             // ---- C: the live ring ----
-            var pC = Prefab(UDir + "/U_C.prefab", 2.6f, go =>
+            GameObject pC = null;
+            if (!onlyP)
             {
-                var part = go.AddComponent<SpellFxRingWavePart>();
-                var so = new SerializedObject(part);
-                so.FindProperty("waterShader").objectReferenceValue = waterShader;
-                so.ApplyModifiedPropertiesWithoutUndo();
-            });
-            log.Append("C ok; ");
+                pC = Prefab(UDir + "/U_C.prefab", 2.6f, go =>
+                {
+                    var part = go.AddComponent<SpellFxRingWavePart>();
+                    var so = new SerializedObject(part);
+                    so.FindProperty("waterShader").objectReferenceValue = waterShader;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                });
+                log.Append("C ok; ");
+            }
 
-            // ---- catalogue ----
+            // ---- P: the pattern ring (D308-153b) ----
+            var crest = PatternMask(UDir + "/P/p_232.png"); var burstA = PatternMask(UDir + "/P/p_226.png"); var burstB = PatternMask(UDir + "/P/p_247.png");
+            var ink = InkStroke(UDir + "/P/ink_stroke.png");
+            GameObject pP = null;
+            if (crest != null && burstA != null && burstB != null && ink != null)
+            {
+                pP = Prefab(UDir + "/U_P.prefab", 1.8f, go =>
+                {
+                    var player = go.GetComponent<SpellFxPlayer>();
+                    var pso = new SerializedObject(player); pso.FindProperty("tailSeconds").floatValue = 1.2f; pso.ApplyModifiedPropertiesWithoutUndo();      // a hit late in the life still plays its burst
+                    var part = go.AddComponent<SpellFxPatternRingPart>();
+                    var so = new SerializedObject(part);
+                    so.FindProperty("patternShader").objectReferenceValue = patternShader;
+                    so.FindProperty("crestTex").objectReferenceValue = crest;
+                    so.FindProperty("burstTexA").objectReferenceValue = burstA;
+                    so.FindProperty("burstTexB").objectReferenceValue = burstB;
+                    so.FindProperty("inkTex").objectReferenceValue = ink;
+                    so.FindProperty("radius").floatValue = 2.2f;
+                    so.FindProperty("lifeSeconds").floatValue = 1.8f;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                });
+                log.Append("P ok; ");
+            }
+            else log.Append("P: textures missing under " + UDir + "/P (p_232 / p_226 / p_247 / ink_stroke); ");
+
+            // ---- catalogue: MERGE - only the variants built in this run are replaced, every other 우 variant (and every other letter) stays ----
             var cat = AssetDatabase.LoadAssetAtPath<SpellFxCatalog>(SpellFxCatalog.AssetPath);
             if (cat == null) { cat = ScriptableObject.CreateInstance<SpellFxCatalog>(); AssetDatabase.CreateAsset(cat, SpellFxCatalog.AssetPath); }
-            var list = (cat.entries ?? new SpellFxCatalog.Entry[0]).Where(e => e != null && e.letter != "우").ToList();
-            if (pA != null) list.Add(new SpellFxCatalog.Entry { letter = "우", variant = "A", prefab = pA });
-            if (pB != null) list.Add(new SpellFxCatalog.Entry { letter = "우", variant = "B", prefab = pB });
-            if (pC != null) list.Add(new SpellFxCatalog.Entry { letter = "우", variant = "C", prefab = pC });
+            var built = new System.Collections.Generic.Dictionary<string, GameObject>();
+            if (pA != null) built["A"] = pA;
+            if (pB != null) built["B"] = pB;
+            if (pC != null) built["C"] = pC;
+            if (pP != null) built["P"] = pP;
+            var list = (cat.entries ?? new SpellFxCatalog.Entry[0]).Where(e => e != null && !(e.letter == "우" && built.ContainsKey(e.variant))).ToList();
+            foreach (var kv in built) list.Add(new SpellFxCatalog.Entry { letter = "우", variant = kv.Key, prefab = kv.Value });
             cat.entries = list.ToArray();
             EditorUtility.SetDirty(cat); AssetDatabase.SaveAssetIfDirty(cat);
             log.Append("catalogue: " + string.Join(", ", cat.entries.Select(e => e.letter + "/" + e.variant)));
@@ -130,6 +172,32 @@ namespace Oheangbu.EditorTools.Vol2
                 imp.textureType = TextureImporterType.Default; imp.alphaIsTransparency = true; imp.mipmapEnabled = false; imp.wrapMode = TextureWrapMode.Clamp;
                 imp.maxTextureSize = 2048; imp.textureCompression = TextureImporterCompression.CompressedHQ; imp.sRGBTexture = true;
                 imp.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        /// <summary>Route P pattern card: RGB = three masks (R line, G fill, B rim grown outward), so linear (sRGB off), mipmaps on, clamp. Reimports only when a setting differs.</summary>
+        static Texture2D PatternMask(string path) => Import(path, false, false);
+
+        /// <summary>Route P ink stroke: white RGB + alpha brush stroke, sRGB on, alpha is transparency, clamp.</summary>
+        static Texture2D InkStroke(string path) => Import(path, true, true);
+
+        static Texture2D Import(string path, bool srgb, bool alphaIsTransparency)
+        {
+            if (!File.Exists(path)) return null;
+            var imp = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (imp != null)
+            {
+                bool change = imp.textureType != TextureImporterType.Default || imp.sRGBTexture != srgb || !imp.mipmapEnabled || imp.wrapMode != TextureWrapMode.Clamp
+                    || imp.alphaIsTransparency != alphaIsTransparency || imp.filterMode != FilterMode.Trilinear || imp.anisoLevel != 4 || imp.maxTextureSize != 2048
+                    || imp.textureCompression != TextureImporterCompression.CompressedHQ;
+                if (change)
+                {
+                    imp.textureType = TextureImporterType.Default; imp.sRGBTexture = srgb; imp.mipmapEnabled = true; imp.wrapMode = TextureWrapMode.Clamp;
+                    imp.alphaIsTransparency = alphaIsTransparency; imp.filterMode = FilterMode.Trilinear; imp.anisoLevel = 4; imp.maxTextureSize = 2048;
+                    imp.textureCompression = TextureImporterCompression.CompressedHQ;
+                    imp.SaveAndReimport();
+                }
             }
             return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
