@@ -97,7 +97,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // ---- shimmer ----
             float flick = 0.92 + 0.08 * sin(_Age * 7.0 + hash * 40.0) + step(0.88, hash) * 0.3 * saturate(sin(_Age * 9.0 + hash * 17.0));
             // ---- hit: a ring running out from the struck point + the cells round it flash ----
-            float ripple = 0, touch = 0, speck = 0, cellHit = 0, seamFlash = 0, quietNear = 0, ripEdge = 0;
+            float ripple = 0, touch = 0, speck = 0, cellHit = 0, seamFlash = 0, quietNear = 0, ripEdge = 0, spill = 0;
             if (_HitAge >= 0)
             {
                 // round 5: by DIRECTION from the dome centre - the struck body stands inside, 1.5 m+ from any wall, so a distance test lit nothing (Fable r4: no flash seen)
@@ -125,6 +125,9 @@ Shader "Oheangbu/SpellFx/HexDome"
                 // round 17 (Fable r16: only the edges near the contact lit, a 2-frame blink under the clip): the WHOLE struck cell (by its centre), HDR, 6 - 8 frame decay
                 float dCell = distance(i.ctrWS, _HitCell.xyz);                // round 17b: the part picks the struck cell (nearest centre) - exactly one cell answers
                 cellHit = step(dCell, 0.05) * _HitCell.w;
+                // round 22 (Fable r21: a brightened plate, no light past its edge): a short spill of light over the struck cell's border onto its neighbours (2 - 4 frames)
+                float dFromCell = distance(i.posWS, _HitCell.xyz);
+                spill = exp(-max(dFromCell - 0.45, 0) / 0.3) * exp(-_HitAge * 16.0) * step(0, _HitAge) * _HitCell.w;
                 seamFlash = cellHit * exp(-_HitAge * 18.0) * 5.0;
                 quietNear = smoothstep(2.4, 1.6, dCell) * (1 - cellHit) * saturate(1 - _HitAge / 0.6);     // the neighbours do not bloom for 0.6 s (the struck cell reads alone)
                 speck = smoothstep(0.32, 0.12, dist) * saturate(1 - _HitAge / 0.12) * smoothstep(0.74, 0.8, VNoise(i.posWS.xy * 16.0 + i.posWS.z * 11.0));     // round 15: 2 - 4 clear ink dots, not a smear     // round 13 / 14: a short INK speck at the contact (dark, not a light)
@@ -188,6 +191,10 @@ Shader "Oheangbu/SpellFx/HexDome"
             // round 21 (Fable r20: the hit read as an outline, not light): the struck cell's whole membrane flashes - pale light, brighter toward its seams, 6 frames
             float memFlash = cellHit * exp(-_HitAge * 11.0) * step(0, _HitAge) * lerp(0.45, 1.0, edge);
             col = lerp(col, float3(1.35, 1.45, 1.5), saturate(memFlash * 0.7)); a = max(a, memFlash * 0.42 * fill);
+            // round 22: a bright core at the struck cell's centre, and the spill (light, not paint) over its border
+            float core = cellHit * exp(-_HitAge * 14.0) * step(0, _HitAge) * smoothstep(0.55, 0.0, edge);
+            col = lerp(col, float3(1.9, 1.95, 2.0), saturate(core * 0.9)); a = max(a, core * 0.55 * fill);
+            col = lerp(col, float3(1.5, 1.6, 1.65), saturate(spill * 0.55)); a = a + spill * 0.3 * fill * (1 - a);
             a = a + pa * (1 - a);
             // round 5 (Fable r4: flat opaque white wires): a thin bright core inside a soft halo
             float lineFade = 1 - saturate(_Fade * 1.6);                         // round 7: the grid goes before the glass (no bare wire left)
