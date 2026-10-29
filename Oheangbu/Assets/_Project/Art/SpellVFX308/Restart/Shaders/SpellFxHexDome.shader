@@ -17,8 +17,8 @@ Shader "Oheangbu/SpellFx/HexDome"
         _BaseRing ("Base ring colour (HDR)", Color) = (1.8, 1.7, 1.5, 1)
         _EdgeW ("Border width (edge units)", Range(0.003, 0.3)) = 0.009
         _Halo ("Border halo colour (ink bleed)", Color) = (0.06, 0.06, 0.08, 1)
-        _LineInk ("Line side colour (ink-toned cream)", Color) = (0.42, 0.39, 0.34, 1)
-        _HitCol ("Hit ripple colour (HDR)", Color) = (1.9, 1.75, 1.35, 1)
+        _LineInk ("Line side colour (ink-toned, cool)", Color) = (0.36, 0.37, 0.40, 1)
+        _HitCol ("Hit ripple colour (HDR)", Color) = (1.3, 1.32, 1.38, 1)
         _HaloA ("Border halo alpha", Range(0, 1)) = 0.24
         _CorePxMin ("Core width min (render px)", Float) = 0.2
         _CorePxMax ("Core width max (render px)", Float) = 0.34
@@ -111,11 +111,11 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float life = saturate(1 - _HitAge / 0.55) * smoothstep(maxR, maxR * 0.7, dist);
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
                 float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
-                float k1 = smoothstep(-0.015, 0.0, s1) * exp(-max(s1, 0) / 0.02), k2 = smoothstep(-0.012, 0.0, s2) * exp(-max(s2, 0) / 0.016);     // round 14: half as wide
-                float dry = smoothstep(0.5, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 3.6, dist * 4.0)));     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
-                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.08 + 0.92 * dry);
+                float k1 = smoothstep(-0.015, 0.0, s1) * exp(-max(s1, 0) / 0.012), k2 = smoothstep(-0.012, 0.0, s2) * exp(-max(s2, 0) / 0.01);     // round 14 / 15: narrow, little glow
+                float dry = smoothstep(0.5, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 5.0, 0.37)));     // round 15: breaks by ANGLE only - there from the first frame (Fable r14: only late)     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
+                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.04 + 0.96 * dry) * (0.45 + 0.75 * VNoise(i.posWS.xy * 14.0 + i.posWS.z * 9.0));     // round 15: ink density along the stroke
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
-                speck = smoothstep(0.22, 0.0, dist) * saturate(1 - _HitAge / 0.06) * smoothstep(0.3, 0.7, VNoise(i.posWS.xy * 26.0 + i.posWS.z * 13.0));     // round 13 / 14: a short INK speck at the contact (dark, not a light)
+                speck = smoothstep(0.32, 0.12, dist) * saturate(1 - _HitAge / 0.12) * smoothstep(0.74, 0.8, VNoise(i.posWS.xy * 16.0 + i.posWS.z * 11.0));     // round 15: 2 - 4 clear ink dots, not a smear     // round 13 / 14: a short INK speck at the contact (dark, not a light)
             }
             float boost = 1 + touch * 1.0;
             // ---- layers ----

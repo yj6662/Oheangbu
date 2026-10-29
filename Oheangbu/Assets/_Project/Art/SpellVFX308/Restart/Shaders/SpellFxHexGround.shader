@@ -5,8 +5,8 @@ Shader "Oheangbu/SpellFx/HexGround"
 {
     Properties
     {
-        _Line ("Foot line heart colour (HDR)", Color) = (0.95, 0.88, 0.72, 1)
-        _LineInk ("Foot line side colour (ink-toned cream)", Color) = (0.42, 0.39, 0.34, 1)
+        _Line ("Foot line heart colour (HDR) - the dome seam's colour x 0.6", Color) = (0.75, 0.76, 0.79, 1)
+        _LineInk ("Foot line side colour (ink-toned, cool)", Color) = (0.36, 0.37, 0.40, 1)
         _Glow ("Outer seep colour / alpha", Color) = (0.06, 0.05, 0.05, 0.5)
         _Foot ("Foot position across the band (0..1)", Range(0, 1)) = 0.8
         _LineW ("Foot line width (band units)", Range(0.002, 0.1)) = 0.016
