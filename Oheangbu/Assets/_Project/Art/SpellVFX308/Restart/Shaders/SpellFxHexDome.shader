@@ -11,7 +11,7 @@ Shader "Oheangbu/SpellFx/HexDome"
     {
         _Patterns ("Pattern atlas 4 x 2 (white line on black)", 2D) = "black" {}
         _Glass ("Glass tint (rgb) / alpha", Color) = (0.20, 0.32, 0.50, 0.15)
-        _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.35)
+        _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.22)
         _Line ("Cell border colour (HDR)", Color) = (1.6, 1.46, 1.16, 1)
         _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.97, 1.0, 0.62)
         _BaseRing ("Base ring colour (HDR)", Color) = (1.8, 1.7, 1.5, 1)
@@ -109,7 +109,7 @@ Shader "Oheangbu/SpellFx/HexDome"
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
                 float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
                 float k1 = smoothstep(-0.025, 0.0, s1) * exp(-max(s1, 0) / 0.07), k2 = smoothstep(-0.02, 0.0, s2) * exp(-max(s2, 0) / 0.05);
-                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life;
+                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.55 + 0.6 * VNoise(i.posWS.xy * 9.0 + i.posWS.z * 5.0));     // round 10: ink in the ring
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
                 ripple += smoothstep(0.35, 0.0, dist) * saturate(1 - _HitAge / 0.1) * 1.5;      // the contact flash (6 frames)
             }
@@ -121,6 +121,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // round 7 (Fable r6: the hairline broke into dots on cells facing the camera - under a pixel): never thinner than ~1.5 px on screen
             float fw = max(fwidth(edge), 1e-4);
             float coreW = clamp(_EdgeW, fw * _CorePxMin, fw * _CorePxMax);     // the core is held between ~1.2 and 2 px on screen whatever the cell size (r7 bigger cells made it a neon bar)
+            coreW *= lerp(0.65, 1.5, VNoise(float2(i.posWS.x - i.posWS.y, i.posWS.z + i.posWS.y) * 3.0));     // round 10: the brush line thickens and thins
             float border = smoothstep(1 - coreW - fw * 0.75, 1 - coreW + fw * 0.25, edge);
             float2 q = (i.uv0 - 0.5) / _PatternScale;                     // -0.5..0.5 inside the pattern's square
             float inCircle = smoothstep(0.5, 0.47, length(q));            // the pattern is clipped to a circle: never a square in a hexagon
@@ -129,7 +130,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // the near wall faces the camera and stands between it and the caster: where it faces the camera it is faint (rim bright, middle clear) - the far inner wall carries the patterns
             float facing = smoothstep(_FacingFrom, 0.95, abs(dot(n, v)));
             float lineK = front ? lerp(1, _FacingPattern, facing) : _BackLine, glassK = front ? lerp(1, 0.5, facing) : _BackGlass;
-            float borderK = front ? lerp(1, _FacingBorder, facing) * smoothstep(0.06, 0.22, abs(dot(n, v))) : _BackLine;     // round 9: the hex lines fade at the silhouette (no twin outline with the fresnel rim)
+            float borderK = front ? lerp(1, _FacingBorder, facing) * smoothstep(0.02, 0.09, abs(dot(n, v))) : _BackLine;     // round 9: the hex lines fade at the silhouette (no twin outline with the fresnel rim)
             line_ *= smoothstep(_PatternFrom, _PatternFrom + 0.2, height);        // hx_1: the low ring of cells is plain glass (the caster inside stays clear), patterns from the shoulder up
 
             float front_ = outline * (1 - outline) * 4 * (1 - gone);                   // round 7: the rising front glows (no bare-wire moment while the glass comes)
@@ -155,7 +156,9 @@ Shader "Oheangbu/SpellFx/HexDome"
             float noNew = (1 - saturate(_Fade * 2.5)) * smoothstep(0.2, 0.35, abs(dot(n, v)));    // round 8: no bloom where the two walls overlap near the silhouette                             // no fresh bloom while the dome goes
             bloomVis *= noNew * behind; flash *= noNew * behind;
             // round 9 (Fable r8: clean white gradients - a CG glass shell): ink density - lines and patterns carry a world-space ink grain
-            float ink = 0.62 + 0.5 * VNoise(float2(i.posWS.x + i.posWS.y * 0.7, i.posWS.z - i.posWS.y * 0.5) * 7.0) + 0.15 * VNoise(i.posWS.xz * 31.0 + i.posWS.y * 23.0);
+            // round 10 (Fable r9: the grain did not read at 1280): stronger density swings, and the line width breathes with it
+            float inkLo = VNoise(float2(i.posWS.x + i.posWS.y * 0.7, i.posWS.z - i.posWS.y * 0.5) * 4.0);
+            float ink = 0.3 + 0.95 * inkLo + 0.2 * VNoise(i.posWS.xz * 31.0 + i.posWS.y * 23.0);
 
             float pa = _Pattern.a * line_ * fill * flick * lineK * bloomVis;
             pa = saturate(pa + line_ * fill * flash * 0.5 * lineK);
@@ -174,7 +177,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
             float rip = saturate(ripple) * outline;
             col = lerp(col, _HitCol.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);
-            a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.45, 1.0, _Fade));        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
+            a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade));        // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
             return half4(col, a);
         }
         ENDHLSL

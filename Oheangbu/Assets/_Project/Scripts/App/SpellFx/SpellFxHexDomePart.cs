@@ -12,6 +12,8 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] Material material;
         [Tooltip("Round 9: the dome's mark on the ground (Oheangbu/SpellFx/HexGround) - a flat ring built here; none = no mark.")]
         [SerializeField] Material groundMaterial;
+        [Tooltip("The ring lies this far above the cast origin (round 10: at 1 cm it sank under the lab floor).")]
+        [SerializeField] float groundLift = 0.04f;
         [SerializeField] float radius = 2.2f;
         [Tooltip("Height scale on top of the mesh's own 0.85: the dome must stand taller than the camera (about 2.1 m) or the camera looks down through its crown at the caster (round 2).")]
         [SerializeField] float heightScale = 1.1f;
@@ -55,7 +57,7 @@ namespace Oheangbu.App.SpellFx
                 // a flat ring from 0.6 to 1.1 dome radii, its band uv.x = 0 inside .. 1 outside; the foot (radius 1) sits at uv.x 0.8 (the shader's _Foot)
                 _ground = new GameObject("HexDomeGround");
                 _ground.transform.SetParent(transform, false);
-                _ground.transform.SetPositionAndRotation(_go.transform.position + Vector3.up * 0.01f, Quaternion.identity);
+                _ground.transform.SetPositionAndRotation(_go.transform.position + Vector3.up * groundLift, Quaternion.identity);
                 if (layerId >= 0) _ground.layer = layerId;
                 _groundMesh = Ring(radius * 0.6f, radius * 1.1f, 96);
                 _ground.AddComponent<MeshFilter>().sharedMesh = _groundMesh;

@@ -73,6 +73,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (mat == null) { mat = new Material(shader); AssetDatabase.CreateAsset(mat, matPath); }
             var fresh = new Material(shader);                    // every run resets the tunables to the shader's defaults (the shader file is the one place they live)
             try { EditorUtility.CopySerialized(fresh, mat); } finally { UnityEngine.Object.DestroyImmediate(fresh); }
+            mat.name = "M_U_H";
             mat.SetTexture("_Patterns", tex);
             EditorUtility.SetDirty(mat); AssetDatabase.SaveAssetIfDirty(mat);
             // round 9: the ground mark
@@ -83,6 +84,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (gMat == null) { gMat = new Material(gShader); AssetDatabase.CreateAsset(gMat, gPath); }
             var gFresh = new Material(gShader);
             try { EditorUtility.CopySerialized(gFresh, gMat); } finally { UnityEngine.Object.DestroyImmediate(gFresh); }
+            gMat.name = "M_U_H_ground";
             EditorUtility.SetDirty(gMat); AssetDatabase.SaveAssetIfDirty(gMat);
 
             // ---- prefab ----
