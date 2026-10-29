@@ -27,7 +27,7 @@ namespace Oheangbu.App.SpellFx
         public float PlaySeconds => playSeconds;
         public float TailSeconds => tailSeconds;
         /// <summary>Calls relayed so far (bookkeeping for the fixture / status, read by nothing in the game).</summary>
-        public int BeginCount, LaunchCount, TickCount, HitCount, MaterialCount, ReactionCount, EndCount;
+        public int BeginCount, LaunchCount, TickCount, HitCount, MaterialCount, ReactionCount, EndCount, InterceptCount, BlockCount;
 
         /// <summary>Gives the prefab its cast and puts it at the cast point looking along the aim. Safe before the prefab is active (the director builds it inactive).</summary>
         public void Begin(SpellFxCast cast)
@@ -82,6 +82,24 @@ namespace Oheangbu.App.SpellFx
             if (Cast == null || _ended) return;
             ReactionCount++;
             Each(p => p.OnReaction(Cast, reaction));
+        }
+
+        /// <summary>D308-156: the cast's ward took an enemy shot at <paramref name="point"/>.</summary>
+        public void Intercept(Vector3 point)
+        {
+            if (Cast == null || _ended) return;
+            if (!Launched) Launch();          // the ward stands from its commit
+            InterceptCount++;
+            Each(p => p.OnIntercept(Cast, point));
+        }
+
+        /// <summary>D308-156: the cast's ward stopped a melee hit (drawn at <paramref name="point"/>).</summary>
+        public void Block(Vector3 point)
+        {
+            if (Cast == null || _ended) return;
+            if (!Launched) Launch();
+            BlockCount++;
+            Each(p => p.OnBlock(Cast, point));
         }
 
         /// <summary>The cast is over for the look (the executor's end, a reset, the cap). Once.</summary>

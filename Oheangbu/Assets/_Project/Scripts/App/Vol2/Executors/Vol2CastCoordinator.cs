@@ -73,6 +73,11 @@ namespace Oheangbu.App
         public readonly List<string> FieldNotes = new List<string>();
         /// <summary>Free-form facts a verb wants on the log (cage start / end, spread rooms ...).</summary>
         public readonly List<string> Notes = new List<string>();
+        /// <summary>D308-156: the ㅜ ward of this cast stands until this scope-clock microsecond (-1 = the cast is no ward).</summary>
+        public long WardUntilUs = -1;
+        /// <summary>D308-156: what the ward did besides touching bodies - shots taken ("Intercept") and melee hits stopped ("Block"), in order.</summary>
+        public readonly List<Vol2WardEvent> WardEvents = new List<Vol2WardEvent>();
+        public int WardCount(string kind) { int n = 0; foreach (var e in WardEvents) if (e.Kind == kind) n++; return n; }
 
         public int ContactCount => Contacts.Count;
         public decimal TotalUnits { get { decimal u = 0; foreach (var c in Contacts) if (c.DamageApplied) u += c.Units; foreach (var t in Ticks) if (t.Applied) u += t.Units; return u; } }
@@ -103,6 +108,15 @@ namespace Oheangbu.App
         string OnGateCut(CastId cast, Vector3 centre, float radius) => "no gate cut on this field port: recorded only";
         /// <summary>웅: the returning ring cleansed the ground from <paramref name="inner"/> to <paramref name="outer"/> metres around <paramref name="centre"/> (the non-combat pollution gate).</summary>
         string OnCleanse(CastId cast, Vector3 centre, float inner, float outer) => "no cleanse on this field port: recorded only";
+    }
+
+    /// <summary>D308-156: a running ward as the coordinator asks it (implemented by Vol2OnceExecutor's ward run). Covers = the ward stands now and the caster is
+    /// within space.ring.radius of its centre.</summary>
+    public interface IVol2WardRun
+    {
+        bool Covers(long nowUs, Vector3 casterPosition);
+        Vector3 BlockPoint(Vector3 casterPosition, IReadOnlyList<IVol2Target> targets);
+        void RecordBlock(long nowUs, Vector3 point, string note);
     }
 
     /// <summary>S5-b slices 3 and 4: CastAccepted -> shape -> contacts -> rules' budget -> damage / body action / material, for the verbs whose
@@ -143,6 +157,9 @@ namespace Oheangbu.App
         public IVol2InkSpender Ink { get; set; }
         public IVol2ParryPort ParryPort { get; set; }
         public IVol2FieldPort Field { get; set; }
+        /// <summary>D308-156: the player's side of the ㅜ ward's melee block (bound by the scope's runtime; null in a fixture = the block is only asked through
+        /// <see cref="TryBlockMelee"/>). The ward asks it to bind when a ward begins; it is released with the coordinator.</summary>
+        public IVol2MeleeWardPort MeleeWard { get; set; }
         /// <summary>Is this body a boss (bind x0.5 ...)? Default: the enemy's own flag. A fixture sets its own.</summary>
         public Func<IVol2Target, bool> BossTest { get; set; } = t => t is Vol2EnemyTarget e && e.Vitals != null && e.Vitals.IsBoss;
         public Vol2StatusBook Wet { get; } = new Vol2StatusBook();
@@ -169,6 +186,9 @@ namespace Oheangbu.App
 
         public event Action<Vol2CastLog> CastBegan, CastEnded, CastUnsupported;
         public event Action<Vol2CastLog, Vol2ContactRecord> ContactResolved;
+        /// <summary>D308-156: a ward took an enemy shot at this point / stopped a melee hit (drawn at this point). Presentation listens (SpellFxDirector).</summary>
+        public event Action<Vol2CastLog, Vector3> ShotIntercepted, MeleeBlocked;
+        public int MeleeBlocks { get; private set; }
 
         public Vol2CastCoordinator(Vol2Services services, Vol2TargetRegistry registry, IVol2Caster caster, IVol2Obstruction wall,
             IVol2DamageSink damage, IVol2StatusSink status, IVol2InkSpender ink, Vol2ShapeTuning tuning, Vol2SwingSignal swings,
@@ -197,6 +217,7 @@ namespace Oheangbu.App
             _swings.Contact -= OnSwing;
             _active.Clear(); _dots.Clear();
             Reactions.Dispose();
+            try { MeleeWard?.Release(); } catch (Exception e) { Debug.LogException(e); }
         }
 
         public bool TryGetLog(CastId cast, out Vol2CastLog log) => _logs.TryGetValue(cast.Value, out log);
@@ -375,6 +396,40 @@ namespace Oheangbu.App
         }
 
         public void NotifyContact(Vol2CastLog log, Vol2ContactRecord rec) { ContactResolved?.Invoke(log, rec); }
+
+        // ---- D308-156: the ㅜ ward ----
+
+        /// <summary>A ward began: the player's melee port asks <see cref="TryBlockMelee"/> from now on (idempotent).</summary>
+        public void EnsureMeleeWard()
+        {
+            try { MeleeWard?.Ensure(TryBlockMelee); } catch (Exception e) { Debug.LogException(e); }
+        }
+
+        /// <summary>An enemy melee hit is about to land on the caster: if a standing ward covers the caster NOW (the first running ward that does), the hit is blocked -
+        /// recorded on that cast's log and announced (<see cref="MeleeBlocked"/>). No parry, no reward, no groggy: nothing else happens. true = blocked.</summary>
+        public bool TryBlockMelee(string note)
+        {
+            if (_disposed) return false;
+            long now = _clock.NowUs;
+            Vector3 at = _caster.Position;
+            for (int i = 0; i < _active.Count; i++)
+            {
+                var a = _active[i];
+                if (!(a.Verb is IVol2WardRun ward) || !ward.Covers(now, at)) continue;
+                Vector3 point = ward.BlockPoint(at, _targets);
+                ward.RecordBlock(now, point, note);
+                MeleeBlocks++;
+                try { MeleeBlocked?.Invoke(a.Log, point); } catch (Exception e) { Debug.LogException(e); }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>A ward took an enemy shot at <paramref name="point"/> (already recorded on the cast log by the ward): announce it.</summary>
+        public void NotifyWardIntercept(Vol2CastRun a, Vector3 point)
+        {
+            try { ShotIntercepted?.Invoke(a.Log, point); } catch (Exception e) { Debug.LogException(e); }
+        }
 
         /// <summary>One damage request for <paramref name="amount"/> action units (R). The units are H x min(R x S, cap); B and K are the damage entry's, at the hit.</summary>
         public void Hit(Vol2CastRun a, IVol2Target t, Vol2ContactRecord rec, decimal amount, AttackId attack, long now, Vector3 point, long swing, int ordinal)

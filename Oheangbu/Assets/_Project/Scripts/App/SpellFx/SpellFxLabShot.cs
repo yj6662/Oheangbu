@@ -86,15 +86,27 @@ namespace Oheangbu.App.SpellFx
             transform.position = point;
             if (_body != null) _body.SetActive(false);
             if (_trail != null) _trail.emitting = false;
-            Burst(point, normal, Velocity);
+            Burst(transform, point, normal);
             Destroy(gameObject, 2.2f);
         }
 
-        void Burst(Vector3 point, Vector3 normal, Vector3 vel)
+        /// <summary>D308-156: the same ink burst for a REAL shot a ward took (the shot itself is the game's; this only draws its end at <paramref name="point"/>).
+        /// Builds a short-lived holder that removes itself.</summary>
+        public static void InkBurst(Vector3 point, Vector3 normal)
+        {
+            if (!Application.isPlaying) return;           // particles need Play; an edit-mode fixture only counts the call
+            var go = new GameObject("SpellFxInkBurst");
+            go.transform.position = point;
+            int layer = VfxAfterFog308.Layer; if (layer >= 0) go.layer = layer;
+            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up);
+            Destroy(go, 2.2f);
+        }
+
+        static void Burst(Transform parent, Vector3 point, Vector3 normal)
         {
             var mat = InkMaterial();
             // drops: thrown back off the membrane and sideways, falling
-            var drops = MakeSystem("InkDrops", point, mat);
+            var drops = MakeSystem(parent, "InkDrops", point, mat);
             var main = drops.main;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 1.0f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 2.6f);
@@ -110,7 +122,7 @@ namespace Oheangbu.App.SpellFx
             col.color = g;
             drops.Play();
             // the cloud: the shot's own ink spreading where it stopped, like ink let into water
-            var cloud = MakeSystem("InkCloud", point, mat);
+            var cloud = MakeSystem(parent, "InkCloud", point, mat);
             var cm = cloud.main;
             cm.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1.0f);
             cm.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.4f);
@@ -126,10 +138,10 @@ namespace Oheangbu.App.SpellFx
             cloud.Play();
         }
 
-        ParticleSystem MakeSystem(string name, Vector3 at, Material mat)
+        static ParticleSystem MakeSystem(Transform parent, string name, Vector3 at, Material mat)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(transform, false); go.transform.position = at;
+            go.transform.SetParent(parent, false); go.transform.position = at;
             int layer = VfxAfterFog308.Layer; if (layer >= 0) go.layer = layer;
             var ps = go.AddComponent<ParticleSystem>();
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);

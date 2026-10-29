@@ -93,6 +93,8 @@ namespace Oheangbu.App
             runtime.Coordinator.Reactions.Enabled = true;
             runtime.Field = new Vol2FieldGateAdapter(caster, services.Clock, runtime.Coordinator.Reactions.Tuning) { Targets = () => runtime.Coordinator.Targets };
             runtime.Coordinator.Field = runtime.Field;
+            // D308-156: the ㅜ ward's melee block asks at the player's incoming melee hits (bound when the first ward begins, released with the coordinator)
+            runtime.Coordinator.MeleeWard = new Vol2PlayerMeleeWardPort(() => wiring != null ? wiring.Vol2Player : null);
             runtime.World = new Vol2WorldMaterials(runtime.Materials, services.Clock, runtime.Coordinator.Reactions.Tuning);
             runtime.Block = new Vol2MovementBlock(runtime.Materials, runtime.Coordinator.Reactions.Tuning);
             go.AddComponent<Vol2WorldBinder>().Bind(runtime.World);

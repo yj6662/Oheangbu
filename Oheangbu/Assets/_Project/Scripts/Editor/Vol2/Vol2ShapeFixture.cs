@@ -177,8 +177,11 @@ namespace Oheangbu.EditorTools.Vol2
                 var sitter = rig.Add("MiddleSitter", 0, 0);
                 var log = rig.Cast('구', out _);
                 var names = Rig.Names(log).OrderBy(x => x, StringComparer.Ordinal).ToList();
-                Check(r, "C4", log.Shape == Vol2ShapeKind.Ring && names.SequenceEqual(new[] { "Band2.0", "BandSide-2.1", "Walker" }) && log.Finished && log.PaidContacts == 3,
-                    "한 번 ring 구: the two on the band and the one that walked across it; the middle, the hollow and the outside are untouched");
+                // D308-156: 구 is a ward now - it stands for the ward life (the cast is still running at the commit) and ends with it; the contacts at the commit are the same
+                bool runningAtCommit = !log.Finished && log.WardUntilUs > log.StartUs;
+                rig.Advance(Vol2Time.ToSecondsF(log.WardUntilUs - log.StartUs) + 0.05, 20);
+                Check(r, "C4", log.Shape == Vol2ShapeKind.Ring && names.SequenceEqual(new[] { "Band2.0", "BandSide-2.1", "Walker" }) && runningAtCommit && log.Finished && log.PaidContacts == 3,
+                    "한 번 ring 구 (ward, D308-156): the two on the band and the one that walked across it; the middle, the hollow and the outside are untouched; running at the commit, Done after the ward life");
             }
 
             // ---- C5 attachment / parry ----

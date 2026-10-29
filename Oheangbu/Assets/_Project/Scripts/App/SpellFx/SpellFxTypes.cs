@@ -36,6 +36,11 @@ namespace Oheangbu.App.SpellFx
         public long StartUs, LaunchUs;
         /// <summary>-1 while the executor has not ended the cast.</summary>
         public long EndUs = -1;
+        /// <summary>D308-156: the scope-clock microsecond the cast's ward stands until (-1 = no ward). A ward's look reads its life from here, not from its own number.</summary>
+        public long WardUntilUs = -1;
+        public bool HasWard => WardUntilUs >= 0;
+        /// <summary>Seconds from the launch to the ward's end (0 = no ward).</summary>
+        public float WardSeconds => HasWard ? Mathf.Max(0f, (float)((WardUntilUs - LaunchUs) / 1000000.0)) : 0f;
         public bool Ended => EndUs >= 0;
         public Vol2CastLog Log;
         public IVol2Clock Clock;
@@ -116,6 +121,10 @@ namespace Oheangbu.App.SpellFx
         void OnHit(SpellFxCast cast, SpellFxHit hit) { }
         void OnMaterial(SpellFxCast cast, SpellFxMaterial material) { }
         void OnReaction(SpellFxCast cast, SpellFxReaction reaction) { }
+        /// <summary>D308-156: the cast's ward shot an enemy shot down at <paramref name="point"/> (where the shot met the ward's band, at the shot's height).</summary>
+        void OnIntercept(SpellFxCast cast, Vector3 point) { }
+        /// <summary>D308-156: the cast's ward stopped a melee hit on the caster; <paramref name="point"/> is the ward's wall toward the nearest enemy, chest high.</summary>
+        void OnBlock(SpellFxCast cast, Vector3 point) { }
         void OnEnd(SpellFxCast cast, SpellFxEndReason reason) { }
     }
 }

@@ -34,6 +34,9 @@ namespace Oheangbu.App.SpellFx
         public int Skipped { get; private set; }
         public int Retired { get; private set; }
         public int HitsRelayed { get; private set; }
+        /// <summary>D308-156: ward events relayed (shots taken, melee hits stopped).</summary>
+        public int InterceptsRelayed { get; private set; }
+        public int BlocksRelayed { get; private set; }
         public int ActiveCount => _active.Count;
         public string LastNote { get; private set; } = "";
 
@@ -70,6 +73,7 @@ namespace Oheangbu.App.SpellFx
             _c.CastBegan += OnBegan; _c.CastEnded += OnEnded; _c.ContactResolved += OnContact;
             _c.Materials.Created += OnMaterialCreated; _c.Materials.Ended += OnMaterialEnded;
             _c.Reactions.ReactionResolved += OnReaction;
+            _c.ShotIntercepted += OnIntercept; _c.MeleeBlocked += OnBlock;          // D308-156: the ㅜ ward's events
             _covers = Covers;
             SpellFxSilencer.Register(_covers);
         }
@@ -98,6 +102,7 @@ namespace Oheangbu.App.SpellFx
                 _c.CastBegan -= OnBegan; _c.CastEnded -= OnEnded; _c.ContactResolved -= OnContact;
                 _c.Materials.Created -= OnMaterialCreated; _c.Materials.Ended -= OnMaterialEnded;
                 _c.Reactions.ReactionResolved -= OnReaction;
+                _c.ShotIntercepted -= OnIntercept; _c.MeleeBlocked -= OnBlock;
             }
             if (_covers != null) SpellFxSilencer.Unregister(_covers);
             _covers = null;
@@ -195,7 +200,29 @@ namespace Oheangbu.App.SpellFx
                 CastId = log.Cast.Value, Letter = g.Letter, Body = g.Body, Frame = g.Frame, Verb = g.Verb, Variant = variant, Spec = spec,
                 Origin = spec.Origin, Forward = spec.Forward, Right = Vector3.Cross(Vector3.up, spec.Forward), Radius = SpellFxCast.RadiusOf(spec, g.Frame),
                 StartUs = log.StartUs, LaunchUs = Math.Max(log.StartUs, log.Emitter.StartUs), Log = log, Clock = _clock, BrushTip = Tip, BrushGrip = Grip,
+                WardUntilUs = log.WardUntilUs,
             };
+        }
+
+        /// <summary>D308-156: the ward of a covered cast took a shot / stopped a melee hit: the cast's prefab hears it.</summary>
+        void OnIntercept(Vol2CastLog log, Vector3 point)
+        {
+            Safe(() =>
+            {
+                if (log == null || !_active.TryGetValue(log.Cast.Value, out var a)) return;
+                a.Player.Intercept(point);
+                InterceptsRelayed++;
+            });
+        }
+
+        void OnBlock(Vol2CastLog log, Vector3 point)
+        {
+            Safe(() =>
+            {
+                if (log == null || !_active.TryGetValue(log.Cast.Value, out var a)) return;
+                a.Player.Block(point);
+                BlocksRelayed++;
+            });
         }
 
         void OnEnded(Vol2CastLog log)
