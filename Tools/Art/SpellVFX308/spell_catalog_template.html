@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>오행부 · 술식 도감</title>
+<style>
+:root{color-scheme:light;--paper:#f3f1e9;--paper2:#fafaf4;--ink:#26332e;--muted:#697369;--line:#d8ddd3;--accent:#315b49;
+--wood:#4f7a4a;--fire:#a5452f;--earth:#9a7a3a;--metal:#66707c;--water:#2f4f7a;
+--s0:#e6e4dc;--s1:#d9c58f;--s2:#9fbf9a;--s3:#5f9a78;--s4:#2f6b4f}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Malgun Gothic",system-ui,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+header{padding:38px max(24px,5vw) 26px;background:#e8ecdf;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:12px;letter-spacing:.16em;font-weight:700;color:var(--accent)}
+h1{font-size:clamp(28px,4vw,42px);letter-spacing:-.05em;margin:6px 0 9px}header p{margin:0;color:var(--muted);max-width:880px}
+.stats{display:flex;gap:26px;flex-wrap:wrap;margin-top:22px}.stat strong{display:block;font-size:25px;line-height:1.25}.stat span{font-size:12px;color:var(--muted)}
+.stat i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:1px}
+.progress{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--s0);margin-top:18px;max-width:880px}.progress div{height:100%}
+main{max-width:1800px;margin:auto;padding:24px max(16px,4vw) 56px}
+h2.sec{font-size:18px;margin:8px 0 12px}
+.matrixwrap{overflow-x:auto;margin-bottom:30px;border:1px solid var(--line);border-radius:12px;background:var(--paper2)}
+table.matrix{border-collapse:collapse;min-width:620px;width:100%}
+.matrix th{font-size:12px;font-weight:600;color:var(--muted);padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+.matrix th.row{text-align:left;padding-left:14px}.matrix td{padding:4px;text-align:center}
+.matrix tr.groupstart td,.matrix tr.groupstart th{border-top:1px solid var(--line)}
+.cell{width:100%;min-width:52px;height:42px;border:1px solid transparent;border-radius:8px;font-size:20px;font-weight:700;color:var(--ink);background:var(--s0)}
+.cell:hover{border-color:var(--accent)}.cell[data-stage="0"]{color:#9a9c94}
+.toolbar{position:sticky;top:0;z-index:2;background:var(--paper);padding:10px 0 16px;display:grid;grid-template-columns:minmax(160px,1.4fr) repeat(5,minmax(110px,1fr));gap:10px}
+.control{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted)}
+input,select{color:var(--ink);border:1px solid #bac4b6;background:#fbfcf6;border-radius:8px;padding:9px;width:100%;min-width:0}
+input:focus,select:focus,button:focus-visible{outline:3px solid #83a28f;outline-offset:2px}
+.bar{display:flex;align-items:center;gap:12px;justify-content:space-between;margin:0 0 16px;color:var(--muted);font-size:13px}
+.bar button,.close{border:1px solid #b7c4b3;border-radius:7px;background:#fbfcf6;color:var(--accent);padding:7px 13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}
+.card{display:flex;flex-direction:column;text-align:left;padding:0;border:1px solid var(--line);background:var(--paper2);border-radius:12px;overflow:hidden;color:inherit;transition:border-color .15s,transform .15s}
+.card:hover{border-color:#769980;transform:translateY(-2px)}
+.thumb{width:100%;aspect-ratio:16/9;background:#e2e1d8;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .big{font-size:64px;font-weight:800;opacity:.22;letter-spacing:-.04em}
+.thumb .tag{position:absolute;top:8px;left:8px;font-size:11px;background:#f9fbf2e8;padding:2px 7px;border-radius:5px}
+.thumb .glyph{position:absolute;right:8px;bottom:6px;font-size:28px;font-weight:800;color:#fff;text-shadow:0 1px 4px #0009}
+.cardtext{padding:11px 13px 13px;width:100%}
+.meta{font-size:11px;font-weight:700}.cardtitle{font-size:13px;line-height:1.45;margin:4px 0 0;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.badge{display:inline-block;margin-top:9px;padding:3px 7px;border-radius:4px;font-size:11px}
+.empty{text-align:center;padding:60px;color:var(--muted)}
+dialog{width:min(980px,94vw);max-height:92vh;border:1px solid var(--line);border-radius:14px;padding:0;background:var(--paper2);color:var(--ink)}
+dialog::backdrop{background:#1d2a2499}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper2);z-index:1}
+.dhead h2{margin:0;font-size:20px}.dbody{padding:18px 20px 24px}
+.media{background:#e2e1d8;border-radius:10px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+.media video{width:100%;height:100%;object-fit:contain;background:#111}.media .big{font-size:120px;font-weight:800;opacity:.18}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 4px}.steps span{font-size:12px;padding:4px 9px;border-radius:999px;background:var(--s0);color:var(--muted)}
+.steps span.on{color:#fff}
+.dbody h3{font-size:13px;color:var(--accent);margin:18px 0 4px}.dbody p{margin:0;white-space:pre-wrap}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:14px}
+.fact{border:1px solid var(--line);border-radius:8px;padding:8px 10px}.fact strong{display:block;font-size:17px}.fact span{font-size:11px;color:var(--muted)}
+pre{white-space:pre-wrap;word-break:break-all;font-size:12px;background:#eceee6;padding:8px 10px;border-radius:6px;margin:4px 0 0}
+details summary{cursor:pointer;color:var(--accent);font-size:13px;margin-top:18px}
+.footnote,footer{font-size:12px;color:var(--muted)}footer{margin-top:36px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:760px){.toolbar{grid-template-columns:1fr 1fr}.toolbar .control:first-child{grid-column:1/-1}header{padding:28px 16px 20px}}
+</style></head><body>
+<header>
+<div class="eyebrow">OHEANGBU · VOL.2 SPELLS</div>
+<h1>오행부 · 술식 도감</h1>
+<p>vol.2 120자 술식의 새 VFX(D308-153 재작업) 진행판입니다. 칸은 새 방식으로 만든 술식만 채워지고, 옛 쇼케이스 룩은 싣지 않습니다. 술식을 추가하거나 판정한 뒤 생성 스크립트를 다시 돌리면 갱신됩니다.</p>
+<div class="stats" id="stats"></div>
+<div class="progress" id="progress"></div>
+</header>
+<main>
+<h2 class="sec">진행 표 · 몸·틀 × 동사</h2>
+<div class="matrixwrap"><table class="matrix" id="matrix"></table></div>
+<div class="toolbar">
+<label class="control">검색<input id="query" placeholder="글자 · 정의 · 메모"></label>
+<label class="control">진행<select id="stage"></select></label>
+<label class="control">몸(초성)<select id="body"></select></label>
+<label class="control">틀(중성)<select id="frame"></select></label>
+<label class="control">동사(종성)<select id="verb"></select></label>
+<label class="control">구분<select id="kind"></select></label>
+</div>
+<div class="bar"><span id="count"></span><button type="button" id="reset">필터 초기화</button></div>
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty" hidden>조건에 맞는 술식이 없습니다.</div>
+<footer id="footer"></footer>
+</main>
+<dialog id="detail"><div class="dhead"><h2 id="dtitle"></h2><button type="button" class="close" id="close">닫기</button></div><div class="dbody" id="dbody"></div></dialog>
+<script id="catalog-data" type="application/json">/*DATA*/{}</script>
+<script>
+const DATA=JSON.parse(document.getElementById("catalog-data").textContent),entries=DATA.entries,STAGES=DATA.stages;
+const $=id=>document.getElementById(id);
+const node=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+const BODY={"목":"var(--wood)","화":"var(--fire)","토":"var(--earth)","금":"var(--metal)","수":"var(--water)"};
+const SC=k=>`var(--s${k})`;
+const uniq=key=>[...new Set(entries.map(e=>e[key]))];
+const counts=DATA.metadata.counts;
+// header
+for(let k=STAGES.length-1;k>=0;k--){const s=node("div","stat");const st=node("strong","",`${counts[k]}`);s.append(st);const sp=node("span");const dot=node("i");dot.style.background=SC(k);sp.append(dot,STAGES[k]);s.append(sp);$("stats").append(s);}
+{const s=node("div","stat");s.append(node("strong","",`${entries.length-counts[0]} / ${entries.length}`),node("span","","착수한 술식"));$("stats").prepend(s);}
+for(let k=STAGES.length-1;k>=1;k--){const d=node("div");d.style.width=`${counts[k]/entries.length*100}%`;d.style.background=SC(k);d.title=`${STAGES[k]} ${counts[k]}`;$("progress").append(d);}
+// matrix: rows = 몸 × 틀, columns = 동사
+const verbs=uniq("verb"),codas=uniq("coda");
+{const head=node("tr");head.append(node("th","row","몸 · 틀"));verbs.forEach((v,i)=>head.append(node("th","",`${codas[i]} ${v}`)));$("matrix").append(head);
+let last="";for(const body of uniq("body"))for(const frame of uniq("frame")){const tr=node("tr",body!==last?"groupstart":"");last=body;
+const th=node("th","row");const b=node("b","",body);b.style.color=BODY[body];th.append(b,` · ${frame}`);tr.append(th);
+for(const v of verbs){const e=entries.find(x=>x.body===body&&x.frame===frame&&x.verb===v);const td=node("td");if(e){const c=node("button","cell",e.glyph);c.type="button";c.dataset.stage=e.stage;c.style.background=SC(e.stage);if(e.stage>=3)c.style.color="#fff";c.title=`${e.glyph} · ${e.stageLabel}${e.score!=null?" · "+e.score+"점":""}`;c.addEventListener("click",()=>detail(e));td.append(c);}tr.append(td);}
+$("matrix").append(tr);}}
+// filters
+function fill(id,values,label){const s=$(id);s.append(new Option(`전체 ${label}`,""));values.forEach(v=>s.append(new Option(v,v)));}
+fill("stage",STAGES,"단계");fill("body",uniq("body"),"몸");fill("frame",uniq("frame"),"틀");fill("verb",verbs,"동사");fill("kind",uniq("kind"),"구분");
+let filtered=entries;
+function filter(){const q=$("query").value.trim().toLowerCase();const f={stageLabel:$("stage").value,body:$("body").value,frame:$("frame").value,verb:$("verb").value,kind:$("kind").value};
+filtered=entries.filter(e=>Object.entries(f).every(([k,v])=>!v||e[k]===v)&&(!q||[e.glyph,e.def,e.ledgerNote,e.stem].join(" ").toLowerCase().includes(q)));render();}
+function card(e){const b=node("button","card");b.type="button";const t=node("div","thumb");
+if(e.media){const img=new Image();img.src=e.media.thumb;img.alt=`${e.glyph} 촬영 프레임`;img.loading="lazy";img.onerror=()=>{img.replaceWith(node("span","big",e.glyph));};t.append(img,node("span","glyph",e.glyph));}
+else{const big=node("span","big",e.glyph);big.style.color=BODY[e.body];t.append(big);}
+t.append(node("span","tag",`#${e.index}`));
+const body=node("div","cardtext");const m=node("div","meta",`${e.body} · ${e.frame} · ${e.verb} · ${e.kind}`);m.style.color=BODY[e.body];
+body.append(m,node("p","cardtitle",e.def));const badge=node("span","badge",e.stageLabel+(e.score!=null?` · ${e.score}점`:"")+(e.variant&&e.stage?` · ${e.variant}`:""));badge.style.background=SC(e.stage);if(e.stage>=3)badge.style.color="#fff";body.append(badge);
+b.append(t,body);b.addEventListener("click",()=>detail(e));return b;}
+function render(){$("grid").replaceChildren(...filtered.map(card));$("empty").hidden=filtered.length!==0;$("count").textContent=`전체 ${entries.length}자 중 ${filtered.length}자 표시`;}
+for(const id of ["stage","body","frame","verb","kind"])$(id).addEventListener("change",filter);$("query").addEventListener("input",filter);
+$("reset").addEventListener("click",()=>{for(const id of ["stage","body","frame","verb","kind","query"])$(id).value="";filter();});
+function sec(d,title,value){if(!value)return;d.append(node("h3","",title),node("p","",value));}
+function detail(e){$("dtitle").textContent=`${e.glyph} · ${e.body} ${e.frame} · ${e.verb}`;const d=$("dbody");d.replaceChildren();
+const m=node("div","media");if(e.media){const v=document.createElement("video");v.src=e.media.clip;v.poster=e.media.thumb;v.controls=true;v.loop=true;v.muted=true;v.autoplay=true;v.playsInline=true;m.append(v);}else{const big=node("span","big",e.glyph);big.style.color=BODY[e.body];m.append(big);}d.append(m);
+const steps=node("div","steps");STAGES.forEach((s,k)=>{const sp=node("span",k<=e.stage&&e.stage>0?"on":"",s);if(k<=e.stage&&e.stage>0)sp.style.background=SC(Math.max(k,2));steps.append(sp);});d.append(steps);
+if(!e.media)d.append(node("p","footnote",e.stage?"목록에는 있으나 촬영 프레임이 아직 없습니다.":"아직 새 방식으로 만들지 않았습니다. 만들면 이 칸이 채워집니다."));
+const facts=node("div","facts");for(const [l,v] of [["먹",e.ink!=null?`${e.ink} (TEST)`:"미기록"],["구분",e.kind],["변형",e.variant||"없음"],["대리 판정",e.score!=null?`${e.score}점`:"없음"],["사용자 PASS",e.userPass?"PASS":"전"]]){const f=node("div","fact");f.append(node("strong","",v),node("span","",l));facts.append(f);}d.append(facts);
+sec(d,"진행 메모",e.ledgerNote);sec(d,"판정",e.judge);sec(d,"결정",e.decision);
+sec(d,"한줄 정의",e.def);sec(d,"자국 윤곽",e.mark);sec(d,"몸 거동",e.motion);sec(d,"반응 재료",e.material);
+const det=node("details");det.append(node("summary","","비고 원문 (표 v11)"),node("p","footnote",e.note));d.append(det);
+if(e.media){d.append(node("h3","","촬영 원본"),node("pre","",`${e.media.shotDir}  (${e.media.frames} 프레임 · ${e.media.shotTime})`));}
+if(e.variants.length)d.append(node("h3","","SpellFx 목록 변형"),node("pre","",e.variants.join(" · ")));
+d.append(node("p","footnote",`파일 이름 ${e.stem} · #${e.index}`));$("detail").showModal();}
+$("close").addEventListener("click",()=>$("detail").close());
+$("detail").addEventListener("click",ev=>{if(ev.target===$("detail"))$("detail").close();});
+$("detail").addEventListener("close",()=>{const v=$("dbody").querySelector("video");if(v)v.pause();});
+$("footer").textContent=`표: ${DATA.metadata.table} · 구현 여부: ${DATA.metadata.catalog} · 판정 원장: ${DATA.metadata.ledger} · 촬영: Art/SpellVFX308/Restart/shots/<글자>_<변형>. 대리 판정은 사용자 PASS가 아니며, 본편 Play 판정은 사용자 몫입니다. 생성: ${DATA.metadata.generated}. 갱신: python Tools/Art/SpellVFX308/spell_catalog.py`;
+render();
+</script></body></html>
