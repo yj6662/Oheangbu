@@ -18,10 +18,10 @@ Shader "Oheangbu/SpellFx/HexDome"
         _EdgeW ("Border width (edge units)", Range(0.003, 0.3)) = 0.009
         _Halo ("Border halo colour", Color) = (0.95, 0.86, 0.66, 1)
         _HitCol ("Hit ripple colour (HDR)", Color) = (1.9, 1.75, 1.35, 1)
-        _HaloA ("Border halo alpha", Range(0, 1)) = 0.14
+        _HaloA ("Border halo alpha", Range(0, 1)) = 0.22
         _CorePxMin ("Core width min (render px)", Float) = 0.3
         _CorePxMax ("Core width max (render px)", Float) = 0.5
-        _HaloPx ("Halo width (render px)", Float) = 3
+        _HaloPx ("Halo width (render px)", Float) = 6
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
         _PatternScale ("Pattern size in the cell", Range(0.5, 1.5)) = 0.74
         _Age ("Age (s)", Float) = 0
@@ -30,7 +30,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _HitPos ("Hit position (world)", Vector) = (0, -1000, 0, 0)
         _HitAge ("Seconds since the hit (<0 none)", Float) = -1
         _PatternFrom ("Patterns start at this cell height (0 ground .. 1 top)", Range(0, 1)) = 0.12
-        _BackLine ("Far side: line / pattern strength", Range(0, 1)) = 0.55
+        _BackLine ("Far side: line / pattern strength", Range(0, 1)) = 0.35
         _BloomSpread ("Pattern bloom moments spread over (s)", Float) = 1.5
         _BloomBoost ("Bloom flash HDR boost", Float) = 2.5
         _FacingFrom ("Near wall: facing ratio where the fade starts", Range(0, 1)) = 0.45
@@ -89,15 +89,20 @@ Shader "Oheangbu/SpellFx/HexDome"
             if (_HitAge >= 0)
             {
                 // round 5: by DIRECTION from the dome centre - the struck body stands inside, 1.5 m+ from any wall, so a distance test lit nothing (Fable r4: no flash seen)
+                // round 8 (Fable r7: the rings came as a full-height arc with no origin): a CONTACT point on the wall - the wall point in the body's direction at
+                //      body height - and the rings grow from 0 there (3D distance), never beyond 0.6 dome radius; a short flash at the contact itself
                 float3 c = TransformObjectToWorld(float3(0, 0, 0));
-                float2 dh = _HitPos.xz - c.xz, dp = i.posWS.xz - c.xz;
-                float ang = acos(clamp(dot(normalize(dh + 1e-4), normalize(dp + 1e-4)), -1, 1));        // 0 on the wall behind the body
-                float dist = ang * length(dp);                                                         // metres round the wall
+                float domeR = length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x));
+                float2 dh = _HitPos.xz - c.xz;
+                float3 contact = float3(c.x, c.y + 0.7, c.z) + float3(normalize(dh + 1e-4).x, 0, normalize(dh + 1e-4).y) * domeR * 0.93;
+                float dist = distance(i.posWS, contact);
+                float maxR = domeR * 0.6;
                 // round 7 (Fable r6: the hit looked like one more random bloom): its own shape - two concentric rings running out from the struck side, warm, ~0.5 s
-                float life = saturate(1 - _HitAge / 0.55);
+                float life = saturate(1 - _HitAge / 0.55) * smoothstep(maxR, maxR * 0.7, dist);
                 float r1 = abs(dist - _HitAge * 3.2), r2 = abs(dist - (_HitAge - 0.12) * 3.2);
                 ripple = (smoothstep(0.1, 0.0, r1) + 0.7 * smoothstep(0.08, 0.0, r2) * step(0.12, _HitAge)) * life;
-                touch = saturate(1 - dist / 1.0) * exp(-_HitAge * 5.0) * 0.6;
+                touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
+                ripple += smoothstep(0.35, 0.0, dist) * saturate(1 - _HitAge / 0.1) * 1.5;      // the contact flash (6 frames)
             }
             float boost = 1 + touch * 1.0;
             // ---- layers ----
@@ -134,7 +139,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             float ready = saturate((_Age - t0 - 0.1) / 0.15);                    // round 6: a soft start (a step here drew a hard line rising with the wipe - Fable r5)
             float bloomVis = saturate(since / 0.08) * (1 - saturate((since - 0.3) / 0.25)) * ready;
             float flash = exp(-since * 7.0) * ready;
-            float noNew = 1 - saturate(_Fade * 2.5);                             // no fresh bloom while the dome goes
+            float noNew = (1 - saturate(_Fade * 2.5)) * smoothstep(0.2, 0.35, abs(dot(n, v)));    // round 8: no bloom where the two walls overlap near the silhouette                             // no fresh bloom while the dome goes
             bloomVis *= noNew; flash *= noNew;
 
             float pa = _Pattern.a * line_ * fill * flick * lineK * bloomVis;
@@ -149,7 +154,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             col = lerp(col, _Line.rgb * boost, saturate(ba / max(a, 1e-3)));
             a = max(a, saturate(ba));
             // ---- the base ring: a bright line where the dome meets the ground ----
-            float ring = exp(-i.yOS / 0.018) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
+            float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
             float rip = saturate(ripple) * outline;
             col = lerp(col, _HitCol.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);

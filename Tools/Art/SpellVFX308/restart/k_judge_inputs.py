@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = r'C:\Users\yj666\Oheangbu\Art\SpellVFX308\Restart'
 tag = sys.argv[1]
-shot = sys.argv[2] if len(sys.argv) > 2 else '우_K'
+shot = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith('--') else '우_K'
 fs = sorted(glob.glob(os.path.join(ROOT, 'shots', shot, 'f_*.jpg')))
 out = os.path.join(ROOT, 'judge', tag); os.makedirs(out, exist_ok=True)
 font = ImageFont.truetype(r'C:\Windows\Fonts\malgunbd.ttf', 22)
@@ -29,6 +29,8 @@ for j, m in enumerate(moments):
 sheet.save(os.path.join(out, 'sheet.jpg'), quality=88)
 
 boxes = {'A 왼쪽 앞 · 시전자 다리': (0.0, 0.45, 0.45, 1.0), 'B 뒤 오른쪽(옛 곰 자리)': (0.62, 0.3, 0.98, 0.8), 'C 오른쪽 앞 물결': (0.55, 0.5, 1.0, 1.0)}
+if '--dome' in sys.argv:      # H (2026-10-29 r8): the dome sits centre-left - crops on its walls, the caster / bear and its crown
+    boxes = {'A 시전자 · 앞벽': (0.25, 0.4, 0.6, 1.0), 'B 곰 쪽 벽(타격)': (0.33, 0.3, 0.68, 0.9), 'C 왼쪽 벽 · 꼭대기': (0.0, 0.22, 0.38, 0.82)}
 cm = (0.12, 0.3, 0.5, 0.7)
 tw, th = 480, 300
 crops = Image.new('RGB', (tw * 4, th * 3))
