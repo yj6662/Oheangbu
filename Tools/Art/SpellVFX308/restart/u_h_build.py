@@ -74,7 +74,7 @@ def dome(freq):
     for fi, (a, b, c) in enumerate(F):
         for x in (a, b, c): adj[x].append(fi)
     rnd = np.random.default_rng(11)
-    pos, nrm, uv0, uv1, uv2, tris = [], [], [], [], [], []
+    pos, nrm, uv0, uv1, uv2, ctr, tris = [], [], [], [], [], [], []
     cells = 0
     for ci, n in enumerate(V):
         if n[1] < -0.06:
@@ -97,6 +97,7 @@ def dome(freq):
             pf = np.array([p[0], p[1] * FLAT, p[2]])
             nf = np.array([p[0], p[1] / FLAT, p[2]]); nf /= np.linalg.norm(nf)
             pos.append(pf.tolist()); nrm.append(nf.tolist()); uv0.append([float(u), float(w)]); uv1.append([h, edge]); uv2.append([float(pat), height])
+            ctr.append([float(n[0]), float(n[1] * FLAT), float(n[2])])      # round 17: the cell's own centre on every vertex (a whole cell can answer a hit)
             return len(pos) - 1
 
         c0 = add(n, 0.0)
@@ -104,7 +105,7 @@ def dome(freq):
         for k in range(len(corners)):
             tris += [c0, corners[k], corners[(k + 1) % len(corners)]]
         cells += 1
-    return {'freq': freq, 'flat': FLAT, 'cells': cells, 'pos': pos, 'nrm': nrm, 'uv0': uv0, 'uv1': uv1, 'uv2': uv2, 'tris': tris}
+    return {'freq': freq, 'flat': FLAT, 'cells': cells, 'pos': pos, 'nrm': nrm, 'uv0': uv0, 'uv1': uv1, 'uv2': uv2, 'ctr': ctr, 'tris': tris}
 
 
 def main():

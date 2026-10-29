@@ -49,7 +49,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (newMesh) mesh = new Mesh { name = "u_h_dome" };
             mesh.Clear();
             mesh.SetVertices(d.Pos); mesh.SetNormals(d.Nrm);
-            mesh.SetUVs(0, d.Uv0); mesh.SetUVs(1, d.Uv1); mesh.SetUVs(2, d.Uv2);
+            mesh.SetUVs(0, d.Uv0); mesh.SetUVs(1, d.Uv1); mesh.SetUVs(2, d.Uv2); mesh.SetUVs(3, d.Ctr);
             mesh.SetTriangles(d.Tris, 0);
             mesh.RecalculateBounds();
             if (newMesh) AssetDatabase.CreateAsset(mesh, HDir + "/u_h_dome.asset"); else EditorUtility.SetDirty(mesh);
@@ -116,7 +116,7 @@ namespace Oheangbu.EditorTools.Vol2
             return log.ToString();
         }
 
-        sealed class Dome { public Vector3[] Pos, Nrm; public Vector2[] Uv0, Uv1, Uv2; public int[] Tris; }
+        sealed class Dome { public Vector3[] Pos, Nrm, Ctr; public Vector2[] Uv0, Uv1, Uv2; public int[] Tris; }
 
         /// <summary>The json is flat arrays of numbers (written by u_h_build.py): a tiny reader for "key": [[a, b, c], ...] / [i, j, ...] is enough.</summary>
         static Dome Parse(string text)
@@ -128,6 +128,7 @@ namespace Oheangbu.EditorTools.Vol2
                 Uv0 = Rows(text, "uv0", 2).Select(r => new Vector2(r[0], r[1])).ToArray(),
                 Uv1 = Rows(text, "uv1", 2).Select(r => new Vector2(r[0], r[1])).ToArray(),
                 Uv2 = Rows(text, "uv2", 2).Select(r => new Vector2(r[0], r[1])).ToArray(),
+                Ctr = Rows(text, "ctr", 3).Select(r => new Vector3(r[0], r[1], r[2])).ToArray(),
                 Tris = Numbers(text, "tris").Select(v => (int)v).ToArray(),
             };
         }
