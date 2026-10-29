@@ -18,7 +18,7 @@ namespace Oheangbu.EditorTools.Vol2
 {
     /// <summary>D308-153 (SPEC-SPELL-FX-RESTART-308 section 4): the new one-cast capture of the restart plumbing. Queue (editor idle, then Play):
     ///   python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.SpellFxShotCommands Run "shot:play"       the spell lab in Play with a Vol2 scope (no lab run)
-    ///   ... "shot:run:&lt;letter&gt;:&lt;variant[,variant..]&gt;[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1]"
+    ///   ... "shot:run:&lt;letter&gt;:&lt;variant[,variant..]&gt;[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1][:shots=N (look-only lab shots flying in, 0 - 8)]"
     ///   ... "shot:status"      ... "shot:stop"
     /// A shot = the real letter raised on the real channel in the lab, seen through a copy of the main camera at the shoulder pose (pivot 1.7 m above the caster, local offset
     /// (0.7, 0.55, -2.8), FOV 60), Time.captureFramerate = 60 (one game frame = 1/60 s). Frames go to Art/SpellVFX308/Restart/shots/&lt;letter&gt;_&lt;variant&gt;/f_00000.jpg
@@ -57,7 +57,7 @@ namespace Oheangbu.EditorTools.Vol2
         {
             public char Letter; public string Variant = "A";
             public float Ahead = 4.6f, Side = 0f, Pitch = 15f;
-            public int Frames = 180;
+            public int Frames = 180, Shots;
             public string Back = "red";
             public bool MainLook, Swing, Stay;
             public string Name => Letter + "_" + Variant;
@@ -82,7 +82,7 @@ namespace Oheangbu.EditorTools.Vol2
         static SpellFxDirector _director; static Vol2ShapeRuntime _shapes; static Vol2CastCoordinator _coord; static CombatLoopWiring _wiring;
         // staging of the current job
         static Camera _cam; static RenderTexture _rt; static Texture2D _tex;
-        static readonly List<GameObject> Hidden = new List<GameObject>(), Dummies = new List<GameObject>();
+        static readonly List<GameObject> Hidden = new List<GameObject>(), Dummies = new List<GameObject>(), LabShots = new List<GameObject>();
         static GameObject _ground; static Material _groundFallback;
         static bool _extrasOnlyBefore, _presenterWasEnabled; static bool _stagedScope;
         static Oheangbu.App.World.LookDriver308 _lookDriver; static Oheangbu.Data.World.LookProfile308 _lookSaved; static bool _lookSwapped;
@@ -139,12 +139,13 @@ namespace Oheangbu.EditorTools.Vol2
                     case "look": if (v != "main" && v != "lab") return "REFUSED shot:run: look=" + v + " (main | lab)"; proto.MainLook = v == "main"; break;
                     case "swing": proto.Swing = v == "1"; break;
                     case "stay": proto.Stay = v == "1"; break;
+                    case "shots": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Shots) || proto.Shots < 0 || proto.Shots > 8) return "REFUSED shot:run: shots=" + v + " (0 - 8)"; break;
                     default: return "REFUSED shot:run: unknown option " + k;
                 }
             }
             Queue.Clear(); Finished.Clear(); Problems.Clear(); SavedVariants.Clear();
             foreach (string variant in t[1].Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).Distinct())
-                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay });
+                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots });
             _total = Queue.Count; _done = 0; _stay = proto.Stay;
             _runId = DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv);
             Directory.CreateDirectory(OutRoot);
@@ -327,6 +328,16 @@ namespace Oheangbu.EditorTools.Vol2
                 _st = St.Teardown; return;
             }
             _launchUs = Math.Max(_beganLog.StartUs, _beganLog.Emitter != null ? _beganLog.Emitter.StartUs : _beganLog.StartUs);
+            // shots=N (2026-10-29, look only): N lab shots fly in from the enemy side at the caster's chest, one every 0.3 s from 0.35 s after the cast - nothing
+            // to any rule (SpellFxLabShot); a presentation part may turn them to ink
+            for (int k = 0; k < j.Shots; k++)
+            {
+                Vector3 o = _shapes.Caster.Position, f = FlatUnit(_beganLog.Spec.Forward), r = Vector3.Cross(Vector3.up, f);
+                float ang = (j.Shots == 1 ? 0f : Mathf.Lerp(-38f, 38f, k / (float)(j.Shots - 1))) * Mathf.Deg2Rad;
+                Vector3 dir = f * Mathf.Cos(ang) + r * Mathf.Sin(ang);
+                Vector3 from = o + dir * 7.5f + Vector3.up * (1.1f + 0.35f * (k % 2)), to = o + Vector3.up * 1.15f;
+                LabShots.Add(Oheangbu.App.SpellFx.SpellFxLabShot.Create(from, to, 8.5f, 0.35f + 0.3f * k).gameObject);
+            }
             if (_director.Spawned == _spawnedBefore) Problems.Add(j.Name + ": no SpellFx prefab was built (no catalogue asset, or no entry for " + j.Letter + "/" + j.Variant + " with a SpellFxPlayer): the OLD look is what these frames show");
             _st = St.Record;
         }
@@ -385,6 +396,8 @@ namespace Oheangbu.EditorTools.Vol2
             }
             catch (Exception) { }
             Dummies.Clear();
+            foreach (var s in LabShots) if (s != null) Object.DestroyImmediate(s);
+            LabShots.Clear();
             _stagedScope = false;
             if (_ground != null) Object.DestroyImmediate(_ground);
             _ground = null;

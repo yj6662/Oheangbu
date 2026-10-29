@@ -22,7 +22,13 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] float fadeSeconds = 0.6f;
         [SerializeField] float flashNotBefore = 0.5f;
 
-        static readonly int AgeId = Shader.PropertyToID("_Age"), FadeId = Shader.PropertyToID("_Fade"), HitPosId = Shader.PropertyToID("_HitPos"), HitAgeId = Shader.PropertyToID("_HitAge"), HitCellId = Shader.PropertyToID("_HitCell");
+        static readonly int AgeId = Shader.PropertyToID("_Age"), FadeId = Shader.PropertyToID("_Fade"), HitPosId = Shader.PropertyToID("_HitPos"), HitAgeId = Shader.PropertyToID("_HitAge"), HitCellId = Shader.PropertyToID("_HitCell"), ImpPosId = Shader.PropertyToID("_ImpPos"), ImpAgeId = Shader.PropertyToID("_ImpAge");
+        const float MeshFlat = 0.85f;                       // the dome mesh's own height / radius (u_h_build.py FLAT)
+
+        // look-only impacts of lab shots (SpellFxLabShot) on the membrane: up to four at once, oldest replaced
+        readonly Vector4[] _impPos = new Vector4[4];
+        readonly float[] _impAt = { -10f, -10f, -10f, -10f };
+        int _impNext;
 
         GameObject _go, _ground;
         Material _mat, _groundMat;
@@ -104,6 +110,7 @@ namespace Oheangbu.App.SpellFx
             if (_groundMat != null) { _groundMat.SetFloat(AgeId, ageSeconds); _groundMat.SetFloat(FadeId, Mathf.Clamp01((ageSeconds - (life - fadeSeconds)) / fadeSeconds)); }
             if (ageSeconds > life + 0.1f && _ground != null && _ground.activeSelf) _ground.SetActive(false);
             if (ageSeconds > life + 0.1f && _go != null && _go.activeSelf) _go.SetActive(false);
+            Shots(ageSeconds);
         }
 
         public void OnHit(SpellFxCast cast, SpellFxHit hit)
@@ -117,6 +124,36 @@ namespace Oheangbu.App.SpellFx
 
         /// <summary>Nothing: the executor ends a ring cast at once; the dome keeps its own life (fadeSeconds at the end).</summary>
         public void OnEnd(SpellFxCast cast, SpellFxEndReason reason) { }
+
+        /// <summary>2026-10-29 (the user: "투사체가 먹이 되어 사라지는 효과도" -> look only): a lab shot that crosses the membrane while the dome stands is turned to ink
+        /// there (<see cref="SpellFxLabShot.Dissolve"/>) and leaves an ink blot that runs down the glass (the shader's _ImpPos / _ImpAge). No rule sees any of this.</summary>
+        void Shots(float age)
+        {
+            if (_go == null || !_go.activeSelf || _mat == null) return;
+            bool standing = age > 0.25f && age < life - fadeSeconds * 0.5f;
+            var t = _go.transform;
+            for (int i = SpellFxLabShot.Active.Count - 1; i >= 0; i--)
+            {
+                var s = SpellFxLabShot.Active[i];
+                if (s == null || !s.Flying || !standing) continue;
+                Vector3 a = Unit(t.InverseTransformPoint(s.PreviousPosition)), b = Unit(t.InverseTransformPoint(s.Position));
+                if (b.magnitude > 1f || a.magnitude <= 1f) continue;              // crosses the shell from outside this frame
+                float k = (a.magnitude - 1f) / Mathf.Max(a.magnitude - b.magnitude, 1e-4f);
+                Vector3 hitU = Vector3.Lerp(a, b, k).normalized;
+                Vector3 local = new Vector3(hitU.x, hitU.y * MeshFlat, hitU.z);
+                Vector3 point = t.TransformPoint(local), normal = (point - t.position).normalized;
+                s.Dissolve(point, normal);
+                _impPos[_impNext] = new Vector4(point.x, point.y, point.z, 1f); _impAt[_impNext] = age;
+                _impNext = (_impNext + 1) % _impPos.Length;
+            }
+            _mat.SetVectorArray(ImpPosId, _impPos);
+            _mat.SetVector(ImpAgeId, new Vector4(Age(0, age), Age(1, age), Age(2, age), Age(3, age)));
+        }
+
+        float Age(int i, float now) => _impPos[i].w > 0.5f ? now - _impAt[i] : -1f;
+
+        /// <summary>A local dome point in unit-sphere space (the mesh is a unit dome squashed to <see cref="MeshFlat"/> in y).</summary>
+        static Vector3 Unit(Vector3 local) => new Vector3(local.x, local.y / MeshFlat, local.z);
 
         /// <summary>Round 17b (Fable r17: no cell centre lay within the shader's fixed reach of the contact, so no cell answered): the centre of the ONE cell
         /// nearest the contact - the wall point in the body's direction at 0.45 m (the shader's own contact) - read from the mesh's cell centres (uv3).</summary>

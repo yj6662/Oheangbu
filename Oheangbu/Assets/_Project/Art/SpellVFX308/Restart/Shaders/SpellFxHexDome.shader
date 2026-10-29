@@ -58,6 +58,11 @@ Shader "Oheangbu/SpellFx/HexDome"
             float4 _HitPos, _HitCell;
         CBUFFER_END
 
+        // look-only impacts of lab shots (SpellFxHexDomePart.Shots): world point (w = 1 when set) and age in seconds (< 0 none). Set per material with
+        // SetVectorArray, so they live outside the per-material buffer.
+        float4 _ImpPos[4];
+        float4 _ImpAge;
+
         float Hash21(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
         float VNoise(float2 p)
         {
@@ -225,6 +230,32 @@ Shader "Oheangbu/SpellFx/HexDome"
             col = lerp(col, ringCol, saturate(ripEdge)); a = max(a, saturate(ripEdge) * 0.8 * outline);
             float sp = saturate(speck) * outline;
             col = lerp(col, _Halo.rgb, sp); a = a + sp * 0.8 * (1 - a);
+            // ---- 2026-10-29 (the user: "투사체가 먹이 되어 사라지는 효과도", look only): where a shot met the membrane its ink stays a moment - a ragged blot that
+            //      spreads in 5 frames, ink running down the glass below it, a thin ring answering - then fades over ~0.6 s ----
+            {
+                float3 dc = TransformObjectToWorld(float3(0, 0, 0));
+                float inkA = 0, ringA = 0;
+                [unroll] for (int k = 0; k < 4; k++)
+                {
+                    float ia = _ImpAge[k];
+                    if (ia < 0 || _ImpPos[k].w < 0.5) continue;
+                    float3 P = _ImpPos[k].xyz;
+                    float d = distance(i.posWS, P);
+                    float fadeOut = 1 - smoothstep(0.7, 1.3, ia);
+                    float rb = 0.36 * smoothstep(0.0, 0.08, ia);
+                    float dn = d + (VNoise(i.posWS.xy * 18.0 + P.z * 3.0) - 0.5) * 0.07;
+                    float blot = smoothstep(rb, rb * 0.65, dn) * fadeOut;
+                    float3 nP = normalize(P - dc), tanP = normalize(cross(float3(0, 1, 0), nP) + 1e-4);
+                    float s = dot(i.posWS - P, tanP), dy = P.y - i.posWS.y;
+                    float dripLen = 0.7 * smoothstep(0.05, 0.9, ia) * (0.35 + VNoise(float2(s * 22.0, P.x * 7.0)));
+                    float col_ = smoothstep(0.42, 0.6, VNoise(float2(s * 26.0 + P.z * 5.0, 0.5)));
+                    float drip = col_ * step(0, dy) * smoothstep(dripLen, dripLen - 0.06, dy) * smoothstep(0.28, 0.14, abs(s)) * fadeOut;
+                    inkA = max(inkA, max(blot, drip * 0.85));
+                    ringA = max(ringA, smoothstep(0.03, 0.0, abs(d - ia * 3.0)) * saturate(1 - ia / 0.25));
+                }
+                col = lerp(col, float3(0.02, 0.02, 0.025), saturate(inkA)); a = max(a, inkA * 0.9 * outline);
+                col = lerp(col, _Accent.rgb, saturate(ringA * 0.8)); a = max(a, ringA * 0.6 * outline);
+            }
             // round 22 / 23 (Fable r22: the spill was cut by the seams drawn after it, the core darker than a seam): core and spill drawn LAST, over the seams, brighter than them
             float core = cellHit * exp(-_HitAge * 14.0) * step(0, _HitAge) * smoothstep(0.6, 0.0, edge);
             col = lerp(col, float3(3.2, 3.25, 3.3), saturate(core)); a = max(a, core * 0.75 * fill);
