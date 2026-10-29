@@ -31,7 +31,7 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] float upArc = 0.15f;
         [SerializeField] float maxReach = 12f;
         [Tooltip("Seconds after the hit before the shot line starts to pull in toward the target, and how long that takes.")]
-        [SerializeField] float pullAfter = 0.6f, pullSeconds = 0.35f;
+        [SerializeField] float pullAfter = 0.3f, pullSeconds = 0.25f;
 
         [Header("Bind")]
         [SerializeField] float coilRadius = 0.18f;
@@ -42,7 +42,7 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] float holdSeconds = 2f;
         [SerializeField] float unravelSeconds = 0.8f;
         [SerializeField] float stemLength = 1.2f;
-        [SerializeField] float rootLength = 1.0f;
+        [SerializeField] float rootLength = 0.6f;
 
         [Header("Leaves / flash")]
         [SerializeField] float leafSize = 0.16f;
@@ -62,6 +62,7 @@ namespace Oheangbu.App.SpellFx
             public float Head = 0f, Tail = 0f;          // visible span 0..1
             public float Glow, Fade = 1f;
             public float Seed;
+            public bool Flat;                           // a mark on the ground: pressed flat and wide (a decal-like stroke, not a lying vine)
         }
 
         sealed class Leaf { public Strand On; public float T; public float Side; public float Size; public float Seed; }
@@ -109,13 +110,7 @@ namespace Oheangbu.App.SpellFx
             _shot = Add(Kind.Shot, t => ShotPoint(t, sgn), shotRadius);
             _shot.Length = Vector3.Distance(_start, _end);
             if (bite == VineBite.Cut) SpawnCrack();
-            // two small curls on the shot, sprouting as the head passes
-            for (int k = 0; k < 2; k++)
-            {
-                float at = 0.35f + 0.25f * k; float dir = k == 0 ? 1f : -1f; var seed = Rand();
-                var curl = Add(Kind.Curl, t => CurlPoint(at, dir, seed, t), shotRadius * 0.45f);
-                curl.Length = 0.4f; curl.Seed = at;
-            }
+            // r6 (Fable 가 r5 #4): no side curls - the one near the body read as an ink "hook" over the eye before the bite
             // r2 (Fable r1 #5): fewer, smaller leaves along the path and none at the brush
             for (int i = 0; i < 4; i++) _leaves.Add(new Leaf { On = _shot, T = 0.28f + 0.18f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 0.6f * (0.85f + 0.3f * Rand()), Seed = Rand() });
             if (_tubeGo != null) { _tubeGo.SetActive(true); _leafGo.SetActive(true); }
@@ -166,6 +161,8 @@ namespace Oheangbu.App.SpellFx
         Vector3 _feet;
         float _shotSign = 1f, _flashAge = -1f, _returnAge = -1f;
         float _feetBelow = 0.5f, _coilR = 0.5f;
+        Vector3 _flashAt;
+        readonly List<Leaf> _motes = new List<Leaf>();
         Vector3 _origin;
 
         float GroundY(Vector3 above, Transform body)
@@ -215,7 +212,7 @@ namespace Oheangbu.App.SpellFx
                 case VineBite.Cage: SpawnCoil(0.6f); SpawnCage(); break;       // r2 (Fable 각 r1 #5): it binds first (a short wind), then the cage rises
                 case VineBite.Seed: SpawnSeed(); break;
                 case VineBite.Return: SpawnCoil(0.45f); SpawnBack(); break;
-                case VineBite.Cut: SpawnCrack(); SpawnCoil(1f); for (int k = 0; k < 3; k++) SpellFxLabShot.InkBurst(_target + Vector3.up * (0.15f * k), Quaternion.AngleAxis(-40f + 40f * k, Vector3.up) * toCaster, SpellFxBurstBody.Metal); break;   // r2 (Fable 갓 r1 #1): the armour flies off in pieces
+                case VineBite.Cut: SpawnCrack(); SpawnCoil(1f); for (int k = 0; k < 3; k++) SpellFxLabShot.InkBurst(_target + Vector3.up * (0.15f * k), Quaternion.AngleAxis(-40f + 40f * k, Vector3.up) * toCaster, SpellFxBurstBody.Armour); break;   // r2 (Fable 갓 r1 #1): the armour flies off in pieces
                 default: SpawnCoil(bite == VineBite.Spread ? 0.75f : 1f); break;
             }
             if (bite != VineBite.Seed && bite != VineBite.Cage)
@@ -226,7 +223,7 @@ namespace Oheangbu.App.SpellFx
                 Vector3 gd = Quaternion.AngleAxis(Rand() < 0.5f ? 20f : -20f, Vector3.up) * -dir;
                 Vector3 g0 = _feet + Vector3.up * 0.015f - dir * (_targetRadius + 0.5f); float gs = Rand();
                 _stem = Add(Kind.Crack, t => g0 + gd * (stemLength * t) + Vector3.Cross(Vector3.up, gd) * ((Mathf.PerlinNoise(t * 9f, gs * 7f) - 0.5f) * 0.06f), shotRadius * 0.7f);
-                _stem.Length = stemLength; _stem.Seed = -2f;      // Seed -2 = widens along its length (Rebuild)
+                _stem.Length = stemLength; _stem.Seed = -2f; _stem.Flat = true;      // Seed -2 = widens along its length (Rebuild)
             }
             // r2 (Fable r1 #3): the bite is an ink splash (black drops), a few leaves with it
             SpellFxLabShot.InkBurst(_hitPos, toCaster, SpellFxBurstBody.Water);          // r3 (Fable r2 #5): ink only - the wood burst's leaf sprites read as green stars
@@ -286,7 +283,7 @@ namespace Oheangbu.App.SpellFx
             if (_hit)
             {
                 float hs = a - _hitAge;
-                if (bite == VineBite.Seed && _activate && _coil == null) { _activateAge = a; SpawnCoil(1f); _flashAge = a; SpellFxLabShot.InkBurst(_hitPos, _hitNormal, SpellFxBurstBody.Water); }
+                if (bite == VineBite.Seed && _activate && _coil == null) { _activateAge = a; SpawnCoil(1f); _flashAge = a; _flashAt = _hitPos; SpellFxLabShot.InkBurst(_hitPos, _hitNormal, SpellFxBurstBody.Water); }
                 while (_jumpQueue.Count > 0) { SpawnJump(_jumpQueue[0]); _jumpQueue.RemoveAt(0); }
                 float endAt = HoldEnd();
                 float u = (hs - endAt) / unravelSeconds;
@@ -310,12 +307,13 @@ namespace Oheangbu.App.SpellFx
                 foreach (var s in _cage)
                 {
                     s.Head = Smooth((hs - s.Seed) / 0.75f);           // the cage grows over the bind (1.5 s cap: it is closed well before)
-                    s.Glow = Flash(hs - s.Seed) * 0.4f;                  // r2 (Fable 각 r1 #3): no lit stripe at rest
+                    s.Glow = s.Flat ? 0.5f : Flash(hs - s.Seed) * 0.4f;     // r2 (Fable 각 r1 #3): no lit stripe at rest (the ink pool: jade rim)
                     if (u > 0f) { s.Tail = Smooth(u - s.Seed); s.Fade = fadeOut; }
                 }
                 if (_pillar != null)
                 {
                     _pillar.Head = Smooth(hs / 0.35f);
+                    for (int m = 0; m < _motes.Count; m++) _motes[m].T = Mathf.Repeat(m / 4f + hs * 0.31f, 0.95f);   // motes rise up the column at ~0.5 m/s
                     _pillar.Glow = 0.75f + 0.25f * Mathf.Sin(hs * 6.28f);    // the waiting seed breathes at 1 Hz (r1: bright - a black rod read as a pole)
                     if (_activateAge >= 0f) { float k = Smooth((a - _activateAge) / 0.3f); _pillar.Tail = k; }
                     if (u > 0f) _pillar.Fade = fadeOut;
@@ -330,10 +328,10 @@ namespace Oheangbu.App.SpellFx
                 }
                 if (_back != null)
                 {
-                    float bs = hs - 0.12f;
-                    _back.Head = Mathf.Clamp01(bs * headSpeed / Mathf.Max(0.5f, _back.Length));
+                    float bs = hs - 0.3f;                                    // r3 (Fable 강 r2 #1): a beat at the body, then the head flies home
+                    _back.Head = Mathf.Clamp01(bs / 0.3f);
                     _back.Glow = Flash(hs) * 0.5f;
-                    if (_back.Head >= 1f && _returnAge < 0f) { _returnAge = a; _flashAge = a; }
+                    if (_back.Head >= 1f && _returnAge < 0f) { _returnAge = a; _flashAge = a; _flashAt = _back.At(0.9f); }
                     if (_returnAge >= 0f)
                     {
                         float rs = a - _returnAge;
@@ -346,15 +344,15 @@ namespace Oheangbu.App.SpellFx
                 foreach (var s in _jumps)
                 {
                     float js = a - s.Seed;
-                    s.Head = s.Kind == Kind.Jump ? Smooth(js / 0.18f) : Smooth((js - 0.18f - HitStop) / coilGrowSeconds);
-                    s.Glow = s.Kind == Kind.Jump ? 0.3f + Flash(js) * 0.5f : Flash(js - 0.18f) * 1.2f;
+                    s.Head = s.Kind == Kind.Jump ? Smooth(js / 0.14f) : Smooth((js - 0.14f - HitStop) / coilGrowSeconds);
+                    s.Glow = s.Kind == Kind.Jump ? 0.15f + Flash(js) * 0.4f : Flash(js - 0.14f) * 1.2f;
                     float ju = (js - holdSeconds) / unravelSeconds;
                     if (s.Kind == Kind.Jump) { float jt = (js - 0.5f) / 0.3f; if (jt > 0f) s.Tail = Smooth(jt); }
                     if (ju > 0f) { s.Tail = Mathf.Max(s.Tail, Smooth(ju)); s.Fade = 1f - Smooth(ju - 0.5f); }
                 }
                 foreach (var s in _marks)
                 {
-                    if (s.Seed < 0f) { s.Head = Smooth((hs - 0.1f) / 0.3f); if (u > 0f) s.Fade = fadeOut; continue; }
+                    if (s.Seed < 0f) { s.Head = Smooth((hs - 0.1f) / 0.3f); if (s.Flat) s.Glow = 0.5f; if (u > 0f) s.Fade = fadeOut; continue; }
                     float ms = a - s.Seed;
                     s.Head = Smooth((ms - 0.2f) / 0.4f);
                     s.Glow = 0.5f;                                   // ground marks: jade edges or they vanish on red soil
@@ -363,7 +361,7 @@ namespace Oheangbu.App.SpellFx
                 if (u > 0f && _coil != null)
                 {
                     if (_roots.Count == 0) SpawnRoots();
-                    foreach (var r in _roots) { r.Head = Smooth(u * 1.6f); r.Fade = 1f - Smooth((u - 0.45f) / 0.55f); r.Glow = 0.5f; }
+                    foreach (var r in _roots) { r.Head = Smooth(u * 1.3f); r.Fade = 1f - Smooth((u - 0.6f) / 0.4f); r.Glow = 0.5f; }
                 }
                 if (_flashGo != null)
                 {
@@ -373,7 +371,7 @@ namespace Oheangbu.App.SpellFx
                     if (f > 0.01f)
                     {
                         var cam = Camera.main;
-                        _flashGo.transform.position = _hitPos;
+                        _flashGo.transform.position = _flashAge >= 0f && a - _flashAge < hs ? _flashAt : _hitPos;
                         if (cam != null) _flashGo.transform.rotation = Quaternion.LookRotation(_flashGo.transform.position - cam.transform.position, Vector3.up);
                         _flashGo.transform.localScale = Vector3.one * flashSize * (0.6f + 0.6f * Mathf.Clamp01(hs / flashSeconds));
                         _flashMat.SetFloat("_Flash", f);
@@ -417,10 +415,11 @@ namespace Oheangbu.App.SpellFx
         {
             // r5 (Fable 가 r4 #1): the loops turn round the axis that points at the caster (the neck), so each front arc crosses the chest in view -
             // not round the body's up axis, where the front arc hid behind the head
-            float r = _coilR * 1.1f;
+            // r6 (Fable 가 r5 #1): the lying body's jaw hid the front arc - higher (+0.25 m) and wider (x1.4) so it crosses the brow and leaves the outline
+            float r = _coilR * 1.1f * 1.4f;
             float turns = coilTurns * turnScale;
             Vector3 ax = _hitNormal, sd = Vector3.Cross(Vector3.up, ax).normalized;
-            float chestUp = ChestAbove() - _feetBelow;
+            float chestUp = ChestAbove() - _feetBelow + 0.25f;
             _coil = Add(Kind.Coil, t =>
             {
                 float ang = Mathf.PI * 0.5f + t * turns * 2f * Mathf.PI;          // starts on top, comes down across the front
@@ -430,7 +429,8 @@ namespace Oheangbu.App.SpellFx
             }, shotRadius * 1.25f);
             _coil.Length = turns * 2f * Mathf.PI * r;
             // two leaves on the front arcs, half a turn apart (the 각 leaf: round, bigger)
-            for (int i = 0; i < 2; i++) _leaves.Add(new Leaf { On = _coil, T = Mathf.Clamp01((0.5f + i) / (turns * 2f) + 0.12f), Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.5f, Seed = Rand() });
+            // two big leaves where the loops cross the face: the bottom of the first loop and the side of the second (0.35 m)
+            for (int i = 0; i < 2; i++) _leaves.Add(new Leaf { On = _coil, T = i == 0 ? 0.5f / turns : Mathf.Min(0.95f, 1.25f / turns), Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 2.2f, Seed = Rand() });
         }
 
         /// <summary>각: branches rise from the ground round the body and arch over it into a cage; the tips curl on above the top ("위로 솟는 가지 완성형").</summary>
@@ -454,7 +454,7 @@ namespace Oheangbu.App.SpellFx
                 System.Func<float, Vector3> bar = t =>
                 {
                     // r3 (Fable 각 r2 #2): alive while it holds - a slow ±2° sway, more toward the top
-                    Vector3 breathe = tng * (Mathf.Sin(_age * 2.5f + ph) * 0.035f * t);
+                    Vector3 breathe = tng * (Mathf.Sin(_age * 2.5f + ph) * 0.09f * t);      // r6: ±5° (±2° did not read)
                     if (t < 0.84f)
                     {
                         float u = t / 0.84f;
@@ -469,11 +469,21 @@ namespace Oheangbu.App.SpellFx
                 s.Length = top * 1.6f; s.Seed = 0.3f + (i / 2) * 0.07f + (main ? 0f : 0.12f);       // after the first wind (the coil) - then one bar after another
                 _cage.Add(s);
                 if (!main) continue;
+                _arrivals.Add(new Arrival { At = _age + s.Seed + 0.05f, Pos = p0 + Vector3.up * 0.1f, Dir = Vector3.up });     // r6 (Fable 각 r3 #1): ink kicks up at each bar's foot as it breaks ground
                 for (int k = 0; k < 2; k++) _leaves.Add(new Leaf { On = s, T = 0.3f + 0.35f * k + 0.1f * Rand(), Side = (k & 1) == 0 ? 1f : -1f, Size = leafSize * (1.6f + 0.5f * Rand()), Seed = Rand() });
                 float at = 0.45f + 0.1f * seed, side = seed < 0.5f ? 1f : -1f;
                 var shoot = Add(Kind.Cage, t => { Vector3 b0 = bar(at); float ang = t * 4f; return b0 + tng * side * (Mathf.Sin(ang) * 0.14f + t * 0.1f) + Vector3.up * ((1f - Mathf.Cos(ang)) * 0.1f) + dir * (t * 0.08f); }, shotRadius * 0.4f);
                 shoot.Length = 0.35f; shoot.Seed = s.Seed + 0.35f;
                 _cage.Add(shoot);
+            }
+            // r6 (Fable 각 r3 #1): an ink pool under the whole cage (pressed flat, a jade rim) - two loose rings and a few short spokes
+            Vector3 c0 = _feet + Vector3.up * 0.02f; float sp = Rand();
+            for (int k = 0; k < 2; k++)
+            {
+                float rr0 = r * (1.15f + 0.25f * k), kk = k;
+                var pool = Add(Kind.Root, t => { float ang = t * Mathf.PI * 2f + sp * 6f + kk; float wob = 1f + 0.12f * (Mathf.PerlinNoise(t * 7f, sp * 5f + kk) - 0.5f); return c0 + new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * rr0 * wob; }, shotRadius * (1.2f - 0.5f * k));
+                pool.Length = Mathf.PI * 2f * rr0; pool.Seed = 0.25f + 0.1f * k; pool.Flat = true;
+                _cage.Add(pool);
             }
         }
 
@@ -494,8 +504,14 @@ namespace Oheangbu.App.SpellFx
                 var c = Add(Kind.Curl, t => { float ang = t * 4f; return at + _hitNormal * 0.05f + _side * dir * (Mathf.Sin(ang) * 0.12f) + Vector3.up * ((1f - Mathf.Cos(ang)) * 0.09f + t * 0.1f); }, shotRadius * 0.5f);
                 c.Length = 0.35f; c.Seed = -1f;
                 _marks.Add(c);
-                _leaves.Add(new Leaf { On = c, T = 0.85f, Side = dir, Size = leafSize * 1.4f, Seed = seed });
+                _leaves.Add(new Leaf { On = c, T = 0.85f, Side = dir, Size = leafSize * 2.4f, Seed = seed });
             }
+            // r3 (Fable 감 r2 #2 / #3 / #4): small motes rising up the column (it is alive), a jade bud at its tip, an ink dot on the ground under it
+            for (int k = 0; k < 4; k++) { var m = new Leaf { On = _pillar, T = k / 4f, Side = (k & 1) == 0 ? 1f : -1f, Size = leafSize * 0.4f, Seed = Rand() }; _leaves.Add(m); _motes.Add(m); }
+            _leaves.Add(new Leaf { On = _pillar, T = 0.985f, Side = 1f, Size = leafSize * 0.7f, Seed = Rand() });
+            Vector3 g = at; g.y = _feet.y + 0.02f; g += _hitNormal * 0.1f;
+            var dot = Add(Kind.Root, t => { float ang = t * Mathf.PI * 4f; float rr = 0.09f * (1f - 0.7f * t); return g + new Vector3(Mathf.Cos(ang) * rr, 0f, Mathf.Sin(ang) * rr); }, shotRadius * 0.9f);
+            dot.Length = 0.6f; dot.Seed = -1f; dot.Flat = true; _marks.Add(dot);
         }
 
         /// <summary>갓: a straight crack carved into the ground along the path, from the caster's feet through the body and on ("아래로 파인 균열선").</summary>
@@ -510,7 +526,7 @@ namespace Oheangbu.App.SpellFx
             Vector3 side = Vector3.Cross(Vector3.up, fwd); float seed = Rand();
             _crackA = a; _crackDir = fwd;
             _crack = Add(Kind.Crack, t => a + fwd * (len * t) + side * ((Mathf.PerlinNoise(t * 40f, seed * 10f) - 0.5f) * 0.09f), shotRadius * 0.8f);
-            _crack.Length = len;
+            _crack.Length = len; _crack.Flat = true;
         }
         Vector3 _crackA, _crackDir;
 
@@ -533,7 +549,7 @@ namespace Oheangbu.App.SpellFx
             Vector3 ax = _feet - _origin; ax.y = 0f; float half = ax.magnitude * 0.5f; ax.Normalize();
             Vector3 sx = Vector3.Cross(Vector3.up, ax); float s2 = Rand();
             var ring = Add(Kind.Root, t => { float ang = t * Mathf.PI * 2f; return c0 + ax * (Mathf.Cos(ang) * half) + sx * (Mathf.Sin(ang) * 0.7f * sgn) + ax * ((Mathf.PerlinNoise(t * 6f, s2 * 9f) - 0.5f) * 0.1f); }, shotRadius * 0.55f);
-            ring.Length = Mathf.PI * (half + 0.7f); ring.Seed = _age + 0.1f;
+            ring.Length = Mathf.PI * (half + 0.7f); ring.Seed = _age - 0.8f;      // a 2 s mark (it fades inside the shot) ring.Flat = true;
             _marks.Add(ring);
         }
 
@@ -563,10 +579,10 @@ namespace Oheangbu.App.SpellFx
             }, shotRadius);
             c.Length = 1.3f * 2f * Mathf.PI * r; c.Seed = _age;
             _jumps.Add(c);
-            _arrivals.Add(new Arrival { At = _age + 0.18f, Pos = now(), Dir = ax });
-            Vector3 feet = hit.Feet; feet.y = GroundY(hit.Position, hit.Target) + 0.02f; float s0 = Rand();
+            _arrivals.Add(new Arrival { At = _age + 0.14f, Pos = now(), Dir = _hitNormal });
+            Vector3 feet = hit.Feet + _hitNormal * (tR + 0.3f); feet.y = GroundY(hit.Position, hit.Target) + 0.02f; float s0 = Rand();     // r3 (Fable 간 r2 #2): in front of the body, where the camera sees it
             var mark = Add(Kind.Root, t => { float ang = s0 * 6.28f + t * 5f; float rr = 0.25f + 0.45f * t; return feet + new Vector3(Mathf.Cos(ang) * rr, 0f, Mathf.Sin(ang) * rr); }, shotRadius * 0.55f);
-            mark.Length = 2.2f; mark.Seed = _age;
+            mark.Length = 2.2f; mark.Seed = _age; mark.Flat = true;
             _marks.Add(mark);
             for (int i = 0; i < 2; i++) _leaves.Add(new Leaf { On = c, T = 0.2f + 0.4f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.3f, Seed = Rand() });
         }
@@ -667,7 +683,7 @@ namespace Oheangbu.App.SpellFx
             foreach (var s in _strands)
             {
                 // r4 (Fable g r1-r3, the "plank" by the hand three times): the shot never draws its first 0.5 m - next to the camera any tube reads as a board
-                float t0 = s.Kind == Kind.Shot ? Mathf.Max(s.Tail, Mathf.Min(0.5f, 0.5f / Mathf.Max(0.5f, s.Length))) : s.Kind == Kind.Back ? s.Tail : s.Tail;
+                float t0 = s.Kind == Kind.Shot ? Mathf.Max(s.Tail, Mathf.Min(0.5f, 0.25f / Mathf.Max(0.5f, s.Length))) : s.Kind == Kind.Back ? s.Tail : s.Tail;
                 float t1 = s.Kind == Kind.Back ? Mathf.Min(s.Head, 1f - Mathf.Min(0.5f, 0.5f / Mathf.Max(0.5f, s.Length))) : s.Head;
                 if (t1 - t0 < 0.002f || s.Fade <= 0.002f) continue;
                 int segs = Mathf.Clamp(Mathf.CeilToInt(s.Length * (t1 - t0) * 16f), 4, 110);
@@ -686,15 +702,17 @@ namespace Oheangbu.App.SpellFx
                     float headTaper = Mathf.Clamp01((s.Head - u) / Mathf.Max(0.02f, 0.25f / Mathf.Max(0.5f, s.Length)));
                     float tailTaper = t0 > 0f ? Mathf.Clamp01((u - t0) / 0.08f) : 1f;
                     float startTaper = s.Kind == Kind.Shot ? Mathf.Lerp(0.15f, 1f, Smooth((u - t0) / 0.1f)) : s.Kind == Kind.Back ? Mathf.Lerp(1f, 0.15f, Smooth((u - (t1 - 0.1f)) / 0.1f)) : 1f;   // the shot grows out of nothing at 0.5 m (강: and fades there coming home)
-                    float rootTaper = s.Kind == Kind.Curl || s.Kind == Kind.Root || s.Kind == Kind.Stem ? Mathf.Lerp(1f, 0.35f, u) : s.Seed == -2f ? Mathf.Lerp(0.6f, 2.6f, u)          // Seed -2: the ground line widens toward the camera
+                    float rootTaper = s.Kind == Kind.Curl || s.Kind == Kind.Root || s.Kind == Kind.Stem ? Mathf.Lerp(1f, 0.35f, u) : s.Seed == -2f ? Mathf.Lerp(1.8f, 0.4f, u)          // Seed -2: the ground line widens toward the camera
                         : s.Kind == Kind.Cage ? Mathf.Lerp(1.3f, 0.35f, u) * (1f + 0.25f * Mathf.Exp(-Mathf.Pow((u - 0.4f - 0.2f * (s.Radius * 37f % 1f)) * 12f, 2f))) : 1f;   // r3 (Fable 각 r2 #1): a brush stroke - thick foot, fine tip, one node
                     float rad = s.Radius * Mathf.Sqrt(headTaper) * Mathf.Lerp(0.4f, 1f, tailTaper) * rootTaper * startTaper;
                     for (int j = 0; j < Around; j++)
                     {
                         float ang = j / (float)Around * Mathf.PI * 2f;
                         Vector3 dir = normal * Mathf.Cos(ang) + bin * Mathf.Sin(ang);
-                        _v.Add(toLocal.MultiplyPoint3x4(p + dir * rad));
-                        _n.Add(toLocal.MultiplyVector(dir));
+                        Vector3 off = dir * rad;
+                        if (s.Flat) { off.y *= 0.12f; off.x *= 2.2f; off.z *= 2.2f; }
+                        _v.Add(toLocal.MultiplyPoint3x4(p + off));
+                        _n.Add(toLocal.MultiplyVector(s.Flat ? Vector3.Lerp(dir, Vector3.up, 0.6f).normalized : dir));
                         _uv.Add(new Vector2(u * s.Length, j / (float)Around));
                         _c.Add(new Color(s.Glow, (int)s.Kind / 10f, u, s.Fade));
                     }
@@ -723,6 +741,7 @@ namespace Oheangbu.App.SpellFx
                 Vector3 p = s.At(l.T), tan = (s.At(Mathf.Min(1f, l.T + 0.02f)) - s.At(Mathf.Max(0f, l.T - 0.02f))).normalized;
                 Vector3 side = Vector3.Cross(tan, Vector3.up); if (side.sqrMagnitude < 1e-4f) side = Vector3.right; side.Normalize();
                 Vector3 dir = (side * l.Side * 0.8f + Vector3.up * 0.5f + tan * 0.3f).normalized;   // the leaf's long axis
+                dir = Quaternion.AngleAxis((l.Seed - 0.5f) * 80f, tan) * dir;                       // r6 (Fable 각 r3 #5): ±40° each, no flat sticker row
                 Vector3 wid = Vector3.Cross(dir, tan).normalized;
                 float len = l.Size * open, w = l.Size * 0.45f * open;
                 Vector3 b0 = p + dir * 0.0f, b1 = p + dir * len;

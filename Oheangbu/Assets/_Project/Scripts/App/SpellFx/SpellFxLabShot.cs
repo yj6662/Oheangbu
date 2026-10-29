@@ -9,7 +9,7 @@ namespace Oheangbu.App.SpellFx
     /// a burst of ink drops and a small ink cloud spread from the contact and fall.
     /// The live list is static; it is cleared on play start (domain reload is off in this project).</summary>
     /// <summary>What a taken shot turns into (2026-10-30, the five ㅜ wards): 수 ink/water, 목 leaves, 화 embers and ash, 토 clods and dust, 금 shards.</summary>
-    public enum SpellFxBurstBody { Water, Wood, Fire, Earth, Metal }
+    public enum SpellFxBurstBody { Water, Wood, Fire, Earth, Metal, Armour }
 
     public sealed class SpellFxLabShot : MonoBehaviour
     {
@@ -125,6 +125,8 @@ namespace Oheangbu.App.SpellFx
                     return new BurstLook { A = new Color(1f, 0.42f, 0.08f, 1f), B = new Color(1f, 0.78f, 0.3f, 1f), Speed = new Vector2(1.0f, 3.0f), Size = new Vector2(0.03f, 0.08f), Gravity = -0.4f, Count = 46, Cloud = new Color(0.12f, 0.1f, 0.09f, 0.6f), CloudSize = new Vector2(0.35f, 0.6f), CloudGravity = -0.12f, CloudCount = 7 };
                 case SpellFxBurstBody.Earth:  // clods dropping hard, ochre dust
                     return new BurstLook { A = new Color(0.28f, 0.19f, 0.11f, 1f), B = new Color(0.46f, 0.34f, 0.2f, 1f), Speed = new Vector2(0.5f, 2.0f), Size = new Vector2(0.08f, 0.22f), Gravity = 2.0f, Count = 26, Cloud = new Color(0.5f, 0.4f, 0.28f, 0.45f), CloudSize = new Vector2(0.4f, 0.7f), CloudGravity = 0.04f, CloudCount = 7 };
+                case SpellFxBurstBody.Armour: // 2026-10-30 갓 (Fable 갓 r2 #1): the guard torn off - big dark ink plates with a jade cast, flung out, falling hard
+                    return new BurstLook { A = new Color(0.03f, 0.035f, 0.03f, 1f), B = new Color(0.14f, 0.26f, 0.2f, 1f), Speed = new Vector2(1.4f, 3.0f), Size = new Vector2(0.16f, 0.32f), Gravity = 1.8f, Count = 9, Cloud = new Color(0.05f, 0.06f, 0.05f, 0.45f), CloudSize = new Vector2(0.3f, 0.5f), CloudGravity = 0.1f, CloudCount = 3 };
                 case SpellFxBurstBody.Metal:  // bright shards flung fast, a faint grey haze
                     return new BurstLook { A = new Color(0.75f, 0.77f, 0.82f, 1f), B = new Color(0.97f, 0.97f, 1f, 1f), Speed = new Vector2(2.0f, 4.5f), Size = new Vector2(0.03f, 0.09f), Gravity = 1.4f, Count = 40, Cloud = new Color(0.6f, 0.6f, 0.65f, 0.25f), CloudSize = new Vector2(0.25f, 0.45f), CloudGravity = 0.02f, CloudCount = 4, Shards = true };
                 default:                      // 수: ink drops and an ink cloud (as before)
