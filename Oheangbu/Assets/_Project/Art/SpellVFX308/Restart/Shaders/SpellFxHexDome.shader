@@ -95,7 +95,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // ---- shimmer ----
             float flick = 0.92 + 0.08 * sin(_Age * 7.0 + hash * 40.0) + step(0.88, hash) * 0.3 * saturate(sin(_Age * 9.0 + hash * 17.0));
             // ---- hit: a ring running out from the struck point + the cells round it flash ----
-            float ripple = 0, touch = 0, speck = 0;
+            float ripple = 0, touch = 0, speck = 0, cellHit = 0, seamFlash = 0;
             if (_HitAge >= 0)
             {
                 // round 5: by DIRECTION from the dome centre - the struck body stands inside, 1.5 m+ from any wall, so a distance test lit nothing (Fable r4: no flash seen)
@@ -111,10 +111,15 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float life = saturate(1 - _HitAge / 0.55) * smoothstep(maxR, maxR * 0.7, dist);
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
                 float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
-                float k1 = smoothstep(-0.015, 0.0, s1) * exp(-max(s1, 0) / 0.012), k2 = smoothstep(-0.012, 0.0, s2) * exp(-max(s2, 0) / 0.01);     // round 14 / 15: narrow, little glow
+                float wv = lerp(0.6, 2.4, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 3.0, 1.7)));     // round 16: the stroke's width breathes (a brush, not a wire)
+                float k1 = smoothstep(-0.015 * wv, 0.0, s1) * exp(-max(s1, 0) / (0.012 * wv)), k2 = smoothstep(-0.012 * wv, 0.0, s2) * exp(-max(s2, 0) / (0.01 * wv));
                 float dry = smoothstep(0.5, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 5.0, 0.37)));     // round 15: breaks by ANGLE only - there from the first frame (Fable r14: only late)     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
                 ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.04 + 0.96 * dry) * (0.45 + 0.75 * VNoise(i.posWS.xy * 14.0 + i.posWS.z * 9.0));     // round 15: ink density along the stroke
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
+                // round 16 (Fable r15: the hit could not be told from a random bloom): the struck cells answer differently - their seams flash for ~3 frames,
+                //      then their patterns bloom faster and larger than the sporadic ones
+                cellHit = smoothstep(0.8, 0.45, dist);
+                seamFlash = cellHit * saturate(1 - _HitAge / 0.06);
                 speck = smoothstep(0.32, 0.12, dist) * saturate(1 - _HitAge / 0.12) * smoothstep(0.74, 0.8, VNoise(i.posWS.xy * 16.0 + i.posWS.z * 11.0));     // round 15: 2 - 4 clear ink dots, not a smear     // round 13 / 14: a short INK speck at the contact (dark, not a light)
             }
             float boost = 1 + touch * 1.0;
@@ -159,6 +164,8 @@ Shader "Oheangbu/SpellFx/HexDome"
             float behind = (tb > 0 && tb < 1) ? smoothstep(0.55, 0.95, length(camP + ray * tb - bodyP)) : 1;
             float noNew = (1 - saturate(_Fade * 2.5)) * smoothstep(0.2, 0.35, abs(dot(n, v)));    // round 8: no bloom where the two walls overlap near the silhouette                             // no fresh bloom while the dome goes
             bloomVis *= noNew * behind; flash *= noNew * behind;
+            float hitBloom = cellHit * smoothstep(0.03, 0.07, _HitAge) * (1 - saturate((_HitAge - 0.45) / 0.35));
+            bloomVis = max(bloomVis, hitBloom); flash = max(flash, cellHit * exp(-max(_HitAge - 0.03, 0) * 4.0) * step(0.03, _HitAge) * 1.6);
             // round 9 (Fable r8: clean white gradients - a CG glass shell): ink density - lines and patterns carry a world-space ink grain
             // round 10 (Fable r9: the grain did not read at 1280): stronger density swings, and the line width breathes with it
             float inkLo = VNoise(float2(i.posWS.x + i.posWS.y * 0.7, i.posWS.z - i.posWS.y * 0.5) * 4.0);
@@ -175,9 +182,10 @@ Shader "Oheangbu/SpellFx/HexDome"
             float halo = smoothstep(1 - fw * _HaloPx, 1 - coreW * 0.5, edge) * _HaloA * outline * borderK * lineFade * saturate(ink);
             col = lerp(col, _Halo.rgb, saturate(halo / max(a + halo, 1e-3))); a = a + halo * (1 - a);     // round 11: the halo is an ink bleed (dark), not a glow
             float ba = border * outline * (0.85 + 0.15 * flick) * borderK * _CoreA * lineFade * saturate(ink + 0.15);
+            ba = max(ba, border * outline * seamFlash);
             float heart = smoothstep(1 - coreW * 0.55, 1 - coreW * 0.1, edge);                 // round 11 (Fable r10: a pure white glowing wire): only the line's heart glows,
             float3 lineCol = lerp(_LineInk.rgb, _Line.rgb * boost * 1.4, saturate(heart * 0.95 + ink * 0.35));   //   its sides are ink-toned cream, varying with the ink density
-            col = lerp(col, lineCol, saturate(ba / max(a, 1e-3)));
+            col = lerp(col, lineCol * (1 + seamFlash * 2.5), saturate(ba / max(a, 1e-3)));
             // round 13 (Fable r12: a matt cream thread, not a hologram seam): a narrow soft light round the heart (3 - 5 px), over the ink edge
             float seam = smoothstep(1 - fw * _SeamPx, 1 - coreW * 0.4, edge) * _SeamA * outline * borderK * lineFade;
             col = lerp(col, _Line.rgb, saturate(seam / max(a + seam, 1e-3) * 0.6)); a = a + seam * (1 - a);
@@ -186,7 +194,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
             float rip = saturate(ripple) * outline;
-            col = lerp(col, _HitCol.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);
+            col = lerp(col, _Halo.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);     // round 16: the ring is a dark ink stroke on the membrane
             float sp = saturate(speck) * outline;
             col = lerp(col, _Halo.rgb, sp); a = a + sp * 0.8 * (1 - a);
             a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade));        // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
