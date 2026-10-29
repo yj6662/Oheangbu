@@ -6,10 +6,10 @@ Shader "Oheangbu/SpellFx/GlassLeaf"
     Properties
     {
         _Patterns ("Pattern atlas 4 x 2 (white line on black)", 2D) = "black" {}
-        _Glass ("Glass (rgb, a = alpha)", Color) = (0.42, 0.7, 0.56, 0.28)
+        _Glass ("Glass (rgb, a = alpha)", Color) = (0.22, 0.46, 0.36, 0.3)
         _Line ("Edge / rib / pattern (HDR)", Color) = (0.95, 0.93, 0.82, 1)
         _Glow ("Bite glow (HDR)", Color) = (0.62, 0.92, 0.72, 1)
-        _PatternA ("Pattern alpha", Range(0, 1)) = 0.75
+        _PatternA ("Pattern alpha", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -57,7 +57,7 @@ Shader "Oheangbu/SpellFx/GlassLeaf"
                 float glow = saturate(i.col.r * 1.5);
                 float3 col = lerp(_Glass.rgb, _Line.rgb, lineA);
                 col = lerp(col, _Glow.rgb, glow * 0.55);
-                float a = lerp(_Glass.a, 0.8, lineA);       // r5 (Fable: "opaque mint stickers" on 감 · 갓 · 강 · 걱): see-through jade glass, cream lines carry the shape
+                float a = lerp(_Glass.a, 0.62, lineA * 0.85);       // r5 (Fable: "opaque mint stickers" on 감 · 갓 · 강 · 걱): see-through jade glass, cream lines carry the shape
                 a = saturate(a + glow * 0.3) * inside * i.col.a;
                 return half4(col, a);
             }

@@ -41,7 +41,10 @@ if '--self' in sys.argv:      # 초성 ㄱ 부착 ㅓ (2026-10-30): the effect i
     cm = (0.1, 0.2, 0.45, 0.8)
     if '--short' in sys.argv:      # 거 (0.5 s): the moments all inside the first second
         moments = (0.01, 0.02, 0.035, 0.06, 0.12, 0.2, 0.23, 0.26); cm = (0.02, 0.06, 0.2, 0.25)
-if '--path' in sys.argv:      # 초성 ㄱ 경로 ㅏ (2026-10-30): caster at lower left-centre, the bear about 5 m ahead in the middle
+if '--fan' in sys.argv:       # 면 ㅗ · 둘레 ㅜ (Fable 면 r1: a left / right ground pair, and the body)
+    boxes = {'A 왼쪽 땅': (0.08, 0.48, 0.47, 0.97), 'B 오른쪽 땅': (0.55, 0.48, 0.94, 0.97), 'C 과녁': (0.36, 0.45, 0.62, 0.8)}
+    cm = (0.1, 0.2, 0.45, 0.8)
+if '--path' in sys.argv and '--fan' not in sys.argv:      # 초성 ㄱ 경로 ㅏ (2026-10-30): caster at lower left-centre, the bear about 5 m ahead in the middle
     # g r2: tight on the action (bear about x .46, y .66 of the frame; brush hand about x .4, y .72)
     boxes = {'A 시전자 · 붓끝': (0.3, 0.5, 0.56, 0.95), 'B 과녁(물림)': (0.38, 0.52, 0.58, 0.8), 'C 경로 · 땅': (0.33, 0.55, 0.62, 0.85)}
     cm = (0.1, 0.2, 0.45, 0.8)

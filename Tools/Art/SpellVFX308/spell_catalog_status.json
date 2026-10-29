@@ -67,74 +67,104 @@
  },
  "거": {
   "variant": "A",
-  "score": 68,
-  "judge": "대리 판정(Fable) · 2회차 71 → 68 · 회차 진행 중",
+  "score": 78,
+  "judge": "대리 판정(Fable) · 3회차 71 → 68 → 78 · 회차 진행 중",
   "decision": "D308-153"
  },
  "걱": {
   "variant": "A",
-  "score": 70,
-  "judge": "대리 판정(Fable) · 2회차 69 → 70 · 회차 진행 중",
+  "score": 81,
+  "judge": "대리 판정(Fable) · 3회차 69 → 72 → 81 · 회차 진행 중",
   "decision": "D308-153"
  },
  "건": {
   "variant": "A",
-  "score": 74,
-  "judge": "대리 판정(Fable) · 2회차 78 → 74 · 회차 진행 중",
+  "score": 82,
+  "judge": "대리 판정(Fable) · 3회차 78 → 74 → 82 · 회차 진행 중",
   "decision": "D308-153"
  },
  "검": {
   "variant": "A",
   "score": 74,
-  "judge": "대리 판정(Fable) · 2회차 64 → 74 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 3회차 64 → 74 → 74 · 회차 진행 중",
   "decision": "D308-153"
  },
  "것": {
   "variant": "A",
-  "score": 70,
-  "judge": "대리 판정(Fable) · 2회차 64 → 70 · 회차 진행 중",
+  "score": 77,
+  "judge": "대리 판정(Fable) · 3회차 64 → 70 → 77 · 회차 진행 중",
   "decision": "D308-153"
  },
  "겅": {
   "variant": "A",
-  "score": 78,
-  "judge": "대리 판정(Fable) · 2회차 76 → 78 · 회차 진행 중",
+  "score": 82,
+  "judge": "대리 판정(Fable) · 3회차 76 → 78 → 82 · 회차 진행 중",
   "decision": "D308-153"
  },
  "고": {
   "variant": "A",
   "score": 59,
-  "judge": "대리 판정(Fable) · 1회차 59 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 2회차 59 → 59 · 회차 진행 중",
   "decision": "D308-153"
  },
  "곡": {
   "variant": "A",
   "score": 60,
-  "judge": "대리 판정(Fable) · 1회차 60 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 2회차 60 → 60 · 회차 진행 중",
   "decision": "D308-153"
  },
  "곤": {
   "variant": "A",
   "score": 63,
-  "judge": "대리 판정(Fable) · 1회차 63 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 2회차 63 → 63 · 회차 진행 중",
   "decision": "D308-153"
  },
  "곰": {
   "variant": "A",
   "score": 39,
-  "judge": "대리 판정(Fable) · 1회차 39 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 2회차 39 → 39 · 회차 진행 중",
   "decision": "D308-153"
  },
  "곳": {
   "variant": "A",
   "score": 52,
-  "judge": "대리 판정(Fable) · 1회차 52 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 2회차 52 → 52 · 회차 진행 중",
   "decision": "D308-153"
  },
  "공": {
   "variant": "A",
   "score": 52,
-  "judge": "대리 판정(Fable) · 1회차 52 · 회차 진행 중",
+  "judge": "대리 판정(Fable) · 2회차 52 → 52 · 회차 진행 중",
+  "decision": "D308-153"
+ },
+ "국": {
+  "variant": "A",
+  "score": 66,
+  "judge": "대리 판정(Fable) · 1회차 66 · 회차 진행 중",
+  "decision": "D308-153"
+ },
+ "군": {
+  "variant": "A",
+  "score": 57,
+  "judge": "대리 판정(Fable) · 1회차 57 · 회차 진행 중",
+  "decision": "D308-153"
+ },
+ "굼": {
+  "variant": "A",
+  "score": 56,
+  "judge": "대리 판정(Fable) · 1회차 56 · 회차 진행 중",
+  "decision": "D308-153"
+ },
+ "굿": {
+  "variant": "A",
+  "score": 62,
+  "judge": "대리 판정(Fable) · 1회차 62 · 회차 진행 중",
+  "decision": "D308-153"
+ },
+ "궁": {
+  "variant": "A",
+  "score": 61,
+  "judge": "대리 판정(Fable) · 1회차 61 · 회차 진행 중",
   "decision": "D308-153"
  }
 }

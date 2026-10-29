@@ -85,6 +85,7 @@ namespace Oheangbu.EditorTools.Vol2
                 var bf = Mat("M_G_Flash_" + b.Key, "Oheangbu/SpellFx/BiteFlash", log);
                 foreach (var kv in b.Colours) { var m = kv.Key.StartsWith("V") ? bv : kv.Key.StartsWith("L") ? bl : bf; m.SetColor(kv.Key.Substring(1), kv.Value); }
                 bl.SetTexture("_Patterns", AssetDatabase.LoadAssetAtPath<Texture2D>(Root + "/U/H/" + b.Atlas));
+                bv.SetFloat("_SeamIdle", 0.24f);          // the body's colour runs along the stalk at rest too (all four read alike as black stalks otherwise)
                 Save(bv); Save(bl); Save(bf);
                 for (int jung = 0; jung < 4; jung++)
                     for (int jong = 0; jong < 6; jong++)
@@ -153,13 +154,13 @@ namespace Oheangbu.EditorTools.Vol2
         static readonly Skin[] Skins =
         {
             MakeSkin("fire", 2, "h_patterns_fire.png", SpellFxBurstBody.Fire, new Color(0.035f, 0.02f, 0.015f), new Color(0.2f, 0.09f, 0.05f), new Color(1f, 0.45f, 0.15f, 0.25f), new Color(1.45f, 0.7f, 0.25f),
-                new Color(0.78f, 0.34f, 0.12f, 0.3f), new Color(1f, 0.78f, 0.5f), new Color(1.3f, 0.65f, 0.22f), new Color(1.2f, 0.85f, 0.45f), new Color(1.25f, 0.55f, 0.15f)),
+                new Color(0.5f, 0.2f, 0.07f, 0.3f), new Color(1f, 0.78f, 0.5f), new Color(1.3f, 0.65f, 0.22f), new Color(1.2f, 0.85f, 0.45f), new Color(1.25f, 0.55f, 0.15f)),
             MakeSkin("earth", 6, "h_patterns_earth.png", SpellFxBurstBody.Earth, new Color(0.04f, 0.03f, 0.02f), new Color(0.22f, 0.16f, 0.09f), new Color(0.85f, 0.65f, 0.35f, 0.22f), new Color(1.2f, 0.95f, 0.55f),
-                new Color(0.62f, 0.47f, 0.26f, 0.3f), new Color(0.96f, 0.86f, 0.66f), new Color(1.1f, 0.86f, 0.46f), new Color(1.1f, 0.95f, 0.7f), new Color(1.1f, 0.8f, 0.4f)),
+                new Color(0.4f, 0.3f, 0.16f, 0.3f), new Color(0.96f, 0.86f, 0.66f), new Color(1.1f, 0.86f, 0.46f), new Color(1.1f, 0.95f, 0.7f), new Color(1.1f, 0.8f, 0.4f)),
             MakeSkin("metal", 9, "h_patterns_metal.png", SpellFxBurstBody.Metal, new Color(0.03f, 0.032f, 0.036f), new Color(0.2f, 0.21f, 0.24f), new Color(0.8f, 0.85f, 0.95f, 0.25f), new Color(1.2f, 1.25f, 1.35f),
-                new Color(0.6f, 0.64f, 0.72f, 0.3f), new Color(0.95f, 0.97f, 1f), new Color(1.2f, 1.25f, 1.35f), new Color(1.15f, 1.15f, 1.2f), new Color(1.1f, 1.15f, 1.3f)),
+                new Color(0.36f, 0.39f, 0.45f, 0.3f), new Color(0.95f, 0.97f, 1f), new Color(1.2f, 1.25f, 1.35f), new Color(1.15f, 1.15f, 1.2f), new Color(1.1f, 1.15f, 1.3f)),
             MakeSkin("water", 11, "h_patterns.png", SpellFxBurstBody.Water, new Color(0.02f, 0.03f, 0.05f), new Color(0.1f, 0.14f, 0.22f), new Color(0.4f, 0.6f, 1f, 0.25f), new Color(0.7f, 0.95f, 1.4f),
-                new Color(0.25f, 0.42f, 0.7f, 0.3f), new Color(0.85f, 0.92f, 1f), new Color(0.7f, 0.95f, 1.4f), new Color(0.9f, 1f, 1.2f), new Color(0.6f, 0.85f, 1.3f)),
+                new Color(0.14f, 0.26f, 0.46f, 0.3f), new Color(0.85f, 0.92f, 1f), new Color(0.7f, 0.95f, 1.4f), new Color(0.9f, 1f, 1.2f), new Color(0.6f, 0.85f, 1.3f)),
         };
 
         static void Vine(GameObject go, Material vine, Material leaf, Material flash, Action<SerializedObject> tune = null)
