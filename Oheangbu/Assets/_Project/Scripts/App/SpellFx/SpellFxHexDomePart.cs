@@ -22,7 +22,7 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] float fadeSeconds = 0.6f;
         [SerializeField] float flashNotBefore = 0.5f;
 
-        static readonly int AgeId = Shader.PropertyToID("_Age"), FadeId = Shader.PropertyToID("_Fade"), HitPosId = Shader.PropertyToID("_HitPos"), HitAgeId = Shader.PropertyToID("_HitAge");
+        static readonly int AgeId = Shader.PropertyToID("_Age"), FadeId = Shader.PropertyToID("_Fade"), HitPosId = Shader.PropertyToID("_HitPos"), HitAgeId = Shader.PropertyToID("_HitAge"), HitCellId = Shader.PropertyToID("_HitCell");
 
         GameObject _go, _ground;
         Material _mat, _groundMat;
@@ -112,10 +112,32 @@ namespace Oheangbu.App.SpellFx
             if (_mat == null) return;
             _hitAt = Mathf.Max(_age, flashNotBefore);         // a contact at the launch flashes once the dome stands (round 5: it fell inside the reveal)
             _mat.SetVector(HitPosId, hit.Position);
+            _mat.SetVector(HitCellId, NearestCell(hit.Position));
         }
 
         /// <summary>Nothing: the executor ends a ring cast at once; the dome keeps its own life (fadeSeconds at the end).</summary>
         public void OnEnd(SpellFxCast cast, SpellFxEndReason reason) { }
+
+        /// <summary>Round 17b (Fable r17: no cell centre lay within the shader's fixed reach of the contact, so no cell answered): the centre of the ONE cell
+        /// nearest the contact - the wall point in the body's direction at 0.45 m (the shader's own contact) - read from the mesh's cell centres (uv3).</summary>
+        Vector4 NearestCell(Vector3 body)
+        {
+            if (_go == null || dome == null) return new Vector4(0f, -1000f, 0f, 0f);
+            var t = _go.transform;
+            Vector3 c = t.position, d = body - c; d.y = 0f;
+            if (d.sqrMagnitude < 1e-6f) d = t.forward;
+            Vector3 contact = c + Vector3.up * 0.45f + d.normalized * radius * 0.93f;
+            var centres = new System.Collections.Generic.List<Vector3>();
+            dome.GetUVs(3, centres);
+            float best = float.MaxValue; Vector3 bestW = contact;
+            foreach (var oc in centres)
+            {
+                Vector3 w = t.TransformPoint(oc);
+                float dd = (w - contact).sqrMagnitude;
+                if (dd < best) { best = dd; bestW = w; }
+            }
+            return new Vector4(bestW.x, bestW.y, bestW.z, 1f);
+        }
 
         void OnDestroy() { if (_mat != null) Destroy(_mat); if (_groundMat != null) Destroy(_groundMat); if (_groundMesh != null) Destroy(_groundMesh); }
     }

@@ -25,7 +25,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _CorePxMax ("Core width max (render px)", Float) = 0.34
         _HaloPx ("Halo width (render px)", Float) = 12
         _SeamPx ("Seam light width (fwidth units - one is several screen px here)", Float) = 2.2
-        _SeamA ("Seam light alpha", Range(0, 1)) = 0.28
+        _SeamA ("Seam light alpha", Range(0, 1)) = 0.4
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
         _PatternScale ("Pattern size in the cell", Range(0.4, 1.5)) = 0.64
         _Age ("Age (s)", Float) = 0
@@ -33,6 +33,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _RiseTime ("Ground-to-top reveal (s)", Float) = 0.45
         _HitPos ("Hit position (world)", Vector) = (0, -1000, 0, 0)
         _HitAge ("Seconds since the hit (<0 none)", Float) = -1
+        _HitCell ("Struck cell centre (world, w = 1 when set)", Vector) = (0, -1000, 0, 0)
         _PatternFrom ("Patterns start at this cell height (0 ground .. 1 top)", Range(0, 1)) = 0.12
         _BackLine ("Far side: line / pattern strength", Range(0, 1)) = 0.35
         _BloomSpread ("Pattern bloom moments spread over (s)", Float) = 1.5
@@ -54,7 +55,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             float4 _Patterns_ST;
             half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol, _LineInk, _Accent;
             float _SeamPx, _SeamA, _HaloA, _CoreA, _CorePxMin, _CorePxMax, _HaloPx, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost;
-            float4 _HitPos;
+            float4 _HitPos, _HitCell;
         CBUFFER_END
 
         float Hash21(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
@@ -115,16 +116,16 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float wv = lerp(0.6, 2.4, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 3.0, 1.7)));     // round 16: the stroke's width breathes (a brush, not a wire)
                 float k1 = smoothstep(-0.015 * wv, 0.0, s1) * exp(-max(s1, 0) / (0.012 * wv)), k2 = smoothstep(-0.012 * wv, 0.0, s2) * exp(-max(s2, 0) / (0.01 * wv));
                 float dry = smoothstep(0.5, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 5.0, 0.37)));     // round 15: breaks by ANGLE only - there from the first frame (Fable r14: only late)     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
-                ripEdge = smoothstep(0.02, 0.0, abs(s1 - 0.004)) * life * (0.04 + 0.96 * dry);
+                ripEdge = smoothstep(0.035, 0.0, abs(s1)) * saturate(1 - _HitAge / 0.14) * smoothstep(maxR, maxR * 0.7, dist);
                 ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.04 + 0.96 * dry) * (0.45 + 0.75 * VNoise(i.posWS.xy * 14.0 + i.posWS.z * 9.0));     // round 15: ink density along the stroke
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
                 // round 16 (Fable r15: the hit could not be told from a random bloom): the struck cells answer differently - their seams flash for ~3 frames,
                 //      then their patterns bloom faster and larger than the sporadic ones
                 // round 17 (Fable r16: only the edges near the contact lit, a 2-frame blink under the clip): the WHOLE struck cell (by its centre), HDR, 6 - 8 frame decay
-                float dCell = distance(i.ctrWS, contact);
-                cellHit = smoothstep(0.75, 0.55, dCell);
+                float dCell = distance(i.ctrWS, _HitCell.xyz);                // round 17b: the part picks the struck cell (nearest centre) - exactly one cell answers
+                cellHit = step(dCell, 0.05) * _HitCell.w;
                 seamFlash = cellHit * exp(-_HitAge * 18.0) * 5.0;
-                quietNear = smoothstep(2.2, 1.4, dCell) * (1 - cellHit) * saturate(1 - _HitAge / 0.6);     // the neighbours do not bloom for 0.6 s (the struck cell reads alone)
+                quietNear = smoothstep(2.4, 1.6, dCell) * (1 - cellHit) * saturate(1 - _HitAge / 0.6);     // the neighbours do not bloom for 0.6 s (the struck cell reads alone)
                 speck = smoothstep(0.32, 0.12, dist) * saturate(1 - _HitAge / 0.12) * smoothstep(0.74, 0.8, VNoise(i.posWS.xy * 16.0 + i.posWS.z * 11.0));     // round 15: 2 - 4 clear ink dots, not a smear     // round 13 / 14: a short INK speck at the contact (dark, not a light)
             }
             float boost = 1 + touch * 1.0;
@@ -191,6 +192,9 @@ Shader "Oheangbu/SpellFx/HexDome"
             col = lerp(col, _Halo.rgb, saturate(halo / max(a + halo, 1e-3))); a = a + halo * (1 - a);     // round 11: the halo is an ink bleed (dark), not a glow
             float ba = border * outline * (0.85 + 0.15 * flick) * borderK * _CoreA * lineFade * saturate(ink + 0.15);
             ba = max(ba, border * outline * saturate(seamFlash));
+            // round 17b (Fable r17: HDR never reached the frame - the lab look tone-maps it): the glow is DRAWN - a soft accent band inside the struck cell's six seams
+            float glowBand = smoothstep(0.55, 1.0, edge) * cellHit * exp(-_HitAge * 9.0) * step(0, _HitAge);
+            col = lerp(col, _Accent.rgb, saturate(glowBand * 0.85)); a = max(a, glowBand * 0.75 * outline);
             float heart = smoothstep(1 - coreW * 0.55, 1 - coreW * 0.1, edge);                 // round 11 (Fable r10: a pure white glowing wire): only the line's heart glows,
             float3 lineCol = lerp(_LineInk.rgb, _Line.rgb * boost * 1.4, saturate(heart * 0.95 + ink * 0.35));   //   its sides are ink-toned cream, varying with the ink density
             col = lerp(col, lineCol + _Accent.rgb * seamFlash, saturate(ba / max(a, 1e-3)));     // round 17 (the user: "이런 이펙트 순간에는 발광도 넣어"): the struck seams glow in the accent
@@ -202,8 +206,8 @@ Shader "Oheangbu/SpellFx/HexDome"
             float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
             float rip = saturate(ripple) * outline;
-            col = lerp(col, _Halo.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);     // round 16: the ring is a dark ink stroke on the membrane
-            col += _Accent.rgb * saturate(ripEdge) * 1.2 * outline; a = max(a, saturate(ripEdge) * 0.7 * outline);      // round 17: its leading edge glows
+            // round 17b (Fable r17: the dark body sank into the glass, only broken glowing bits drifted): one continuous glowing ring, ~8 frames
+            col = lerp(col, _Accent.rgb, saturate(ripEdge)); a = max(a, saturate(ripEdge) * 0.8 * outline);
             float sp = saturate(speck) * outline;
             col = lerp(col, _Halo.rgb, sp); a = a + sp * 0.8 * (1 - a);
             a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade));        // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
