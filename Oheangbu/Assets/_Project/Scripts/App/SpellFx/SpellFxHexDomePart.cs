@@ -11,7 +11,9 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] Mesh dome;
         [SerializeField] Material material;
         [SerializeField] float radius = 2.2f;
-        [SerializeField] float centreAhead = 1.4f;
+        [Tooltip("Height scale on top of the mesh's own 0.85: the dome must stand taller than the camera (about 2.1 m) or the camera looks down through its crown at the caster (round 2).")]
+        [SerializeField] float heightScale = 1.1f;
+        [SerializeField] float centreAhead = 1.5f;
         [SerializeField] float life = 2.4f;
         [SerializeField] float fadeSeconds = 0.6f;
 
@@ -34,7 +36,7 @@ namespace Oheangbu.App.SpellFx
             _go = new GameObject("HexDome");
             _go.transform.SetParent(transform, false);
             _go.transform.SetPositionAndRotation(origin + back * centreAhead, Quaternion.LookRotation(back, Vector3.up));
-            _go.transform.localScale = Vector3.one * radius;
+            _go.transform.localScale = new Vector3(radius, radius * heightScale, radius);
             int layerId = VfxAfterFog308.Layer;
             if (layerId >= 0) _go.layer = layerId;
             _go.AddComponent<MeshFilter>().sharedMesh = dome;
