@@ -8,6 +8,9 @@ namespace Oheangbu.App.SpellFx
     /// IVol2Projectile. A presentation part (the 우 dome) that sees it cross its membrane calls <see cref="Dissolve"/>: the shot turns to ink - its body goes,
     /// a burst of ink drops and a small ink cloud spread from the contact and fall.
     /// The live list is static; it is cleared on play start (domain reload is off in this project).</summary>
+    /// <summary>What a taken shot turns into (2026-10-30, the five ㅜ wards): 수 ink/water, 목 leaves, 화 embers and ash, 토 clods and dust, 금 shards.</summary>
+    public enum SpellFxBurstBody { Water, Wood, Fire, Earth, Metal }
+
     public sealed class SpellFxLabShot : MonoBehaviour
     {
         public static readonly List<SpellFxLabShot> Active = new List<SpellFxLabShot>(8);
@@ -78,7 +81,9 @@ namespace Oheangbu.App.SpellFx
         }
 
         /// <summary>The shot met the membrane at <paramref name="point"/> (outward <paramref name="normal"/>): its body goes, ink bursts out from there and falls.</summary>
-        public void Dissolve(Vector3 point, Vector3 normal)
+        public void Dissolve(Vector3 point, Vector3 normal) => Dissolve(point, normal, SpellFxBurstBody.Water);
+
+        public void Dissolve(Vector3 point, Vector3 normal, SpellFxBurstBody body)
         {
             if (!_alive) return;
             _alive = false;
@@ -86,36 +91,63 @@ namespace Oheangbu.App.SpellFx
             transform.position = point;
             if (_body != null) _body.SetActive(false);
             if (_trail != null) _trail.emitting = false;
-            Burst(transform, point, normal);
+            Burst(transform, point, normal, body);
             Destroy(gameObject, 2.2f);
         }
 
         /// <summary>D308-156: the same ink burst for a REAL shot a ward took (the shot itself is the game's; this only draws its end at <paramref name="point"/>).
         /// Builds a short-lived holder that removes itself.</summary>
-        public static void InkBurst(Vector3 point, Vector3 normal)
+        public static void InkBurst(Vector3 point, Vector3 normal) => InkBurst(point, normal, SpellFxBurstBody.Water);
+
+        public static void InkBurst(Vector3 point, Vector3 normal, SpellFxBurstBody body)
         {
             if (!Application.isPlaying) return;           // particles need Play; an edit-mode fixture only counts the call
             var go = new GameObject("SpellFxInkBurst");
             go.transform.position = point;
             int layer = VfxAfterFog308.Layer; if (layer >= 0) go.layer = layer;
-            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up);
+            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up, body);
             Destroy(go, 2.2f);
         }
 
-        static void Burst(Transform parent, Vector3 point, Vector3 normal)
+        /// <summary>The look of one body's burst: the thrown bits and the cloud they leave.</summary>
+        struct BurstLook
         {
+            public Color A, B, Cloud; public Vector2 Speed, Size, CloudSize; public float Gravity, CloudGravity; public int Count, CloudCount; public bool Shards;
+        }
+
+        static BurstLook LookOf(SpellFxBurstBody b)
+        {
+            switch (b)
+            {
+                case SpellFxBurstBody.Wood:   // leaves torn off, drifting down slowly; a pale green dust
+                    return new BurstLook { A = new Color(0.12f, 0.25f, 0.08f, 0.95f), B = new Color(0.32f, 0.45f, 0.16f, 0.9f), Speed = new Vector2(0.6f, 1.8f), Size = new Vector2(0.07f, 0.18f), Gravity = 0.35f, Count = 32, Cloud = new Color(0.25f, 0.32f, 0.18f, 0.35f), CloudSize = new Vector2(0.3f, 0.55f), CloudGravity = 0.05f, CloudCount = 6 };
+                case SpellFxBurstBody.Fire:   // embers flying up, dark ash smoke rising
+                    return new BurstLook { A = new Color(1f, 0.42f, 0.08f, 1f), B = new Color(1f, 0.78f, 0.3f, 1f), Speed = new Vector2(1.0f, 3.0f), Size = new Vector2(0.03f, 0.08f), Gravity = -0.4f, Count = 46, Cloud = new Color(0.12f, 0.1f, 0.09f, 0.6f), CloudSize = new Vector2(0.35f, 0.6f), CloudGravity = -0.12f, CloudCount = 7 };
+                case SpellFxBurstBody.Earth:  // clods dropping hard, ochre dust
+                    return new BurstLook { A = new Color(0.28f, 0.19f, 0.11f, 1f), B = new Color(0.46f, 0.34f, 0.2f, 1f), Speed = new Vector2(0.5f, 2.0f), Size = new Vector2(0.08f, 0.22f), Gravity = 2.0f, Count = 26, Cloud = new Color(0.5f, 0.4f, 0.28f, 0.45f), CloudSize = new Vector2(0.4f, 0.7f), CloudGravity = 0.04f, CloudCount = 7 };
+                case SpellFxBurstBody.Metal:  // bright shards flung fast, a faint grey haze
+                    return new BurstLook { A = new Color(0.75f, 0.77f, 0.82f, 1f), B = new Color(0.97f, 0.97f, 1f, 1f), Speed = new Vector2(2.0f, 4.5f), Size = new Vector2(0.03f, 0.09f), Gravity = 1.4f, Count = 40, Cloud = new Color(0.6f, 0.6f, 0.65f, 0.25f), CloudSize = new Vector2(0.25f, 0.45f), CloudGravity = 0.02f, CloudCount = 4, Shards = true };
+                default:                      // 수: ink drops and an ink cloud (as before)
+                    return new BurstLook { A = new Color(0.03f, 0.03f, 0.035f, 0.95f), B = new Color(0.12f, 0.1f, 0.1f, 0.9f), Speed = new Vector2(0.8f, 2.6f), Size = new Vector2(0.06f, 0.2f), Gravity = 1.1f, Count = 40, Cloud = new Color(0.05f, 0.05f, 0.06f, 0.55f), CloudSize = new Vector2(0.35f, 0.65f), CloudGravity = 0.15f, CloudCount = 7 };
+            }
+        }
+
+        static void Burst(Transform parent, Vector3 point, Vector3 normal, SpellFxBurstBody body)
+        {
+            var look = LookOf(body);
             var mat = InkMaterial();
             // drops: thrown back off the membrane and sideways, falling
             var drops = MakeSystem(parent, "InkDrops", point, mat);
             var main = drops.main;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 1.0f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 2.6f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.06f, 0.2f);
-            main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.03f, 0.03f, 0.035f, 0.95f), new Color(0.12f, 0.1f, 0.1f, 0.9f));
-            main.gravityModifier = 1.1f;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(look.Speed.x, look.Speed.y);
+            main.startSize = new ParticleSystem.MinMaxCurve(look.Size.x, look.Size.y);
+            main.startColor = new ParticleSystem.MinMaxGradient(look.A, look.B);
+            main.gravityModifier = look.Gravity;
+            if (look.Shards) { var r = drops.GetComponent<ParticleSystemRenderer>(); r.renderMode = ParticleSystemRenderMode.Stretch; r.velocityScale = 0.05f; r.lengthScale = 2.5f; }
             var shape = drops.shape; shape.shapeType = ParticleSystemShapeType.Hemisphere; shape.radius = 0.05f;
             shape.rotation = Quaternion.LookRotation(normal).eulerAngles;
-            var em = drops.emission; em.rateOverTime = 0f; em.SetBursts(new[] { new ParticleSystem.Burst(0f, 40) });
+            var em = drops.emission; em.rateOverTime = 0f; em.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)look.Count) });
             var sol = drops.sizeOverLifetime; sol.enabled = true; sol.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 0.6f), new Keyframe(0.15f, 1f), new Keyframe(1f, 0.3f)));
             var col = drops.colorOverLifetime; col.enabled = true;
             var g = new Gradient(); g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) }, new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 0.6f), new GradientAlphaKey(0f, 1f) });
@@ -126,11 +158,11 @@ namespace Oheangbu.App.SpellFx
             var cm = cloud.main;
             cm.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1.0f);
             cm.startSpeed = new ParticleSystem.MinMaxCurve(0.1f, 0.4f);
-            cm.startSize = new ParticleSystem.MinMaxCurve(0.35f, 0.65f);
-            cm.startColor = new Color(0.05f, 0.05f, 0.06f, 0.55f);
-            cm.gravityModifier = 0.15f;
+            cm.startSize = new ParticleSystem.MinMaxCurve(look.CloudSize.x, look.CloudSize.y);
+            cm.startColor = look.Cloud;
+            cm.gravityModifier = look.CloudGravity;
             var cs = cloud.shape; cs.shapeType = ParticleSystemShapeType.Sphere; cs.radius = 0.08f;
-            var ce = cloud.emission; ce.rateOverTime = 0f; ce.SetBursts(new[] { new ParticleSystem.Burst(0f, 7) });
+            var ce = cloud.emission; ce.rateOverTime = 0f; ce.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)look.CloudCount) });
             var csol = cloud.sizeOverLifetime; csol.enabled = true; csol.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 0.4f), new Keyframe(1f, 2.0f)));
             var ccol = cloud.colorOverLifetime; ccol.enabled = true;
             var cg = new Gradient(); cg.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) }, new[] { new GradientAlphaKey(0.9f, 0f), new GradientAlphaKey(0f, 1f) });

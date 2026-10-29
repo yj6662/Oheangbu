@@ -39,6 +39,30 @@ def atlas():
     return out
 
 
+# 2026-10-30 (the user: "'ㅜ' 술식 5개 전부 우와 같은 종류의 술식으로 구현해줘"): one atlas per body. The six patterns sit in the slots the mesh uses
+# (1, 2, 3, 4, 5, 7 - slots 0 / 6 stay empty); sources are the pack's own Pattern_N.png (white, line = alpha, ~3000 px).
+PACK = REPO / 'Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture'
+BODY_PATTERNS = {
+    'wood': [114, 210, 218, 241, 152, 175],    # 구 목: flower vine, lotus, branch, lotus leaves, plum, flower
+    'fire': [131, 27, 136, 39, 38, 170],       # 누 화: sun flames, spiked sun, star rim, radial bursts
+    'earth': [233, 162, 216, 211, 31, 88],     # 무 토: mountains, meander, square spirals, framed square
+    'metal': [132, 20, 166, 37, 7, 23],        # 수 금: cross lozenge, angular snowflake, bars, keys, cross
+}
+SLOTS = [1, 2, 3, 4, 5, 7]
+
+
+def body_atlas(body):
+    out = Image.new('L', (TILE * 4, TILE * 2), 0)
+    for slot, n in zip(SLOTS, BODY_PATTERNS[body]):
+        a = Image.open(PACK / f'Pattern_{n}.png').convert('RGBA').split()[3]
+        side = max(a.size); sq = Image.new('L', (side, side), 0); sq.paste(a, ((side - a.size[0]) // 2, (side - a.size[1]) // 2))
+        sq = sq.filter(ImageFilter.MaxFilter(7))                      # keep the hairlines alive through the ~6x reduction
+        mi = sq.resize((TILE, TILE), Image.LANCZOS).filter(ImageFilter.GaussianBlur(0.5)).point(lambda v: min(255, int(v * 1.8)))
+        out.paste(mi, ((slot % 4) * TILE, (slot // 4) * TILE))
+    out.convert('RGB').save(OUT / f'h_patterns_{body}.png')
+    return out
+
+
 def icosphere(freq):
     t = (1 + 5 ** 0.5) / 2
     v = np.array([(-1, t, 0), (1, t, 0), (-1, -t, 0), (1, -t, 0), (0, -1, t), (0, 1, t), (0, -1, -t), (0, 1, -t), (t, 0, -1), (t, 0, 1), (-t, 0, -1), (-t, 0, 1)], float)
@@ -110,6 +134,7 @@ def dome(freq):
 
 def main():
     atlas()
+    for b in BODY_PATTERNS: body_atlas(b)
     d = dome(FREQ)
     (OUT / 'h_dome.json').write_text(json.dumps(d), encoding='utf-8')
     print('atlas', OUT / 'h_patterns.png', 'dome cells', d['cells'], 'verts', len(d['pos']), 'tris', len(d['tris']) // 3)

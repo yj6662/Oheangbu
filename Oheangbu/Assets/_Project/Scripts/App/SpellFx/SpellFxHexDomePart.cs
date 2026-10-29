@@ -24,6 +24,8 @@ namespace Oheangbu.App.SpellFx
         [Tooltip("D308-156: when the cast is a ward, stand where the ward really is - centred on the cast point, foot on the band's outer edge, life = the ward's own life " +
                  "(the fields radius / centreAhead / life above are then not used). Off = the round-2 camera placement (look only).")]
         [SerializeField] bool followWard = true;
+        [Tooltip("2026-10-30, the five ㅜ wards: what a taken shot turns into (the ward's own body).")]
+        [SerializeField] SpellFxBurstBody burstBody = SpellFxBurstBody.Water;
 
         static readonly int AgeId = Shader.PropertyToID("_Age"), FadeId = Shader.PropertyToID("_Fade"), HitPosId = Shader.PropertyToID("_HitPos"), HitAgeId = Shader.PropertyToID("_HitAge"), HitCellId = Shader.PropertyToID("_HitCell"), ImpPosId = Shader.PropertyToID("_ImpPos"), ImpAgeId = Shader.PropertyToID("_ImpAge");
         const float MeshFlat = 0.85f;                       // the dome mesh's own height / radius (u_h_build.py FLAT)
@@ -138,7 +140,7 @@ namespace Oheangbu.App.SpellFx
                 if (u.sqrMagnitude > 1e-6f) { u.Normalize(); if (u.y < 0f) u.y = 0f; u.Normalize(); point = t.TransformPoint(new Vector3(u.x, u.y * MeshFlat, u.z)); }
             }
             Vector3 normal = point - centre; if (normal.sqrMagnitude < 1e-6f) normal = Vector3.up;
-            SpellFxLabShot.InkBurst(point, normal.normalized);
+            SpellFxLabShot.InkBurst(point, normal.normalized, burstBody);
             Blot(point, _age);
         }
 
@@ -187,7 +189,7 @@ namespace Oheangbu.App.SpellFx
                 Vector3 hitU = Vector3.Lerp(a, b, k).normalized;
                 Vector3 local = new Vector3(hitU.x, hitU.y * MeshFlat, hitU.z);
                 Vector3 point = t.TransformPoint(local), normal = (point - t.position).normalized;
-                s.Dissolve(point, normal);
+                s.Dissolve(point, normal, burstBody);
                 Blot(point, age);
             }
         }

@@ -19,6 +19,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _Halo ("Border halo colour (ink bleed)", Color) = (0.06, 0.06, 0.08, 1)
         _LineInk ("Line side colour (ink-toned, cool)", Color) = (0.36, 0.37, 0.40, 1)
         _HitCol ("Hit ripple colour (HDR)", Color) = (1.3, 1.32, 1.38, 1)
+        _ImpCol ("Impact blot colour (the body: ink, soot, sap, earth, tarnish)", Color) = (0.02, 0.02, 0.025, 1)
         _Accent ("Hit accent colour (HDR) - the one accent", Color) = (0.6, 1.35, 1.5, 1)
         _HaloA ("Border halo alpha", Range(0, 1)) = 0.12
         _CorePxMin ("Core width min (render px)", Float) = 0.2
@@ -53,7 +54,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         TEXTURE2D(_Patterns); SAMPLER(sampler_Patterns);
         CBUFFER_START(UnityPerMaterial)
             float4 _Patterns_ST;
-            half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol, _LineInk, _Accent;
+            half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol, _LineInk, _Accent, _ImpCol;
             float _SeamPx, _SeamA, _HaloA, _CoreA, _CorePxMin, _CorePxMax, _HaloPx, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost;
             float4 _HitPos, _HitCell;
         CBUFFER_END
@@ -253,7 +254,7 @@ Shader "Oheangbu/SpellFx/HexDome"
                     inkA = max(inkA, max(blot, drip * 0.85));
                     ringA = max(ringA, smoothstep(0.03, 0.0, abs(d - ia * 3.0)) * saturate(1 - ia / 0.25));
                 }
-                col = lerp(col, float3(0.02, 0.02, 0.025), saturate(inkA)); a = max(a, inkA * 0.9 * outline);
+                col = lerp(col, _ImpCol.rgb, saturate(inkA)); a = max(a, inkA * 0.9 * outline);     // 2026-10-30: the blot in the ward's own body colour
                 col = lerp(col, _Accent.rgb, saturate(ringA * 0.8)); a = max(a, ringA * 0.6 * outline);
             }
             // round 22 / 23 (Fable r22: the spill was cut by the seams drawn after it, the core darker than a seam): core and spill drawn LAST, over the seams, brighter than them
