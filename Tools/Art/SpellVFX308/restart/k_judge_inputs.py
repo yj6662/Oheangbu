@@ -23,6 +23,8 @@ def lab(im, t):
 moments = (0.04, 0.12, 0.2, 0.3, 0.42, 0.55, 0.7, 0.85)
 if '--path' in sys.argv:      # 초성 ㄱ (Fable g r1: put one moment in the unravel, f150-f175 of 240)
     moments = (0.08, 0.13, 0.18, 0.25, 0.37, 0.55, 0.67, 0.75)
+if '--short' in sys.argv:     # 거 (a 0.5 s parry): every moment inside the first second
+    moments = (0.01, 0.02, 0.035, 0.06, 0.12, 0.2, 0.23, 0.26)
 cw, ch = 640, 360
 sheet = Image.new('RGB', (cw * 4, ch * 2))
 for j, m in enumerate(moments):
@@ -35,8 +37,10 @@ if '--dome' in sys.argv:      # H (2026-10-29 r8): the dome sits centre-left - c
     boxes = {'A 시전자 · 앞벽': (0.25, 0.4, 0.6, 1.0), 'B 곰 쪽 벽(타격)': (0.33, 0.3, 0.68, 0.9), 'C 왼쪽 벽 · 꼭대기': (0.0, 0.22, 0.38, 0.82)}
 cm = (0.12, 0.3, 0.5, 0.7)
 if '--self' in sys.argv:      # 초성 ㄱ 부착 ㅓ (2026-10-30): the effect is on the caster - the body, above the brush, the ground round the caster
-    boxes = {'A 시전자 몸': (0.15, 0.25, 0.6, 1.0), 'B 붓 · 머리 위': (0.25, 0.0, 0.7, 0.6), 'C 둘레 · 바닥': (0.0, 0.45, 0.85, 1.0)}
+    boxes = {'A 시전자 몸': (0.15, 0.25, 0.6, 1.0), 'B 붓 · 머리 위': (0.336, 0.347, 0.57, 0.764), 'C 둘레 · 바닥': (0.0, 0.45, 0.85, 1.0)}
     cm = (0.1, 0.2, 0.45, 0.8)
+    if '--short' in sys.argv:      # 거 (0.5 s): the moments all inside the first second
+        moments = (0.01, 0.02, 0.035, 0.06, 0.12, 0.2, 0.23, 0.26); cm = (0.02, 0.06, 0.2, 0.25)
 if '--path' in sys.argv:      # 초성 ㄱ 경로 ㅏ (2026-10-30): caster at lower left-centre, the bear about 5 m ahead in the middle
     # g r2: tight on the action (bear about x .46, y .66 of the frame; brush hand about x .4, y .72)
     boxes = {'A 시전자 · 붓끝': (0.3, 0.5, 0.56, 0.95), 'B 과녁(물림)': (0.38, 0.52, 0.58, 0.8), 'C 경로 · 땅': (0.33, 0.55, 0.62, 0.85)}
