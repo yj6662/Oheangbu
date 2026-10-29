@@ -57,7 +57,7 @@ namespace Oheangbu.EditorTools.Vol2
         {
             public char Letter; public string Variant = "A";
             public float Ahead = 4.6f, Side = 0f, Pitch = 15f;
-            public int Frames = 180, Shots;
+            public int Frames = 180, Shots, Extra;
             public string Back = "red";
             public bool MainLook, Swing, Stay;
             public string Name => Letter + "_" + Variant;
@@ -139,13 +139,14 @@ namespace Oheangbu.EditorTools.Vol2
                     case "look": if (v != "main" && v != "lab") return "REFUSED shot:run: look=" + v + " (main | lab)"; proto.MainLook = v == "main"; break;
                     case "swing": proto.Swing = v == "1"; break;
                     case "stay": proto.Stay = v == "1"; break;
+                    case "extra": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Extra) || proto.Extra < 0 || proto.Extra > 4) return "REFUSED shot:run: extra=" + v + " (0 - 4)"; break;
                     case "shots": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Shots) || proto.Shots < 0 || proto.Shots > 8) return "REFUSED shot:run: shots=" + v + " (0 - 8)"; break;
                     default: return "REFUSED shot:run: unknown option " + k;
                 }
             }
             Queue.Clear(); Finished.Clear(); Problems.Clear(); SavedVariants.Clear();
             foreach (string variant in t[1].Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).Distinct())
-                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots });
+                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots, Extra = proto.Extra });
             _total = Queue.Count; _done = 0; _stay = proto.Stay;
             _runId = DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv);
             Directory.CreateDirectory(OutRoot);
@@ -264,7 +265,11 @@ namespace Oheangbu.EditorTools.Vol2
                 _ground.GetComponent<MeshRenderer>().sharedMaterial = soilMat;
             }
             var enemyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefab);
-            Vector3 at = origin + fwd * j.Ahead + right * j.Side;
+            Vector3 main = origin + fwd * j.Ahead + right * j.Side;
+            // extra=N (2026-10-30, 간 · 번진다): N more bodies round the first, about 2.6 m off to the sides and a little behind (inside the spread's 3 m)
+            for (int e = 0; e <= j.Extra; e++)
+            {
+            Vector3 at = e == 0 ? main : main + right * ((e % 2 == 1 ? 1f : -1f) * 2.6f * ((e + 1) / 2)) + fwd * (0.9f * ((e + 1) / 2));
             GameObject go; EnemyVitals vitals;
             if (enemyPrefab != null)
             {
@@ -291,6 +296,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             reg.AddExtra(vitals);
             Dummies.Add(go);
+            }
             Physics.SyncTransforms();
             // look=main: the main world's look profile on the lab's LookDriver308 for this run (runtime only, put back at teardown)
             if (j.MainLook && !_lookSwapped)

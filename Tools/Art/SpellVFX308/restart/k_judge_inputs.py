@@ -1,4 +1,4 @@
-"""D308-153 우 K score loop (2026-10-29, the user: "점수 97점될 때까지 자동으로 계속 돌리길 바랬는데"): the judge's pictures for one round.
+﻿"""D308-153 우 K score loop (2026-10-29, the user: "점수 97점될 때까지 자동으로 계속 돌리길 바랬는데"): the judge's pictures for one round.
   python Tools/Art/SpellVFX308/restart/k_judge_inputs.py <round tag> [shot folder, default 우_K]
 Out: Art/SpellVFX308/Restart/judge/<tag>/
   sheet.jpg  8 moments of the game shot (2 x 4, frame index printed)
@@ -21,6 +21,8 @@ def lab(im, t):
 
 
 moments = (0.04, 0.12, 0.2, 0.3, 0.42, 0.55, 0.7, 0.85)
+if '--path' in sys.argv:      # 초성 ㄱ (Fable g r1: put one moment in the unravel, f150-f175 of 240)
+    moments = (0.08, 0.13, 0.18, 0.25, 0.37, 0.55, 0.67, 0.75)
 cw, ch = 640, 360
 sheet = Image.new('RGB', (cw * 4, ch * 2))
 for j, m in enumerate(moments):
@@ -32,6 +34,10 @@ boxes = {'A 왼쪽 앞 · 시전자 다리': (0.0, 0.45, 0.45, 1.0), 'B 뒤 오�
 if '--dome' in sys.argv:      # H (2026-10-29 r8): the dome sits centre-left - crops on its walls, the caster / bear and its crown
     boxes = {'A 시전자 · 앞벽': (0.25, 0.4, 0.6, 1.0), 'B 곰 쪽 벽(타격)': (0.33, 0.3, 0.68, 0.9), 'C 왼쪽 벽 · 꼭대기': (0.0, 0.22, 0.38, 0.82)}
 cm = (0.12, 0.3, 0.5, 0.7)
+if '--path' in sys.argv:      # 초성 ㄱ 경로 ㅏ (2026-10-30): caster at lower left-centre, the bear about 5 m ahead in the middle
+    # g r2: tight on the action (bear about x .46, y .66 of the frame; brush hand about x .4, y .72)
+    boxes = {'A 시전자 · 붓끝': (0.3, 0.5, 0.56, 0.95), 'B 과녁(물림)': (0.38, 0.52, 0.58, 0.8), 'C 경로 · 땅': (0.33, 0.55, 0.62, 0.85)}
+    cm = (0.1, 0.2, 0.45, 0.8)
 tw, th = 480, 300
 crops = Image.new('RGB', (tw * 4, th * 3))
 for r, (name, b) in enumerate(boxes.items()):
