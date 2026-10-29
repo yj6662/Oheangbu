@@ -25,7 +25,7 @@ namespace Oheangbu.EditorTools.Vol2
         const string Root = "Assets/_Project/Art/SpellVFX308/Restart";
         const string GDir = Root + "/U/G";
         const string SpriteDir = GDir + "/sprites";
-        const float RingRadius = 2.2f, HitRadius = 0.3f;
+        const float RingRadius = 2.2f, HitRadius = 0.3f, PointRadius = 0.1f;
 
         /// <summary>One source graph and what has to be edited in its copy. Block fileIDs and literals were read from the source YAML.</summary>
         sealed class GraphBase
@@ -98,6 +98,31 @@ namespace Oheangbu.EditorTools.Vol2
                 var hitAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(hitPath);
                 if (ringAsset == null || hitAsset == null) { log.Append(tag).Append(" REFUSED: the graph copies did not import; "); continue; }
                 log.Append(tag).Append(" graph asset type ").Append(ringAsset.GetType().Name).Append("; ");
+
+                if (tag == "G2")
+                {
+                    // score loop round 1 (2026-10-29): G2 = placed slots (SpellFxVfxRingSlotsPart) on a POINT copy of the wash graph (arc-circle radius 0.1 m)
+                    string ptPath = GDir + "/VFX_U_G2_pt.vfx";
+                    string perr = EnsureGraph(spec.Value, ptPath, PointRadius, log);
+                    var ptAsset = perr == null ? AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(ptPath) : null;
+                    if (ptAsset == null) { log.Append("G2 REFUSED: point graph ").Append(perr ?? "did not import").Append("; "); continue; }
+                    built[tag] = Prefab(Root + "/U/U_" + tag + ".prefab", 2.6f, go =>
+                    {
+                        var player = go.GetComponent<SpellFxPlayer>();
+                        var pso = new SerializedObject(player); pso.FindProperty("tailSeconds").floatValue = 1.4f; pso.ApplyModifiedPropertiesWithoutUndo();
+                        var part = go.AddComponent<SpellFxVfxRingSlotsPart>();
+                        var so = new SerializedObject(part);
+                        so.FindProperty("pointGraph").objectReferenceValue = ptAsset;
+                        so.FindProperty("moundTex").objectReferenceValue = mound;
+                        so.FindProperty("crestTex").objectReferenceValue = crest;
+                        so.FindProperty("clawTex").objectReferenceValue = claw;
+                        so.FindProperty("inkTex").objectReferenceValue = ink;
+                        so.FindProperty("splashTex").objectReferenceValue = splash;
+                        so.ApplyModifiedPropertiesWithoutUndo();
+                    });
+                    log.Append(tag).Append(" slots prefab ok; ");
+                    continue;
+                }
 
                 built[tag] = Prefab(Root + "/U/U_" + tag + ".prefab", 1.8f, go =>
                 {
