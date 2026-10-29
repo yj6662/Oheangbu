@@ -12,7 +12,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _Patterns ("Pattern atlas 4 x 2 (white line on black)", 2D) = "black" {}
         _Glass ("Glass tint (rgb) / alpha", Color) = (0.18, 0.31, 0.58, 0.125)
         _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.08)
-        _Line ("Cell border colour (HDR)", Color) = (1.3, 1.2, 0.98, 1)
+        _Line ("Cell border colour (HDR)", Color) = (1.25, 1.27, 1.32, 1)
         _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.95, 0.9, 0.68)
         _BaseRing ("Base ring colour (HDR)", Color) = (1.8, 1.7, 1.5, 1)
         _EdgeW ("Border width (edge units)", Range(0.003, 0.3)) = 0.009
@@ -23,8 +23,8 @@ Shader "Oheangbu/SpellFx/HexDome"
         _CorePxMin ("Core width min (render px)", Float) = 0.2
         _CorePxMax ("Core width max (render px)", Float) = 0.34
         _HaloPx ("Halo width (render px)", Float) = 12
-        _SeamPx ("Seam light width (render px)", Float) = 7
-        _SeamA ("Seam light alpha", Range(0, 1)) = 0.2
+        _SeamPx ("Seam light width (fwidth units - one is several screen px here)", Float) = 1.4
+        _SeamA ("Seam light alpha", Range(0, 1)) = 0.28
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
         _PatternScale ("Pattern size in the cell", Range(0.4, 1.5)) = 0.64
         _Age ("Age (s)", Float) = 0
@@ -95,7 +95,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // ---- shimmer ----
             float flick = 0.92 + 0.08 * sin(_Age * 7.0 + hash * 40.0) + step(0.88, hash) * 0.3 * saturate(sin(_Age * 9.0 + hash * 17.0));
             // ---- hit: a ring running out from the struck point + the cells round it flash ----
-            float ripple = 0, touch = 0;
+            float ripple = 0, touch = 0, speck = 0;
             if (_HitAge >= 0)
             {
                 // round 5: by DIRECTION from the dome centre - the struck body stands inside, 1.5 m+ from any wall, so a distance test lit nothing (Fable r4: no flash seen)
@@ -111,11 +111,11 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float life = saturate(1 - _HitAge / 0.55) * smoothstep(maxR, maxR * 0.7, dist);
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
                 float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
-                float k1 = smoothstep(-0.025, 0.0, s1) * exp(-max(s1, 0) / 0.04), k2 = smoothstep(-0.02, 0.0, s2) * exp(-max(s2, 0) / 0.03);
-                float dry = smoothstep(0.47, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 3.6, dist * 4.0)));     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
+                float k1 = smoothstep(-0.015, 0.0, s1) * exp(-max(s1, 0) / 0.02), k2 = smoothstep(-0.012, 0.0, s2) * exp(-max(s2, 0) / 0.016);     // round 14: half as wide
+                float dry = smoothstep(0.5, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 3.6, dist * 4.0)));     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
                 ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.08 + 0.92 * dry);
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
-                ripple += smoothstep(0.22, 0.0, dist) * saturate(1 - _HitAge / 0.04) * 1.4 * smoothstep(0.3, 0.7, VNoise(i.posWS.xy * 26.0 + i.posWS.z * 13.0));     // round 13: a 2-frame ink speck at the contact (Fable r12: a torch spot)
+                speck = smoothstep(0.22, 0.0, dist) * saturate(1 - _HitAge / 0.06) * smoothstep(0.3, 0.7, VNoise(i.posWS.xy * 26.0 + i.posWS.z * 13.0));     // round 13 / 14: a short INK speck at the contact (dark, not a light)
             }
             float boost = 1 + touch * 1.0;
             // ---- layers ----
@@ -180,13 +180,15 @@ Shader "Oheangbu/SpellFx/HexDome"
             col = lerp(col, lineCol, saturate(ba / max(a, 1e-3)));
             // round 13 (Fable r12: a matt cream thread, not a hologram seam): a narrow soft light round the heart (3 - 5 px), over the ink edge
             float seam = smoothstep(1 - fw * _SeamPx, 1 - coreW * 0.4, edge) * _SeamA * outline * borderK * lineFade;
-            col = lerp(col, _Line.rgb * 1.15, saturate(seam / max(a + seam, 1e-3) * 0.6)); a = a + seam * (1 - a);
+            col = lerp(col, _Line.rgb, saturate(seam / max(a + seam, 1e-3) * 0.6)); a = a + seam * (1 - a);
             a = max(a, saturate(ba));
             // ---- the base ring: a bright line where the dome meets the ground ----
             float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
             float rip = saturate(ripple) * outline;
             col = lerp(col, _HitCol.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);
+            float sp = saturate(speck) * outline;
+            col = lerp(col, _Halo.rgb, sp); a = a + sp * 0.8 * (1 - a);
             a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade));        // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
             return half4(col, a);
         }
