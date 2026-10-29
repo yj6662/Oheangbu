@@ -99,13 +99,14 @@ namespace Oheangbu.App.SpellFx
         /// Builds a short-lived holder that removes itself.</summary>
         public static void InkBurst(Vector3 point, Vector3 normal) => InkBurst(point, normal, SpellFxBurstBody.Water);
 
-        public static void InkBurst(Vector3 point, Vector3 normal, SpellFxBurstBody body)
+        /// <param name="edge">Optional rim tint for the bits (Fable 낫 r1: the fire body's armour plates stayed jade - the caller passes its own body colour).</param>
+        public static void InkBurst(Vector3 point, Vector3 normal, SpellFxBurstBody body, Color? edge = null)
         {
             if (!Application.isPlaying) return;           // particles need Play; an edit-mode fixture only counts the call
             var go = new GameObject("SpellFxInkBurst");
             go.transform.position = point;
             int layer = VfxAfterFog308.Layer; if (layer >= 0) go.layer = layer;
-            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up, body);
+            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up, body, edge);
             Destroy(go, 2.2f);
         }
 
@@ -134,9 +135,10 @@ namespace Oheangbu.App.SpellFx
             }
         }
 
-        static void Burst(Transform parent, Vector3 point, Vector3 normal, SpellFxBurstBody body)
+        static void Burst(Transform parent, Vector3 point, Vector3 normal, SpellFxBurstBody body, Color? edge = null)
         {
             var look = LookOf(body);
+            if (edge.HasValue) { var e = edge.Value; e.a = 1f; look.B = e; }
             var mat = body == SpellFxBurstBody.Armour ? PlateMaterial() : InkMaterial();
             // drops: thrown back off the membrane and sideways, falling
             var drops = MakeSystem(parent, "InkDrops", point, mat);

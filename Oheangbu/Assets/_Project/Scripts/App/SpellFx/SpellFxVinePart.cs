@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Oheangbu.App.SpellFx
@@ -221,7 +221,7 @@ namespace Oheangbu.App.SpellFx
                 case VineBite.Cage: SpawnCoil(0.6f); SpawnCage(); break;       // r2 (Fable 각 r1 #5): it binds first (a short wind), then the cage rises
                 case VineBite.Seed: SpawnSeed(); break;
                 case VineBite.Return: SpawnBack(); break;      // r5 (Fable 강 r3-r4): no half-coil - over the head it read as a hose; the touch is the flash
-                case VineBite.Cut: SpawnCrack(); SpawnCoil(1f); for (int k = 0; k < 3; k++) SpellFxLabShot.InkBurst(_hitPos + toCaster * 0.3f + Vector3.up * (0.1f + 0.15f * k), Quaternion.AngleAxis(-40f + 40f * k, Vector3.up) * toCaster, SpellFxBurstBody.Armour); break;   // r2 (Fable 갓 r1 #1): the armour flies off in pieces
+                case VineBite.Cut: SpawnCrack(); SpawnCoil(1f); for (int k = 0; k < 3; k++) SpellFxLabShot.InkBurst(_hitPos + toCaster * 0.3f + Vector3.up * (0.1f + 0.15f * k), Quaternion.AngleAxis(-40f + 40f * k, Vector3.up) * toCaster, SpellFxBurstBody.Armour, PlateEdge()); break;   // r2 (Fable 갓 r1 #1): the armour flies off in pieces
                 default:
                     SpawnCoil(bite == VineBite.Spread ? 0.75f : 1f);
                     if (bite == VineBite.Spread)
@@ -303,6 +303,7 @@ namespace Oheangbu.App.SpellFx
                 while (_jumpQueue.Count > 0) { SpawnJump(_jumpQueue[0]); _jumpQueue.RemoveAt(0); }
                 float endAt = HoldEnd();
                 float u = (hs - endAt) / unravelSeconds;
+                if (u > 0f) EndBurst();
                 float fadeOut = u > 0f ? 1f - Smooth(u - 0.5f) : 1f;
                 if (_coil != null)
                 {
@@ -764,6 +765,7 @@ namespace Oheangbu.App.SpellFx
         void AnimateSelf(float a)
         {
             float u = (a - _selfHold) / (bite == VineBite.Parry ? 0.25f : unravelSeconds);      // r2 (Fable 거 r1 #1): the parry bursts away fast
+            if (u > 0f) EndBurst();
             if (bite == VineBite.Parry && u > 0f && !_burst)
             {
                 _burst = true;
@@ -942,6 +944,7 @@ namespace Oheangbu.App.SpellFx
         {
             float u = (a - _fanHold) / unravelSeconds;
             if ((bite == VineBite.Thicket || bite == VineBite.RingPillar) && _matLive) u = -1f;
+            if (u > 0f) EndBurst();
             foreach (var s in _fan)
             {
                 s.Head = Smooth((a - s.Seed) / s.Grow);
@@ -962,7 +965,7 @@ namespace Oheangbu.App.SpellFx
                 Vector3 from = _origin;
                 if (rim) { float best = float.MaxValue; foreach (var e in _runEnds) { float dd = (e - h.Position).sqrMagnitude; if (dd < best) { best = dd; from = e; } } }
                 FanCoil(h, rim ? from : (Vector3?)null);
-                if (bite == VineBite.FanCut || bite == VineBite.RingCut) for (int q = 0; q < 2; q++) SpellFxLabShot.InkBurst(h.Position + _hitNormal * 0.3f + Vector3.up * (0.1f + 0.15f * q), Quaternion.AngleAxis(-30f + 60f * q, Vector3.up) * _hitNormal, SpellFxBurstBody.Armour);
+                if (bite == VineBite.FanCut || bite == VineBite.RingCut) for (int q = 0; q < 2; q++) SpellFxLabShot.InkBurst(h.Position + _hitNormal * 0.3f + Vector3.up * (0.1f + 0.15f * q), Quaternion.AngleAxis(-30f + 60f * q, Vector3.up) * _hitNormal, SpellFxBurstBody.Armour, PlateEdge());
             }
             for (int k = _arrivals.Count - 1; k >= 0; k--)
                 if (a >= _arrivals[k].At) { SpellFxLabShot.InkBurst(_arrivals[k].Pos, _arrivals[k].Dir, SpellFxBurstBody.Water); Spark(_arrivals[k].Pos + _arrivals[k].Dir * 0.3f); _arrivals.RemoveAt(k); }
@@ -1007,6 +1010,35 @@ namespace Oheangbu.App.SpellFx
             for (int i = 0; i < 2; i++) _leaves.Add(new Leaf { On = c, T = 0.2f + 0.4f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.4f, Seed = Rand() });
             _arrivals.Add(new Arrival { At = _age + delay, Pos = now(), Dir = -_fanFwd });
         }
+
+        bool _ended;
+
+        /// <summary>2026-10-30 body judges r1 (화 · 금 · 수 alike): the end was wood's ink crumbs for every body. Once, as the unravel starts, each body
+        /// lets go its own way from up to four standing strands: fire's embers and ash rise, metal's shards snap out sideways, earth's clods drop,
+        /// water's drops run down. Wood keeps its roots (no burst).</summary>
+        void EndBurst()
+        {
+            if (_ended) return;
+            _ended = true;
+            if (burstBody == SpellFxBurstBody.Wood) return;
+            int n = 0, step = Mathf.Max(1, _strands.Count / 4);
+            for (int i = 0; i < _strands.Count && n < 4; i += step)
+            {
+                var s = _strands[i];
+                if (s.Flat || s.Head - s.Tail < 0.05f || s.Fade < 0.2f) continue;
+                Vector3 p = s.At(0.5f * (s.Head + s.Tail));
+                Vector3 outward = p - _origin; outward.y = 0f; outward = outward.sqrMagnitude > 1e-4f ? outward.normalized : Vector3.right;
+                Vector3 dir = burstBody == SpellFxBurstBody.Fire ? Vector3.up
+                    : burstBody == SpellFxBurstBody.Metal ? outward
+                    : burstBody == SpellFxBurstBody.Water ? Vector3.down
+                    : (Vector3.up + outward).normalized;
+                SpellFxLabShot.InkBurst(p, dir, burstBody);
+                n++;
+            }
+        }
+
+        /// <summary>The armour plates' rim takes this body's own rim colour (Fable 낫 r1: the fire plates stayed jade).</summary>
+        Color PlateEdge() => tubeMaterial != null && tubeMaterial.HasProperty("_Rim") ? tubeMaterial.GetColor("_Rim") : new Color(0.2f, 0.42f, 0.32f, 1f);
 
         sealed class SparkCard { public GameObject Go; public Material Mat; public float At; }
         readonly List<SparkCard> _sparks = new List<SparkCard>();

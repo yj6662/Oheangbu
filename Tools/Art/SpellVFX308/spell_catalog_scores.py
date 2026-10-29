@@ -21,9 +21,13 @@ def main():
         if not m or not v.exists():
             continue
         g = '가' if m[1] == 'ga' else m[1]
-        t = TOTAL.search(v.read_text(encoding='utf-8', errors='replace'))
+        text = v.read_text(encoding='utf-8', errors='replace')
+        t = TOTAL.search(text)
         if t:
-            rounds.setdefault(g, []).append((int(m[2]), float(t[1])))
+            # a verdict may carry earlier rounds as extra columns ("| **합계** | **100** | **59** | **65** | **71.5** |"): the last bold number is this round's
+            row = text[t.start():text.find('\n', t.start())]
+            nums = re.findall(r'\*\*([\d.]+)\*\*', row)[1:]
+            rounds.setdefault(g, []).append((int(m[2]), float(nums[-1] if nums else t[1])))
     for g, rs in rounds.items():
         rs.sort()
         e = led.setdefault(g, {})
