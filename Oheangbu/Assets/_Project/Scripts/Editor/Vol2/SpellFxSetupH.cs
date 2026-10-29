@@ -75,6 +75,15 @@ namespace Oheangbu.EditorTools.Vol2
             try { EditorUtility.CopySerialized(fresh, mat); } finally { UnityEngine.Object.DestroyImmediate(fresh); }
             mat.SetTexture("_Patterns", tex);
             EditorUtility.SetDirty(mat); AssetDatabase.SaveAssetIfDirty(mat);
+            // round 9: the ground mark
+            var gShader = Shader.Find("Oheangbu/SpellFx/HexGround");
+            if (gShader == null) return "REFUSED setup:h: shader Oheangbu/SpellFx/HexGround missing (" + log + ")";
+            string gPath = HDir + "/M_U_H_ground.mat";
+            var gMat = AssetDatabase.LoadAssetAtPath<Material>(gPath);
+            if (gMat == null) { gMat = new Material(gShader); AssetDatabase.CreateAsset(gMat, gPath); }
+            var gFresh = new Material(gShader);
+            try { EditorUtility.CopySerialized(gFresh, gMat); } finally { UnityEngine.Object.DestroyImmediate(gFresh); }
+            EditorUtility.SetDirty(gMat); AssetDatabase.SaveAssetIfDirty(gMat);
 
             // ---- prefab ----
             var go = new GameObject("U_H");
@@ -87,6 +96,7 @@ namespace Oheangbu.EditorTools.Vol2
                 var so = new SerializedObject(part);
                 so.FindProperty("dome").objectReferenceValue = mesh;
                 so.FindProperty("material").objectReferenceValue = mat;
+                so.FindProperty("groundMaterial").objectReferenceValue = gMat;
                 so.ApplyModifiedPropertiesWithoutUndo();
                 prefab = PrefabUtility.SaveAsPrefabAsset(go, Root + "/U/U_H.prefab");
             }
