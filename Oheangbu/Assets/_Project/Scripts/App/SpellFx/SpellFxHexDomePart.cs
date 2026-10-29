@@ -16,6 +16,7 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] float centreAhead = 1.5f;
         [SerializeField] float life = 2.4f;
         [SerializeField] float fadeSeconds = 0.6f;
+        [SerializeField] float flashNotBefore = 0.5f;
 
         static readonly int AgeId = Shader.PropertyToID("_Age"), FadeId = Shader.PropertyToID("_Fade"), HitPosId = Shader.PropertyToID("_HitPos"), HitAgeId = Shader.PropertyToID("_HitAge");
 
@@ -71,8 +72,9 @@ namespace Oheangbu.App.SpellFx
         {
             Build(cast);
             if (_mat == null) return;
-            _hitAt = _age;
+            _hitAt = Mathf.Max(_age, flashNotBefore);         // a contact at the launch flashes once the dome stands (round 5: it fell inside the reveal)
             _mat.SetVector(HitPosId, hit.Position);
+            Debug.Log("[SpellFxHexDomePart] hit at age " + _age.ToString("0.00") + " pos " + hit.Position + " dome " + (_go != null ? _go.transform.position.ToString() : "-"), this);
         }
 
         /// <summary>Nothing: the executor ends a ring cast at once; the dome keeps its own life (fadeSeconds at the end).</summary>

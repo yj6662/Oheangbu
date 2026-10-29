@@ -30,8 +30,9 @@ def atlas():
         t = im[cy:cy + 400, cx:cx + 400]
         m = np.clip((t - bg - 0.06) / 0.35, 0, 1)
         mi = Image.fromarray((m * 255).astype(np.uint8)).resize((TILE, TILE), Image.LANCZOS)
-        mi = mi.filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
-        mi = mi.point(lambda v: min(255, int(v * 1.6)))
+        # round 5 (Fable r4: the patterns read as white filled stickers): fine engraved lines - no dilation, a light blur only
+        mi = mi.filter(ImageFilter.GaussianBlur(0.5))
+        mi = mi.point(lambda v: min(255, int(v * 1.35)))
         out.paste(mi, ((k % 4) * TILE, (k // 4) * TILE))
     OUT.mkdir(parents=True, exist_ok=True)
     out.convert('RGB').save(OUT / 'h_patterns.png')
@@ -87,7 +88,7 @@ def dome(freq):
         ang = np.arctan2(ring @ b, ring @ t)
         ring = ring[np.argsort(ang)]
         rad = float(np.mean([np.linalg.norm((p - n) - n * ((p - n) @ n)) for p in ring]))
-        h = float(rnd.random()); pat = int(rnd.integers(0, 8))
+        h = float(rnd.random()); pat = int(rnd.choice([1, 2, 3, 4, 5, 7]))        # round 6: not 0 (crescent seigaiha) / 6 (fish) - they read as filled stamps
         height = float(max(n[1], 0.0))
 
         def add(p, edge):
