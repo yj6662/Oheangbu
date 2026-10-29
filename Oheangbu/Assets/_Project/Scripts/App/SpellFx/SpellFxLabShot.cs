@@ -193,9 +193,10 @@ namespace Oheangbu.App.SpellFx
                 for (int x = 0; x < S; x++)
                 {
                     float dx = (x + 0.5f) / S * 2f - 1f, dy = (y + 0.5f) / S * 2f - 1f;
-                    float ang = Mathf.Atan2(dy, dx), rag = 0.78f + 0.12f * Mathf.Sin(ang * 5f) + 0.07f * Mathf.Sin(ang * 11f + 1.3f);
+                    // 2026-10-30 (Fable g r1-r3: "a five-point star"): no dominant lobe count - a round drop with an uneven, soft rim
+                    float ang = Mathf.Atan2(dy, dx), rag = 0.84f + 0.05f * Mathf.Sin(ang * 3f + 0.4f) + 0.04f * Mathf.Sin(ang * 7f + 1.3f) + 0.025f * Mathf.Sin(ang * 13f + 2.1f);
                     float r = Mathf.Sqrt(dx * dx + dy * dy) / rag;
-                    float a = Mathf.Clamp01((1f - r) * 4f);
+                    float a = Mathf.Clamp01((1f - r) * 3f);
                     px[y * S + x] = new Color32(255, 255, 255, (byte)(a * 255f));
                 }
             _inkTex.SetPixels32(px); _inkTex.Apply(false);

@@ -56,7 +56,7 @@ namespace Oheangbu.EditorTools.Vol2
         sealed class Job
         {
             public char Letter; public string Variant = "A";
-            public float Ahead = 4.6f, Side = 0f, Pitch = 15f;
+            public float Ahead = 4.6f, Side = 0f, Pitch = 15f, Side3;
             public int Frames = 180, Shots, Extra;
             public string Back = "red";
             public bool MainLook, Swing, Stay;
@@ -139,6 +139,7 @@ namespace Oheangbu.EditorTools.Vol2
                     case "look": if (v != "main" && v != "lab") return "REFUSED shot:run: look=" + v + " (main | lab)"; proto.MainLook = v == "main"; break;
                     case "swing": proto.Swing = v == "1"; break;
                     case "stay": proto.Stay = v == "1"; break;
+                    case "view": if (v != "side" && v != "shoulder") return "REFUSED shot:run: view=" + v + " (shoulder | side)"; proto.Side3 = v == "side" ? 7f : 0f; break;
                     case "extra": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Extra) || proto.Extra < 0 || proto.Extra > 4) return "REFUSED shot:run: extra=" + v + " (0 - 4)"; break;
                     case "shots": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Shots) || proto.Shots < 0 || proto.Shots > 8) return "REFUSED shot:run: shots=" + v + " (0 - 8)"; break;
                     default: return "REFUSED shot:run: unknown option " + k;
@@ -146,7 +147,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             Queue.Clear(); Finished.Clear(); Problems.Clear(); SavedVariants.Clear();
             foreach (string variant in t[1].Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).Distinct())
-                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots, Extra = proto.Extra });
+                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots, Extra = proto.Extra, Side3 = proto.Side3 });
             _total = Queue.Count; _done = 0; _stay = proto.Stay;
             _runId = DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv);
             Directory.CreateDirectory(OutRoot);
@@ -487,6 +488,14 @@ namespace Oheangbu.EditorTools.Vol2
             Quaternion rot = Quaternion.Euler(pitchDegrees, yawDegrees, 0f);
             Vector3 pivot = origin + Vector3.up * 1.7f;
             _cam.transform.SetPositionAndRotation(pivot + rot * new Vector3(0.7f, 0.55f, -2.8f), rot);
+            if (_job != null && _job.Side3 > 0f)
+            {
+                // view=side (2026-10-30, the judge's "side-angle debug still"): from the right, square to the path, the caster and the body both in frame
+                Quaternion yaw = Quaternion.Euler(0f, yawDegrees, 0f);
+                Vector3 mid = origin + yaw * Vector3.forward * (_job.Ahead * 0.55f);
+                Vector3 at = mid + yaw * Vector3.right * _job.Side3 + Vector3.up * 1.4f;
+                _cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation(mid + Vector3.up * 0.6f - at, Vector3.up));
+            }
             _cam.fieldOfView = 60f;
             _cam.targetTexture = _rt;
             _cam.Render();

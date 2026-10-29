@@ -8,7 +8,7 @@ Shader "Oheangbu/SpellFx/Vine"
         _Ink ("Ink core", Color) = (0.02, 0.02, 0.018, 1)
         _InkHi ("Ink fibre highlight", Color) = (0.13, 0.125, 0.11, 1)
         _Rim ("Jade rim (rgb, a = strength)", Color) = (0.5, 0.8, 0.62, 0.2)
-        _Spec ("Cream highlight (rgb, a = strength)", Color) = (0.95, 0.93, 0.85, 0.16)
+        _Spec ("Cream highlight (rgb, a = strength)", Color) = (0.95, 0.93, 0.85, 0)
         _Seam ("Seam light (HDR)", Color) = (0.8, 1.25, 0.9, 1)
         _SeamIdle ("Seam light at rest 0..1", Range(0, 1)) = 0.06
         _Fibres ("Fibres per metre", Float) = 9
@@ -69,7 +69,7 @@ Shader "Oheangbu/SpellFx/Vine"
                 col += _Seam.rgb * i.col.r * 0.5 * smoothstep(0.35, 1.0, fres);      // r3 (Fable r2 #2): the bite lights the EDGES, the stalk stays ink
                 // 감's pillar (kind 7 -> g 0.7) is light, not ink: the waiting seed's column
                 float pillar = step(abs(i.col.g - 0.7), 0.04);
-                col = lerp(col, _Seam.rgb * (0.75 + 0.25 * i.col.r) * (0.7 + 0.3 * fib), pillar * 0.9);
+                col = lerp(col, _Seam.rgb * (0.45 + 0.35 * i.col.r) * (0.7 + 0.3 * fib), pillar * (0.35 + 0.35 * i.col.r) * (0.4 + 0.6 * fres));   // r2 (Fable 감 r1): jade edges over ink, breathing - not an opaque mint rod
                 return half4(col, 1);
             }
             ENDHLSL
