@@ -16,7 +16,7 @@ from PIL import Image, ImageFilter
 REPO = Path(__file__).resolve().parents[4]
 SRC = REPO / 'Art/SpellVFX308/Restart/kcisa/ref_water_patterns.png'
 OUT = REPO / 'Art/SpellVFX308/Restart/u_H'
-FREQ = int(sys.argv[sys.argv.index('--freq') + 1]) if '--freq' in sys.argv else 4
+FREQ = int(sys.argv[sys.argv.index('--freq') + 1]) if '--freq' in sys.argv else 3      # round 7: bigger, fewer cells (Fable r6 vs hx_1)
 FLAT = 0.85          # dome height / radius
 TILE = 512
 

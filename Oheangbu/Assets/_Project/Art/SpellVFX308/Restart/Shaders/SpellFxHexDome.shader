@@ -12,12 +12,16 @@ Shader "Oheangbu/SpellFx/HexDome"
         _Patterns ("Pattern atlas 4 x 2 (white line on black)", 2D) = "black" {}
         _Glass ("Glass tint (rgb) / alpha", Color) = (0.20, 0.32, 0.50, 0.15)
         _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.35)
-        _Line ("Cell border colour (HDR)", Color) = (1.55, 1.5, 1.35, 1)
+        _Line ("Cell border colour (HDR)", Color) = (1.6, 1.46, 1.16, 1)
         _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.97, 1.0, 0.62)
         _BaseRing ("Base ring colour (HDR)", Color) = (1.8, 1.7, 1.5, 1)
         _EdgeW ("Border width (edge units)", Range(0.003, 0.3)) = 0.009
-        _Halo ("Border halo colour", Color) = (0.62, 0.78, 1.0, 1)
+        _Halo ("Border halo colour", Color) = (0.95, 0.86, 0.66, 1)
+        _HitCol ("Hit ripple colour (HDR)", Color) = (1.9, 1.75, 1.35, 1)
         _HaloA ("Border halo alpha", Range(0, 1)) = 0.14
+        _CorePxMin ("Core width min (render px)", Float) = 0.3
+        _CorePxMax ("Core width max (render px)", Float) = 0.5
+        _HaloPx ("Halo width (render px)", Float) = 3
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
         _PatternScale ("Pattern size in the cell", Range(0.5, 1.5)) = 0.74
         _Age ("Age (s)", Float) = 0
@@ -44,8 +48,8 @@ Shader "Oheangbu/SpellFx/HexDome"
         TEXTURE2D(_Patterns); SAMPLER(sampler_Patterns);
         CBUFFER_START(UnityPerMaterial)
             float4 _Patterns_ST;
-            half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo;
-            float _HaloA, _CoreA, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost;
+            half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol;
+            float _HaloA, _CoreA, _CorePxMin, _CorePxMax, _HaloPx, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost;
             float4 _HitPos;
         CBUFFER_END
 
@@ -89,15 +93,21 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float2 dh = _HitPos.xz - c.xz, dp = i.posWS.xz - c.xz;
                 float ang = acos(clamp(dot(normalize(dh + 1e-4), normalize(dp + 1e-4)), -1, 1));        // 0 on the wall behind the body
                 float dist = ang * length(dp);                                                         // metres round the wall
-                ripple = exp(-pow((dist - _HitAge * 4.0) / 0.5, 2)) * saturate(1 - _HitAge / 1.2);
-                touch = saturate(1 - dist / 1.4) * exp(-_HitAge * 2.5);
+                // round 7 (Fable r6: the hit looked like one more random bloom): its own shape - two concentric rings running out from the struck side, warm, ~0.5 s
+                float life = saturate(1 - _HitAge / 0.55);
+                float r1 = abs(dist - _HitAge * 3.2), r2 = abs(dist - (_HitAge - 0.12) * 3.2);
+                ripple = (smoothstep(0.1, 0.0, r1) + 0.7 * smoothstep(0.08, 0.0, r2) * step(0.12, _HitAge)) * life;
+                touch = saturate(1 - dist / 1.0) * exp(-_HitAge * 5.0) * 0.6;
             }
-            float boost = 1 + ripple * 1.6 + touch * 1.4;
+            float boost = 1 + touch * 1.0;
             // ---- layers ----
             float3 n = normalize(i.nrmWS) * side;
             float3 v = normalize(GetWorldSpaceViewDir(i.posWS));
             float fres = pow(1 - saturate(abs(dot(n, v))), 4.0);
-            float border = smoothstep(1 - _EdgeW * 1.6, 1 - _EdgeW * 0.3, edge);
+            // round 7 (Fable r6: the hairline broke into dots on cells facing the camera - under a pixel): never thinner than ~1.5 px on screen
+            float fw = max(fwidth(edge), 1e-4);
+            float coreW = clamp(_EdgeW, fw * _CorePxMin, fw * _CorePxMax);     // the core is held between ~1.2 and 2 px on screen whatever the cell size (r7 bigger cells made it a neon bar)
+            float border = smoothstep(1 - coreW - fw * 0.75, 1 - coreW + fw * 0.25, edge);
             float2 q = (i.uv0 - 0.5) / _PatternScale;                     // -0.5..0.5 inside the pattern's square
             float inCircle = smoothstep(0.5, 0.47, length(q));            // the pattern is clipped to a circle: never a square in a hexagon
             float2 auv = (float2(fmod(pat, 4), 1 - floor(pat / 4)) + saturate(q + 0.5)) / float2(4, 2);
@@ -108,7 +118,9 @@ Shader "Oheangbu/SpellFx/HexDome"
             float borderK = front ? lerp(1, _FacingBorder, facing) : _BackLine;
             line_ *= smoothstep(_PatternFrom, _PatternFrom + 0.2, height);        // hx_1: the low ring of cells is plain glass (the caster inside stays clear), patterns from the shoulder up
 
-            float3 col = _Glass.rgb * (1 + touch * 1.5); float a = _Glass.a * fill * glassK * (1 + touch);
+            float front_ = outline * (1 - outline) * 4 * (1 - gone);                   // round 7: the rising front glows (no bare-wire moment while the glass comes)
+            float sil = lerp(0.25, 1, pow(1 - saturate(abs(dot(n, v))), 1.5));    // round 7: almost clear face-on (no flat blue sheet over the caster), tinted toward the silhouette
+            float3 col = _Glass.rgb * (1 + touch * 1.5); float a = _Glass.a * fill * glassK * sil * (1 + touch) + front_ * 0.18 * glassK;
             float rimK = front ? 1 : 0.3;                                        // round 6: the far side's rim stays faint (it read as a hazy band across the caster)
             col = lerp(col, _Rim.rgb, fres * rimK); a = max(a, _Rim.a * fres * fill * glassK * rimK);
             // ---- sporadic bloom (round 3, the user: "문양이 처음부터 모든 곳에 새겨지는 것이 아니라, 산발적으로 Bloom하는 방식"): every cell's pattern blooms at its own
@@ -124,21 +136,23 @@ Shader "Oheangbu/SpellFx/HexDome"
             float flash = exp(-since * 7.0) * ready;
             float noNew = 1 - saturate(_Fade * 2.5);                             // no fresh bloom while the dome goes
             bloomVis *= noNew; flash *= noNew;
-            bloomVis = max(bloomVis, touch);                                     // the struck side's cells all bloom at once
-            flash = max(flash, touch * 0.8);
+
             float pa = _Pattern.a * line_ * fill * flick * lineK * bloomVis;
             pa = saturate(pa + line_ * fill * flash * 0.5 * lineK);
             col = lerp(col, _Pattern.rgb * (boost + flash * _BloomBoost), saturate(pa / max(a + pa, 1e-3)));
             a = a + pa * (1 - a);
             // round 5 (Fable r4: flat opaque white wires): a thin bright core inside a soft halo
-            float halo = smoothstep(1 - _EdgeW * 14, 1 - _EdgeW * 0.5, edge) * _HaloA * outline * borderK;
+            float lineFade = 1 - saturate(_Fade * 1.6);                         // round 7: the grid goes before the glass (no bare wire left)
+            float halo = smoothstep(1 - fw * _HaloPx, 1 - coreW * 0.5, edge) * _HaloA * outline * borderK * lineFade;
             col = lerp(col, _Halo.rgb * boost, saturate(halo / max(a + halo, 1e-3))); a = a + halo * (1 - a);
-            float ba = border * outline * (0.85 + 0.15 * flick) * borderK * _CoreA;
+            float ba = border * outline * (0.85 + 0.15 * flick) * borderK * _CoreA * lineFade;
             col = lerp(col, _Line.rgb * boost, saturate(ba / max(a, 1e-3)));
             a = max(a, saturate(ba));
             // ---- the base ring: a bright line where the dome meets the ground ----
             float ring = exp(-i.yOS / 0.018) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
+            float rip = saturate(ripple) * outline;
+            col = lerp(col, _HitCol.rgb, saturate(rip / max(a + rip, 1e-3))); a = a + rip * 0.85 * (1 - a);
             a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.45, 1.0, _Fade));        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
             return half4(col, a);
         }
