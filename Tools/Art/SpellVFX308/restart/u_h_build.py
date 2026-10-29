@@ -32,7 +32,7 @@ def atlas():
         mi = Image.fromarray((m * 255).astype(np.uint8)).resize((TILE, TILE), Image.LANCZOS)
         # round 5 (Fable r4: the patterns read as white filled stickers): fine engraved lines - no dilation, a light blur only
         mi = mi.filter(ImageFilter.GaussianBlur(0.5))
-        mi = mi.point(lambda v: min(255, int(v * 1.35)))
+        mi = mi.point(lambda v: min(255, int(v * 1.8)))      # round 21: firmer line drawing (Fable r20: hairlines)
         out.paste(mi, ((k % 4) * TILE, (k // 4) * TILE))
     OUT.mkdir(parents=True, exist_ok=True)
     out.convert('RGB').save(OUT / 'h_patterns.png')

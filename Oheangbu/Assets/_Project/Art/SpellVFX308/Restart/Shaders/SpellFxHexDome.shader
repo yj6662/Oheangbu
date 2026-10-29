@@ -13,13 +13,13 @@ Shader "Oheangbu/SpellFx/HexDome"
         _Glass ("Glass tint (rgb) / alpha", Color) = (0.18, 0.31, 0.58, 0.125)
         _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.08)
         _Line ("Cell border colour (HDR)", Color) = (1.3, 1.27, 1.22, 1)
-        _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.95, 0.9, 0.68)
+        _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.95, 0.9, 0.85)
         _BaseRing ("Base ring colour (HDR)", Color) = (1.8, 1.7, 1.5, 1)
         _EdgeW ("Border width (edge units)", Range(0.003, 0.3)) = 0.009
         _Halo ("Border halo colour (ink bleed)", Color) = (0.06, 0.06, 0.08, 1)
         _LineInk ("Line side colour (ink-toned, cool)", Color) = (0.36, 0.37, 0.40, 1)
         _HitCol ("Hit ripple colour (HDR)", Color) = (1.3, 1.32, 1.38, 1)
-        _Accent ("Hit accent colour (HDR) - the one accent", Color) = (0.35, 1.5, 1.7, 1)
+        _Accent ("Hit accent colour (HDR) - the one accent", Color) = (0.6, 1.35, 1.5, 1)
         _HaloA ("Border halo alpha", Range(0, 1)) = 0.12
         _CorePxMin ("Core width min (render px)", Float) = 0.2
         _CorePxMax ("Core width max (render px)", Float) = 0.34
@@ -185,7 +185,9 @@ Shader "Oheangbu/SpellFx/HexDome"
             float accentK = cellHit * saturate(1 - max(_HitAge - 0.05, 0) / 0.2) * step(0, _HitAge);
             float3 patCol = lerp(_Pattern.rgb * (boost + flash * _BloomBoost * lineK), _Accent.rgb * 1.6, accentK);      // round 17: the struck cell blooms in the one accent colour first
             col = lerp(col, patCol, saturate(pa / max(a + pa, 1e-3)));     // round 9: the far wall's flash is capped like its lines
-            col += _Accent.rgb * cellHit * exp(-_HitAge * 10.0) * 0.1 * step(0, _HitAge) * fill;     // the struck glass glows a moment (faint: no panel)
+            // round 21 (Fable r20: the hit read as an outline, not light): the struck cell's whole membrane flashes - pale light, brighter toward its seams, 6 frames
+            float memFlash = cellHit * exp(-_HitAge * 11.0) * step(0, _HitAge) * lerp(0.45, 1.0, edge);
+            col = lerp(col, float3(1.35, 1.45, 1.5), saturate(memFlash * 0.7)); a = max(a, memFlash * 0.42 * fill);
             a = a + pa * (1 - a);
             // round 5 (Fable r4: flat opaque white wires): a thin bright core inside a soft halo
             float lineFade = 1 - saturate(_Fade * 1.6);                         // round 7: the grid goes before the glass (no bare wire left)
@@ -206,7 +208,8 @@ Shader "Oheangbu/SpellFx/HexDome"
             float seam = smoothstep(1 - fw * _SeamPx, 1 - coreW * 0.4, edge) * _SeamA * outline * borderK * lineFade;
             col = lerp(col, _Line.rgb, saturate(seam / max(a + seam, 1e-3) * 0.6)); a = a + seam * (1 - a);
             // round 20 (Fable r19: no halo round the seam - a wire cage, not glass): a faint, wider, neutral light (not cream: r13's frost)
-            float glowH = smoothstep(1 - fw * 8.0, 1 - fw * 3.0, edge) * 0.1 * outline * borderK * lineFade;
+            float effectNow = saturate(max(bloomVis, cellHit * exp(-_HitAge * 4.0) * step(0, _HitAge)));       // round 21: the light halo only at effect moments (a bloom, the struck cell) - the resting seams keep their ink edge
+            float glowH = smoothstep(1 - fw * 8.0, 1 - fw * 3.0, edge) * 0.16 * outline * borderK * lineFade * effectNow;
             col = lerp(col, float3(0.85, 0.88, 0.93), saturate(glowH / max(a + glowH, 1e-3) * 0.5)); a = a + glowH * (1 - a);
             a = max(a, saturate(ba));
             // ---- the base ring: a bright line where the dome meets the ground ----
