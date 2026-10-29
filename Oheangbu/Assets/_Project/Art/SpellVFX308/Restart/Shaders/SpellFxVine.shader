@@ -67,6 +67,13 @@ Shader "Oheangbu/SpellFx/Vine"
                 float glow = saturate(_SeamIdle + i.col.r * 0.9);
                 col = lerp(col, _Seam.rgb, seam * glow);
                 col += _Seam.rgb * i.col.r * 0.5 * smoothstep(0.35, 1.0, fres);      // r3 (Fable r2 #2): the bite lights the EDGES, the stalk stays ink
+                // a flat ground mark (g 0.95): a decal-like stroke - dark ink inside, jade only along its two edges, no spiral seams (Fable 갓 r3: "a striped hose")
+                if (i.col.g > 0.9)
+                {
+                    float edge = abs(cos(around * 6.28318));
+                    float3 inkIn = lerp(_Ink.rgb, _InkHi.rgb, saturate(fib * 0.6)) * 0.8;
+                    col = lerp(inkIn, _Seam.rgb * 0.85, smoothstep(0.8, 0.98, edge) * saturate(i.col.r * 1.4));
+                }
                 // 감's pillar (kind 7 -> g 0.7) is light, not ink: the waiting seed's column
                 float pillar = step(abs(i.col.g - 0.7), 0.04);
                 col = lerp(col, _Seam.rgb * (0.45 + 0.35 * i.col.r) * (0.7 + 0.3 * fib), pillar * (0.35 + 0.35 * i.col.r) * (0.4 + 0.6 * fres));   // r2 (Fable 감 r1): jade edges over ink, breathing - not an opaque mint rod

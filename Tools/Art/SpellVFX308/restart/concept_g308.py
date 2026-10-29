@@ -35,7 +35,23 @@ SPELLS = {
     '감': "\"감\" = a vine SEED is planted on the bear: a small glowing jade seed lodged in the bear's chest with a thin vertical column of light/ink and a dot mark; it waits (no binding yet). Show it as a quiet, waiting mark: thin line from the brush to the bear already fading, the seed glowing, a faint vertical pillar.",
     '갓': "\"갓\" = the vine becomes a CUTTING line that passes along the path to the bear and through it: a sharp straight crack-line carved down into the ground along the path, the bear's armour/guard peeled away (shards of dark plates flying), vines binding at the peeled spot. Show the cut: a blade-straight crack line on the ground from caster to bear.",
     '강': "\"강\" = the vine goes OUT to the bear and RETURNS: a closed looping curve - an outgoing vine arc on one side and a returning arc on the other, forming a closed loop between the caster and the bear; small enemy shots near the loop knocked down. Show the loop at the moment the vine turns back at the bear.",
+    # ㅓ 부착 (attachment): on the caster's own body / brush - nothing is shot; the bear only stands there
+    '거': "\"거\" = a PARRY: the vine wraps once round the caster's own body and brush arm in a flash (0.5 s) - a tight spiral of ink vine with glass leaves round the torso and the brush, a sharp jade light along it, as if catching a blow. Nothing flies to the bear.",
+    '걱': "\"걱\" (the strongest form) = SELF-HEALING: the vine coils gently round the caster's body from the ground up, glass leaves unfolding along it, small jade motes and leaf-light rising from the caster - calm, restoring. Nothing flies to the bear.",
+    '건': "\"건\" = the vine CLINGS to the caster's body (for 6 s) and is ready to spread: a vine winding round the brush arm and shoulders with a few short tendrils reaching outward toward nearby enemies like feelers. Nothing flies to the bear.",
+    '감2': "",
+    '검': "\"검\" = a vine SEED is planted on the caster's OWN chest: a glowing jade seed at the chest with a small ink knot and two glass leaves, a thin vertical column of jade light rising from it - it waits to burst when the caster is hit. Nothing flies to the bear.",
+    '것': "\"것\" = the vine becomes a BLADE on the caster's brush: an ink vine wound tightly along the whole brush shaft, its edge sharpened into a long jade cutting edge (like a sword edge of light) with glass leaves at the guard. Nothing flies to the bear.",
+    '겅': "\"겅\" = the vine ORBITS the caster: a closed ring of ink vine with glass leaves circling round the caster at waist height (about 1.2 m radius), motion streaks showing it spinning, a faint jade arc on the ground under it. Nothing flies to the bear.",
+    # ㅗ 면 (fan): the vine covers the area in FRONT of the caster (a wide wedge, about 6 m deep, 90 degrees)
+    '고': "\"고\" = vines BURST across the whole fan-shaped area in front of the caster at once: many ink vines racing outward along the ground in a wide wedge, curling up and binding everything inside (the bear is caught). Show the wedge of vines spread on the ground with tendrils rising where they bind.",
+    '곡': "\"곡\" (the strongest form) = the vines left in the front area GROW INTO A SMALL FOREST: thickets of vine stems and glass leaves rising from the ground over the wedge in front, the bear caught among them; the wedge is clearly wider than a normal cast.",
+    '곤': "\"곤\" = the front-area vines SPREAD from the wedge's edge to nearby enemies and patches: the wedge of ground vines with thinner runners reaching out from its rim to two more bears at the sides, short vine marks on the ground where it spread.",
+    '곰': "\"곰\" = vine SEEDS are planted across the front area: a wedge of small glowing jade seeds dotted on the ground in front, each with a tiny thin column of light - quiet, waiting for an enemy to step in. No vines yet.",
+    '곳': "\"곳\" = a vine CUTS across the front area: straight crack lines carved into the ground fanning out in the wedge in front, sharp jade edges, the bear's armour plates flying off where a crack passes under it.",
+    '공': "\"공\" = the front-area vines go OUT and COME BACK: a sweeping fan of vines flung out across the wedge and curling back toward the caster like a wave returning, motion streaks showing the out-and-back sweep.",
 }
+SPELLS.pop('감2')
 TAIL = """
 4. Save the image unchanged (PNG) as: %s
 5. Print the saved file path and stop."""

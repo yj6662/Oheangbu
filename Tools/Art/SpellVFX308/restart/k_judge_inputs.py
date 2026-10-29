@@ -34,6 +34,9 @@ boxes = {'A 왼쪽 앞 · 시전자 다리': (0.0, 0.45, 0.45, 1.0), 'B 뒤 오�
 if '--dome' in sys.argv:      # H (2026-10-29 r8): the dome sits centre-left - crops on its walls, the caster / bear and its crown
     boxes = {'A 시전자 · 앞벽': (0.25, 0.4, 0.6, 1.0), 'B 곰 쪽 벽(타격)': (0.33, 0.3, 0.68, 0.9), 'C 왼쪽 벽 · 꼭대기': (0.0, 0.22, 0.38, 0.82)}
 cm = (0.12, 0.3, 0.5, 0.7)
+if '--self' in sys.argv:      # 초성 ㄱ 부착 ㅓ (2026-10-30): the effect is on the caster - the body, above the brush, the ground round the caster
+    boxes = {'A 시전자 몸': (0.15, 0.25, 0.6, 1.0), 'B 붓 · 머리 위': (0.25, 0.0, 0.7, 0.6), 'C 둘레 · 바닥': (0.0, 0.45, 0.85, 1.0)}
+    cm = (0.1, 0.2, 0.45, 0.8)
 if '--path' in sys.argv:      # 초성 ㄱ 경로 ㅏ (2026-10-30): caster at lower left-centre, the bear about 5 m ahead in the middle
     # g r2: tight on the action (bear about x .46, y .66 of the frame; brush hand about x .4, y .72)
     boxes = {'A 시전자 · 붓끝': (0.3, 0.5, 0.56, 0.95), 'B 과녁(물림)': (0.38, 0.52, 0.58, 0.8), 'C 경로 · 땅': (0.33, 0.55, 0.62, 0.85)}

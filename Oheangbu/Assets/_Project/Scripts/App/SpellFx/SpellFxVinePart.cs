@@ -49,7 +49,9 @@ namespace Oheangbu.App.SpellFx
         [SerializeField] float flashSize = 0.9f;
         [SerializeField] float flashSeconds = 0.28f;
 
-        public enum VineBite { Coil, Cage, Spread, Seed, Cut, Return }
+        /// <summary>Path verbs (ㅏ, the vine is shot) and, from Parry on, the attachment verbs (ㅓ, the vine stays on the caster: 거 Parry · 걱 Heal · 건 Cling ·
+        /// 검 SelfSeed · 것 Blade · 겅 Orbit).</summary>
+        public enum VineBite { Coil, Cage, Spread, Seed, Cut, Return, Parry, Heal, Cling, SelfSeed, Blade, Orbit }
 
         enum Kind { Shot, Coil, Stem, Root, Curl, Cage, Jump, Pillar, Crack, Back }
 
@@ -96,7 +98,7 @@ namespace Oheangbu.App.SpellFx
 
         public void OnLaunch(SpellFxCast cast)
         {
-            _launched = true; _launchAge = 0f; _origin = cast.Origin;
+            _launched = true; _launchAge = 0f; _origin = cast.Origin; _cast = cast;
             Vector3 fwd = cast.Forward; fwd.y = 0f; if (fwd.sqrMagnitude < 1e-4f) fwd = Vector3.forward; fwd.Normalize();
             _side = Vector3.Cross(Vector3.up, fwd).normalized;
             Vector3? tip = cast.BrushTip != null ? cast.BrushTip() : null;
@@ -105,6 +107,7 @@ namespace Oheangbu.App.SpellFx
             float reach = Mathf.Min(maxReach, cast.Spec != null && cast.Spec.PathLength > 0.5f ? cast.Spec.PathLength : maxReach);
             _aimEnd = cast.Origin + fwd * reach + Vector3.up * 1.0f;
             _end = _aimEnd;
+            if (bite >= VineBite.Parry) { SpawnSelf(cast, fwd); if (_tubeGo != null) { _tubeGo.SetActive(true); _leafGo.SetActive(true); } return; }
             float sgn = Rand() < 0.5f ? -1f : 1f;
             _shotSign = sgn;
             _shot = Add(Kind.Shot, t => ShotPoint(t, sgn), shotRadius);
@@ -119,7 +122,7 @@ namespace Oheangbu.App.SpellFx
         /// <summary>The rule's path (36 m/s) reaches the body before the drawn head does: the hit is held until the head arrives at the struck body, then the bite plays.</summary>
         public void OnHit(SpellFxCast cast, SpellFxHit hit)
         {
-            if (!_launched) return;
+            if (!_launched || bite >= VineBite.Parry) return;
             if (_hit || _pending)
             {
                 // later contacts: 간 spreads to the next bodies (a jump each); 감 the seed's activation binds; 강 the return touch (drawn by the back strand)
@@ -161,7 +164,9 @@ namespace Oheangbu.App.SpellFx
         Vector3 _feet;
         float _shotSign = 1f, _flashAge = -1f, _returnAge = -1f;
         float _feetBelow = 0.5f, _coilR = 0.5f;
-        Vector3 _flashAt;
+        Vector3 _flashAt, _home;
+        Transform _cam;
+        SpellFxCast _cast;
         readonly List<Leaf> _motes = new List<Leaf>();
         Vector3 _origin;
 
@@ -211,9 +216,18 @@ namespace Oheangbu.App.SpellFx
             {
                 case VineBite.Cage: SpawnCoil(0.6f); SpawnCage(); break;       // r2 (Fable 각 r1 #5): it binds first (a short wind), then the cage rises
                 case VineBite.Seed: SpawnSeed(); break;
-                case VineBite.Return: SpawnCoil(0.45f); SpawnBack(); break;
-                case VineBite.Cut: SpawnCrack(); SpawnCoil(1f); for (int k = 0; k < 3; k++) SpellFxLabShot.InkBurst(_target + Vector3.up * (0.15f * k), Quaternion.AngleAxis(-40f + 40f * k, Vector3.up) * toCaster, SpellFxBurstBody.Armour); break;   // r2 (Fable 갓 r1 #1): the armour flies off in pieces
-                default: SpawnCoil(bite == VineBite.Spread ? 0.75f : 1f); break;
+                case VineBite.Return: SpawnBack(); break;      // r5 (Fable 강 r3-r4): no half-coil - over the head it read as a hose; the touch is the flash
+                case VineBite.Cut: SpawnCrack(); SpawnCoil(1f); for (int k = 0; k < 3; k++) SpellFxLabShot.InkBurst(_hitPos + toCaster * 0.3f + Vector3.up * (0.1f + 0.15f * k), Quaternion.AngleAxis(-40f + 40f * k, Vector3.up) * toCaster, SpellFxBurstBody.Armour); break;   // r2 (Fable 갓 r1 #1): the armour flies off in pieces
+                default:
+                    SpawnCoil(bite == VineBite.Spread ? 0.75f : 1f);
+                    if (bite == VineBite.Spread)
+                    {
+                        // r6 (Fable 간 r5 #3): the first body gets the same crescent mark as the bodies it spreads to (in front of the chin, 3 s)
+                        Vector3 gf = _feet + _hitNormal * (_targetRadius + 0.3f); gf.y = _feet.y + 0.02f; float s1 = Rand();
+                        var m0 = Add(Kind.Root, t => { float ang = s1 * 6.28f + t * 5f; float rr = 0.25f + 0.45f * t; return gf + new Vector3(Mathf.Cos(ang) * rr, 0f, Mathf.Sin(ang) * rr); }, shotRadius * 0.55f);
+                        m0.Length = 2.2f; m0.Seed = _age; m0.Flat = true; _marks.Add(m0);
+                    }
+                    break;
             }
             if (bite != VineBite.Seed && bite != VineBite.Cage)
             {
@@ -234,6 +248,7 @@ namespace Oheangbu.App.SpellFx
         {
             _age = ageSeconds;
             if (!_launched || _tubeGo == null) return;
+            if (bite >= VineBite.Parry) { _cam = Camera.main != null ? Camera.main.transform : null; AnimateSelf(_age); Rebuild(); return; }
             if (_targetTr != null) _target = _targetTr.position + _targetOffset;
             Animate();
             Rebuild();
@@ -276,10 +291,7 @@ namespace Oheangbu.App.SpellFx
                     _shot.Tail = Smooth(u); _shot.Fade = 1f - Smooth(u - 0.4f);
                 }
             }
-            foreach (var s in _strands)
-            {
-                if (s.Kind == Kind.Curl) { s.Head = _shot != null ? Smooth((_shot.Head - s.Seed) / 0.18f) : 0f; s.Tail = _shot != null ? Smooth((_shot.Tail - s.Seed) / 0.1f) : 0f; s.Glow = _shot != null ? _shot.Glow : 0f; s.Fade = _shot != null ? _shot.Fade : 1f; }
-            }
+            // (the shot's side curls are gone since r6 - their old "follow the shot" step also folded away 감's seed knot and leaf stems, which are Curl strands too)
             if (_hit)
             {
                 float hs = a - _hitAge;
@@ -330,8 +342,8 @@ namespace Oheangbu.App.SpellFx
                 {
                     float bs = hs - 0.3f;                                    // r3 (Fable 강 r2 #1): a beat at the body, then the head flies home
                     _back.Head = Mathf.Clamp01(bs / 0.3f);
-                    _back.Glow = Flash(hs) * 0.5f;
-                    if (_back.Head >= 1f && _returnAge < 0f) { _returnAge = a; _flashAge = a; _flashAt = _back.At(0.9f); }
+                    _back.Glow = _returnAge < 0f ? 0.6f : 0.2f;                         // the homing head is lit while it flies
+                    if (_back.Head >= 1f && _returnAge < 0f) { _returnAge = a; _flashAge = a; _flashAt = _back.At(1f); }
                     if (_returnAge >= 0f)
                     {
                         float rs = a - _returnAge;
@@ -340,7 +352,21 @@ namespace Oheangbu.App.SpellFx
                     }
                 }
                 for (int k = _arrivals.Count - 1; k >= 0; k--)
-                    if (a >= _arrivals[k].At) { SpellFxLabShot.InkBurst(_arrivals[k].Pos, _arrivals[k].Dir, SpellFxBurstBody.Water); _arrivals.RemoveAt(k); }
+                    if (a >= _arrivals[k].At)
+                    {
+                        SpellFxLabShot.InkBurst(_arrivals[k].Pos, _arrivals[k].Dir, SpellFxBurstBody.Water);
+                        if (_arrivals[k].Dir != Vector3.up) Spark(_arrivals[k].Pos + _arrivals[k].Dir * 0.3f);     // r5 (Fable 간 r4 #1): each spread hit flashes like the first
+                        _arrivals.RemoveAt(k);
+                    }
+                for (int k = 0; k < _sparks.Count; k++)
+                {
+                    var sp = _sparks[k]; float f = Flash(a - sp.At);
+                    sp.Go.SetActive(f > 0.01f);
+                    if (f <= 0.01f) continue;
+                    if (_cam != null) sp.Go.transform.rotation = Quaternion.LookRotation(sp.Go.transform.position - _cam.position, Vector3.up);
+                    sp.Go.transform.localScale = Vector3.one * flashSize * (0.6f + 0.6f * Mathf.Clamp01((a - sp.At) / flashSeconds));
+                    sp.Mat.SetFloat("_Flash", f);
+                }
                 foreach (var s in _jumps)
                 {
                     float js = a - s.Seed;
@@ -490,10 +516,10 @@ namespace Oheangbu.App.SpellFx
         /// <summary>감: a seed lodged at the hit with a thin pillar of light-ink standing over it ("세로 기둥 · 점"); it waits.</summary>
         void SpawnSeed()
         {
-            Vector3 at = _hitPos;
+            Vector3 at = _hitPos + Vector3.up * 0.35f + _hitNormal * 0.2f;      // r4 (Fable 감 r3 #1): above the head and toward the camera - at the chest it hid in the body
             // r2 (Fable 감 r1): a thin column (x0.4) with a seed node half way, and a seed mark at the hit - an ink knot with two glass leaves
-            _pillar = Add(Kind.Pillar, t => at + Vector3.up * (t * 1.6f) + _side * (Mathf.Sin(t * 5f) * 0.02f), shotRadius * 0.2f);
-            _pillar.Length = 1.6f;
+            _pillar = Add(Kind.Pillar, t => at + Vector3.up * (t * 1.3f) + _side * (Mathf.Sin(t * 9f) * 0.1f * t) + _hitNormal * (Mathf.Cos(t * 9f) * 0.1f * t), shotRadius * 0.5f);     // r6 (Fable 감 r5 #1): 0.06 m, a loose spiral the motes ride
+            _pillar.Length = 1.5f;
             var knot = Add(Kind.Curl, t => { float ang = t * 9f; float rr = 0.09f * (1f - 0.4f * t); return at + _hitNormal * 0.04f + _side * (Mathf.Cos(ang) * rr) + Vector3.up * (Mathf.Sin(ang) * rr); }, shotRadius * 0.8f);
             knot.Length = 0.6f; knot.Seed = -1f; _marks.Add(knot);
             var node = Add(Kind.Curl, t => { float ang = t * 9f; float rr = 0.05f; return at + Vector3.up * 0.8f + _side * (Mathf.Cos(ang) * rr) + _hitNormal * (Mathf.Sin(ang) * rr); }, shotRadius * 0.5f);
@@ -507,9 +533,9 @@ namespace Oheangbu.App.SpellFx
                 _leaves.Add(new Leaf { On = c, T = 0.85f, Side = dir, Size = leafSize * 2.4f, Seed = seed });
             }
             // r3 (Fable 감 r2 #2 / #3 / #4): small motes rising up the column (it is alive), a jade bud at its tip, an ink dot on the ground under it
-            for (int k = 0; k < 4; k++) { var m = new Leaf { On = _pillar, T = k / 4f, Side = (k & 1) == 0 ? 1f : -1f, Size = leafSize * 0.4f, Seed = Rand() }; _leaves.Add(m); _motes.Add(m); }
-            _leaves.Add(new Leaf { On = _pillar, T = 0.985f, Side = 1f, Size = leafSize * 0.7f, Seed = Rand() });
-            Vector3 g = at; g.y = _feet.y + 0.02f; g += _hitNormal * 0.1f;
+            for (int k = 0; k < 4; k++) { var m = new Leaf { On = _pillar, T = k / 4f, Side = (k & 1) == 0 ? 1f : -1f, Size = leafSize * 0.7f, Seed = Rand() }; _leaves.Add(m); _motes.Add(m); }
+            for (int k = 0; k < 2; k++) _leaves.Add(new Leaf { On = _pillar, T = 0.985f, Side = k == 0 ? 1f : -1f, Size = leafSize * 0.65f, Seed = Rand() });     // the bud: two small leaves
+            Vector3 g = _feet + _hitNormal * (_targetRadius + 0.45f); g.y = _feet.y + 0.02f;      // in front of the chin, where the camera sees the ground
             var dot = Add(Kind.Root, t => { float ang = t * Mathf.PI * 4f; float rr = 0.09f * (1f - 0.7f * t); return g + new Vector3(Mathf.Cos(ang) * rr, 0f, Mathf.Sin(ang) * rr); }, shotRadius * 0.9f);
             dot.Length = 0.6f; dot.Seed = -1f; dot.Flat = true; _marks.Add(dot);
         }
@@ -527,23 +553,29 @@ namespace Oheangbu.App.SpellFx
             _crackA = a; _crackDir = fwd;
             _crack = Add(Kind.Crack, t => a + fwd * (len * t) + side * ((Mathf.PerlinNoise(t * 40f, seed * 10f) - 0.5f) * 0.09f), shotRadius * 0.8f);
             _crack.Length = len; _crack.Flat = true;
+            for (int k = 0; k < 3; k++) _leaves.Add(new Leaf { On = _crack, T = 0.08f + 0.06f * k, Side = (k & 1) == 0 ? 1f : -1f, Size = leafSize * 1.9f, Seed = Rand() });     // r4 (Fable 갓 r3 #4): glass leaves along the cut
         }
         Vector3 _crackA, _crackDir;
 
         /// <summary>강: the head turns at the body and comes back to the brush along the other side - one closed loop ("닫힌 곡선").</summary>
         void SpawnBack()
         {
-            float sgn = -_shotSign;
+            // r4 (Fable 강 r3 #1): home is the brush HAND now (the grip), not the launch tip - that tip sat off to the right, so the return grew sideways
+            Vector3? grip = null;            // r5: the great brush's root sits far out along the brush (near the body) - home is the caster's right hand
+            Vector3 fw = _target - _origin; fw.y = 0f; fw = fw.sqrMagnitude > 1e-4f ? fw.normalized : transform.forward;
+            _home = grip ?? (_origin + Vector3.up * 1.4f + _side * 0.55f + fw * 0.6f);      // r6: the right hand, out in front - visible past the caster's shoulder
+
+            float sgn = 1f;                 // r6: always out on the right, where the caster's body does not hide it
             _back = Add(Kind.Back, t =>
             {
                 // r2 (Fable 강 r1 #1: the high return read as a blade rising out of the head): a wide, low arc out to the other side and home -
                 // the outgoing line and this one make one closed loop seen from behind (its home end fades 0.5 m before the brush)
-                Vector3 p = Vector3.Lerp(_hitPos, _start, t);
+                Vector3 p = Vector3.Lerp(_hitPos, _home, t);
                 float bell = Mathf.Sin(Mathf.PI * t);
-                return p + _side * (sgn * 1.1f * bell) + Vector3.up * (0.2f * bell);
+                return p + _side * (sgn * 0.8f * bell) + Vector3.up * (0.3f * bell);
             }, shotRadius);
-            _back.Length = Vector3.Distance(_hitPos, _start) * 1.2f;
-            for (int i = 0; i < 4; i++) _leaves.Add(new Leaf { On = _back, T = 0.2f + 0.18f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.2f, Seed = Rand() });
+            _back.Length = Vector3.Distance(_hitPos, _home) * 1.2f;
+            for (int i = 0; i < 2; i++) _leaves.Add(new Leaf { On = _back, T = 0.3f + 0.25f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.2f, Seed = Rand() });
             // r2 (Fable 강 r1 #2): the closed curve on the ground under the loop, 3 s
             Vector3 c0 = Vector3.Lerp(_origin, _feet, 0.55f); c0.y = _feet.y + 0.02f;
             Vector3 ax = _feet - _origin; ax.y = 0f; float half = ax.magnitude * 0.5f; ax.Normalize();
@@ -558,9 +590,9 @@ namespace Oheangbu.App.SpellFx
         {
             // r2 (Fable 간 r1): the same bind rule as the first body (neck / shoulder, loops round the arrival axis), a shoulder-high hop, and the hit's
             // own reaction (ink + the coil's flash) when the hop ARRIVES
-            float tR = Mathf.Clamp(hit.TargetRadius, 0.25f, 0.9f), r = (tR * 0.75f + 0.05f) * 1.1f;
+            float tR = Mathf.Clamp(hit.TargetRadius, 0.25f, 0.9f), r = (tR * 0.75f + 0.05f) * 1.1f * 1.4f;     // r4 (Fable 간 r3 #1): the same ring as the first body
             Transform tr = hit.Target; Vector3 off = tr != null ? hit.Position - tr.position : Vector3.zero;
-            float fb = Mathf.Max(0.2f, hit.Position.y - GroundY(hit.Position, hit.Target)), up2 = Mathf.Max(0.4f, fb * 0.75f) - fb;
+            float fb = Mathf.Max(0.2f, hit.Position.y - GroundY(hit.Position, hit.Target)), up2 = Mathf.Max(0.4f, fb * 0.75f) - fb + 0.25f;
             System.Func<Vector3> now = () => (tr != null ? tr.position + off : hit.Position) + Vector3.up * up2;
             Vector3 from = _target + Vector3.up * (ChestAbove() - _feetBelow);
             var j = Add(Kind.Jump, t =>
@@ -570,14 +602,16 @@ namespace Oheangbu.App.SpellFx
             }, shotRadius * 0.75f);
             j.Length = Vector3.Distance(from, now()) + 0.3f; j.Seed = _age;
             _jumps.Add(j);
-            Vector3 ax = from - now(); ax.y = 0f; ax = ax.sqrMagnitude > 1e-4f ? ax.normalized : _hitNormal;
+            // r5 (Fable 간 r4 #2): the same closed ring, the same way round as the first body - its axis points at the caster too, not along the hop
+            Vector3 ax = _hitNormal;
             Vector3 sd = Vector3.Cross(Vector3.up, ax).normalized;
+            _leaves.Add(new Leaf { On = j, T = 0.5f, Side = 1f, Size = leafSize * 1.4f, Seed = Rand() });          // r5 (#3): a glass leaf on each hop
             var c = Add(Kind.Coil, t =>
             {
-                float ang = Mathf.PI * 0.5f + t * 1.3f * 2f * Mathf.PI;
+                float ang = Mathf.PI * 0.5f + t * 1.5f * 2f * Mathf.PI;
                 return now() + ax * Mathf.Lerp(0.2f, -0.4f, t) + sd * (Mathf.Cos(ang) * r) + Vector3.up * (Mathf.Sin(ang) * r * 0.8f);
             }, shotRadius);
-            c.Length = 1.3f * 2f * Mathf.PI * r; c.Seed = _age;
+            c.Length = 1.5f * 2f * Mathf.PI * r; c.Seed = _age;
             _jumps.Add(c);
             _arrivals.Add(new Arrival { At = _age + 0.14f, Pos = now(), Dir = _hitNormal });
             Vector3 feet = hit.Feet + _hitNormal * (tR + 0.3f); feet.y = GroundY(hit.Position, hit.Target) + 0.02f; float s0 = Rand();     // r3 (Fable 간 r2 #2): in front of the body, where the camera sees it
@@ -585,6 +619,172 @@ namespace Oheangbu.App.SpellFx
             mark.Length = 2.2f; mark.Seed = _age; mark.Flat = true;
             _marks.Add(mark);
             for (int i = 0; i < 2; i++) _leaves.Add(new Leaf { On = c, T = 0.2f + 0.4f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.3f, Seed = Rand() });
+        }
+
+        // ------------------------------------------------------------------ ㅓ attachment: the vine on the caster (2026-10-30)
+
+        readonly List<Strand> _self = new List<Strand>();
+        float _selfHold, _selfGrow;
+
+        static float HoldOf(VineBite b)
+        {
+            switch (b) { case VineBite.Parry: return 0.5f; case VineBite.Heal: return 3f; case VineBite.SelfSeed: return 8f; default: return 6f; }
+        }
+
+        /// <summary>The attachment verbs: nothing is shot - at the launch the vine takes the caster's own body (round the torso / along the brush / round
+        /// the caster), holds for the verb's time (the rules: parry 0.5 s, heal 3 s, cling / blade / orbit 6 s, seed 8 s) and lets go as the path's bind does.</summary>
+        void SpawnSelf(SpellFxCast cast, Vector3 fwd)
+        {
+            _selfHold = HoldOf(bite);
+            _selfGrow = bite == VineBite.Parry ? 0.12f : bite == VineBite.Heal ? 0.9f : 0.35f;
+            Vector3 c = _origin; float bodyR = 0.36f;
+            _hit = true; _hitAge = 0.04f; _hitNormal = -fwd;
+            _target = c + Vector3.up * 1.0f; _feet = c; _feetBelow = 1.0f;
+            System.Func<Vector3> hand = () => c + Vector3.up * 1.25f + _side * 0.32f + fwd * 0.25f;
+            System.Func<Vector3> tip = () => hand() + (Vector3.up * 0.9f + fwd * 0.45f).normalized * 1.8f;      // r1: a raised blade from the hand (the rig's brush tip lay by the hand and hid it)
+            _hitPos = c + Vector3.up * 1.2f - fwd * 0.3f + _side * 0.2f;          // the flash: on the caster's back-right, where the camera sees it
+            switch (bite)
+            {
+                case VineBite.Parry:
+                case VineBite.Heal:
+                case VineBite.Cling:
+                {
+                    // round the torso, from the hips up (heal: from the ground, slowly), and along the brush arm to the brush
+                    float y0 = bite == VineBite.Heal ? 0.05f : 0.55f, turns = bite == VineBite.Parry ? 2.2f : 2.6f;
+                    var body = Add(Kind.Coil, t =>
+                    {
+                        float ang = t * turns * 2f * Mathf.PI;
+                        float r = bodyR * (1f + 0.15f * Mathf.Sin(t * 17f)) * (bite == VineBite.Heal ? 1.15f : 1f);
+                        return c + new Vector3(Mathf.Cos(ang) * r, Mathf.Lerp(y0, 1.55f, t), Mathf.Sin(ang) * r);
+                    }, shotRadius * 0.9f);
+                    body.Length = turns * 2f * Mathf.PI * bodyR; body.Seed = 0f; _self.Add(body);
+                    var arm = Add(Kind.Coil, t =>
+                    {
+                        Vector3 a = c + Vector3.up * 1.45f + _side * 0.2f, b = tip();
+                        Vector3 axis = (b - a); float len = axis.magnitude; axis = len > 1e-3f ? axis / len : fwd;
+                        Vector3 n1 = Vector3.Cross(axis, Vector3.up).normalized, n2 = Vector3.Cross(axis, n1);
+                        float ang = t * 5f * Mathf.PI * 2f;
+                        return Vector3.Lerp(a, b, t * 0.85f) + (n1 * Mathf.Cos(ang) + n2 * Mathf.Sin(ang)) * 0.07f;
+                    }, shotRadius * 0.6f);
+                    arm.Length = 3f; arm.Seed = 0.08f; _self.Add(arm);
+                    int nl = bite == VineBite.Heal ? 8 : 4;
+                    for (int i = 0; i < nl; i++) _leaves.Add(new Leaf { On = body, T = 0.12f + 0.8f * i / nl, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.4f, Seed = Rand() });
+                    _leaves.Add(new Leaf { On = arm, T = 0.5f, Side = 1f, Size = leafSize * 1.2f, Seed = Rand() });
+                    body.Glow = bite == VineBite.Parry ? 0.9f : 0.25f; arm.Glow = body.Glow;
+                    if (bite == VineBite.Heal)
+                        for (int k = 0; k < 3; k++)
+                        {
+                            // invisible carriers for the rising motes (heal light), round the body
+                            float a0 = k * 2.1f;
+                            var carrier = Add(Kind.Pillar, t => c + new Vector3(Mathf.Cos(a0 + t * 2f) * 0.55f, 0.2f + t * 2.0f, Mathf.Sin(a0 + t * 2f) * 0.55f), 0.0002f);
+                            carrier.Length = 2f; carrier.Seed = 0.3f; _self.Add(carrier);
+                            for (int m = 0; m < 3; m++) { var mote = new Leaf { On = carrier, T = m / 3f, Side = 1f, Size = leafSize * 0.6f, Seed = Rand() }; _leaves.Add(mote); _motes.Add(mote); }
+                        }
+                    if (bite == VineBite.Cling)
+                        for (int k = 0; k < 3; k++)
+                        {
+                            // feelers: short tendrils reaching out from the shoulders toward where the spread would go
+                            float side = k - 1f, sd = Rand();
+                            Vector3 from = c + Vector3.up * (1.35f - 0.15f * Mathf.Abs(side)) + _side * (0.3f * side);
+                            Vector3 dir = (fwd * 0.8f + _side * side * 0.9f + Vector3.up * 0.15f).normalized;
+                            var feel = Add(Kind.Curl, t => from + dir * (t * 0.9f) + Vector3.up * (Mathf.Sin(t * 6f + sd * 5f) * 0.08f) + Vector3.Cross(Vector3.up, dir) * (Mathf.Sin(t * 9f) * 0.05f), shotRadius * 0.45f);
+                            feel.Length = 0.9f; feel.Seed = 0.3f + 0.1f * k; feel.Glow = 0.4f; _self.Add(feel);
+                        }
+                    break;
+                }
+                case VineBite.SelfSeed:
+                {
+                    // the seed on the caster's back (the camera sees the back): an ink knot, two glass leaves, a column of light over the head with motes
+                    Vector3 at = c + Vector3.up * 1.3f - fwd * 0.22f;
+                    var knot = Add(Kind.Curl, t => { float ang = t * 9f; float rr = 0.09f * (1f - 0.4f * t); return at - fwd * 0.04f + _side * (Mathf.Cos(ang) * rr) + Vector3.up * (Mathf.Sin(ang) * rr); }, shotRadius * 0.8f);
+                    knot.Length = 0.6f; knot.Seed = 0f; _self.Add(knot);
+                    for (int k = 0; k < 2; k++) _leaves.Add(new Leaf { On = knot, T = 0.3f + 0.5f * k, Side = k == 0 ? 1f : -1f, Size = leafSize * 2.2f, Seed = Rand() });
+                    var col = Add(Kind.Pillar, t => at + Vector3.up * (t * 1.3f) + _side * (Mathf.Sin(t * 5f) * 0.02f), shotRadius * 0.2f);
+                    col.Length = 1.3f; col.Seed = 0.1f; col.Glow = 0.8f; _self.Add(col);
+                    for (int k = 0; k < 4; k++) { var m = new Leaf { On = col, T = k / 4f, Side = (k & 1) == 0 ? 1f : -1f, Size = leafSize * 0.7f, Seed = Rand() }; _leaves.Add(m); _motes.Add(m); }
+                    for (int k = 0; k < 2; k++) _leaves.Add(new Leaf { On = col, T = 0.985f, Side = k == 0 ? 1f : -1f, Size = leafSize * 0.65f, Seed = Rand() });
+                    break;
+                }
+                case VineBite.Blade:
+                {
+                    // the vine wound along the brush shaft (two helices) and a lit cutting edge beside it
+                    for (int h = 0; h < 2; h++)
+                    {
+                        float ph = h * Mathf.PI;
+                        var wrap = Add(Kind.Coil, t =>
+                        {
+                            Vector3 a = hand(), b = tip(), axis = b - a; float len = axis.magnitude; axis = len > 1e-3f ? axis / len : fwd;
+                            Vector3 n1 = Vector3.Cross(axis, Vector3.up).normalized, n2 = Vector3.Cross(axis, n1);
+                            float ang = ph + t * 7f * Mathf.PI * 2f;
+                            return Vector3.Lerp(a, b, t) + (n1 * Mathf.Cos(ang) + n2 * Mathf.Sin(ang)) * 0.06f;
+                        }, shotRadius * 0.55f);
+                        wrap.Length = 3f; wrap.Seed = 0.05f * h; _self.Add(wrap);
+                    }
+                    var edge = Add(Kind.Pillar, t =>      // drawn as light (the pillar look): the blade's cutting edge
+                    
+                    {
+                        Vector3 a = hand(), b = tip(), axis = b - a; float len = axis.magnitude; axis = len > 1e-3f ? axis / len : fwd;
+                        Vector3 n = Vector3.Cross(axis, Vector3.up).normalized;
+                        return Vector3.Lerp(a, b, 0.15f + 0.95f * t) + n * 0.11f * Mathf.Sin(Mathf.PI * Mathf.Min(1f, t * 1.1f));
+                    }, shotRadius * 0.4f);
+                    edge.Length = 2.5f; edge.Seed = 0.15f; edge.Glow = 1f; _self.Add(edge);
+                    _leaves.Add(new Leaf { On = _self[0], T = 0.08f, Side = 1f, Size = leafSize * 1.5f, Seed = Rand() });
+                    _leaves.Add(new Leaf { On = _self[1], T = 0.1f, Side = -1f, Size = leafSize * 1.3f, Seed = Rand() });
+                    break;
+                }
+                case VineBite.Orbit:
+                {
+                    // a ring of vine circling the caster at the waist (it turns), leaves on it, its track on the ground
+                    float r = 0.85f;      // r1: at 1.2 m the near side passed the camera as a black slab
+                    var ring = Add(Kind.Coil, t =>
+                    {
+                        float ang = t * Mathf.PI * 1.7f + _age * 4f;
+                        return c + new Vector3(Mathf.Cos(ang) * r, 0.85f + 0.08f * Mathf.Sin(ang * 3f), Mathf.Sin(ang) * r);
+                    }, shotRadius * 1.0f);
+                    ring.Length = r * Mathf.PI * 1.7f; ring.Seed = 0f; ring.Glow = 0.3f; _self.Add(ring);
+                    for (int i = 0; i < 4; i++) _leaves.Add(new Leaf { On = ring, T = 0.15f + 0.22f * i, Side = (i & 1) == 0 ? 1f : -1f, Size = leafSize * 1.5f, Seed = Rand() });
+                    var track = Add(Kind.Root, t => { float ang = t * Mathf.PI * 2f; return c + Vector3.up * 0.02f + new Vector3(Mathf.Cos(ang) * r, 0f, Mathf.Sin(ang) * r); }, shotRadius * 0.6f);
+                    track.Length = r * Mathf.PI * 2f; track.Seed = 0.15f; track.Flat = true; track.Glow = 0.5f; _self.Add(track);
+                    break;
+                }
+            }
+        }
+
+        void AnimateSelf(float a)
+        {
+            float u = (a - _selfHold) / unravelSeconds;
+            foreach (var s in _self)
+            {
+                s.Head = Smooth((a - s.Seed) / _selfGrow);
+                if (bite == VineBite.Parry && s.Kind == Kind.Coil) s.Glow = 0.25f + 0.75f * Mathf.Clamp01(1f - (a - 0.1f) / 0.4f);
+                if (u > 0f) { s.Tail = Smooth(u) * 0.4f; s.Fade = 1f - Smooth(u * 1.1f); }
+            }
+            for (int m = 0; m < _motes.Count; m++) _motes[m].T = Mathf.Repeat(m / (float)_motes.Count + a * 0.31f, 0.95f);
+            if (_flashGo != null)
+            {
+                float f = Flash(a - _hitAge) * (bite == VineBite.Parry ? 1f : 0.5f);
+                _flashGo.SetActive(f > 0.01f);
+                if (f > 0.01f)
+                {
+                    _flashGo.transform.position = _hitPos;
+                    if (_cam != null) _flashGo.transform.rotation = Quaternion.LookRotation(_hitPos - _cam.position, Vector3.up);
+                    _flashGo.transform.localScale = Vector3.one * flashSize;
+                    _flashMat.SetFloat("_Flash", f);
+                }
+            }
+        }
+
+        sealed class SparkCard { public GameObject Go; public Material Mat; public float At; }
+        readonly List<SparkCard> _sparks = new List<SparkCard>();
+
+        /// <summary>One more bite flash at <paramref name="at"/> (the spread's other bodies): a copy of the flash card with its own clock.</summary>
+        void Spark(Vector3 at)
+        {
+            if (flashMaterial == null) return;
+            var go = MakeChild("VineSpark", flashMaterial, out var mesh, out var mat, VfxAfterFog308.Layer);
+            mesh.vertices = _flashMesh.vertices; mesh.uv = _flashMesh.uv; mesh.triangles = _flashMesh.triangles; mesh.RecalculateBounds();
+            go.transform.position = at;
+            _sparks.Add(new SparkCard { Go = go, Mat = mat, At = _age });
         }
 
         struct Arrival { public float At; public Vector3 Pos, Dir; }
@@ -683,8 +883,8 @@ namespace Oheangbu.App.SpellFx
             foreach (var s in _strands)
             {
                 // r4 (Fable g r1-r3, the "plank" by the hand three times): the shot never draws its first 0.5 m - next to the camera any tube reads as a board
-                float t0 = s.Kind == Kind.Shot ? Mathf.Max(s.Tail, Mathf.Min(0.5f, 0.25f / Mathf.Max(0.5f, s.Length))) : s.Kind == Kind.Back ? s.Tail : s.Tail;
-                float t1 = s.Kind == Kind.Back ? Mathf.Min(s.Head, 1f - Mathf.Min(0.5f, 0.5f / Mathf.Max(0.5f, s.Length))) : s.Head;
+                float t0 = s.Kind == Kind.Shot ? Mathf.Max(s.Tail, Mathf.Min(0.5f, 0.25f / Mathf.Max(0.5f, s.Length))) : s.Tail;
+                float t1 = s.Head;      // r6 (Fable 강 r5 #1): the return reaches the hand itself (it tapers there)
                 if (t1 - t0 < 0.002f || s.Fade <= 0.002f) continue;
                 int segs = Mathf.Clamp(Mathf.CeilToInt(s.Length * (t1 - t0) * 16f), 4, 110);
                 Vector3 prevT = Vector3.zero, normal = Vector3.zero;
@@ -714,7 +914,7 @@ namespace Oheangbu.App.SpellFx
                         _v.Add(toLocal.MultiplyPoint3x4(p + off));
                         _n.Add(toLocal.MultiplyVector(s.Flat ? Vector3.Lerp(dir, Vector3.up, 0.6f).normalized : dir));
                         _uv.Add(new Vector2(u * s.Length, j / (float)Around));
-                        _c.Add(new Color(s.Glow, (int)s.Kind / 10f, u, s.Fade));
+                        _c.Add(new Color(s.Glow, s.Flat ? 0.95f : (int)s.Kind / 10f, u, s.Fade));      // g 0.95 = a flat ground mark (the shader draws it as a decal)
                     }
                     if (i < segs)
                         for (int j = 0; j < Around; j++)
@@ -731,6 +931,7 @@ namespace Oheangbu.App.SpellFx
 
             // leaves: a card leaning off the strand, opening as the head passes it
             var toLocalL = _leafGo.transform.worldToLocalMatrix;
+            _cam = Camera.main != null ? Camera.main.transform : null;
             _v.Clear(); _n.Clear(); _uv.Clear(); _c.Clear(); _t.Clear();
             foreach (var l in _leaves)
             {
@@ -742,7 +943,14 @@ namespace Oheangbu.App.SpellFx
                 Vector3 side = Vector3.Cross(tan, Vector3.up); if (side.sqrMagnitude < 1e-4f) side = Vector3.right; side.Normalize();
                 Vector3 dir = (side * l.Side * 0.8f + Vector3.up * 0.5f + tan * 0.3f).normalized;   // the leaf's long axis
                 dir = Quaternion.AngleAxis((l.Seed - 0.5f) * 80f, tan) * dir;                       // r6 (Fable 각 r3 #5): ±40° each, no flat sticker row
+                // r7 (감's leaves unseen three times): on a curve that faces the camera, cross(dir, tan) put the blade edge-on - turn each leaf about its
+                // long axis toward the camera (a little of the old tilt kept so they do not read as stickers)
                 Vector3 wid = Vector3.Cross(dir, tan).normalized;
+                if (_cam != null)
+                {
+                    Vector3 toCam = (_cam.position - p).normalized, face = Vector3.Cross(dir, toCam);
+                    if (face.sqrMagnitude > 1e-4f) wid = Vector3.Slerp(wid, face.normalized, 0.75f).normalized;
+                }
                 float len = l.Size * open, w = l.Size * 0.45f * open;
                 Vector3 b0 = p + dir * 0.0f, b1 = p + dir * len;
                 int bv = _v.Count;

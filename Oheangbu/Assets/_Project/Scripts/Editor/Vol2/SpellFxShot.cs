@@ -57,7 +57,7 @@ namespace Oheangbu.EditorTools.Vol2
         {
             public char Letter; public string Variant = "A";
             public float Ahead = 4.6f, Side = 0f, Pitch = 15f, Side3;
-            public int Frames = 180, Shots, Extra;
+            public int Frames = 180, Shots, Extra; public bool Fake;
             public string Back = "red";
             public bool MainLook, Swing, Stay;
             public string Name => Letter + "_" + Variant;
@@ -140,14 +140,14 @@ namespace Oheangbu.EditorTools.Vol2
                     case "swing": proto.Swing = v == "1"; break;
                     case "stay": proto.Stay = v == "1"; break;
                     case "view": if (v != "side" && v != "shoulder") return "REFUSED shot:run: view=" + v + " (shoulder | side)"; proto.Side3 = v == "side" ? 7f : 0f; break;
-                    case "extra": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Extra) || proto.Extra < 0 || proto.Extra > 4) return "REFUSED shot:run: extra=" + v + " (0 - 4)"; break;
+                    case "fake": proto.Fake = v == "1"; break;                    case "extra": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Extra) || proto.Extra < 0 || proto.Extra > 4) return "REFUSED shot:run: extra=" + v + " (0 - 4)"; break;
                     case "shots": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Shots) || proto.Shots < 0 || proto.Shots > 8) return "REFUSED shot:run: shots=" + v + " (0 - 8)"; break;
                     default: return "REFUSED shot:run: unknown option " + k;
                 }
             }
             Queue.Clear(); Finished.Clear(); Problems.Clear(); SavedVariants.Clear();
             foreach (string variant in t[1].Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).Distinct())
-                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots, Extra = proto.Extra, Side3 = proto.Side3 });
+                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots, Extra = proto.Extra, Side3 = proto.Side3, Fake = proto.Fake });
             _total = Queue.Count; _done = 0; _stay = proto.Stay;
             _runId = DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv);
             Directory.CreateDirectory(OutRoot);
@@ -327,8 +327,11 @@ namespace Oheangbu.EditorTools.Vol2
             _spawnedBefore = _director.Spawned;
             _coord.CastBegan += _onBegan = l => { if (_beganLog == null) _beganLog = l; };
             _coord.Services.Route.Adapter.Decided += _onDecided = d => _decision = d;
+            // fake=1: the letter is never raised (the old heal look answered the letter even with no cast) - the prefab alone
+            if (j.Fake) { if (StartFake(j)) { _st = St.Record; return; } Problems.Add(j.Name + ": fake=1 but no catalogue prefab"); _st = St.Teardown; return; }
             try { _wiring.LetterChannel.Raise(new DrawnLetter(j.Letter, default, default, null, 0.6f, 0.6f, 1f, 1f, 3)); }
             catch (Exception e) { Problems.Add(j.Name + ": raising the letter: " + e.Message); }
+            if (_beganLog == null && j.Fake && StartFake(j)) { _st = St.Record; return; }
             if (_beganLog == null)
             {
                 Problems.Add(j.Name + ": the letter started no cast (" + (_decision != null ? "accepted=" + _decision.Accepted + " reason=" + _decision.Reason : "no decision") + ")");
@@ -349,10 +352,40 @@ namespace Oheangbu.EditorTools.Vol2
             _st = St.Record;
         }
 
+        // fake=1 (2026-10-30, 걱: a self-heal the lab's rules refuse to start - 급소창 / 교전 conditions): the LOOK ONLY - the catalogue prefab is built and
+        // driven here on the scope clock with a made-up cast at the caster (no rule ran; the frames say so in their index note "FAKE")
+        static GameObject _fakeGo; static SpellFxPlayer _fakePlayer; static Vector3 _fakeOrigin, _fakeFwd;
+
+        static bool StartFake(Job j)
+        {
+            var cat = SpellFxCatalog.Load();
+            var prefab = cat != null ? cat.Find(j.Letter, j.Variant) : null;
+            if (prefab == null) return false;
+            long now = _coord.Services.Clock.NowUs;
+            _fakeOrigin = _shapes.Caster.Position; _fakeFwd = FlatUnit(_shapes.Caster.AimDirection);
+            var cast = new SpellFxCast { CastId = -7, Letter = j.Letter, Variant = j.Variant, Origin = _fakeOrigin, Forward = _fakeFwd, Right = Vector3.Cross(Vector3.up, _fakeFwd), StartUs = now, LaunchUs = now + 300000, Clock = _coord.Services.Clock };
+            _fakeGo = Object.Instantiate(prefab);
+            _fakePlayer = _fakeGo.GetComponent<SpellFxPlayer>();
+            if (_fakePlayer == null) { Object.Destroy(_fakeGo); _fakeGo = null; return false; }
+            _fakePlayer.Begin(cast);
+            _launchUs = cast.LaunchUs;
+            Problems.Add(j.Name + ": FAKE - the rules started no cast; the prefab is driven alone (look only)");
+            return true;
+        }
+
         static void Record()
         {
             var j = _job;
             long now = _coord.Services.Clock.NowUs;
+            if (_fakePlayer != null)
+            {
+                _fakePlayer.Tick(now);
+                Shoot(_fakeOrigin, Quaternion.LookRotation(_fakeFwd, Vector3.up).eulerAngles.y, j.Pitch, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"));
+                _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), "0", ((now - _launchUs) / 1000000.0).ToString("0.0000", Inv), "0", "1", "FAKE"));
+                _frames++;
+                if (_frames >= j.Frames || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
+                return;
+            }
             var player = _director.PlayerOf(_beganLog.Cast.Value);
             double age = (now - _beganLog.StartUs) / 1000000.0, launchAge = (now - _launchUs) / 1000000.0;
             _hits = _beganLog.Contacts.Count(c => c.BudgetAccepted);
@@ -368,6 +401,7 @@ namespace Oheangbu.EditorTools.Vol2
             var j = _job;
             try { _index?.Dispose(); } catch (Exception) { }
             _index = null;
+            if (_fakeGo != null) { Object.Destroy(_fakeGo); _fakeGo = null; _fakePlayer = null; }
             var player = _beganLog != null ? _director.PlayerOf(_beganLog.Cast.Value) : null;
             string summary = j.Name + " | frames " + _frames + (_beganLog != null ? " | cast " + _beganLog.Status + " contacts " + _beganLog.Contacts.Count + " paid " + _beganLog.PaidContacts + " materials " + _beganLog.Materials.Count : " | NO CAST")
                 + " | director spawned " + _director.Spawned + " skipped " + _director.Skipped + " retired " + _director.Retired + " hits " + _director.HitsRelayed + " | " + _director.LastNote

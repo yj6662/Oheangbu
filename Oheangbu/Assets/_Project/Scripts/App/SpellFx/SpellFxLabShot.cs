@@ -16,7 +16,7 @@ namespace Oheangbu.App.SpellFx
         public static readonly List<SpellFxLabShot> Active = new List<SpellFxLabShot>(8);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { Active.Clear(); _inkTex = null; _inkMat = null; }
+        static void ResetStatics() { Active.Clear(); _inkTex = null; _inkMat = null; _plateTex = null; _plateMat = null; }
 
         public Vector3 Velocity;
         public float Delay;
@@ -126,7 +126,7 @@ namespace Oheangbu.App.SpellFx
                 case SpellFxBurstBody.Earth:  // clods dropping hard, ochre dust
                     return new BurstLook { A = new Color(0.28f, 0.19f, 0.11f, 1f), B = new Color(0.46f, 0.34f, 0.2f, 1f), Speed = new Vector2(0.5f, 2.0f), Size = new Vector2(0.08f, 0.22f), Gravity = 2.0f, Count = 26, Cloud = new Color(0.5f, 0.4f, 0.28f, 0.45f), CloudSize = new Vector2(0.4f, 0.7f), CloudGravity = 0.04f, CloudCount = 7 };
                 case SpellFxBurstBody.Armour: // 2026-10-30 갓 (Fable 갓 r2 #1): the guard torn off - big dark ink plates with a jade cast, flung out, falling hard
-                    return new BurstLook { A = new Color(0.03f, 0.035f, 0.03f, 1f), B = new Color(0.14f, 0.26f, 0.2f, 1f), Speed = new Vector2(1.4f, 3.0f), Size = new Vector2(0.16f, 0.32f), Gravity = 1.8f, Count = 9, Cloud = new Color(0.05f, 0.06f, 0.05f, 0.45f), CloudSize = new Vector2(0.3f, 0.5f), CloudGravity = 0.1f, CloudCount = 3 };
+                    return new BurstLook { A = new Color(0.05f, 0.07f, 0.06f, 1f), B = new Color(0.2f, 0.42f, 0.32f, 1f), Speed = new Vector2(2.2f, 4.0f), Size = new Vector2(0.16f, 0.32f), Gravity = 1.8f, Count = 9, Cloud = new Color(0.05f, 0.06f, 0.05f, 0.45f), CloudSize = new Vector2(0.3f, 0.5f), CloudGravity = 0.1f, CloudCount = 3 };
                 case SpellFxBurstBody.Metal:  // bright shards flung fast, a faint grey haze
                     return new BurstLook { A = new Color(0.75f, 0.77f, 0.82f, 1f), B = new Color(0.97f, 0.97f, 1f, 1f), Speed = new Vector2(2.0f, 4.5f), Size = new Vector2(0.03f, 0.09f), Gravity = 1.4f, Count = 40, Cloud = new Color(0.6f, 0.6f, 0.65f, 0.25f), CloudSize = new Vector2(0.25f, 0.45f), CloudGravity = 0.02f, CloudCount = 4, Shards = true };
                 default:                      // 수: ink drops and an ink cloud (as before)
@@ -137,7 +137,7 @@ namespace Oheangbu.App.SpellFx
         static void Burst(Transform parent, Vector3 point, Vector3 normal, SpellFxBurstBody body)
         {
             var look = LookOf(body);
-            var mat = InkMaterial();
+            var mat = body == SpellFxBurstBody.Armour ? PlateMaterial() : InkMaterial();
             // drops: thrown back off the membrane and sideways, falling
             var drops = MakeSystem(parent, "InkDrops", point, mat);
             var main = drops.main;
@@ -147,6 +147,7 @@ namespace Oheangbu.App.SpellFx
             main.startColor = new ParticleSystem.MinMaxGradient(look.A, look.B);
             main.gravityModifier = look.Gravity;
             if (look.Shards) { var r = drops.GetComponent<ParticleSystemRenderer>(); r.renderMode = ParticleSystemRenderMode.Stretch; r.velocityScale = 0.05f; r.lengthScale = 2.5f; }
+            if (body == SpellFxBurstBody.Armour) { main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f); var rot = drops.rotationOverLifetime; rot.enabled = true; rot.z = new ParticleSystem.MinMaxCurve(-6f, 6f); }
             var shape = drops.shape; shape.shapeType = ParticleSystemShapeType.Hemisphere; shape.radius = 0.05f;
             shape.rotation = Quaternion.LookRotation(normal).eulerAngles;
             var em = drops.emission; em.rateOverTime = 0f; em.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)look.Count) });
@@ -183,6 +184,42 @@ namespace Oheangbu.App.SpellFx
             var r = go.GetComponent<ParticleSystemRenderer>(); r.sharedMaterial = mat; r.renderMode = ParticleSystemRenderMode.Billboard;
             return ps;
         }
+
+        /// <summary>갓's torn guard (Fable 갓 r4 #1: "angular plates, not round dots"): an irregular four-cornered plate, dark inside with a lighter rim
+        /// (the particle colour tints it: ink inside, jade at the edge). Made once in code.</summary>
+        static Material PlateMaterial()
+        {
+            if (_plateMat != null) return _plateMat;
+            const int S = 64;
+            _plateTex = new Texture2D(S, S, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = "SpellFxArmourPlate" };
+            var px = new Color32[S * S];
+            Vector2[] c = { new Vector2(-0.82f, -0.55f), new Vector2(0.7f, -0.8f), new Vector2(0.85f, 0.45f), new Vector2(-0.4f, 0.78f) };
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    var p = new Vector2((x + 0.5f) / S * 2f - 1f, (y + 0.5f) / S * 2f - 1f);
+                    float d = float.MaxValue; bool inside = true;
+                    for (int k = 0; k < 4; k++)
+                    {
+                        Vector2 a = c[k], b = c[(k + 1) % 4], e = b - a, n = new Vector2(e.y, -e.x).normalized;
+                        float s = Vector2.Dot(p - a, n);                // > 0 outside this edge (clockwise corners)
+                        if (s > 0f) inside = false;
+                        d = Mathf.Min(d, -s);
+                    }
+                    float alpha = inside ? Mathf.Clamp01(d * 40f) : 0f;
+                    float rim = inside ? Mathf.Clamp01(1f - d * 9f) : 0f;
+                    byte v = (byte)(Mathf.Lerp(0.35f, 1f, rim) * 255f);
+                    px[y * S + x] = new Color32(v, v, v, (byte)(alpha * 255f));
+                }
+            _plateTex.SetPixels32(px); _plateTex.Apply(false);
+            var sh = Shader.Find("Universal Render Pipeline/Particles/Unlit") ?? Shader.Find("Sprites/Default");
+            _plateMat = new Material(InkMaterial()) { name = "SpellFxArmourPlate", mainTexture = _plateTex };
+            if (_plateMat.HasProperty("_BaseMap")) _plateMat.SetTexture("_BaseMap", _plateTex);
+            return _plateMat;
+        }
+
+        static Texture2D _plateTex;
+        static Material _plateMat;
 
         /// <summary>A soft, ragged ink blot made once (no asset needed: this runs in Play from code).</summary>
         static Material InkMaterial()

@@ -107,6 +107,13 @@ namespace Oheangbu.EditorTools.Vol2
             new Recipe { Letter = "감", PlaySeconds = 4f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Seed)) },
             new Recipe { Letter = "갓", PlaySeconds = 3.6f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Cut)) },
             new Recipe { Letter = "강", PlaySeconds = 3.4f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Return)) },
+            // ㅓ 부착: the vine on the caster (the same part, the self verbs)
+            new Recipe { Letter = "거", PlaySeconds = 1.8f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Parry)) },
+            new Recipe { Letter = "걱", PlaySeconds = 4.2f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Heal)) },
+            new Recipe { Letter = "건", PlaySeconds = 7f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Cling)) },
+            new Recipe { Letter = "검", PlaySeconds = 9f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.SelfSeed)) },
+            new Recipe { Letter = "것", PlaySeconds = 7f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Blade)) },
+            new Recipe { Letter = "겅", PlaySeconds = 7f, Build = (go, v, l, f) => Vine(go, v, l, f, Bite(SpellFxVinePart.VineBite.Orbit)) },
         };
 
         static Action<SerializedObject> Bite(SpellFxVinePart.VineBite b) => so => so.FindProperty("bite").enumValueIndex = (int)b;
