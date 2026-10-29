@@ -27,7 +27,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _SeamPx ("Seam light width (fwidth units - one is several screen px here)", Float) = 3
         _SeamA ("Seam light alpha", Range(0, 1)) = 0.5
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
-        _PatternScale ("Pattern size in the cell", Range(0.4, 1.5)) = 0.64
+        _PatternScale ("Pattern size in the cell", Range(0.4, 1.5)) = 0.8
         _Age ("Age (s)", Float) = 0
         _Fade ("Fade 0..1", Range(0, 1)) = 0
         _RiseTime ("Ground-to-top reveal (s)", Float) = 0.45
@@ -127,7 +127,7 @@ Shader "Oheangbu/SpellFx/HexDome"
                 cellHit = step(dCell, 0.05) * _HitCell.w;
                 // round 22 (Fable r21: a brightened plate, no light past its edge): a short spill of light over the struck cell's border onto its neighbours (2 - 4 frames)
                 float dFromCell = distance(i.posWS, _HitCell.xyz);
-                spill = exp(-max(dFromCell - 0.45, 0) / 0.3) * exp(-_HitAge * 16.0) * step(0, _HitAge) * _HitCell.w;
+                spill = exp(-max(dFromCell - 0.45, 0) / 0.3) * exp(-_HitAge * 22.0) * step(0, _HitAge) * _HitCell.w;
                 seamFlash = cellHit * exp(-_HitAge * 18.0) * 5.0;
                 quietNear = smoothstep(2.4, 1.6, dCell) * (1 - cellHit) * saturate(1 - _HitAge / 0.6);     // the neighbours do not bloom for 0.6 s (the struck cell reads alone)
                 speck = smoothstep(0.32, 0.12, dist) * saturate(1 - _HitAge / 0.12) * smoothstep(0.74, 0.8, VNoise(i.posWS.xy * 16.0 + i.posWS.z * 11.0));     // round 15: 2 - 4 clear ink dots, not a smear     // round 13 / 14: a short INK speck at the contact (dark, not a light)
@@ -191,10 +191,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // round 21 (Fable r20: the hit read as an outline, not light): the struck cell's whole membrane flashes - pale light, brighter toward its seams, 6 frames
             float memFlash = cellHit * exp(-_HitAge * 11.0) * step(0, _HitAge) * lerp(0.45, 1.0, edge);
             col = lerp(col, float3(1.35, 1.45, 1.5), saturate(memFlash * 0.7)); a = max(a, memFlash * 0.42 * fill);
-            // round 22: a bright core at the struck cell's centre, and the spill (light, not paint) over its border
-            float core = cellHit * exp(-_HitAge * 14.0) * step(0, _HitAge) * smoothstep(0.55, 0.0, edge);
-            col = lerp(col, float3(1.9, 1.95, 2.0), saturate(core * 0.9)); a = max(a, core * 0.55 * fill);
-            col = lerp(col, float3(1.5, 1.6, 1.65), saturate(spill * 0.55)); a = a + spill * 0.3 * fill * (1 - a);
+
             a = a + pa * (1 - a);
             // round 5 (Fable r4: flat opaque white wires): a thin bright core inside a soft halo
             float lineFade = 1 - saturate(_Fade * 1.6);                         // round 7: the grid goes before the glass (no bare wire left)
@@ -228,6 +225,10 @@ Shader "Oheangbu/SpellFx/HexDome"
             col = lerp(col, ringCol, saturate(ripEdge)); a = max(a, saturate(ripEdge) * 0.8 * outline);
             float sp = saturate(speck) * outline;
             col = lerp(col, _Halo.rgb, sp); a = a + sp * 0.8 * (1 - a);
+            // round 22 / 23 (Fable r22: the spill was cut by the seams drawn after it, the core darker than a seam): core and spill drawn LAST, over the seams, brighter than them
+            float core = cellHit * exp(-_HitAge * 14.0) * step(0, _HitAge) * smoothstep(0.6, 0.0, edge);
+            col = lerp(col, float3(3.2, 3.25, 3.3), saturate(core)); a = max(a, core * 0.75 * fill);
+            col = lerp(col, float3(2.4, 2.5, 2.6), saturate(spill * 0.7)); a = a + spill * 0.4 * fill * (1 - a);
             a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade));        // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
             return half4(col, a);
         }
