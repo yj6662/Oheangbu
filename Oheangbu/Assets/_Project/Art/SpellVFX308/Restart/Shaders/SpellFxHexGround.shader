@@ -6,7 +6,7 @@ Shader "Oheangbu/SpellFx/HexGround"
     Properties
     {
         _Line ("Foot line colour (HDR)", Color) = (1.6, 1.48, 1.2, 1)
-        _Glow ("Inner glow colour / alpha", Color) = (0.95, 0.86, 0.66, 0.2)
+        _Glow ("Outer seep colour / alpha", Color) = (0.08, 0.07, 0.07, 0.35)
         _Foot ("Foot position across the band (0..1)", Range(0, 1)) = 0.8
         _LineW ("Foot line width (band units)", Range(0.002, 0.1)) = 0.016
         _Age ("Age (s)", Float) = 0
@@ -43,7 +43,7 @@ Shader "Oheangbu/SpellFx/HexGround"
                 float fw = max(fwidth(x), 1e-4);
                 float w = max(_LineW, fw * 0.6);
                 float line_ = smoothstep(w + fw, w * 0.3, abs(x - _Foot));
-                float glow = pow(saturate((x - (_Foot - 0.6)) / 0.6), 2.0) * step(x, _Foot) * _Glow.a;   // a soft light spilling inward from the foot, nothing outside
+                float glow = pow(saturate(1 - (x - _Foot) / 0.14), 2.0) * step(_Foot, x) * _Glow.a;   // round 11 (Fable r10: an inner plate): the ink seeps OUTWARD from the foot only
                 float ink = 0.6 + 0.55 * VNoise(i.posWS.xz * 6.0);
                 float a = saturate(line_ * ink + glow * ink) * on;
                 float3 col = lerp(_Glow.rgb, _Line.rgb, saturate(line_ / max(line_ + glow, 1e-3)));

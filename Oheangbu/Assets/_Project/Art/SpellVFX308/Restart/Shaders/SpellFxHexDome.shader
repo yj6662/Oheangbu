@@ -11,14 +11,15 @@ Shader "Oheangbu/SpellFx/HexDome"
     {
         _Patterns ("Pattern atlas 4 x 2 (white line on black)", 2D) = "black" {}
         _Glass ("Glass tint (rgb) / alpha", Color) = (0.20, 0.32, 0.50, 0.15)
-        _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.22)
-        _Line ("Cell border colour (HDR)", Color) = (1.6, 1.46, 1.16, 1)
-        _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.97, 1.0, 0.62)
+        _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.08)
+        _Line ("Cell border colour (HDR)", Color) = (1.3, 1.2, 0.98, 1)
+        _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.95, 0.9, 0.9)
         _BaseRing ("Base ring colour (HDR)", Color) = (1.8, 1.7, 1.5, 1)
         _EdgeW ("Border width (edge units)", Range(0.003, 0.3)) = 0.009
-        _Halo ("Border halo colour", Color) = (0.95, 0.86, 0.66, 1)
+        _Halo ("Border halo colour (ink bleed)", Color) = (0.06, 0.06, 0.08, 1)
+        _LineInk ("Line side colour (ink-toned cream)", Color) = (0.42, 0.39, 0.34, 1)
         _HitCol ("Hit ripple colour (HDR)", Color) = (1.9, 1.75, 1.35, 1)
-        _HaloA ("Border halo alpha", Range(0, 1)) = 0.11
+        _HaloA ("Border halo alpha", Range(0, 1)) = 0.2
         _CorePxMin ("Core width min (render px)", Float) = 0.2
         _CorePxMax ("Core width max (render px)", Float) = 0.34
         _HaloPx ("Halo width (render px)", Float) = 6
@@ -32,7 +33,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         _PatternFrom ("Patterns start at this cell height (0 ground .. 1 top)", Range(0, 1)) = 0.12
         _BackLine ("Far side: line / pattern strength", Range(0, 1)) = 0.35
         _BloomSpread ("Pattern bloom moments spread over (s)", Float) = 1.5
-        _BloomBoost ("Bloom flash HDR boost", Float) = 2.5
+        _BloomBoost ("Bloom flash HDR boost", Float) = 4
         _FacingFrom ("Near wall: facing ratio where the fade starts", Range(0, 1)) = 0.45
         _FacingPattern ("Near wall facing the camera: pattern strength", Range(0, 1)) = 0.1
         _FacingBorder ("Near wall facing the camera: border strength", Range(0, 1)) = 0.15
@@ -48,7 +49,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         TEXTURE2D(_Patterns); SAMPLER(sampler_Patterns);
         CBUFFER_START(UnityPerMaterial)
             float4 _Patterns_ST;
-            half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol;
+            half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol, _LineInk;
             float _HaloA, _CoreA, _CorePxMin, _CorePxMax, _HaloPx, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost;
             float4 _HitPos;
         CBUFFER_END
@@ -101,7 +102,7 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float3 c = TransformObjectToWorld(float3(0, 0, 0));
                 float domeR = length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x));
                 float2 dh = _HitPos.xz - c.xz;
-                float3 contact = float3(c.x, c.y + 0.7, c.z) + float3(normalize(dh + 1e-4).x, 0, normalize(dh + 1e-4).y) * domeR * 0.93;
+                float3 contact = float3(c.x, c.y + 0.45, c.z) + float3(normalize(dh + 1e-4).x, 0, normalize(dh + 1e-4).y) * domeR * 0.93;
                 float dist = distance(i.posWS, contact);
                 float maxR = domeR * 0.6;
                 // round 7 (Fable r6: the hit looked like one more random bloom): its own shape - two concentric rings running out from the struck side, warm, ~0.5 s
@@ -109,7 +110,8 @@ Shader "Oheangbu/SpellFx/HexDome"
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
                 float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
                 float k1 = smoothstep(-0.025, 0.0, s1) * exp(-max(s1, 0) / 0.07), k2 = smoothstep(-0.02, 0.0, s2) * exp(-max(s2, 0) / 0.05);
-                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.55 + 0.6 * VNoise(i.posWS.xy * 9.0 + i.posWS.z * 5.0));     // round 10: ink in the ring
+                float dry = smoothstep(0.32, 0.62, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 4.0, dist * 6.0)));     // round 11: dry-brush breaks round the ring
+                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.4 + 0.8 * dry);
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
                 ripple += smoothstep(0.35, 0.0, dist) * saturate(1 - _HitAge / 0.1) * 1.5;      // the contact flash (6 frames)
             }
@@ -135,7 +137,7 @@ Shader "Oheangbu/SpellFx/HexDome"
 
             float front_ = outline * (1 - outline) * 4 * (1 - gone);                   // round 7: the rising front glows (no bare-wire moment while the glass comes)
             float sil = lerp(0.25, 1, pow(1 - saturate(abs(dot(n, v))), 1.5));    // round 7: almost clear face-on (no flat blue sheet over the caster), tinted toward the silhouette
-            float3 col = _Glass.rgb * (1 + touch * 1.5); float a = _Glass.a * fill * glassK * sil * (1 + touch) + front_ * 0.18 * glassK;
+            float3 col = _Glass.rgb * (1 + touch * 2.5); float a = _Glass.a * fill * glassK * sil + front_ * 0.18 * glassK;     // round 11: the struck glass brightens, never a darker disc
             float rimK = front ? 1 : 0.3;                                        // round 6: the far side's rim stays faint (it read as a hazy band across the caster)
             col = lerp(col, _Rim.rgb, fres * rimK); a = max(a, _Rim.a * fres * fill * glassK * rimK);
             // ---- sporadic bloom (round 3, the user: "문양이 처음부터 모든 곳에 새겨지는 것이 아니라, 산발적으로 Bloom하는 방식"): every cell's pattern blooms at its own
@@ -143,11 +145,11 @@ Shader "Oheangbu/SpellFx/HexDome"
             float h2 = frac(hash * 7.13 + 0.37), h3 = frac(hash * 13.7 + 0.11);
             // round 5 (Fable r4: blooms piled up until every cell was lit): each cell blooms on its own period (1.4 - 2.8 s, random phase), lit ~0.55 s a time ->
             //      about a quarter of the cells lit at any moment, never all; nothing before the cell is revealed
-            float period = 1.4 + h3 * 1.4;
+            float period = 0.9 + h3 * 1.1;                                       // round 11 (Fable r10: the hold was a still second): blooms come more often
             float cyc = (_Age - t0 - 0.1) / period + h2;
             float since = frac(cyc) * period;
             float ready = saturate((_Age - t0 - 0.1) / 0.15);                    // round 6: a soft start (a step here drew a hard line rising with the wipe - Fable r5)
-            float bloomVis = smoothstep(0, 0.16, since) * (1 - saturate((since - 0.3) / 0.25)) * ready;     // round 9: an eased 8 - 10 frame attack (Fable r8: a 4-frame pop)
+            float bloomVis = smoothstep(0, 0.09, since) * (1 - saturate((since - 0.12) / 0.35)) * ready;     // round 11: 5-frame rise, ~25-frame settle     // round 9: an eased 8 - 10 frame attack (Fable r8: a 4-frame pop)
             float flash = smoothstep(0, 0.12, since) * exp(-since * 6.0) * ready;
             // round 9 (Fable r8: a far-wall bloom opened right over the bear's head at the hit): no bloom on pixels seen just behind the struck body
             float3 bodyP = _HitPos.xyz + float3(0, 0.8, 0), camP = GetCameraPositionWS(), ray = i.posWS - camP;
@@ -160,7 +162,8 @@ Shader "Oheangbu/SpellFx/HexDome"
             float inkLo = VNoise(float2(i.posWS.x + i.posWS.y * 0.7, i.posWS.z - i.posWS.y * 0.5) * 4.0);
             float ink = 0.3 + 0.95 * inkLo + 0.2 * VNoise(i.posWS.xz * 31.0 + i.posWS.y * 23.0);
 
-            float pa = _Pattern.a * line_ * fill * flick * lineK * bloomVis;
+            float bloomK = front ? max(lineK, 0.6 * bloomVis) : lineK;          // round 11: a bloom shows on the near wall too while it is lit
+            float pa = _Pattern.a * line_ * fill * flick * bloomK * bloomVis;
             pa = saturate(pa + line_ * fill * flash * 0.5 * lineK);
             pa *= saturate(ink);
             col = lerp(col, _Pattern.rgb * (boost + flash * _BloomBoost * lineK), saturate(pa / max(a + pa, 1e-3)));     // round 9: the far wall's flash is capped like its lines
@@ -168,9 +171,11 @@ Shader "Oheangbu/SpellFx/HexDome"
             // round 5 (Fable r4: flat opaque white wires): a thin bright core inside a soft halo
             float lineFade = 1 - saturate(_Fade * 1.6);                         // round 7: the grid goes before the glass (no bare wire left)
             float halo = smoothstep(1 - fw * _HaloPx, 1 - coreW * 0.5, edge) * _HaloA * outline * borderK * lineFade * saturate(ink);
-            col = lerp(col, _Halo.rgb * boost, saturate(halo / max(a + halo, 1e-3))); a = a + halo * (1 - a);
+            col = lerp(col, _Halo.rgb, saturate(halo / max(a + halo, 1e-3))); a = a + halo * (1 - a);     // round 11: the halo is an ink bleed (dark), not a glow
             float ba = border * outline * (0.85 + 0.15 * flick) * borderK * _CoreA * lineFade * saturate(ink + 0.15);
-            col = lerp(col, _Line.rgb * boost, saturate(ba / max(a, 1e-3)));
+            float heart = smoothstep(1 - coreW * 0.55, 1 - coreW * 0.1, edge);                 // round 11 (Fable r10: a pure white glowing wire): only the line's heart glows,
+            float3 lineCol = lerp(_LineInk.rgb, _Line.rgb * boost, saturate(heart * 0.7 + ink * 0.45));   //   its sides are ink-toned cream, varying with the ink density
+            col = lerp(col, lineCol, saturate(ba / max(a, 1e-3)));
             a = max(a, saturate(ba));
             // ---- the base ring: a bright line where the dome meets the ground ----
             float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
