@@ -22,6 +22,11 @@ namespace Oheangbu.Combat
 
         private Camera _cam;
         private bool _drawing;
+        // D308-147: _drawing is the draw PRESENTATION (close-up pose and FOV). _drawInput308 is the draw INPUT mode (the pointer is
+        // the brush). They are the same signal unless an owner of the presentation signal takes over (UsePresentationSignal308).
+        // The render-time reaction stays shut for either: recognition never sees a moved view (D308-21).
+        private bool _drawInput308;
+        private bool _presentationSignal308;
         private bool _shoulder = true;
         private Vector3 _localPose;   // 붐 적용 전의 블렌드 상태(카메라 localPosition과 분리)
         private float _boom01 = 1f;   // 충돌 붐 비율 — 축소는 즉시, 복원은 점진
@@ -34,6 +39,21 @@ namespace Oheangbu.Combat
         private int _sprintFrame308 = -10;
 
         public bool IsShoulder => _shoulder;
+        /// <summary>D308-147: true = the close-up follows <see cref="SetDrawPresentation308"/> (the drawing input's presentation
+        /// start - the first stroke of a riposte candidate), not the draw-mode channel. Set by the walker that owns both; false
+        /// (the default) keeps the channel as the only signal. Turning it off puts the close-up back on the input mode.</summary>
+        public bool UsePresentationSignal308
+        {
+            get => _presentationSignal308;
+            set
+            {
+                if (_presentationSignal308 == value) return;
+                _presentationSignal308 = value;
+                if (!value && _drawing != _drawInput308) ApplyDrawPresentation308(_drawInput308);
+            }
+        }
+        /// <summary>The draw presentation started (true) or ended (false). Ignored unless <see cref="UsePresentationSignal308"/>.</summary>
+        public void SetDrawPresentation308(bool drawing) { if (_presentationSignal308) ApplyDrawPresentation308(drawing); }
         public bool IsDrawingCloseup => _drawing;
         public bool IsBodyVisible => !_drawingPresentationActive && _config != null && _camera != null
             && _camera.localPosition.sqrMagnitude > _config.BodyShowDistance * _config.BodyShowDistance;
@@ -175,6 +195,13 @@ namespace Oheangbu.Combat
         }
 
         private void OnDrawModeChanged(bool drawing)
+        {
+            _drawInput308 = drawing;
+            if (_presentationSignal308) return;   // D308-147: the presentation owner calls SetDrawPresentation308
+            ApplyDrawPresentation308(drawing);
+        }
+
+        private void ApplyDrawPresentation308(bool drawing)
         {
             _drawing = drawing;
             if (drawing) { _closeupHold = 0f; _fovReturning = false; }

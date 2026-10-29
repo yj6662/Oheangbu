@@ -1,0 +1,415 @@
+﻿Key,Value,Unit,Status,Source,Candidate,CandidateTrigger,Note
+ink.capacity,100,먹,TEST,vol2_v10 E-1,,,먹 미터 기준
+ink.bare.a,11,먹,TEST,vol2_v10 E-1,12,E7 ⑭: 1–2인 맨몸 선택률 >45%; 효율비 하한 0.7 결정 동반,무받침 ㅏ
+ink.bare.o,14,먹,TEST,vol2_v10 E-1,15,E7 ⑭: 1–2인 맨몸 선택률 >45%; 효율비 하한 0.7 결정 동반,무받침 ㅗ
+ink.bare.u,14,먹,TEST,vol2_v10 E-1,15,E7 ⑭: 1–2인 맨몸 선택률 >45%; 효율비 하한 0.7 결정 동반,무받침 ㅜ
+ink.normal.a,12,먹,TEST,vol2_v10 E-1,,,일반 받침 ㅏ
+ink.normal.eo,13,먹,TEST,vol2_v10 E-1,,,일반 받침 ㅓ; F ⑨의 먹 14는 폐기된 단독 후보이므로 Candidate에서 제외
+ink.normal.o,15,먹,TEST,vol2_v10 E-1,,,일반 받침 ㅗ
+ink.normal.u,15,먹,TEST,vol2_v10 E-1,,,일반 받침 ㅜ
+ink.peak.multiplier,2,배,TEST,vol2_v10 E-1,,,같은 틀 일반 비용에 곱함
+ink.peak.a,24,먹,TEST,vol2_v10 E-1,,,극치 ㅏ
+ink.peak.eo,26,먹,TEST,vol2_v10 E-1,,,극치 ㅓ
+ink.peak.o,30,먹,TEST,vol2_v10 E-1,,,극치 ㅗ
+ink.peak.u,30,먹,TEST,vol2_v10 E-1,,,극치 ㅜ
+ink.bare.discount,1,먹,TEST,vol2_v10 E-1,,,같은 틀 일반 받침 비용에서 차감; 패링 제외
+ink.normal.mean,13.75,먹,TEST,vol2_v10 E-1,,,일반 80칸 평균; 참고값이며 가드 아님
+ink.regen.ring,0,먹/s,TEST,vol2_v10 E-1,,,내 둘레 체류 중; 전투 여부보다 우선
+ink.regen.drawing,0,먹/s,TEST,vol2_v10 E-1,,,작도 중
+ink.regen.combat,2,먹/s,TEST,vol2_v10 E-1,,,전투 중 자연 회복
+ink.regen.outside,10,먹/s,TEST,vol2_v10 E-1,,,전투 밖
+ink.regen.outsideDelay,8,s,TEST,vol2_v10 E-1,12,E7(번호 미지정): 전투 사이 이동 중 먹이 늘 100; E-1,마지막 피격·시전 후
+ink.regen.fullRefill,10,s,TEST,vol2_v10 E-1,,,참고: 전투 밖 0→100; 진입 대기 8초 별도
+ink.regen.combatSample,30,s,TEST,vol2_v10 E-1,,,참고 회복 예시 시간
+ink.regen.combatSampleInk,60,먹,TEST,vol2_v10 E-1,,,참고: 30×2
+ink.regen.combatSampleCasts,5,회,TEST,vol2_v10 E-1,,,참고: 60/일반 ㅏ 비용 12
+ink.cast.extraStroke,1,획,TEST,vol2_v10 E-1,,,받침과 맨몸의 차
+ink.cast.extraStrokeTime,0.2,s,TEST,vol2_v10 E-1,,,받침 획 하나; 근삿값
+ink.cast.activationDelayDifference,0,s,TEST,vol2_v10 E-1,,,맨몸 대비 추가 발동 지연
+ink.cast.recoveryDifference,0,s,TEST,vol2_v10 E-1,,,맨몸 대비 추가 후딜
+body.earth.base,1.3,피해,TEST,vol2_v10 E-2,,,토 조정 전 즉시 기준; 현재 즉시값을 구하는 인자
+body.earth.adjust,0.85,배,TEST,vol2_v10 E-2,0.8,E7 ⑤: 몸 다섯 해금 시험에서 토 선택률 >40%,토 즉시 피해 조정
+body.earth.instant,1.105,피해,TEST,vol2_v10 E-2,1.04,E7 ⑤: 토 조정 0.8 적용 시 파생값,1.30×0.85
+body.fire.instant,1,피해,TEST,vol2_v10 E-2,,,무받침 ㅏ 화 기준
+body.metal.instant,0.8,피해,TEST,vol2_v10 E-2,,,금 즉시
+body.wood.instant,0.6,피해,TEST,vol2_v10 E-2,,,목 즉시
+body.water.instant,0.6,피해,TEST,vol2_v10 E-2,,,수 즉시
+body.wood.utility,0.4,피해환산,TEST,vol2_v10 E-2,상향(미정),E7 ⑤: 목·화 구간 화 선택률 >60%,붙듦
+body.wood.moveMultiplier,0.5,배,TEST,vol2_v10 E-2,,,붙듦 이동 속도
+body.wood.duration,2,s,TEST,vol2_v10 E-2,,,붙듦
+body.fire.utility,0.3,피해환산,TEST,vol2_v10 E-2,,,지속 피해
+body.fire.duration,2,s,TEST,vol2_v10 E-2,,,지속 피해
+body.earth.utility,0.15,피해환산,TEST,vol2_v10 E-2,,,밀침
+body.metal.speedUtility,0.25,피해환산,TEST,vol2_v10 E-2,,,빠름
+body.metal.wetUtility,0.1,피해환산,TEST,vol2_v10 E-2,,,젖은 적 가산
+body.water.utility,0.4,피해환산,TEST,vol2_v10 E-2,,,젖음·옮음·금 가산 준비
+body.water.duration,4,s,TEST,vol2_v10 E-2,,,젖음
+body.fire.total,1.3,총가치,TEST,vol2_v10 E-2,,,즉시+부가 환산
+body.earth.total,1.255,총가치,TEST,vol2_v10 E-2,1.19,E7 ⑤: 토 조정 0.8 적용 시 파생값,즉시+부가 환산
+body.metal.total,1.15,총가치,TEST,vol2_v10 E-2,,,즉시+부가 환산
+body.wood.total,1,총가치,TEST,vol2_v10 E-2,,,즉시+부가 환산; 붙듦 상향 시 재산정
+body.water.total,1,총가치,TEST,vol2_v10 E-2,,,즉시+부가 환산
+body.totalMaxMinRatio,1.3,배,TEST,vol2_v10 E-2,,,현행 총가치 최대/최소; 참고
+body.sameCostTopRatio,1.13,배,TEST,vol2_v10 E-2,,,E-2 서술의 같은 먹 묶음 1위/2위 ≤1.13; E-4 경고선 1.3과 별개
+action.instant,0.7,배,TEST,vol2_v10 E-2,,,받침 즉시 몫; 무받침 즉시에 곱함
+action.eo.second,0.3,작용량,TEST,vol2_v10 E-2,0.25,E7 ⑨: ㅓ 선택률 >50%; 네 항목 한 벌,대상별 둘째 접촉; 머리 현행값과 동일
+action.eo.contactCount,2,회,TEST,vol2_v10 E-2,,,ㅁ 제외; 대상별 첫째·둘째
+action.eo.verbCount,1,회,TEST,vol2_v10 E-2,,,동사 몫은 한 번
+action.seed.activation,1.2,작용량,TEST,vol2_v10 E-2,,,ㅁ: 즉시 몫 없이 작동 한 번
+action.seed.activationCount,1,회,TEST,vol2_v10 E-2,,,한 번 작동 후 소비
+action.seed.instant,0,작용량,TEST,vol2_v10 E-2,,,씨앗 즉시 몫 없음
+action.seed.second,0,작용량,TEST,vol2_v10 E-2,,,ㅓ+ㅁ 둘째 접촉 없음
+action.spread.total,1,작용량,TEST,vol2_v10 E-2,,,ㄴ 번짐 공유 총량
+action.spread.targetCap,4,명,TEST,vol2_v10 E-2,,,일반 번짐 최대; ㅓ 효과 상한 3이 우선
+action.strip.utility,0.4,작용량,TEST,vol2_v10 E-2,,,ㅅ 공유 항; 첫 대상 한 번만 환산
+action.return.multiplier,0.5,배,TEST,vol2_v10 E-2,,,ㅇ 귀환
+action.return.count,1,회,TEST,vol2_v10 E-2,,,귀환 추가 작용
+action.return.amount,0.35,작용량,TEST,vol2_v10 E-2,,,0.7×0.5
+action.return.peakMultiplier,0.75,배,TEST,vol2_v10 E-2,,,극치 귀환 상한
+action.eo.return,0,작용량,TEST,vol2_v10 E-2,,,ㅓ 궤도는 귀환 없음
+action.effectTargetCap,3,명,TEST,vol2_v10 E-2,,,패링 제외 ㅓ 직접·씨앗·번짐 전부와 ㅏ+ㅁ; 시전 ID별 먼저 닿거나 심긴 셋
+action.effectOverflowStart,4,번째 대상,TEST,vol2_v10 E-2,,,ㅓ는 기본 타격만; ㅏ+ㅁ 씨앗은 서지 않음
+action.firstTargetCount,1,명,TEST,vol2_v10 E-2,,,무받침 ㅏ 및 일반 ㅏ+ㅅ; N인 표에서도 ×1
+action.normal.none.total,1,작용량,TEST,vol2_v10 E-2 동사별 일반 총 작용량,,,ㅏ·ㅗ·ㅜ; 없음; 기준 대상 1인
+action.normal.none.perTarget,1,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,없음 대상별 항
+action.normal.none.shared,0,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,없음 공유 항
+action.normal.g.total,1.6,작용량,TEST,vol2_v10 E-2 동사별 일반 총 작용량,1.55,E7 ⑨: ㄱ 공유 0.85 적용 시 파생값,ㅏ·ㅗ·ㅜ; ㄱ; 기준 대상 1인
+action.normal.g.perTarget,0.7,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,ㄱ 대상별 항
+action.normal.g.shared,0.9,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,0.85,E7 ⑨: ㅓ 선택률 >50%; 네 항목 한 벌,ㄱ 공유 항; 잔존물 하나당 수명 내 총량; 재접촉·틱 모두 포함
+action.normal.n.total,1.7,작용량,TEST,vol2_v10 E-2 동사별 일반 총 작용량,,,ㅏ·ㅗ·ㅜ; ㄴ; 기준 대상 1인
+action.normal.n.perTarget,0.7,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,ㄴ 대상별 항
+action.normal.n.shared,1,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㄴ 공유 항
+action.normal.m.total,1.2,작용량,TEST,vol2_v10 E-2 동사별 일반 총 작용량,,,ㅏ·ㅗ·ㅜ; ㅁ; 기준 대상 1인
+action.normal.m.perTarget,1.2,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅁ 대상별 항
+action.normal.m.shared,0,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅁ 공유 항
+action.normal.s.total,1.1,작용량,TEST,vol2_v10 E-2 동사별 일반 총 작용량,,,ㅏ·ㅗ·ㅜ; ㅅ; 기준 대상 1인
+action.normal.s.perTarget,0.7,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅅ 대상별 항
+action.normal.s.shared,0.4,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅅ 공유 항
+action.normal.ng.total,1.05,작용량,TEST,vol2_v10 E-2 동사별 일반 총 작용량,,,ㅏ·ㅗ·ㅜ; ㅇ; 기준 대상 1인
+action.normal.ng.perTarget,1.05,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅇ 대상별 항
+action.normal.ng.shared,0,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅇ 공유 항
+action.eo.g.total,1.9,작용량,TEST,vol2_v10 E-2 ㅓ 열 일반 총 작용량,1.8,E7 ⑨: 네 항목 한 벌의 파생값,ㄱ; 기준 대상 1인
+action.eo.g.perTarget,1,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,0.95,E7 ⑨: 둘째 접촉 0.25의 파생값,ㄱ ㅓ 대상별 항
+action.eo.g.shared,0.9,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,0.85,E7 ⑨: ㄱ 공유 0.85; 동일 예산의 ㅓ 분할 표기,ㄱ ㅓ 공유 항
+action.eo.n.total,2,작용량,TEST,vol2_v10 E-2 ㅓ 열 일반 총 작용량,1.95,E7 ⑨: 네 항목 한 벌의 파생값,ㄴ; 기준 대상 1인
+action.eo.n.perTarget,1,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,0.95,E7 ⑨: 둘째 접촉 0.25의 파생값,ㄴ ㅓ 대상별 항
+action.eo.n.shared,1,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㄴ ㅓ 공유 항
+action.eo.m.total,1.2,작용량,TEST,vol2_v10 E-2 ㅓ 열 일반 총 작용량,,,ㅁ; 기준 대상 1인
+action.eo.m.perTarget,1.2,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅁ ㅓ 대상별 항
+action.eo.m.shared,0,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅁ ㅓ 공유 항
+action.eo.s.total,1.4,작용량,TEST,vol2_v10 E-2 ㅓ 열 일반 총 작용량,1.35,E7 ⑨: 네 항목 한 벌의 파생값,ㅅ; 기준 대상 1인
+action.eo.s.perTarget,1,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,0.95,E7 ⑨: 둘째 접촉 0.25의 파생값,ㅅ ㅓ 대상별 항
+action.eo.s.shared,0.4,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅅ ㅓ 공유 항
+action.eo.ng.total,1,작용량,TEST,vol2_v10 E-2 ㅓ 열 일반 총 작용량,0.95,E7 ⑨: 네 항목 한 벌의 파생값,ㅇ; 기준 대상 1인
+action.eo.ng.perTarget,1,작용량/대상,TEST,vol2_v10 E-2 광역 가격 기준,0.95,E7 ⑨: 둘째 접촉 0.25의 파생값,ㅇ ㅓ 대상별 항
+action.eo.ng.shared,0,작용량/시전,TEST,vol2_v10 E-2 광역 가격 기준,,,ㅇ ㅓ 공유 항
+combat.parry.window,0.5,s,TEST,vol2_v10 A-4 무받침 ㅓ·B-4,,,패링 유효 구간; A-4 무받침 ㅓ·CSV 패링 5행
+combat.parry.cooldown,0.8,s,TEST,vol2_v10 E-1·E-2·E-3,,,재사용 ≥
+combat.parry.successCost,0,먹,TEST,vol2_v10 E-1·E-2·E-3,,,후불 성공
+combat.parry.failureCost,14,먹,TEST,vol2_v10 E-1·E-2·E-3,,,후불 실패 고정
+combat.parry.inkFloor,0,먹,TEST,vol2_v10 E-1·E-2·E-3,,,실패 시 먹 부족하면 여기까지만 차감
+combat.parry.refund,0,먹,TEST,vol2_v10 E-1·E-2·E-3,,,환급 없음
+combat.parry.airMissLockout,,s,TEST,vol2_v10 E-1·E-2·E-3,0.5,E7 ⑬: 먹 0 패링 시도 / 전체 패링 시도 >30%; 허공 실패 뒤 후보,현행 추가 봉쇄값은 원문 미정의; 0을 추정해서 채우지 않음
+combat.groggy.decay,0.6,배,TEST,vol2_v10 E-1·E-2·E-3,,,패링·상합·상극 검격 합산 n; 0.6^(n−1)
+combat.groggy.totalCap,2.5,그로기단위,TEST,vol2_v10 E-1·E-2·E-3,,,적 1체당 합 ≤; 1/(1−0.6)
+combat.groggy.reset,6,s,TEST,vol2_v10 E-1·E-2·E-3,,,그로기에서 풀린 뒤 n 초기화
+combat.groggy.sourceCount,3,종,TEST,vol2_v10 E-1·E-2·E-3,,,패링·상합·상극 검격
+combat.groggy.first,1,그로기단위,TEST,vol2_v10 E-1·E-2·E-3,,,C-2; 패링 기준 길이 1단위; 초 단위 값은 이 자료에 없음
+combat.groggy.third,0.36,그로기단위,TEST,vol2_v10 E-1·E-2·E-3,,,C-2 예시; 0.6²
+combat.noInk.cost,0,먹,TEST,vol2_v10 E-1·E-2·E-3,,,언제나 사용 가능
+combat.noInk.woodRatio,0.5,배,TEST,vol2_v10 E-1·E-2·E-3,,,목 즉시 피해 0.6의 절반
+combat.noInk.damage,0.3,피해,TEST,vol2_v10 E-1·E-2·E-3,,,0.6×0.5
+combat.noInk.cooldown,1.1,s,TEST,vol2_v10 E-1·E-2·E-3,1.3,E7 ⑮: 무먹 사용률·먹 회복 대기 시간 비율이 높을 때; 수치 통과선 없음,재사용 ≥
+combat.noInk.targets,1,명,TEST,vol2_v10 E-1·E-2·E-3,,,첫 닿는 적 하나
+combat.noInk.multiplier,1,배,TEST,vol2_v10 E-1·E-2·E-3,,,고정; 세·급소창·상극 배율 없음
+combat.noInk.groggy,0,그로기단위,TEST,vol2_v10 E-1·E-2·E-3,,,그로기 없음
+combat.noInk.residue,0,개,TEST,vol2_v10 E-1·E-2·E-3,,,재료 없음
+combat.noInk.drawing,0,s,TEST,vol2_v10 E-1·E-2·E-3,,,작도 없음
+combat.borrowed.multiplier,0.5,배,TEST,vol2_v10 E-1·E-2·E-3,,,엉 반사 원 위력에 곱함; 내 총 작용량 밖
+combat.borrowed.globalCountCap,4,회,TEST,vol2_v10 E-1·E-2·E-3,,,빌린 위력·극치 개수 축 공통 상한; 엉 실제 상한은 3
+combat.borrowed.reflectTotalCap,1,피해/시전,TEST,vol2_v10 E-1·E-2·E-3,,,엉 반사 합 ≤; 무받침 ㅏ 화=1 단위
+combat.counter.multiplier,1.25,배,TEST,vol2_v10 E-1·E-2·E-3,,,상극; 극치 구조×세 상한 밖에서 한 번
+combat.force.min,1,배,TEST,vol2_v10 E-1·E-2·E-3,,,세 하한
+combat.force.max,1.15,배,TEST,vol2_v10 E-1·E-2·E-3,,,세 상한
+combat.peak.structureForceCap,1.5,배,TEST,vol2_v10 E-1·E-2·E-3,,,같은 동사 일반 대비 극치 구조×세 상한
+combat.peak.criticalMax,1.875,배,TEST,vol2_v10 E-1·E-2·E-3,1.725,E7 ⑪: 시간비 <0.72 또는 E7 ⑫: 급소창 극치 비율 >80%,min(1.5×1.15;1.5)×1.25
+combat.normal.criticalMax,1.4375,배,TEST,vol2_v10 E-1·E-2·E-3,,,1×1.15×1.25
+combat.peak.criticalAdvantage,1.3,배,TEST,vol2_v10 E-1·E-2·E-3,,,C-2·E-4; 약 1.875/1.4375; 반올림 참고
+combat.strip.duration,3,s,TEST,vol2_v10 E-1·E-2·E-3,,,가드·갑주 벗김
+combat.strip.peakDuration,4.5,s,TEST,vol2_v10 E-1·E-2·E-3,,,극치 벗김 ≤; 3×1.5
+combat.bind.maxDuration,1.5,s,TEST,vol2_v10 E-1·E-2·E-3,,,속박·끌림 ≤
+combat.bind.bossMultiplier,0.5,배,TEST,vol2_v10 E-1·E-2·E-3,,,보스 ×0.5 또는 면제
+combat.bind.bossExempt,0,s,TEST,vol2_v10 E-1·E-2·E-3,,,면제인 보스; 옹은 보스 면제
+combat.critical.peakSlots,1,자,TEST,vol2_v10 E-1·E-2·E-3,,,급소창 극치 한 자 틈
+combat.critical.consecutiveSame,0,회,TEST,vol2_v10 E-1·E-2·E-3,,,같은 글자 연속 재사용 허용 횟수 0
+timing.g.life,10,s,TEST,vol2_v10 E-3,,,ㄱ 일반 잔존물
+timing.attachment.life,6,s,TEST,vol2_v10 E-3,,,ㄱ 부착·ㅇ 궤도; 씨앗은 8초 예외
+timing.n.life,3,s,TEST,vol2_v10 E-3,,,ㄴ 자국
+timing.seed.life,8,s,TEST,vol2_v10 E-3,,,ㅁ 대기
+timing.return.roundTrip,1.2,s,TEST,vol2_v10 E-3,,,ㅇ 왕복 ≤
+timing.child.life,10,s,TEST,vol2_v10 E-3,,,상생 자식 수명 새로
+timing.world.regeneration,45,s,TEST,vol2_v10 E-3,,,세계 재료 재생 ≥
+timing.forecast,0.3,s,TEST,vol2_v10 E-3,,,접촉 예보
+timing.enemyReaction.warning,0.5,s,TEST,vol2_v10 E-3,,,적 소유 반응 예고 ≥
+timing.omen.start,0.8,s,TEST,vol2_v10 E-3,,,임팩트 최소 0.8초 전; 적 종 데이터 게이트
+timing.omen.peak,0.3,s,TEST,vol2_v10 E-3,,,임팩트 0.3초 전 가장 또렷
+timing.cast.total,1.2,s,TEST,vol2_v10 E-3,,,단일 시전 ≤
+timing.cast.openingMin,0.65,s,TEST,vol2_v10 E-3,,,ㅗ·ㅜ 빈틈 하한
+timing.cast.openingMax,0.9,s,TEST,vol2_v10 E-3,,,ㅗ·ㅜ 빈틈 상한
+timing.eo.secondDelay,0.3,s,TEST,vol2_v10 A-5·B-4·C-1,,,대상의 첫 접촉 뒤 별도 휘두르기
+timing.eo.secondCount,1,회/시전ID/대상ID,TEST,vol2_v10 A-5·B-4·C-1,,,둘째 접촉 최대
+timing.drawing.eoMax,0.7,s,TEST,vol2_v10 A-5·B-4·C-1,0.6,E7 ⑨: ㅓ 선택률 >50%; 네 항목 한 벌,머리 현행값; C-1 작도 상한 ≤
+timing.drawing.parryMax,0.5,s,TEST,vol2_v10 A-5·B-4·C-1,,,두 획 긋기와 뗌 ≤
+timing.omen.readBudget,0.3,s,TEST,vol2_v10 A-5·B-4·C-1,,,전조 읽기; 0.3+0.5=0.8
+timing.recognition.display,0.3,s,TEST,vol2_v10 A-5·B-4·C-1,,,불발 인식 글자 표시
+space.ring.radius,2,m,TEST,vol2_v10 E-3,,,ㅜ 고리
+space.ring.thickness,0.6,m,TEST,vol2_v10 E-3,,,ㅜ 고리 띠
+space.ring.perPlayer,1,개,TEST,vol2_v10 E-3,,,플레이어당; 지속 묶음 3 안에 포함
+space.path.width,0.3,m,TEST,vol2_v10 E-3,,,ㅏ 경로
+space.path.length,12,m,TEST,vol2_v10 E-3,,,ㅏ 경로
+space.fan.width,4,m,TEST,vol2_v10 E-3,,,ㅗ 부채꼴
+space.fan.depth,5,m,TEST,vol2_v10 E-3,,,ㅗ 면 깊이
+space.spread.adjacency,3,m,TEST,vol2_v10 E-3,,,번짐 인접 거리
+space.metal.link,3,m,TEST,vol2_v10 E-3,,,금 날선 연결
+space.residue.bundleCap,3,묶음,TEST,vol2_v10 E-3,,,플레이어 지속 잔존물 ≤
+space.residue.height,1.3,m,TEST,vol2_v10 E-3,,,자국 높이 ≤; 필드 게이트만 면제
+space.omen.visibility,6,m,TEST,vol2_v10 E-3,,,전조 가시 거리
+space.returnRing.outer,4,m,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,ㅜ+ㅇ 바깥 확장 거리
+space.seed.attachmentRadius,2,m,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,ㅓ+ㅁ 작동 둘레
+space.returnOutline.diameter,1,m,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,ㅇ 닫힌 곡선 윤곽 지름 ≤
+space.omen.minThickness,1,%화면높이,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,6 m 거리에서 최소 굵기 ≥
+space.screen.centerReserved,0.3333333333333333,화면폭비,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,가운데 1/3; 분수 원문
+space.screen.handsReserved,40,%,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,하단 손 영역
+space.screen.enemyVisible,70,%,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,적 가시 영역 ≥
+space.screen.emission,0,개,TEST,vol2_v10 A-3·A-4·C-3·B-4,,,발광 없음
+reaction.sameBody.maxMultiplier,1.2,배,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,비화 작용량 합 ≤어미×1.2
+reaction.sameBody.count,1,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,비화는 한 번
+reaction.child.parentMultiplier,0.5,배,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,두 어미 작용량 합×1/2
+reaction.blocked.remaining,0.5,배,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,막힘 접촉 재료 잔량
+reaction.split.parts,2,개,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,A-3 ㅅ 재료 분할
+reaction.split.amountPerPart,0.5,배,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,각 작용량 1/2; 소유 불변
+reaction.depth,1,세대깊이,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,어미→자식; 손자 없음
+reaction.grandchildren,0,개,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,자식 상생 재접촉은 소비만
+reaction.consumptionPerMaterial,1,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,같은 재료 소비
+reaction.damageCap,0.8,배,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,같은 먹 직접 광역 대비 반응 총 피해 ≤
+reaction.enemy.damageCap,0.5,배,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,내 같은 반응 대비 적 소유 반응 피해 ≤
+reaction.enemy.concurrent,1,개,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,한 술사 동시 반응
+reaction.enemy.stagger,0,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,적 소유 반응 경직 없음
+reaction.enemy.castCancel,0,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,적 소유 반응 작도 취소 없음
+reaction.damage.groggy,0,그로기단위,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,반응 피해 그로기 없음
+reaction.damage.detonation,0,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,반응 피해로 기폭 없음
+reaction.child.fade,0.3,s,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,상생 재접촉 소비 표시; 방향 없이 종이색으로 걷힘
+reaction.woodEarth.slow,2,s,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,목→토 꺾음: 발 빠짐
+reaction.fireMetal.damageDuration,2,s,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,화→금 꺾음: 달굼 지속
+reaction.earthWater.slow,3,s,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,토→수 꺾음: 진창
+reaction.metalWood.damageCount,1,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,금→목 꺾음: 가시
+reaction.waterFire.damageCount,1,회,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,수→화 꺾음: 김
+reaction.waterFire.occlusion,0.3,s,TEST,vol2_v10 E-2·B-2·B-3·B-5·B-6,,,김 가림
+body.wet.fireMultiplier,0.5,배,TEST,vol2_v10 A-1,,,젖은 적 화 피해
+body.wet.metalMultiplier,1.25,배,TEST,vol2_v10 A-1,,,젖은 적 금 피해
+body.metal.residueHitCount,1,회,TEST,vol2_v10 A-1,,,금 잔존물 지나는 적 베기
+peak.각.total,1.6,작용량,TEST,vol2_v10 A-5·E-2·E-3,1.55,E7 ⑨: 네 항목 한 벌 적용 시 파생값,각; CSV 해당 행 선언·수식: 즉시 0.7 + 재료 0.9
+peak.각.cap,2.4,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.325,E7 ⑨: 네 항목 한 벌 적용 시 파생값,각; CSV 해당 행 기준 1인 상한
+peak.걱.total,2.65,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.55,E7 ⑨: 네 항목 한 벌 적용 시 파생값,걱; CSV 해당 행 선언·수식: 즉시 0.7 + 둘째 접촉 0.3 + 몸 재료 0.9 + 뿌리 재료 0.25×3
+peak.걱.cap,2.85,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.7,E7 ⑨: 네 항목 한 벌 적용 시 파생값,걱; CSV 해당 행 기준 1인 상한
+peak.곡.total,1.6,작용량,TEST,vol2_v10 A-5·E-2·E-3,1.55,E7 ⑨: 네 항목 한 벌 적용 시 파생값,곡; CSV 해당 행 선언·수식: 즉시 0.7 + 재료 0.9
+peak.곡.cap,2.4,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.325,E7 ⑨: 네 항목 한 벌 적용 시 파생값,곡; CSV 해당 행 기준 1인 상한
+peak.국.total,1.6,작용량,TEST,vol2_v10 A-5·E-2·E-3,1.55,E7 ⑨: 네 항목 한 벌 적용 시 파생값,국; CSV 해당 행 선언·수식: 즉시 0.7 + 재료 0.9
+peak.국.cap,2.4,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.325,E7 ⑨: 네 항목 한 벌 적용 시 파생값,국; CSV 해당 행 기준 1인 상한
+peak.난.total,2.2,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,난; CSV 해당 행 선언·수식: 즉시 0.7 + 번짐 0.5×3
+peak.난.cap,2.55,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,난; CSV 해당 행 기준 1인 상한
+peak.넌.total,2.5,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.45,E7 ⑨: 네 항목 한 벌 적용 시 파생값,넌; CSV 해당 행 선언·수식: 즉시 0.7 + 둘째 접촉 0.3 + 번짐 0.5×3
+peak.넌.cap,3,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.925,E7 ⑨: 네 항목 한 벌 적용 시 파생값,넌; CSV 해당 행 기준 1인 상한
+peak.논.total,2.2,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,논; CSV 해당 행 선언·수식: 즉시 0.7 + 번짐 1 + 되번짐 0.5
+peak.논.cap,2.55,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,논; CSV 해당 행 기준 1인 상한
+peak.눈.total,1.7,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,눈; CSV 해당 행 선언·수식: 즉시 0.7 + 번짐 1
+peak.눈.cap,2.55,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,눈; CSV 해당 행 기준 1인 상한
+peak.맘.total,1.2,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,맘; CSV 해당 행 선언·수식: 작동 1.2
+peak.맘.cap,1.8,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,맘; CSV 해당 행 기준 1인 상한
+peak.멈.total,1.2,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,멈; CSV 해당 행 선언·수식: 작동 1.2
+peak.멈.cap,1.8,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,멈; CSV 해당 행 기준 1인 상한
+peak.몸.total,1.8,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,몸; CSV 해당 행 선언·수식: 작동 1.8
+peak.몸.cap,1.8,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,몸; CSV 해당 행 기준 1인 상한
+peak.뭄.total,1.2,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,뭄; CSV 해당 행 선언·수식: 작동 1.2
+peak.뭄.cap,1.8,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,뭄; CSV 해당 행 기준 1인 상한
+peak.삿.total,1.45,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,삿; CSV 해당 행 선언·수식: 즉시 1.05 + 벗김 0.4
+peak.삿.cap,1.65,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,삿; CSV 해당 행 기준 1인 상한
+peak.섯.total,2.1,작용량,TEST,vol2_v10 A-5·E-2·E-3,1.98,E7 ⑨: 네 항목 한 벌 적용 시 파생값,섯; CSV 해당 행 선언·수식: 즉시 0.7 + 둘째 접촉 0.3 + 뒤쪽 가름 0.35×2 + 벗김 0.4
+peak.섯.cap,2.1,작용량,TEST,vol2_v10 A-5·E-2·E-3,2.025,E7 ⑨: 네 항목 한 벌 적용 시 파생값,섯; CSV 해당 행 기준 1인 상한
+peak.솟.total,1.45,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,솟; CSV 해당 행 선언·수식: 즉시 0.7 + 벗김 0.4 + 재료 0.35
+peak.솟.cap,1.65,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,솟; CSV 해당 행 기준 1인 상한
+peak.숫.total,1.1,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,숫; CSV 해당 행 선언·수식: 즉시 0.7 + 벗김 0.4
+peak.숫.cap,1.65,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,숫; CSV 해당 행 기준 1인 상한
+peak.앙.total,1.225,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,앙; CSV 해당 행 선언·수식: 즉시 0.7 + 귀환 0.525
+peak.앙.cap,1.575,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,앙; CSV 해당 행 기준 1인 상한
+peak.엉.total,1,작용량,TEST,vol2_v10 A-5·E-2·E-3,0.95,E7 ⑨: 네 항목 한 벌 적용 시 파생값,엉; CSV 해당 행 선언·수식: 즉시 0.7 + 둘째 접촉 0.3
+peak.엉.cap,1.5,작용량,TEST,vol2_v10 A-5·E-2·E-3,1.425,E7 ⑨: 네 항목 한 벌 적용 시 파생값,엉; CSV 해당 행 기준 1인 상한
+peak.옹.total,1.05,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,옹; CSV 해당 행 선언·수식: 즉시 0.7 + 귀환 0.35
+peak.옹.cap,1.575,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,옹; CSV 해당 행 기준 1인 상한
+peak.웅.total,1.05,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,웅; CSV 해당 행 선언·수식: 즉시 0.7 + 귀환 0.35
+peak.웅.cap,1.575,작용량,TEST,vol2_v10 A-5·E-2·E-3,,,웅; CSV 해당 행 기준 1인 상한
+peak.standardCap.g,2.4,작용량,TEST,vol2_v10 E-3 극치 총 작용량 상한,2.325,E7 ⑨: ㄱ 공유 0.85의 파생값,ㅏ·ㅗ·ㅜ ㄱ 일반×1.5; 기준 대상 1인
+peak.eoCap.g,2.85,작용량,TEST,vol2_v10 E-3 ㅓ 열 극치 총 작용량 상한,2.7,E7 ⑨: 네 항목 한 벌의 파생값,ㅓ ㄱ 일반×1.5; 기준 대상 1인
+peak.standardCap.n,2.55,작용량,TEST,vol2_v10 E-3 극치 총 작용량 상한,,,ㅏ·ㅗ·ㅜ ㄴ 일반×1.5; 기준 대상 1인
+peak.eoCap.n,3,작용량,TEST,vol2_v10 E-3 ㅓ 열 극치 총 작용량 상한,2.925,E7 ⑨: 네 항목 한 벌의 파생값,ㅓ ㄴ 일반×1.5; 기준 대상 1인
+peak.standardCap.m,1.8,작용량,TEST,vol2_v10 E-3 극치 총 작용량 상한,,,ㅏ·ㅗ·ㅜ ㅁ 일반×1.5; 기준 대상 1인
+peak.eoCap.m,1.8,작용량,TEST,vol2_v10 E-3 ㅓ 열 극치 총 작용량 상한,,,ㅓ ㅁ 일반×1.5; 기준 대상 1인
+peak.standardCap.s,1.65,작용량,TEST,vol2_v10 E-3 극치 총 작용량 상한,,,ㅏ·ㅗ·ㅜ ㅅ 일반×1.5; 기준 대상 1인
+peak.eoCap.s,2.1,작용량,TEST,vol2_v10 E-3 ㅓ 열 극치 총 작용량 상한,2.025,E7 ⑨: 네 항목 한 벌의 파생값,ㅓ ㅅ 일반×1.5; 기준 대상 1인
+peak.standardCap.ng,1.575,작용량,TEST,vol2_v10 E-3 극치 총 작용량 상한,,,ㅏ·ㅗ·ㅜ ㅇ 일반×1.5; 기준 대상 1인
+peak.eoCap.ng,1.5,작용량,TEST,vol2_v10 E-3 ㅓ 열 극치 총 작용량 상한,1.425,E7 ⑨: 네 항목 한 벌의 파생값,ㅓ ㅇ 일반×1.5; 기준 대상 1인
+peak.nonDamageAxisCap,1.5,배,TEST,vol2_v10 A-5·E-3,,,수명·면적·벗김 시간 축 상한
+peak.nonDamageAxisCount,3,축,TEST,vol2_v10 A-5·E-3,,,수명·면적·벗김 시간
+peak.countAxisCap,4,개,TEST,vol2_v10 A-5·E-3,,,관통·반사·소각·정화·번짐 각 상한
+peak.걱.rootAmount,0.25,작용량,TEST,vol2_v10 A-5·E-3,,,작은 목 재료 1개; CSV 걱
+peak.걱.rootLife,5,s,TEST,vol2_v10 A-5·E-3,,,적에 붙은 작은 목 재료; CSV 걱
+peak.걱.rootCount,3,개/시전,TEST,vol2_v10 A-5·E-3,,,누적 생성
+peak.곡.bindCount,1,회/대상,TEST,vol2_v10 A-5·E-3,,,적당 붙듦 1.5초 한 번; CSV 곡
+peak.곡.area,1.5,배,TEST,vol2_v10 A-5·E-3,,,면적 성장 상한
+peak.국.lifeMultiplier,1.5,배,TEST,vol2_v10 A-5·E-3,,,고리 안 내 잔존물 수명
+peak.spread.amountPerTarget,0.5,작용량,TEST,vol2_v10 A-5·E-3,,,난·넌 번진 적마다 고정
+peak.spread.peakTargets,3,명,TEST,vol2_v10 A-5·E-3,,,난·넌 번짐 상한
+peak.spread.peakTotal,1.5,작용량,TEST,vol2_v10 A-5·E-3,,,난·넌 공유 번짐 예산
+peak.넌.swings,2,회,TEST,vol2_v10 A-5·E-3,,,첫 두 휘두르기가 공유 번짐 예산 나눔
+peak.넌.carrierAmount,0,작용량,TEST,vol2_v10 A-5·E-3,,,내 몸 화 재료는 운반체
+peak.논.returnSpread,0.5,작용량,TEST,vol2_v10 A-5·E-3,,,되번짐 공유 합
+peak.논.spreadPasses,2,회,TEST,vol2_v10 A-5·E-3,,,나감·되번짐
+peak.눈.burnCount,4,개,TEST,vol2_v10 A-5·E-3,,,적 장판 소각 상한
+peak.멈.staggerImmunity,1,회,TEST,vol2_v10 A-5·E-3,,,피격 경직만 면제; 피해는 받음
+peak.몸.activationMultiplier,1.5,배,TEST,vol2_v10 A-5·E-3,,,내려찍기 작동 1.2×1.5
+peak.몸.concurrent,1,개,TEST,vol2_v10 A-5·E-3,,,소환 동시 상한
+peak.몸.residueAmount,0,작용량,TEST,vol2_v10 A-5·E-3,,,무너진 뒤 토 재료 자격만
+peak.몸.residueLife,10,s,TEST,vol2_v10 A-5·E-3,,,무너진 뒤 토 재료; CSV 몸
+peak.뭄.groundLife,8,s,TEST,vol2_v10 A-5·E-3,,,작동 뒤 굳은 땅; CSV 뭄
+peak.삿.pierceCount,3,명,TEST,vol2_v10 A-5·E-3,,,벗김만; 벰은 첫 대상
+peak.삿.firstHitMultiplier,1.5,배,TEST,vol2_v10 A-5·E-3,,,첫 대상 벰
+peak.삿.instant,1.05,작용량,TEST,vol2_v10 A-5·E-3,,,0.7×1.5
+peak.섯.swings,2,회,TEST,vol2_v10 A-5·E-3,,,각각 앞·뒤 함께
+peak.섯.rearMultiplier,0.5,배,TEST,vol2_v10 A-5·E-3,0.45,E7 ⑨: ㅓ 선택률 >50%; 네 항목 한 벌,뒤쪽 가름
+peak.섯.rearAmount,0.35,작용량/회,TEST,vol2_v10 A-5·E-3,0.315,E7 ⑨: 뒤쪽 ×0.45의 파생값,0.7×0.5
+peak.솟.residueLife,4,s,TEST,vol2_v10 A-5·E-3,,,금 재료 수명
+peak.솟.residueAmount,0.35,작용량,TEST,vol2_v10 A-5·E-3,,,가른다 중 유일한 금 재료
+peak.앙.carryCount,1,개,TEST,vol2_v10 A-5·E-3,,,옮기는 내 재료
+peak.앙.destinationDistance,2,m,TEST,vol2_v10 A-5·E-3,,,시전자 앞; CSV 앙
+peak.앙.returnAmount,0.525,작용량,TEST,vol2_v10 A-5·E-3,,,0.7×0.75
+peak.엉.reflectionCount,3,회,TEST,vol2_v10 A-5·E-3,,,실제 반사 상한; 공통 개수 상한 4 이내
+peak.웅.cleanseCount,4,개,TEST,vol2_v10 A-5·E-3,,,적 장판·산물 정화 상한
+efficiency.one.min,0.75,비율,TEST,vol2_v10 E-1·E-2·E-4,0.8,E7 ⑭: 1–2인 맨몸 선택률 <15%; 띠 [0.8;0.95] 결정,1인 효율비 하한 포함
+efficiency.one.max,0.9,비율,TEST,vol2_v10 E-1·E-2·E-4,0.95,E7 ⑭: 1–2인 맨몸 선택률 <15%; 띠 [0.8;0.95] 결정,1인 효율비 상한 포함
+efficiency.two.min,0.75,비율,TEST,vol2_v10 E-1·E-2·E-4,,,2인 ㅗ·ㅜ·전체 하한 포함
+efficiency.two.maxExclusive,1,비율,TEST,vol2_v10 E-1·E-2·E-4,,,2인 ㅗ·ㅜ·전체 상한 미포함
+efficiency.highUsage.lowerBandAlternative,,비율,TEST,vol2_v10 E-1·E-2·E-4,0.7,E7 ⑭: 1–2인 맨몸 선택률 >45%; 맨몸 비용 12/15/15 결정 동반,현행 one.min=0.75 참조; 같은 파라미터의 반대 조건 대안
+efficiency.one.a,0.82,비율,TEST,vol2_v10 E-1·E-2·E-4,0.826,E7 ⑨: 네 항목 한 벌 적용 시 파생값,문서 반올림 참고
+efficiency.one.o,0.806,비율,TEST,vol2_v10 E-1·E-2·E-4,0.812,E7 ⑨: 네 항목 한 벌 적용 시 파생값,문서 반올림 참고
+efficiency.one.u,0.806,비율,TEST,vol2_v10 E-1·E-2·E-4,0.812,E7 ⑨: 네 항목 한 벌 적용 시 파생값,문서 반올림 참고
+efficiency.one.overall,0.811,비율,TEST,vol2_v10 E-1·E-2·E-4,,,문서 반올림 참고
+efficiency.two.a,0.53,비율,TEST,vol2_v10 E-1·E-2·E-4,,,참고만; 띠 밖; ㅏ+ㅅ 분모도 첫 대상 ×1
+efficiency.two.o,0.974,비율,TEST,vol2_v10 E-1·E-2·E-4,0.978,E7 ⑨: 네 항목 한 벌 적용 시 파생값,문서 반올림 참고
+efficiency.two.u,0.974,비율,TEST,vol2_v10 E-1·E-2·E-4,0.978,E7 ⑨: 네 항목 한 벌 적용 시 파생값,문서 반올림 참고
+efficiency.two.overall,0.974,비율,TEST,vol2_v10 E-1·E-2·E-4,0.978,E7 ⑨: 네 항목 한 벌 적용 시 파생값,ㅗ·ㅜ 평균; 문서 반올림 참고
+efficiency.three.a,0.391,비율,TEST,vol2_v10 E-1·E-2·E-4,,,참고; 무리에서 무받침 ㅏ 첫 대상만
+efficiency.suffixAdvantage.min,1.1,배,TEST,vol2_v10 E-1·E-2·E-4,,,받침 먹당 작용 이득 참고 범위 하한
+efficiency.suffixAdvantage.max,1.33,배,TEST,vol2_v10 E-1·E-2·E-4,,,받침 먹당 작용 이득 참고 범위 상한
+efficiency.suffixAdvantage.a,1.22,배,TEST,vol2_v10 E-1·E-2·E-4,,,1/0.820 반올림
+efficiency.suffixAdvantage.o_u,1.24,배,TEST,vol2_v10 E-1·E-2·E-4,,,1/0.806 반올림
+efficiency.noInk.sustained,0.273,작용량/s,TEST,vol2_v10 E-1·E-2·E-4,,,문서 정밀 참고; 0.3/1.1≈0.272727
+efficiency.best.noDrawing,0.31,작용량/s,TEST,vol2_v10 E-1·E-2·E-4,,,참고: ㅓ ㄴ 2/13×2.0
+efficiency.a_n.noDrawing,0.28,작용량/s,TEST,vol2_v10 E-1·E-2·E-4,,,참고: ㅏ ㄴ 2/12×1.7
+efficiency.best.withDrawing,0.278,작용량/s,TEST,vol2_v10 E-1·E-2·E-4,0.2746,E7 ⑨: 1.95/(6.5+0.6); 파생 참고,2/(13/2+0.7); 문서 반올림
+efficiency.drawing.equalLimit,0.83,s,TEST,vol2_v10 E-1·E-2·E-4,,,等호 약 0.833333; 실제 게이트는 이 값 미만
+efficiency.best.inkWait,6.5,s,TEST,vol2_v10 E-1·E-2·E-4,,,13/2; 최고 ㅓ ㄴ 회복 대기
+efficiency.highUsage.aCandidateRatio,,비율,TEST,vol2_v10 E-1·E-2·E-4,0.74,E7 ⑭: 맨몸 ㅏ 비용 12로 올릴 때; F 반올림,현행 one.a=0.820 참조
+efficiency.highUsage.o_uCandidateRatio,,비율,TEST,vol2_v10 E-1·E-2·E-4,0.74,E7 ⑭: 맨몸 ㅗ·ㅜ 비용 15로 올릴 때; F 반올림,현행 one.o/u=0.806 참조
+gate.missing,0,칸,TEST,vol2_v10 E-4·E-2,,,누락 허용
+gate.duplicateLetter,0,개,TEST,vol2_v10 E-4·E-2,,,중복 글자 허용
+gate.duplicateDefinition,0,개,TEST,vol2_v10 E-4·E-2,,,쌍둥이 한줄정의 허용
+gate.topSample,10,위,TEST,vol2_v10 E-4·E-2,,,먹당 총가치 상위 표본
+gate.bodyBias,4,개,TEST,vol2_v10 E-4·E-2,,,상위 10 몸 편중 ≤; 1·2인 모두
+gate.frameBias,6,개,TEST,vol2_v10 E-4·E-2,,,상위 10 틀 편중 ≤; 1·2인 모두
+gate.verbBias,5,개,TEST,vol2_v10 E-4·E-2,,,상위 10 동사 편중 ≤; 1·2인 모두
+gate.targetScenario.one,1,명,TEST,vol2_v10 E-4·E-2,,,기준 대상 수
+gate.targetScenario.two,2,명,TEST,vol2_v10 E-4·E-2,,,모든 틀 대상별 항×2; 첫 대상 글자×1; 공유는 한 번
+gate.targetScenario.three,3,명,TEST,vol2_v10 E-4·E-2,,,참고 표
+gate.targetScenario.four,4,명,TEST,vol2_v10 E-4·E-2,,,참고 표; 상한 해당 행은 min(N;3)
+gate.boundaryGap,0.005,총가치/먹,TEST,vol2_v10 E-4·E-2,,,10·11위 차 < 경고; 쌍둥이 같은 글자는 참고
+gate.sameCostRatioWarning,1.3,배,TEST,vol2_v10 E-4·E-2,,,같은 먹 묶음 1위/2위 <1.3 경고 기준
+gate.unblockableWords,0,개,TEST,vol2_v10 E-4·E-2,,,정의 문장 막을 수 없 낱말 허용 0
+gate.selftests,13,개,TEST,vol2_v10 E-4·E-2,,,머리 현행값; E-4 시험 설명 및 검사기 SELFTEST_COUNT
+gate.eoAffectedRows,30,행,TEST,vol2_v10 E-4·E-2,,,ㅓ 받침 25 + ㅏ+ㅁ 5; 머리·A-5·E-2 범위
+gate.eoContactRows,20,행,TEST,vol2_v10 E-4·E-2,,,ㅓ 직접 첫째·둘째 접촉; ㅁ 제외
+gate.eoSeedRows,5,행,TEST,vol2_v10 E-4·E-2,,,ㅓ+ㅁ 즉시·둘째 없음
+gate.parryRows,5,행,TEST,vol2_v10 E-4·E-2,,,패링 재료는 방어 판정; 상극 그로기 대응
+gate.refundPhrases,0,개,TEST,vol2_v10 E-4·E-2,,,CSV 패링 전액 환급 문구 금지
+gate.parryReactionWords,0,개,TEST,vol2_v10 E-4·E-2,,,패링 반응재료 반응표 낱말 금지
+gate.borrowedRows,1,행,TEST,vol2_v10 E-4·E-2,,,빌린 위력 허용 행은 엉뿐
+e7.repetitionsPerCondition,5,회,TEST,vol2_v10 F E7 통과선,,,같은 배치 직접·반응 각각
+e7.decision.window,30,s,TEST,vol2_v10 F E7 통과선,,,① 목적·대상이 바뀐 유효 결정 집계
+e7.decision.minMedian,8,회,TEST,vol2_v10 F E7 통과선,,,① 중앙값 ≥
+e7.decision.minUnlocked,12,자,TEST,vol2_v10 F E7 통과선,,,① 개방 글자 ≥ 뒤 측정
+e7.misfire.max,10,%,TEST,vol2_v10 F E7 통과선,,,② 불발률 ≤
+e7.killTime.ratioMin,1,비율,TEST,vol2_v10 F E7 통과선,,,③ T직접/T반응 ≥; 첫 피격부터 처치; 작도 제외
+e7.killTime.costEnemyMin,1.3,비율,TEST,vol2_v10 F E7 통과선,,,③ 반응이 아니면 손해가 큰 적 ≥
+e7.reaction.killShareMax,70,%,TEST,vol2_v10 F E7 통과선,,,③ 반응을 쓴 처치 비율 ≤
+e7.unfairEvents,0,건,TEST,vol2_v10 F E7 통과선,,,④ 예고·소유·판정 억울함
+e7.body.min,10,%,TEST,vol2_v10 F E7 통과선,,,⑤ 몸 다섯 해금 각 몸 선택률 ≥
+e7.body.max,40,%,TEST,vol2_v10 F E7 통과선,,,⑤ 몸 다섯 해금 각 몸 선택률 ≤
+e7.body.earthMax,40,%,TEST,vol2_v10 F E7 통과선,,,⑤ 토 >40%면 토 즉시 ×0.8 후보
+e7.body.fireEarlyMax,60,%,TEST,vol2_v10 F E7 통과선,,,⑤ 목·화 구간 화 ≤; 초과 시 목 붙듦 환산 0.40 상향 검토
+e7.body.fullUnlock,5,몸,TEST,vol2_v10 F E7 통과선,,,⑤ 10–40% 판정 적용 조건
+e7.body.earlyUnlock,2,몸,TEST,vol2_v10 F E7 통과선,,,⑤ 목·화 구간
+e7.sot.max,15,%,TEST,vol2_v10 F E7 통과선,,,⑥ 솟 선택률 ≤
+e7.topSpells.count,5,자,TEST,vol2_v10 F E7 통과선,,,⑦ 상위 글자 표본
+e7.topSpells.window,2,h,TEST,vol2_v10 F E7 통과선,,,⑦ 첫 두 시간; 해금별 집계
+e7.topSpells.maxShare,60,%,TEST,vol2_v10 F E7 통과선,,,⑦ 상위 다섯 글자 점유 ≤
+e7.peak.outsideMin,5,%,TEST,vol2_v10 F E7 통과선,,,⑧ 급소창 밖 극치 사용률 ≥
+e7.eo.maxShare,50,%,TEST,vol2_v10 F E7 통과선,,,⑨ ㅓ 선택률 ≤; 초과 시 네 항목 한 벌
+e7.firstSight.people,2,명,TEST,vol2_v10 F E7 통과선,,,⑩ 사람 초견 시험
+e7.firstSight.letters,6,자,TEST,vol2_v10 F E7 통과선,,,⑩ G 한 장
+e7.firstSight.parryLetters,3,자,TEST,vol2_v10 F E7 통과선,,,⑩ 패링
+e7.firstSight.eoSLetters,1,자,TEST,vol2_v10 F E7 통과선,,,⑩ ㅓ+ㅅ
+e7.firstSight.uNgLetters,2,자,TEST,vol2_v10 F E7 통과선,,,⑩ ㅜ+ㅇ
+e7.firstSight.minCorrect,80,%,TEST,vol2_v10 F E7 통과선,,,⑩ 핵심 작동 ≥
+e7.critical.timeRatioMin,0.72,비율,TEST,vol2_v10 F E7 통과선,,,⑪ 극치 급소창 처치시간/일반 급소창 처치시간 ≥; 미달 시 1.725 대안
+e7.critical.peakShareMax,80,%,TEST,vol2_v10 F E7 통과선,,,⑫ 급소창 전체 유효 시전 중 극치 비율 ≤; 초과 시 1.725 대안
+e7.critical.minWindows,5,회,TEST,vol2_v10 F E7 통과선,,,⑫ 같은 해금·배치의 급소창 ≥; 창당 시전 횟수 아님
+e7.zeroInk.parryTrigger,30,%,TEST,vol2_v10 F E7 통과선,,,⑬ 먹 0 시도/전체 패링 시도 >; 통과선 아닌 후보 발동선
+e7.zeroInk.inkState,0,먹,TEST,vol2_v10 F E7 통과선,,,⑬ 시도율 기록 상태
+e7.bare.minTargets,1,명,TEST,vol2_v10 F E7 통과선,,,⑭ 전투 시작 시 적 수; 1–2인 구간
+e7.bare.maxTargets,2,명,TEST,vol2_v10 F E7 통과선,,,⑭ 1–2인 구간 상한
+e7.bare.minShare,15,%,TEST,vol2_v10 F E7 통과선,,,⑭ 1–2인 맨몸 선택률 ≥; 미달 시 띠 상향 후보
+e7.bare.maxShare,45,%,TEST,vol2_v10 F E7 통과선,,,⑭ 1–2인 맨몸 선택률 ≤; 초과 시 맨몸 비용 상향+띠 하한 완화 후보
+e7.bare.bodyUnlock,5,몸,TEST,vol2_v10 F E7 통과선,,,⑭ 몸 다섯 열린 시험
+e7.bare.finalUnlock,5,받침,TEST,vol2_v10 F E7 통과선,,,⑭ 받침 다섯 열린 시험
+e7.crowd.minTargets,3,명,TEST,vol2_v10 F E7 통과선,,,⑭ 전투 시작 시 적 수 ≥; 별도 집계
+e7.crowd.o_uTrigger,60,%,TEST,vol2_v10 F E7 통과선,,,⑭ 무받침 ㅗ·ㅜ 선택률 >이면 무리 기본 해법 허용 재검토
+e7.noInk.shareThreshold,,%,TEST,vol2_v10 F E7 통과선,,,⑮ 기록만; 통과선 없음; 비율이 높으면 재사용 1.3초 후보
+e7.early.duration,30,min,TEST,vol2_v10 F E7 통과선,,,첫 30분 별도 시험
+e7.early.people,2,명,TEST,vol2_v10 F E7 통과선,,,힌트 없이 사람 둘
+e7.early.agents,2,명,TEST,vol2_v10 F E7 통과선,,,힌트 없이 에이전트 둘
+e7.early.bodies,2,몸,TEST,vol2_v10 F E7 통과선,,,목·화
+e7.early.bareLetters,4,자,TEST,vol2_v10 F E7 통과선,,,무받침 ㅏ·ㅗ
+e7.early.parryLetters,2,자,TEST,vol2_v10 F E7 통과선,,,패링 ㅓ
+e7.early.fireDiscoveryMin,60,%,TEST,vol2_v10 F E7 통과선,,,㉠ 화×세계 목 들불 발견 ≥
+e7.early.parryFirstMin,60,%,TEST,vol2_v10 F E7 통과선,,,㉡ 첫 시도 방향 정답률 ≥
+e7.early.parryRepeatMin,80,%,TEST,vol2_v10 F E7 통과선,,,㉡ 같은 종 두 번째 만남부터 ≥
+e7.early.parryRepeatStart,2,번째 만남,TEST,vol2_v10 F E7 통과선,,,㉡ 같은 적 종
+e7.early.randomGuess,50,%,TEST,vol2_v10 F E7 통과선,,,㉡ 몸 둘 단일 시도 추측 기준; 참고
+e7.early.bookLetters,8,자,TEST,vol2_v10 F E7 통과선,,,㉢ ㄱ 책 구간 먹 체감 기록만
+e7.early.bookPeakLetters,4,자,TEST,vol2_v10 F E7 통과선,,,㉢ 목 극치
+e7.early.bookNormalLetters,4,자,TEST,vol2_v10 F E7 통과선,,,㉢ 화 일반 재료 공급
+e7.early.bookPeakInkMin,24,먹,TEST,vol2_v10 F E7 통과선,,,㉢ 극치 먹 체감 범위 하한
+e7.early.bookPeakInkMax,30,먹,TEST,vol2_v10 F E7 통과선,,,㉢ 극치 먹 체감 범위 상한
+e7.early.bookMinute,40,min,TEST,vol2_v10 F E7 통과선,,,㉢ 약 40분 차 플레이어; TEST
+structure.bodies,5,개,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,몸
+structure.frames,4,개,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,틀
+structure.finals,5,개,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,받침 동사
+structure.finalOptions,6,개,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,무받침 포함
+structure.letters,120,자,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,5×4×6
+structure.normalLetters,80,자,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,일반 받침
+structure.peakLetters,20,자,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,초성·받침 같은 몸
+structure.bareLetters,20,자,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,패링 5 포함
+structure.fieldPeakLetters,5,자,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,ㅜ 극치
+structure.reactionCells,25,칸,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,방향표 5×5
+structure.reactionProductKinds,4,종,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,피해·감속·없음·자식 잔존물
+structure.summonTypes,1,종,TEST,vol2_v10 A-1·A-2·A-3·A-4·A-5·B-2,,,토 ㅗ ㅁ 흙 거인 유일
+timing.s.ringLife,10,s,TEST,vol2_v10 A-4,,,ㅜ+ㅅ 가르는 선 유지; 반응 재료는 아님

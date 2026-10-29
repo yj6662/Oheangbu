@@ -44,6 +44,11 @@ namespace Oheangbu.Combat
         public event Action<HarvestCancelReason> PullCanceled;
         // 구 신호 호환 — 이제 덩어리를 끊는 순간 한 번만 발화한다(매 프레임 아님)
         public event Action<Vector3> Extracted;
+        // S5-b slice 9 (D308-150 V2, vol.2 swing driver): the raw left-click press, raised BEFORE any gate of the pull. A Vol2 scope's swing driver listens and,
+        // with <see cref="Intercepted"/> set, owns the press: the legacy lock-on pull below does not run (the driver's contact swing is the 갈무리 then).
+        // Legacy308: nobody subscribes and Intercepted stays false - the pull is exactly what it was.
+        public event Action Pressed;
+        public bool Intercepted { get; set; }
 
         public void Init(InkPool ink)
         {
@@ -62,6 +67,8 @@ namespace Oheangbu.Combat
         // 입력 계층(PlayerMotor)이 좌클릭 누름 프레임에 부른다. 게이트를 못 넘으면 아무 일도 없다(냉각 중 연타 포함)
         public bool TryBeginPull()
         {
+            Pressed?.Invoke();
+            if (Intercepted) return false;
             if (_config == null || _lockOn == null || !isActiveAndEnabled) return false;
             if (State == HarvestState.Pulling) return false;
             if (State == HarvestState.Cooldown && Time.time < _cooldownUntil) return false;

@@ -15,7 +15,7 @@ namespace Oheangbu.App
         readonly CombatLoopWiring wiring;
         readonly Func<bool> unlocked;
         readonly Func<float> clock;
-        readonly float[] ends = new float[5];
+        readonly float[] ends = new float[5], starts = new float[5];
         readonly Func<IncomingDamageKind, float> damageScale;
         readonly GameObject[] visuals = new GameObject[5];
         readonly Vfx120Profile[] visualProfiles = new Vfx120Profile[5];
@@ -37,6 +37,9 @@ namespace Oheangbu.App
             int index = Array.IndexOf(Letters, letter);
             return !disposed && index >= 0 && ends[index] > now;
         }
+        /// <summary>D308-127 (presentation, read only): when a running buff was last cast. false = not running.</summary>
+        public bool Started(char letter, float now, out float since)
+        { int index=Array.IndexOf(Letters,letter);bool on=!disposed&&index>=0&&ends[index]>now;since=on?starts[index]:0f;return on; }
         public float Remaining(char letter, float now)
         { int index=Array.IndexOf(Letters,letter);return !disposed&&index>=0?Mathf.Max(0,ends[index]-now):0; }
         public bool CanActivate(char letter) => Unlocked && profile.Valid && vitals.Hp01 > 0
@@ -47,7 +50,7 @@ namespace Oheangbu.App
             Tick(now); // Finish the old interval before refreshing its deadline.
             if (letter == '넉') FlushAura(now);
             int index = Array.IndexOf(Letters, letter);
-            ends[index] = now + (letter == '넉' ? profile.AuraDuration : profile.Duration);
+            ends[index] = now + (letter == '넉' ? profile.AuraDuration : profile.Duration); starts[index] = now;
             if (letter == '넉') { auraScale = wiring.SummonDamageScale(Element.Fire); auraSampleAt = now; }
             RefreshVisual(index, ends[index]-now);
             return true;

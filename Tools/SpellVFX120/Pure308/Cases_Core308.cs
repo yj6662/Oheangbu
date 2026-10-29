@@ -117,37 +117,68 @@ namespace Pure308
 
             var testOnly = rows.Where(x => x.Gate == SpellGateMode.Test).ToArray();
             r.Fact("testOnlyRows", string.Join(" ", testOnly.Select(x => x.Index + ":" + x.Handler)));
-            // grid cell 50 = earth a + giyeok (the rock that stays as cover): the one enemy / world dependent row behind the final
-            // the main game grants. No glyph is named: the cell is found by its number, the rule by the sheet's Gate column.
+            // grid cell 94 = metal u + mieum (the domain that keeps the player from being pushed): an enemy / world dependent row behind a
+            // final the main game grants. No glyph is named: the cell is found by its number, the rule by the sheet's Gate column.
+            // Cell 50 = earth a + giyeok (the rock that stays as cover), cell 77 = metal a + siot (the hit that goes through a guard),
+            // cell 66 = earth o + ieung (the cloud that blinds an enemy's brain) and cell 94 itself left the TEST gate on their main-world
+            // consumers (R125, S125, H125, D308-129 P129). No shipped row is TEST now: the TEST-only rule runs on a check-only copy of the
+            // live sheets in which cell 94's row carries Gate test (never imported, never one of the 120).
+            var liveAnchor = c.RowAt(94);
+            r.Check("A5", testOnly.Length == 0 && liveAnchor != null && liveAnchor.Gate != SpellGateMode.Test && Status(liveAnchor, normal) == SpellResolveStatus.Ok,
+                "D308-129: no shipped row is TEST-only; the anchor domain resolves on a normal save that earned the mieum final", string.Join(" ", testOnly.Select(x => x.Index)));
+            string anchorLine = liveAnchor.Letter + ",new,domain.anchor,,,,";
+            var synthetic = c.Sheets.Select(s => s.Text.Contains("\n" + anchorLine) ? new SpellSheet308(s.Name, s.Text.Replace("\n" + anchorLine, "\n" + liveAnchor.Letter + ",new,domain.anchor,,,test,")) : s).ToList();
+            var testBuild = SpellTableBuilder308.Build(c.CanonicalCsv, synthetic, c.UnlockCsv);
+            if (!r.Check("A5", testBuild.Ok && synthetic.Count(s => !c.Sheets.Contains(s)) == 1, "the check-only copy marks exactly one sheet's anchor row test and builds")) return;
+            rows = testBuild.Rows;
+            testOnly = rows.Where(x => x.Gate == SpellGateMode.Test).ToArray();
+            ids = new HashSet<string>(rows.Where(x => x.HasHandler).Select(x => x.Handler));
+            var anchor = rows.First(x => x.Index == 94);
+            var blind = c.RowAt(66);
+            var thrust = c.RowAt(77);
             var rock = c.RowAt(50);
-            // WP-17 (D308-121) added three domain rows whose world target does not exist yet: 68, 94, 117
-            r.Check("A5", testOnly.Select(x => x.Index).SequenceEqual(new[] { 18, 42, 45, 50, 66, 68, 77, 78, 90, 94, 95, 111, 117, 120 }) && testOnly.Contains(rock) && rock.Final == SpellFinal.Giyeok &&
+            // WP-17 (D308-121) added three domain rows whose world target did not exist yet: 68, 94, 117. D308-125 (적용 5) gave
+            // 111 and 117 their world consumer (the ember patch and its scorch), and 68 the 적로 불승냥이 charge (적용 3, M125), so they left the TEST gate.
+            // The three path-opening field rows 45 / 95 / 120 left it on the main world's dungeon gates (F125); the wave, rock, needle
+            // and barrage rows 18 / 50 / 78 / 90 on the main world's stone-throwers (R125); the haze row 42 on the main world's own
+            // strikes, the goat arcs, the old melee bodies and the stone-throwers (N125); the thrust row 77 on the main world's
+            // guarding field enemies (S125); the blind row 66 on the main world's searching field brains (H125).
+            r.Check("A5", testOnly.Select(x => x.Index).SequenceEqual(new[] { 94 }) && testOnly.Contains(anchor) && anchor.Final == SpellFinal.Mieum && !testOnly.Contains(rock) && !testOnly.Contains(thrust) && !testOnly.Contains(blind) &&
                 testOnly.All(x => x.HasHandler && x.Feature == SpellLegacyFeature.None && x.Final != SpellFinal.None),
-                "#308b: fourteen rows are TEST-only, the enemy / world dependent rows of the field, counter and domain packages (the rock-cover row behind the giyeok final among them)", string.Join(" ", testOnly.Select(x => x.Index)));
-            r.Check("A5", c.Build.Unlocks.Any(u => u.Final == rock.Final && u.GrantedInMain) && Status(rock, normal) == SpellResolveStatus.Locked,
+                "#308b (check-only copy): one row is TEST-only, an enemy / world dependent row behind a main-game final (the anchor domain behind the mieum final)", string.Join(" ", testOnly.Select(x => x.Index)));
+            r.Check("A5", c.Build.Unlocks.Any(u => u.Final == anchor.Final && u.GrantedInMain) && Status(anchor, normal) == SpellResolveStatus.Locked,
                 "a normal save cannot resolve it: with the campaign running, its final granted in the main game, the ledger id recorded and every evidence complete it is Locked (the misfire)",
-                Status(rock, normal).ToString());
-            r.Check("A5", Status(rock, testing) == SpellResolveStatus.Ok && Status(rock, leaked) == SpellResolveStatus.Locked,
+                Status(anchor, normal).ToString());
+            r.Check("A5", Status(anchor, testing) == SpellResolveStatus.Ok && Status(anchor, leaked) == SpellResolveStatus.Locked,
                 "the TEST unlock in the isolated store resolves it; the same request outside the isolated store does not");
+            r.Check("A5", Status(thrust, normal) == SpellResolveStatus.Ok, "S125: the thrust row, out of TEST, resolves on a normal save that earned the siot final", Status(thrust, normal).ToString());
+            r.Check("A5", Status(blind, normal) == SpellResolveStatus.Ok, "H125: the blind row, out of TEST, resolves on a normal save that earned the ieung final", Status(blind, normal).ToString());
             var opened = rows.Where(x => x.Final != SpellFinal.None && x.HasHandler && x.Feature == SpellLegacyFeature.None && x.Gate != SpellGateMode.Open && Status(x, normal) == SpellResolveStatus.Ok)
                 .Select(x => x.Index).ToArray();
             r.Fact("mainGameNewRows", string.Join(" ", opened));
             // 14 wood o, 38 fire o, 62 earth o, 86 metal o, 110 water o, each + giyeok: the five glyphs the main story opens after its first final;
-            // WP-17 (D308-121) adds the three giyeok domain rows that do not wait on a world target (눅 숙 욱)
+            // WP-17 (D308-121) adds the three giyeok domain rows that do not wait on a world target (눅 숙 욱); D308-125 (적용 5) opens
+            // the two nieun rows the ember patch gave a world consumer (111 purge, 117 status ward) and 적용 3 the giyeok ground circle 68 (the charge);
+            // F125 the three field rows on the dungeon gates (45 nieun burn, 95 siot cut, 120 ieung cleanse); R125 the stone-throwers'
+            // four (50 giyeok rock; 18 wave, 78 needle, 90 barrage on ieung); N125 the haze (42 on ieung); S125 the thrust (77 on siot); H125 the blind cloud (66 on ieung)
             var openedRows = rows.Where(x => opened.Contains(x.Index)).ToArray();
-            var giyeokOpened = new[] { 14, 38, 62, 86, 110, c.Row('눅').Index, c.Row('숙').Index, c.Row('욱').Index }.OrderBy(x => x).ToArray();
-            r.Check("A5", openedRows.Where(x => x.Final == SpellFinal.Giyeok).Select(x => x.Index).SequenceEqual(giyeokOpened) && opened.Length == 70 &&
-                openedRows.Count(x => x.Final == SpellFinal.Nieun) == 17 && openedRows.Count(x => x.Final == SpellFinal.Siot) == 18 &&
-                openedRows.Count(x => x.Final == SpellFinal.Ieung) == 14 && openedRows.Count(x => x.Final == SpellFinal.Mieum) == 13 && !openedRows.Any(x => x.Gate == SpellGateMode.Test),
-                "#308b + WP-17: a normal save that earned all five finals resolves 70 new rows (giyeok 8: the o glyphs of the five elements and three domains; nieun 17, siot 18, ieung 14, mieum 13) and no TEST-only row", string.Join(" ", opened));
+            var giyeokOpened = new[] { 14, 38, 50, 62, 86, 110, c.Row('눅').Index, 68, c.Row('숙').Index, c.Row('욱').Index }.OrderBy(x => x).ToArray();
+            r.Check("A5", openedRows.Where(x => x.Final == SpellFinal.Giyeok).Select(x => x.Index).SequenceEqual(giyeokOpened) && opened.Length == 83 &&
+                openedRows.Count(x => x.Final == SpellFinal.Nieun) == 20 && openedRows.Count(x => x.Final == SpellFinal.Siot) == 20 &&
+                openedRows.Count(x => x.Final == SpellFinal.Ieung) == 20 && openedRows.Count(x => x.Final == SpellFinal.Mieum) == 13 && !openedRows.Any(x => x.Gate == SpellGateMode.Test),
+                "#308b + WP-17 + D308-125: a normal save that earned all five finals resolves 83 new rows (giyeok 10: the o glyphs of the five elements and four domains and the rock; nieun 20, siot 20, ieung 20, mieum 13) and no TEST-only row", string.Join(" ", opened));
             var newRows = rows.Where(x => x.HasHandler && x.Feature == SpellLegacyFeature.None).ToArray();
             r.Check("A5", newRows.Length == 84 && newRows.All(x => Status(x, testing) == SpellResolveStatus.Ok),
                 "with the TEST unlock in the isolated store all 84 new rows resolve (64 + the 20 domain rows of WP-17), the TEST-only rows among them", newRows.Count(x => Status(x, testing) == SpellResolveStatus.Ok).ToString());
             var giyeokRule = c.Build.Unlocks.First(u => u.Final == SpellFinal.Giyeok);
+            var siotRule = c.Build.Unlocks.First(u => u.Final == SpellFinal.Siot);
+            var ieungRule = c.Build.Unlocks.First(u => u.Final == SpellFinal.Ieung);
+            var mieumRule = c.Build.Unlocks.First(u => u.Final == SpellFinal.Mieum);
             var ordinary = c.RowAt(14);
-            r.Check("A5", SpellUnlockPolicy308.RuleFor(rock, giyeokRule).GrantedInMain == false && SpellUnlockPolicy308.RuleFor(ordinary, giyeokRule).GrantedInMain &&
-                SpellUnlockPolicy308.RuleFor(rock, giyeokRule).LedgerId == giyeokRule.LedgerId && SpellUnlockPolicy308.RuleFor(null, giyeokRule).GrantedInMain,
-                "the per-row rule: a TEST-only row is judged without the main-game grant of its final; every other row keeps its final's rule as it is");
+            r.Check("A5", SpellUnlockPolicy308.RuleFor(anchor, mieumRule).GrantedInMain == false && SpellUnlockPolicy308.RuleFor(ordinary, giyeokRule).GrantedInMain &&
+                SpellUnlockPolicy308.RuleFor(rock, giyeokRule).GrantedInMain && SpellUnlockPolicy308.RuleFor(thrust, siotRule).GrantedInMain && SpellUnlockPolicy308.RuleFor(blind, ieungRule).GrantedInMain &&
+                SpellUnlockPolicy308.RuleFor(anchor, mieumRule).LedgerId == mieumRule.LedgerId && SpellUnlockPolicy308.RuleFor(null, giyeokRule).GrantedInMain,
+                "the per-row rule: a TEST-only row is judged without the main-game grant of its final; every other row (the rock, the thrust and the blind cloud, out of TEST since R125, S125 and H125, among them) keeps its final's rule as it is");
             // ---- #308b (D308-51): the boss chain that writes the ledger ids of the later finals (FinalGrantRule308) ----
             // the chain of the main content in earning order; the first entry is granted elsewhere (no boss in the table)
             string[] chainIds = { "g", "n", "s", "ng", "m" }, chainPlaces = { "", "p_n", "p_s", "p_ng", "p_m" };

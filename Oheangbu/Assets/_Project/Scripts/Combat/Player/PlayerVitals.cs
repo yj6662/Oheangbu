@@ -80,6 +80,7 @@ namespace Oheangbu.Combat
         public event Action<float> Damaged; // 실피해량 — 무적으로 막힌 피격은 발화하지 않는다
         public event Action<PlayerHitInfo> AttackDamaged; // #308: the same hit with its attacker (after Damaged). No reward hangs here: retaliation only
         public PlayerHitInfo LastHit { get; private set; } // #308: set before Damaged fires, so a Damaged listener can read who struck
+        public long HitSerial308 { get; private set; } // S5-b slice 8: counts real hits (LastHit changes with it); the vol.2 hit gate reports each hit once, whoever listens first
         public event Action Died;
         public event Action HpChanged;
         // #308 D308-125 적용 5: burning-ground ticks. No Damaged, no AttackDamaged, no LastHit: a tick neither breaks a letter
@@ -132,7 +133,7 @@ namespace Oheangbu.Combat
 
             bool spared=Lose308(amount);
             HpChanged?.Invoke();
-            LastHit = new PlayerHitInfo(attacker, amount, kind);
+            LastHit = new PlayerHitInfo(attacker, amount, kind); HitSerial308++;
             Damaged?.Invoke(amount);
             AttackDamaged?.Invoke(LastHit);
             if (spared) Spared308?.Invoke();

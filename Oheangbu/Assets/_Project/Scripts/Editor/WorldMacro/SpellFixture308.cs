@@ -268,6 +268,13 @@ namespace Oheangbu.EditorTools.WorldMacro
             info.SetValue(target, value);
         }
 
+        public static object Get(object target, string field)
+        {
+            var info = target.GetType().GetField(field, Hidden);
+            if (info == null) throw new MissingFieldException(target.GetType().Name, field);
+            return info.GetValue(target);
+        }
+
         public static object Call(object target, string method, params object[] arguments)
         {
             var info = target.GetType().GetMethod(method, Hidden);

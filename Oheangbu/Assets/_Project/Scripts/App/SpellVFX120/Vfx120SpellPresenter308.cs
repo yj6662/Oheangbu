@@ -129,6 +129,7 @@ namespace Oheangbu.App.SpellVFX120
                 case SpellFxCue.Secondary: live.Fx.Signal(Vfx120Effect.Cue.Hit, args.Target); break;
                 case SpellFxCue.TargetDefeated: live.Fx.Signal(Vfx120Effect.Cue.TargetDefeated, args.Target); break;
                 case SpellFxCue.Break: live.Fx.Signal(Vfx120Effect.Cue.Break); break;
+                case SpellFxCue.React:   // D308-132: a zone a reaction consumed ends quietly on a catalogue body (no Break burst: the product has the look)
                 case SpellFxCue.Expire:
                 case SpellFxCue.Consume: live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
                 case SpellFxCue.Return:
@@ -163,6 +164,7 @@ namespace Oheangbu.App.SpellVFX120
             ClearZone308();
             ClearBurst308();
             ClearMark308();
+            ClearReaction308();
             foreach (var stack in _spares.Values)
                 while (stack.Count > 0) Destroy(stack.Pop());
             _spares.Clear();

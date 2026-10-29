@@ -1,0 +1,14 @@
+{
+  "name": "Oheangbu.Vol2.Rules",
+  "rootNamespace": "Oheangbu.Vol2.Rules",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

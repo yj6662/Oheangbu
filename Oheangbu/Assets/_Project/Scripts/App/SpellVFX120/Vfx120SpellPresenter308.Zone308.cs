@@ -41,7 +41,7 @@ namespace Oheangbu.App.SpellVFX120
             foreach (int stale in _staleZones) { DryAll(_zones[stale]); _zones.Remove(stale); }
             var floor = new ZoneFloor { Prefab = source.Zone308Prefab, Life = life, Until = now + request.Duration + ZoneRemember };
             _zones[id] = floor;
-            if (request.Role == SpellFxRole.Zone || request.Role == SpellFxRole.Ward) PutZone308(floor, request.FallbackPoint, request.Radius, request.ImpactClock, request.Letter);
+            if (request.Role == SpellFxRole.Zone || request.Role == SpellFxRole.Ward) PutZone308(floor, request.FallbackPoint, request.Radius, request.ImpactClock, request.Letter, request.Follow);
         }
 
         // never swallows the cue
@@ -55,10 +55,13 @@ namespace Oheangbu.App.SpellVFX120
                 case SpellFxCue.Break:
                     foreach (var body in floor.Bodies) if (body != null) body.Splash();
                     break;
+                case SpellFxCue.React:   // D308-132 step 6: consumed by a reaction - the floor pales out, folding along the way the wave ran
+                    foreach (var body in floor.Bodies) if (body != null) body.React(args.Direction);
+                    break;
             }
         }
 
-        void PutZone308(ZoneFloor floor, Vector3 point, float radius, float delay, char letter)
+        void PutZone308(ZoneFloor floor, Vector3 point, float radius, float delay, char letter, Transform follow = null)
         {
             if (floor.Prefab == null || radius < ZoneMinRadius) return;
             var eye = Camera.main;
@@ -70,9 +73,11 @@ namespace Oheangbu.App.SpellVFX120
                 instance.name = "Spell308_Zone_" + (letter != '\0' ? letter.ToString() : floor.Prefab.name);
                 if (_owner != null && instance.scene != _owner.gameObject.scene) SceneManager.MoveGameObjectToScene(instance, _owner.gameObject.scene);
                 instance.transform.localScale = floor.Prefab.transform.localScale * radius;
+                foreach (var density in instance.GetComponentsInChildren<Vfx308RingDensity>(true)) density.Apply(radius);   // D308-126: counts per metre of rim
                 var body = instance.GetComponent<Vfx308ZoneBody>();
                 if (body == null) { Destroy(instance); return; }
                 body.Delay = delay; body.Life = floor.Life;
+                if (follow != null) { var f = instance.AddComponent<Vfx308ZoneFollow>(); f.Target = follow; f.Body = body; }   // 궁: the circle goes with the caster
                 floor.Bodies.RemoveAll(b => b == null);
                 floor.Bodies.Add(body);
             }

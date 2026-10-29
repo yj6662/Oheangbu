@@ -16,6 +16,7 @@ namespace Oheangbu.App
         public float Radius;
         public float From, Until;   // stands while From <= now < Until
         public int Fx;              // presenter handle id (0 = nothing shown)
+        public char Letter;         // the glyph that put the piece there (what a stone it stops shows)
     }
 
     // "Cover": a ranged strike from an enemy to the player is stopped when the straight line between them is cut by a
@@ -58,6 +59,49 @@ namespace Oheangbu.App
             if (!(sideA > 0f) || !(sideB < 0f)) return false;
             Vector3 crossing = a + (b - a) * (sideA / (sideA - sideB));
             return crossing.magnitude <= wall.Radius;                     // the crossing lies on the wall's line: its distance from the centre is its offset along the wall
+        }
+
+        // D308-125 적용 6: does the path a shot flew, from the hand (`from`) to where it is now (`at`), meet the piece at
+        // this time? `entry` is where it first met it, at the shot's own height (the hand when it left the hand inside a
+        // rock: the effect only asks for a piece that Blocks, which already lets a shooter inside the rock through).
+        public static bool Meets(in SpellCover308 piece, Vector3 from, Vector3 at, float now, out Vector3 entry)
+        {
+            entry = at;
+            if (!Stands(piece, now) || !(piece.Radius > 0f)) return false;
+            float t;
+            if (!(piece.Wall ? WallMeets(piece, from, at, out t) : RockMeets(piece, from, at, out t))) return false;
+            entry = Vector3.Lerp(from, at, t);
+            return true;
+        }
+
+        // The first share of the path inside the circle.
+        static bool RockMeets(in SpellCover308 rock, Vector3 from, Vector3 at, out float t)
+        {
+            t = 0f;
+            Vector3 a = AreaGeometry.Flat(from - rock.Centre), b = AreaGeometry.Flat(at - rock.Centre);
+            float r2 = rock.Radius * rock.Radius, c = a.sqrMagnitude - r2;
+            if (c <= 0f) return true;
+            Vector3 line = b - a;
+            float length = line.sqrMagnitude;
+            if (length < 1e-8f) return false;
+            float half = Vector3.Dot(a, line), disc = half * half - length * c;   // |a + line t|^2 = r^2
+            if (disc < 0f) return false;
+            t = (-half - Mathf.Sqrt(disc)) / length;
+            return t >= 0f && t <= 1f;
+        }
+
+        // The share of the path where it crosses the wall's line from ahead of it, within the wall's width.
+        static bool WallMeets(in SpellCover308 wall, Vector3 from, Vector3 at, out float t)
+        {
+            t = 0f;
+            Vector3 ahead = AreaGeometry.Flat(wall.Direction);
+            if (ahead.sqrMagnitude < 1e-6f) return false;
+            ahead = ahead.normalized;
+            Vector3 a = AreaGeometry.Flat(from - wall.Centre), b = AreaGeometry.Flat(at - wall.Centre);
+            float sideA = Vector3.Dot(a, ahead), sideB = Vector3.Dot(b, ahead);
+            if (!(sideA > 0f) || sideB > 0f) return false;
+            t = sideA / (sideA - sideB);
+            return (a + (b - a) * t).magnitude <= wall.Radius;
         }
 
         // Where the rock of an air cast lands: `range` along the flat aim direction from the caster.

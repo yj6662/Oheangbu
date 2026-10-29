@@ -9,15 +9,16 @@ namespace Oheangbu.App
     // their own runtime (EABuffRuntime) and are not in here.
     public sealed class SpellBuffState308
     {
-        struct Slot { public char Letter; public float Until; public int Charges; public float SpeedScale; }
+        struct Slot { public char Letter; public float Until; public int Charges; public float SpeedScale; public float Since; public int Order; }
         readonly List<Slot> _slots = new List<Slot>();
+        int _order;
 
         // charges = 0: a plain timed buff. charges > 0: also ends when the last charge is consumed.
         // speedScale: how much faster the player's projectiles fly while the buff runs (1 = not at all; D308-123).
         public void Activate(char letter, float now, float duration, int charges = 0, float speedScale = 1f)
         {
             if (float.IsNaN(now) || float.IsNaN(duration) || duration <= 0f) return;
-            var slot = new Slot { Letter = letter, Until = now + duration, Charges = charges > 0 ? charges : 0, SpeedScale = speedScale > 0f ? speedScale : 1f };
+            var slot = new Slot { Letter = letter, Until = now + duration, Charges = charges > 0 ? charges : 0, SpeedScale = speedScale > 0f ? speedScale : 1f, Since = now, Order = ++_order };
             int at = IndexOf(letter);
             if (at >= 0) _slots[at] = slot; else _slots.Add(slot);
         }
@@ -37,6 +38,16 @@ namespace Oheangbu.App
         {
             int at = IndexOf(letter);
             return at >= 0 && now < _slots[at].Until;
+        }
+
+        // D308-127 (presentation, read only): when a running buff was last cast, and the order of its casts (a recast counts
+        // again). false = not running.
+        public bool Started(char letter, float now, out float since, out int order)
+        {
+            int at = IndexOf(letter);
+            bool on = at >= 0 && now < _slots[at].Until;
+            since = on ? _slots[at].Since : 0f; order = on ? _slots[at].Order : 0;
+            return on;
         }
 
         public float Remaining(char letter, float now)

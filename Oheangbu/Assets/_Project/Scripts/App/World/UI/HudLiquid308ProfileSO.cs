@@ -37,6 +37,7 @@ namespace Oheangbu.App.World.UI
         [Header("references (hud308-setup)")]
         [Tooltip("M_InkVessel308 (UI/InkVessel308). Empty = plain fallback quads: the values still read")] public Material Material;
         [Tooltip("hud308_atlas.png (linear, mips, Clamp)")] public Texture2D AtlasTexture;
+        [Tooltip("D308-125 5 (c): M_VesselSmoke308 (UI/VesselSmoke308), soot in the HP vessel's head while scorched. Empty = no soot")] public Material Smoke308;
 
         void OnValidate()
         {

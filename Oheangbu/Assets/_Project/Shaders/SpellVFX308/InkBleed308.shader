@@ -7,6 +7,12 @@
 // (_Radial 1): a small soft round lift of the pigment for two cels, capped at OH_GLOW_CEILING_OUT (D308-10c) - soft to
 // nothing at its rim, so it reads as a faint light and not as a flat pale shape. Heat is a warm PAINT tone under the ceiling.
 // Fades out softly against geometry (_SoftDepth) and toward the eye (nothing nearer than _NearClip).
+// D308-125 5 (c) _Paint: the sheet is a PAINTED colour sheet (fire308.py *_vfx: sRGB colour + alpha) instead of the channel
+// sheet - its colour times the vertex colour (x _Tint), greyed first by _Desat, still under the ink ceiling.
+//   _Paint 1: the particle system frames it (texture sheet animation, Blend streams as above).
+//   _Paint 2: framed here - a sheet of variants, each _Grid.z cels laid row after row (_Grid.x columns, _Grid.y rows): the
+//   streams Position, Color, UV, Custom1.xy (variant, first cel), AgePercent; the variant's cels from the first one play once
+//   over the particle's life, blended cel to cel. (Texture sheet animation cannot: one variant spans two rows of the brush sheet.)
 Shader "Oheangbu/SpellVFX308/InkBleed"
 {
     Properties
@@ -28,6 +34,9 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
         _SoakInk("Soak: first colour (ink) - D308-84 the body forms black, then the pigment soaks in", Color) = (.05,.047,.045,1)
         _SoakFrom("Soak starts (particle age 0-1)", Range(0,1)) = 0
         _SoakTo("Soak full (particle age 0-1, 0 = off)", Range(0,1)) = 0
+        _Paint("Painted colour sheet (0 = channel sheet, 1 = framed by the system, 2 = framed here)", Float) = 0
+        _Grid("Paint 2: columns, rows, cels per variant", Vector) = (8,8,16,0)
+        _Desat("Paint: grey the sheet before the tint (1 = ash)", Range(0,1)) = 0
     }
     SubShader
     {
@@ -49,9 +58,16 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
             struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; float4 uv:TEXCOORD0; float3 misc:TEXCOORD1; };
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             CBUFFER_START(UnityPerMaterial)
-            float4 _MainTex_ST; half4 _Ink, _HeatColor, _Tint, _SoakInk;
-            float _HeartLo, _HeartHi, _Rim, _Opacity, _Heat, _Glow, _Radial, _SoftDepth, _NearClip, _NearFade, _SoakFrom, _SoakTo;
+            float4 _MainTex_ST; half4 _Ink, _HeatColor, _Tint, _SoakInk; float4 _Grid;
+            float _HeartLo, _HeartHi, _Rim, _Opacity, _Heat, _Glow, _Radial, _SoftDepth, _NearClip, _NearFade, _SoakFrom, _SoakTo, _Paint, _Desat;
             CBUFFER_END
+            // _Paint 2: the sheet uv of cel k of a variant (the image's first row is at the top)
+            float2 PaintCel(float2 uv, float variant, float k)
+            {
+                float index = variant * _Grid.z + k;
+                float row = floor(index / _Grid.x), col = index - row * _Grid.x;
+                return float2((col + uv.x) / _Grid.x, (_Grid.y - 1.0 - row + uv.y) / _Grid.y);
+            }
             Varyings vert(Attributes v)
             {
                 Varyings o; UNITY_SETUP_INSTANCE_ID(v);
@@ -69,6 +85,22 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
                     float k = saturate(1.0 - dot(p, p));
                     a = k * k * i.color.a;
                     rgb = min(i.color.rgb + min(_Glow, OH_GLOW_MAX) * (.5 + i.color.rgb), OH_GLOW_CEILING_OUT);
+                }
+                else if (_Paint > .5)
+                {
+                    half4 t;
+                    if (_Paint > 1.5)
+                    {
+                        float2 q = saturate(i.uv.xy);
+                        float cels = max(_Grid.z, 1.0), first = clamp(i.uv.w, 0.0, cels - 1.0);
+                        float f = min(first + saturate(i.misc.x) * (cels - first), cels - .001);
+                        float k0 = floor(f), k1 = min(k0 + 1.0, cels - 1.0), variant = floor(max(i.uv.z, 0.0));
+                        t = lerp(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, PaintCel(q, variant, k0)), SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, PaintCel(q, variant, k1)), f - k0);
+                    }
+                    else t = lerp(SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv.xy), SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv.zw), saturate(i.misc.x));
+                    float3 c = lerp(t.rgb, dot(t.rgb, float3(.2126, .7152, .0722)).xxx, saturate(_Desat));
+                    rgb = min(c * i.color.rgb, OH_INK_CEILING_OUT);   // paint, not light
+                    a = t.a * i.color.a;
                 }
                 else
                 {

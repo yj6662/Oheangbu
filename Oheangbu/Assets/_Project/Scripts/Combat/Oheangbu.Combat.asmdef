@@ -5,6 +5,7 @@
         "Oheangbu.Core",
         "Oheangbu.Data",
         "Oheangbu.Spellcraft",
+        "Oheangbu.Vol2.Rules",
         "Unity.InputSystem"
     ],
     "includePlatforms": [],

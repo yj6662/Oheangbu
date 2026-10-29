@@ -311,14 +311,50 @@ namespace Oheangbu.App.World
             Apexes++;
         }
 
+        // D308-150 V9 (the vol.2 legacy bridge, Vol2LegacyStage): the vol.2 route never raises the wiring's swing events (TryRouteVol2 returns before
+        // TryBeginSwing308), so the bridge starts the same ink by hand. Presentation only, exactly what OnBegan / OnPlanned do for the old route:
+        // ShowSwing308 = OnBegan with the swing state, apex time and ward lead given (no SpellCast, no wiring); ShowPlan308 = OnPlanned without the
+        // "is this the apex" window (the bridge calls it at the vol.2 launch, which may come before the shown apex when the launch is not delayed).
+        public bool ShowSwing308(char letter, Oheangbu.Core.Domain.Element element, string state, float apexTime, float lead)
+        {
+            if (!isActiveAndEnabled || !Bind()) return false;
+            int index = Profile.IndexOf(state);
+            if (index < 0) return false;
+            StopFollowing();
+            entry = index; active = Get(index);
+            var e = Profile.States[index];
+            releasedAt = Time.time;
+            apexAt = apexTime > releasedAt + .0001f ? apexTime : releasedAt + (lead > 0f ? lead : e.VisualApexSeconds);
+            followUntil = apexAt + e.FollowAfterApex;
+            following = true; apexDone = false; has = false; velocity = Vector3.zero;
+            samples.Clear(); strokeSeconds = e.StrokeSeconds;
+            soak = Profile.SoakFor(element, letter);
+            if (soak >= 0)
+            {
+                var row = Profile.Soaks[soak];
+                inkK = Mathf.Max(.1f, row.AgingAfterApex * (1f - Mathf.Clamp(e.SoakLinger, 0f, .9f)));
+                soakMax = Mathf.Clamp01(row.Max + Mathf.Max(0f, e.SoakMaxAdd));
+                soakReach = row.Reach + Mathf.Max(0f, e.SoakReachAdd);
+                soakPigment = QualitySettings.activeColorSpace == ColorSpace.Linear ? row.Pigment.linear : row.Pigment;
+            }
+            else inkK = 1f;
+            if (strokeRenderer != null) { strokeRenderer.sharedMaterial = e.Stroke; strokeRenderer.enabled = e.Stroke != null; }
+            Swings++;
+            return true;
+        }
+
+        public bool ShowPlan308(CastPlan plan) => Plan(plan, false);
+
         // The apex plan of this swing (CastPlanned is raised inside the apex dispatch, before the spell is spawned).
-        void OnPlanned(CastPlan plan)
+        void OnPlanned(CastPlan plan) { Plan(plan, true); }
+
+        bool Plan(CastPlan plan, bool apexOnly)
         {
             try
             {
-                if (plan == null || !following || entry < 0 || rig == null || rig.EffectTip == null) return;
+                if (plan == null || !following || entry < 0 || rig == null || rig.EffectTip == null) return false;
                 float now = Time.time;
-                if (now < apexAt - .05f || now > apexAt + .25f) return;   // not this swing's apex
+                if (apexOnly && (now < apexAt - .05f || now > apexAt + .25f)) return false;   // not this swing's apex
                 Vector3 tip = has ? previous : rig.EffectTip.position;
                 var e = Profile.States[entry];
                 if (bridgeRenderer != null) bridgeRenderer.sharedMaterial = e.Stroke;
@@ -331,7 +367,7 @@ namespace Oheangbu.App.World
                     if (target == null && plan.Area != null && plan.Area.Shots.Count > 0 && plan.Area.Shots[0].Target != null) target = plan.Area.Shots[0].Target.transform;
                     Vector3 end = target != null ? target.position + Vector3.up * 1.1f : plan.Area != null ? plan.Area.Point + Vector3.up * 1.1f : tip + flat * 10f;
                     Vector3 to = end - tip; float distance = to.magnitude;
-                    if (distance < .3f) return;
+                    if (distance < .3f) return false;
                     float length = Mathf.Clamp(distance * .2f, .8f, 2f);
                     Vector3 stem = tip + to / distance * length;
                     for (int i = 0; i <= 8; i++) { bridgePath.Add(Vector3.Lerp(tip, stem, i / 8f)); bridgeAt.Add(now + .1f * i / 8f); }
@@ -358,12 +394,13 @@ namespace Oheangbu.App.World
                     var runner = Pool();
                     if (runner != null && runner.Run != null) { runner.Run.Play(true); runNext = 0; runSize = bridgeWidth * Profile.RunBlotScale; }
                 }
-                else return;
+                else return false;
                 bridgeUntil = bridgeAt[bridgeAt.Count - 1] + bridgeDry;
                 if (bridgeRenderer != null) bridgeRenderer.enabled = e.Stroke != null;
                 Bridges++;
+                return true;
             }
-            catch (System.Exception ex) { Debug.LogException(ex, this); }
+            catch (System.Exception ex) { Debug.LogException(ex, this); return false; }
         }
 
         void StepBridge(float now, Vector3 eye)

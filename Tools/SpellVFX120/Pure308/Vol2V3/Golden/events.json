@@ -1,0 +1,1357 @@
+{
+  "schema": "vol2-v3/events/1",
+  "contractHash": "3271e9a2ee24a36752a6f8c5f5540dcaceceb9521d09a444a846fd4d09353f3e",
+  "review": "Hand-calculated from E3 §3; half-open cast/seed lifetime [start, end), rejected events never grant slots, target IDs stay reserved.",
+  "cases": [
+    {
+      "caseId": "attachment-second-boundary",
+      "letter": "넉",
+      "castId": 100,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Touch",
+            "swingId": 10
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0.7
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 299999,
+            "kind": "Touch",
+            "swingId": 11
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoSecondContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 300000,
+            "kind": "Touch",
+            "swingId": 10
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoSecondContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 300000,
+            "kind": "Touch",
+            "swingId": 11
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SecondContact",
+            "per": 1,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0.3
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 300000,
+            "kind": "Touch",
+            "swingId": 11
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "DuplicateEvent",
+            "per": 1,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 1,
+            "nowUs": 600000,
+            "kind": "Touch",
+            "swingId": 12
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoSecondContact",
+            "per": 1,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 6,
+            "targetId": 2,
+            "nowUs": 600000,
+            "kind": "Touch",
+            "swingId": 12
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 1.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 2,
+            "commandAmount": 0.7
+          }
+        },
+        {
+          "input": {
+            "eventId": 7,
+            "targetId": 2,
+            "nowUs": 900000,
+            "kind": "Touch",
+            "swingId": 13
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SecondContact",
+            "per": 2,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 2,
+            "commandAmount": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "one-shared-target-set",
+      "letter": "선",
+      "castId": 101,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Touch",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 1,
+            "slots": 1,
+            "commandAmount": 0.7
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 2,
+            "nowUs": 1,
+            "kind": "Shared",
+            "effect": "Spread",
+            "amount": 0.4,
+            "materialId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 0.7,
+            "shared": 0.4,
+            "remaining": 0.6,
+            "slots": 2,
+            "commandAmount": 0.4
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 3,
+            "nowUs": 2,
+            "kind": "Shared",
+            "effect": "Spread",
+            "amount": 0.6,
+            "materialId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 0.7,
+            "shared": 1,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0.6
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 4,
+            "nowUs": 3,
+            "kind": "Touch",
+            "swingId": 2
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "TargetCap",
+            "per": 0.7,
+            "shared": 1,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 4,
+            "nowUs": 4,
+            "kind": "Shared",
+            "effect": "Spread",
+            "amount": 0.1,
+            "materialId": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "TargetCap",
+            "per": 0.7,
+            "shared": 1,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 6,
+            "targetId": 2,
+            "nowUs": 5,
+            "kind": "Touch",
+            "swingId": 2
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 1.4,
+            "shared": 1,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0.7
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "residue-tick-reaction-transfer",
+      "letter": "낙",
+      "castId": 102,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Shared",
+            "effect": "Residue",
+            "amount": 0.2,
+            "materialId": 77
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 0,
+            "shared": 0.2,
+            "remaining": 0.7,
+            "slots": 1,
+            "commandAmount": 0.2
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 2,
+            "nowUs": 1,
+            "kind": "Shared",
+            "effect": "Residue",
+            "amount": 0.3,
+            "materialId": 77
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 0,
+            "shared": 0.5,
+            "remaining": 0.4,
+            "slots": 2,
+            "commandAmount": 0.3
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 3,
+            "nowUs": 2,
+            "kind": "Transfer",
+            "effect": "Residue",
+            "amount": 0.25,
+            "materialId": 77
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Transferred",
+            "per": 0,
+            "shared": 0.5,
+            "remaining": 0.15,
+            "slots": 2,
+            "commandAmount": 0,
+            "transferred": 0.25,
+            "childBudget": 0.25
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 3,
+            "nowUs": 2,
+            "kind": "Transfer",
+            "effect": "Residue",
+            "amount": 0.25,
+            "materialId": 77
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "DuplicateEvent",
+            "per": 0,
+            "shared": 0.5,
+            "remaining": 0.15,
+            "slots": 2,
+            "commandAmount": 0,
+            "transferred": 0.25
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 2,
+            "nowUs": 3,
+            "kind": "Shared",
+            "effect": "Residue",
+            "amount": 1,
+            "materialId": 77
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 0,
+            "shared": 0.65,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 0.15,
+            "transferred": 0.25
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 2,
+            "nowUs": 4,
+            "kind": "Shared",
+            "effect": "Residue",
+            "amount": 0.1,
+            "materialId": 77
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SharedExhausted",
+            "per": 0,
+            "shared": 0.65,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 0,
+            "transferred": 0.25
+          }
+        },
+        {
+          "input": {
+            "eventId": 6,
+            "targetId": 2,
+            "nowUs": 5,
+            "kind": "Shared",
+            "effect": "Residue",
+            "amount": 0.9,
+            "materialId": 78
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "MaterialCount",
+            "per": 0,
+            "shared": 0.65,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 0,
+            "transferred": 0.25
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "path-seed-first-three",
+      "letter": "감",
+      "castId": 103,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Plant",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Planted",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 2,
+            "nowUs": 1,
+            "kind": "Plant",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Planted",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 3,
+            "nowUs": 2,
+            "kind": "Plant",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Planted",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 4,
+            "nowUs": 3,
+            "kind": "Plant",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "TargetCap",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 1,
+            "nowUs": 4,
+            "kind": "Activate",
+            "swingId": 1,
+            "trigger": "OwnerAttack"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedNotReady",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 6,
+            "targetId": 1,
+            "nowUs": 5,
+            "kind": "Activate",
+            "swingId": 2,
+            "trigger": "OwnerAttack"
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Activated",
+            "per": 1.2,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 1.2
+          }
+        },
+        {
+          "input": {
+            "eventId": 7,
+            "targetId": 1,
+            "nowUs": 6,
+            "kind": "Activate",
+            "swingId": 3,
+            "trigger": "OwnerAttack"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedConsumed",
+            "per": 1.2,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 8,
+            "targetId": 4,
+            "nowUs": 7,
+            "kind": "Plant",
+            "swingId": 3
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "TargetCap",
+            "per": 1.2,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 9,
+            "targetId": 2,
+            "nowUs": 8000000,
+            "kind": "Activate",
+            "swingId": 4,
+            "trigger": "OwnerAttack"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "Expired",
+            "per": 1.2,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "attachment-seed-damage-only",
+      "letter": "멈",
+      "castId": 104,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Activate",
+            "trigger": "Parry",
+            "swingId": 1,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedTrigger",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 1,
+            "kind": "Activate",
+            "trigger": "Dodge",
+            "swingId": 2,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedTrigger",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 2,
+            "kind": "Activate",
+            "trigger": "DamageReceived",
+            "swingId": 3,
+            "amount": 0
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedTrigger",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 3,
+            "kind": "Touch",
+            "swingId": 4
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedTrigger",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 1,
+            "nowUs": 4,
+            "kind": "Activate",
+            "trigger": "DamageReceived",
+            "swingId": 5,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Activated",
+            "per": 1.2,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 1.2
+          }
+        },
+        {
+          "input": {
+            "eventId": 6,
+            "targetId": 2,
+            "nowUs": 4,
+            "kind": "Activate",
+            "trigger": "DamageReceived",
+            "swingId": 5,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Activated",
+            "per": 2.4,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 1.2
+          }
+        },
+        {
+          "input": {
+            "eventId": 7,
+            "targetId": 3,
+            "nowUs": 4,
+            "kind": "Activate",
+            "trigger": "DamageReceived",
+            "swingId": 5,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Activated",
+            "per": 3.6,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 1.2
+          }
+        },
+        {
+          "input": {
+            "eventId": 8,
+            "targetId": 4,
+            "nowUs": 4,
+            "kind": "Activate",
+            "trigger": "DamageReceived",
+            "swingId": 5,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "TargetCap",
+            "per": 3.6,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 9,
+            "targetId": 2,
+            "nowUs": 5,
+            "kind": "Activate",
+            "trigger": "DamageReceived",
+            "swingId": 6,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SeedAlreadyTriggered",
+            "per": 3.6,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 3,
+            "commandAmount": 0
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "strip-utility-not-hp",
+      "letter": "갓",
+      "castId": 105,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Touch",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.4,
+            "slots": 1,
+            "commandAmount": 0.7,
+            "hp": 0.42
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 1,
+            "kind": "Shared",
+            "effect": "Strip",
+            "amount": 0.4,
+            "materialId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 0.7,
+            "shared": 0.4,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0.4,
+            "hp": 0,
+            "utility": 0.4
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 2,
+            "nowUs": 2,
+            "kind": "Touch",
+            "swingId": 2
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "FirstTargetOnly",
+            "per": 0.7,
+            "shared": 0.4,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 3,
+            "kind": "Shared",
+            "effect": "Strip",
+            "amount": 0.4,
+            "materialId": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "SharedExhausted",
+            "per": 0.7,
+            "shared": 0.4,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "return-only-target-and-once",
+      "letter": "강",
+      "castId": 106,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Return"
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Returned",
+            "per": 0.35,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0.35
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 1,
+            "kind": "Touch"
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 1.05,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0.7
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 2,
+            "kind": "Return"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoReturn",
+            "per": 1.05,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 2,
+            "nowUs": 3,
+            "kind": "Return"
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Returned",
+            "per": 1.4,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 0.35
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 2,
+            "nowUs": 4,
+            "kind": "Return"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoReturn",
+            "per": 1.4,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 2,
+            "commandAmount": 0
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "attachment-no-return",
+      "letter": "겅",
+      "castId": 107,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Touch",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0.7
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 1,
+            "kind": "Return"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoReturn",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 300000,
+            "kind": "Touch",
+            "swingId": 2
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SecondContact",
+            "per": 1,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "borrowed-separate-cap",
+      "letter": "엉",
+      "castId": 108,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Reflect",
+            "materialId": 90,
+            "amount": 1.2
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Reflected",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0,
+            "borrowed": 0.6,
+            "hp": 0.6
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 1,
+            "kind": "Reflect",
+            "materialId": 90,
+            "amount": 1.2
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "DuplicateProjectile",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0,
+            "borrowed": 0.6
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 2,
+            "kind": "Reflect",
+            "materialId": 91,
+            "amount": 2
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "Reflected",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0,
+            "borrowed": 1,
+            "hp": 0.4
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 3,
+            "kind": "Reflect",
+            "materialId": 92,
+            "amount": 1
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "BorrowedExhausted",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0,
+            "borrowed": 1
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "cast-life-identity-order",
+      "letter": "넉",
+      "castId": 109,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 10,
+            "kind": "Touch",
+            "swingId": 1,
+            "lifeRevision": 4
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0.7
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 300010,
+            "kind": "Touch",
+            "swingId": 2,
+            "lifeRevision": 5
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "LifeRevisionMismatch",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 300011,
+            "kind": "Touch",
+            "swingId": 2,
+            "lifeRevision": 4,
+            "castId": 110
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "CastMismatch",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 9,
+            "kind": "Touch",
+            "swingId": 2,
+            "lifeRevision": 4
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "TimeOrder",
+            "per": 0.7,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        },
+        {
+          "input": {
+            "eventId": 5,
+            "targetId": 1,
+            "nowUs": 300010,
+            "kind": "Touch",
+            "swingId": 2,
+            "lifeRevision": 4
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SecondContact",
+            "per": 1,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0.3
+          }
+        },
+        {
+          "input": {
+            "eventId": 6,
+            "targetId": 2,
+            "nowUs": 6000000,
+            "kind": "Touch",
+            "swingId": 3
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "Expired",
+            "per": 1,
+            "shared": 0,
+            "remaining": 0.9,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "seot-front-rear-two-swings",
+      "letter": "섯",
+      "castId": 110,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Touch",
+            "swingId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "FirstContact",
+            "per": 1.05,
+            "shared": 0,
+            "remaining": 0.4,
+            "slots": 1,
+            "commandAmount": 1.05
+          }
+        },
+        {
+          "input": {
+            "eventId": 2,
+            "targetId": 1,
+            "nowUs": 300000,
+            "kind": "Touch",
+            "swingId": 2
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SecondContact",
+            "per": 1.7,
+            "shared": 0,
+            "remaining": 0.4,
+            "slots": 1,
+            "commandAmount": 0.65
+          }
+        },
+        {
+          "input": {
+            "eventId": 3,
+            "targetId": 1,
+            "nowUs": 300001,
+            "kind": "Shared",
+            "effect": "Strip",
+            "amount": 0.4,
+            "materialId": 1
+          },
+          "expected": {
+            "accepted": true,
+            "reason": "SharedPaid",
+            "per": 1.7,
+            "shared": 0.4,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0.4,
+            "hp": 0,
+            "utility": 0.4
+          }
+        },
+        {
+          "input": {
+            "eventId": 4,
+            "targetId": 1,
+            "nowUs": 600000,
+            "kind": "Touch",
+            "swingId": 3
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "NoSecondContact",
+            "per": 1.7,
+            "shared": 0.4,
+            "remaining": 0,
+            "slots": 1,
+            "commandAmount": 0
+          }
+        }
+      ]
+    },
+    {
+      "caseId": "parry-no-material-budget",
+      "letter": "거",
+      "castId": 111,
+      "startedUs": 0,
+      "events": [
+        {
+          "input": {
+            "eventId": 1,
+            "targetId": 1,
+            "nowUs": 0,
+            "kind": "Touch"
+          },
+          "expected": {
+            "accepted": false,
+            "reason": "ParryOutsideBudget",
+            "per": 0,
+            "shared": 0,
+            "remaining": 0,
+            "slots": 0,
+            "commandAmount": 0
+          }
+        }
+      ]
+    }
+  ]
+}

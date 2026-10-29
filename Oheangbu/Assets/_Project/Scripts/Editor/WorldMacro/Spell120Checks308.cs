@@ -424,7 +424,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 new KeyValuePair<string, Action<Report>>("WP11", x => FixturesWP11(x)), new KeyValuePair<string, Action<Report>>("WP12", x => FixturesWP12(x)),
                 new KeyValuePair<string, Action<Report>>("WP13", x => FixturesWP13(x)), new KeyValuePair<string, Action<Report>>("WP14", x => FixturesWP14(x)),
                 new KeyValuePair<string, Action<Report>>("WP15", x => FixturesWP15(x)), new KeyValuePair<string, Action<Report>>("C124", x => FixturesC124(x)),
-                new KeyValuePair<string, Action<Report>>("E125", x => FixturesE125(x)),
+                new KeyValuePair<string, Action<Report>>("E125", x => FixturesE125(x)), new KeyValuePair<string, Action<Report>>("M125", x => FixturesM125(x)), new KeyValuePair<string, Action<Report>>("F125", x => FixturesF125(x)),
+                new KeyValuePair<string, Action<Report>>("R125", x => FixturesR125(x)), new KeyValuePair<string, Action<Report>>("N125", x => FixturesN125(x)),
+                new KeyValuePair<string, Action<Report>>("S125", x => FixturesS125(x)), new KeyValuePair<string, Action<Report>>("G125", x => FixturesG125(x)),
+                new KeyValuePair<string, Action<Report>>("H125", x => FixturesH125(x)), new KeyValuePair<string, Action<Report>>("P129", x => FixturesP129(x)),
+                new KeyValuePair<string, Action<Report>>("R128", x => FixturesR128(x)),
+                new KeyValuePair<string, Action<Report>>("V128", x => FixturesV128(x)),
             };
             foreach (var package in packages)
             {
@@ -497,6 +502,16 @@ namespace Oheangbu.EditorTools.WorldMacro
         static partial void FixturesWP15(Report r);
         static partial void FixturesC124(Report r);   // #308 D308-124: the weak-point counter-element scale and the boss element slot
         static partial void FixturesE125(Report r);   // #308 D308-125 적용 5: burning ground, the scorch, 운's wash and 온's wipe on the real wiring
+        static partial void FixturesM125(Report r);   // #308 D308-125 적용 3 (b): 묵's circle against the real 적로 불승냥이 charge and its bite
+        static partial void FixturesF125(Report r);   // #308 D308-125 F125: 눈 · 숫 · 웅 against the main world's own dungeon gates
+        static partial void FixturesR125(Report r);   // #308 D308-125 R125: 상 · 송 · 막 · 공 against the main world's own stone-throwers
+        static partial void FixturesN125(Report r);   // #308 D308-125 N125: 농's haze against the main world's goat arcs, old melee bodies and stone-throwers
+        static partial void FixturesS125(Report r);   // #308 D308-125 S125: 삿's thrust against the main world's guarding field enemies (GuardBrains -> session clone -> Guard308)
+        static partial void FixturesG125(Report r);   // #308 D308-125 G125: 낭 · 순 against the main world's guarding field enemies, 눗 · 숭 against its stone-throwers
+        static partial void FixturesH125(Report r);   // #308 D308-125 H125: 몽's cloud against the main world's field brains (search) and field bosses (miss only)
+        static partial void FixturesP129(Report r);   // #308 D308-129: 숨's anchor against the 적로 불승냥이 charge's push on a real PlayerMotor
+        static partial void FixturesR128(Report r);   // #308 D308-128 B / D308-132: five-element reactions between the player's zones and a later spell
+        static partial void FixturesV128(Report r);   // #308 D308-128 21 / D308-132 step 6: the look of the reactions (wildfire, steam): prefabs, budgets, ink-only materials, the React cue, the dressing
 
         // A handler the foundation checks drive: it records what the host asked of it and can be told to refuse.
         sealed class ProbeEffect : ISpellEffect, ISpellCostHook, ISpellCastHook, ISpellAcceptHook, ISpellHitHook, IPlayerHitHook

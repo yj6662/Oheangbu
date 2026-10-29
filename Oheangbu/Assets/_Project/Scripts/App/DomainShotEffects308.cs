@@ -117,7 +117,9 @@ namespace Oheangbu.App
                 if (order.Target == null || !(order.Power > 0f)) continue;
                 host.ApplyDirectHit(order.Target, order.Life, order.Power * host.DamageScale(order.Element), order.Origin,
                     AttackProvenance.Create(instigator, DamageSource.Retaliation, order.Element), order.Letter);
-                (ctx.Fx as ISpellBurstPresenter308)?.Burst(order.Letter, order.Target.transform.position + Vector3.up);
+                Vector3 chest = order.Target.transform.position + Vector3.up;
+                (ctx.Fx as ISpellBurstPresenter308)?.Return(order.Letter, order.Origin, chest);   // D308-125 적용 6: the metal stroke back
+                (ctx.Fx as ISpellBurstPresenter308)?.Burst(order.Letter, chest);
             }
             _orders.Clear();
         }

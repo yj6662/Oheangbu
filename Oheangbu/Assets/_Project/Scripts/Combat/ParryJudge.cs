@@ -51,6 +51,30 @@ namespace Oheangbu.Combat
             _config = config;
         }
 
+        // S5-b slice 2 (D308-149, design section 9): in a vol.2 scope the verdict of an impact comes from the vol.2 rules (ParryRulesV3),
+        // asked HERE, at the front of ResolveImpact - before the caller applies any damage. (OwnedImpactResolved fires after the verdict and
+        // cannot gate a hit; it stays an observation.) With a resolver set the old guard (RaiseGuard / ParryWindow / Generates / Overcomes)
+        // is not consulted at all. null = the old judge, bit for bit what it was.
+        public IVol2ImpactResolver Vol2Resolver { get; set; }
+
+        private ParryOutcome ResolveVol2(float now, Vector3 impactPoint, AttackProvenance attack)
+        {
+            var verdict = Vol2Resolver.Resolve(now, impactPoint, attack);
+            ParryOutcome outcome = verdict.Outcome;
+            if (attack.AttackId > 0)
+            {
+                _resolvedAttacks.Add(attack.AttackId, outcome); _resolvedOrder.Enqueue(attack.AttackId);
+                if (_resolvedOrder.Count > 256) _resolvedAttacks.Remove(_resolvedOrder.Dequeue());
+            }
+            if (outcome != ParryOutcome.None)
+            {
+                // the same two observations as before so the contact burst still draws; the rewards hang on the wiring, which skips them in vol.2
+                OwnedImpactResolved?.Invoke(new ParryImpactResult(outcome, verdict.Guard, impactPoint, attack));
+                ImpactResolved?.Invoke(outcome, verdict.Guard, impactPoint);
+            }
+            return outcome;
+        }
+
         // 글자 완성 = 방어막 생성. 새 방어막은 이전 것을 대체한다(동시 1장) [TEST]
         public void RaiseGuard(Element element, float now) => RaiseGuard(element, now, 1f);
         public void RaiseGuard(Element element, float now, float durationScale)
@@ -70,6 +94,7 @@ namespace Oheangbu.Combat
         public ParryOutcome ResolveImpact(Element attackElement, float now, Vector3 impactPoint, AttackProvenance attack)
         {
             if (attack.AttackId > 0 && _resolvedAttacks.TryGetValue(attack.AttackId, out var resolved)) return resolved;
+            if (Vol2Resolver != null) return ResolveVol2(now, impactPoint, attack);
             float parryWindow = GuardWindow;
             float duration = GuardLifetime;
 

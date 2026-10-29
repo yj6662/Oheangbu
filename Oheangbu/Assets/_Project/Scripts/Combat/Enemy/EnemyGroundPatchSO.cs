@@ -19,6 +19,8 @@ namespace Oheangbu.Combat
         [Min(0f)] public float Grace = .25f;
         [Min(0f)] public float ScorchLife = 4f;
         [Min(0f)] public float ScorchDamage = 1.5f;
+        [Header("Look (D308-125 5 (c), presentation only)")] public GameObject Look308;
+        public GameObject ScorchLook308;
 
         public EmberExposure308.Numbers Numbers => new EmberExposure308.Numbers(Tick, Damage, Dwell, Grace, ScorchLife, ScorchDamage);
 

@@ -2,13 +2,22 @@ using UnityEngine;
 
 namespace Oheangbu.App.World
 {
-    // D301 앞잡(글자 난사) — every number is TEST data (COMBAT-GROGGY amendment).
+    // D301 앞잡 — every number is TEST data (COMBAT-GROGGY amendment).
+    // D308-148: the riposte is ONE stroke with ONE hit now. Range, TotalDamage, ConsumesWindow, DeferPresentationOnRiposteCandidate,
+    // HitStopScale / HitStopSeconds, CastPose / PoseRaise / PoseLower and Stroke are read; everything else below (glyphs, atlas,
+    // circles, wisps, ghosts, trail, orb, ring and splash materials, flash, shake, Layer) is the LEGACY look of the 48-glyph volley:
+    // read by nobody, kept serialized so the asset (Resources/Riposte301Profile.asset, GUID fixed) loads unchanged.
     [CreateAssetMenu(menuName = "Oheangbu/World Macro/Riposte 301 Profile")]
     public sealed class Riposte301Profile : ScriptableObject
     {
         [Min(1f)] public float Range = 14f;
-        [Tooltip("Damage of the whole volley before the open weak point's multiplier.")]
+        [Tooltip("D308-148: the damage of the ONE hit (45) before the open weak point's multiplier - EnemyVitals applies the window's 1.5 at the pierce frame (inside = 67.5), nobody multiplies it twice.")]
         [Min(0f)] public float TotalDamage = 45f;
+        [Header("D308-148 one stroke")]
+        [Tooltip("The stroke's materials, shape, clock, flakes and colour drain (RiposteStroke308Build sets it). Empty = the riposte is not offered: there is no old look to fall back to.")]
+        public RiposteStroke308Profile Stroke;
+        [Header("LEGACY (D308-148): the 48-glyph volley - read by nobody")]
+        [Tooltip("LEGACY: the volley's shot count (48 in the asset). The riposte is one hit now.")]
         [Range(4, 64)] public int GlyphCount = 32;
         [Tooltip("Seconds over which the glyphs leave the caster.")]
         [Min(0f)] public float LaunchSpread = .5f;
@@ -31,8 +40,10 @@ namespace Oheangbu.App.World
         public Color Ink = new Color(.05f, .045f, .045f, 1f);
         [Tooltip("Momentary contact tint (ART-INK: only at the hit, never sustained).")]
         public Color HitFlash = new Color(1.4f, .35f, .18f, 1f);
-        [Tooltip("The volley consumes the open window: groggy and weak point reset after the last glyph.")]
+        [Tooltip("The stroke closes the open window by key (this life, this opening) Stroke.WindowCloseDelay seconds after the pierce: groggy and weak point end.")]
         public bool ConsumesWindow = true;
+        [Tooltip("D308-147 plan C: a Q press that is a riposte candidate holds back the draw presentation (slow-down, close-up, swing cut, arm pose) until the first stroke. Off = the old early presentation on the press (A/B); the release still decides the riposte.")]
+        public bool DeferPresentationOnRiposteCandidate = true;
         [Tooltip("Layer the glyphs draw on (VfxAfterFog, drawn after the realm fog).")]
         public int Layer = 20;
 
@@ -63,9 +74,9 @@ namespace Oheangbu.App.World
         [Header("#302 impact")]
         [Range(0, 12)] public int SplashCount = 5;
         public float SplashSpeed = 3.2f, SplashLife = .38f, SplashSize = .28f, ShakeAmplitude = .045f, ShakeDecay = 9f;
-        [Tooltip("Hit stop on the last glyph: time scale and real seconds.")]
+        [Tooltip("Hit stop at the pierce (the one hit): time scale and real seconds. READ.")]
         public float HitStopScale = .06f, HitStopSeconds = .08f;
-        [Header("#302 casting pose (third-person body)")]
+        [Header("#302 casting pose (third-person body) - READ: the arm raises with the swing and lowers after the pierce")]
         public bool CastPose = true;
         public float PoseRaise = .2f, PoseLower = .3f;
     }

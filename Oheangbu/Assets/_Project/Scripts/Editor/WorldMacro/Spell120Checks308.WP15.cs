@@ -13,7 +13,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     // (낭 = mod.guardbreak, 몽 = zone.blind) and the two enemy-side rules they lean on (the defence cap, the guard seam that
     // stays off on every shipped brain profile). Every cast goes through the resolver; effects are driven with an explicit
     // clock (Edit Mode has no frame loop). The guarding dummy is the WP-13 TEST target (SpellGuardTestTarget308).
-    // What stays for Play: a field enemy's brain losing the player inside the cloud and searching, a real enemy that guards
+    // The main world's brains losing the player in the cloud are H125's (Spell120Checks308.H125.cs).
+    // What stays for Play: a field enemy walking to the last known place and searching, a real enemy that guards
     // in its Wait phase, the look of both glyphs (the fixtures use the null presenter).
     public static partial class Spell120Checks308
     {
@@ -179,6 +180,39 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
             }
             finally { UnityEngine.Object.DestroyImmediate(profile); }
+
+            // ---- a TEST-only row (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST
+            // target). A normal save that earned its final opens the other rows of that final, never this one. The rock row, the thrust
+            // row, the blind row and the anchor row held this case until the main world gave each its consumer (D308-125 R125, S125,
+            // H125, D308-129 P129); no shipped row is TEST now, so the case runs on a fixture-only sheet: the anchor domain (grid cell
+            // 94, metal u + mieum) as its WP-17 row with Gate test, beside the spring domain of the same final (cell 118, water u +
+            // mieum). The sheet lives in this check alone (never imported, never one of the 120).
+            char anchor = SpellGrammar308.LetterAt(94), spring = SpellGrammar308.LetterAt(118);
+            if (r.Wants(anchor.ToString()))
+            {
+                var testOnly = new SpellSheet308("Rules308_ZZTestOnly", RuleHeader +
+                    anchor + ",new,domain.anchor,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6\n" +
+                    spring + ",new,domain.regen,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=10;domain.scale=2\n");
+                using (var g = NewFixture(r, effects, WP15Sheets, testOnly))
+                {
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled);
+                    g.Resolver.TryRow(anchor, out var anchorRow); g.Resolver.TryRow(spring, out var springRow);   // the spring: a row of the same final that the main game does open
+                    g.Finals.Proven.Add(SpellFinal.Mieum);                          // the main-game proof, no TEST unlock
+                    g.Aim(g.Inside[0]); g.Cast(spring);
+                    bool mainOpens = springRow != null && springRow.Gate == SpellGateMode.Final && springRow.Final == anchorRow?.Final && g.Accepted.Count == 1 && g.Misfires.Count == 0;
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled); g.RestoreAll(); g.Aim(g.Inside[0]);
+                    float ink = g.Ink.Value; g.Cast(anchor);
+                    r.Check("A5", anchorRow != null && anchorRow.Gate == SpellGateMode.Test && mainOpens && g.Accepted.Count == 0 && g.Misfires.Count == 1 &&
+                        g.Misfires[0].Value == SpellResolveStatus.Locked && Near(ink - g.Ink.Value, g.Config.MisfireInkCost) && g.PendingCount == 0,
+                        "a normal save that proved the final: the other row of that final casts, the TEST-only anchor row is a Locked misfire (misfire ink, nothing scheduled)");
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled);
+                    g.Finals.Proven.Clear(); g.Finals.Open.Add(SpellFinal.Mieum);   // the TEST unlock of the isolated store
+                    g.RestoreAll(); g.Aim(g.Inside[0]); g.Cast(anchor);
+                    r.Check("A5", g.Accepted.Count == 1 && g.Misfires.Count == 0, "the TEST unlock of its final opens the anchor row");
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled);
+                    g.Finals.Proven.Clear(); g.Finals.Open.Clear();
+                }
+            }
 
             // ---- the brain's guard stays off until a profile opts in ----
             var guids = AssetDatabase.FindAssets("t:" + nameof(EnemyBrainProfile308));

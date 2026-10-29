@@ -14,9 +14,12 @@ namespace Oheangbu.App
 
     // 11.58: a presenter that can put down a one-shot burst for a letter at a point without a handle (an enemy projectile
     // shot down by a volley that never began a presentation). Optional - found with `as`; rules never read anything back.
+    // D308-125 적용 6: Return draws a letter's stroke from one point to another (숭: from where the circle took a shot to the
+    // shooter's chest), on top of the bursts; same contract as Burst.
     public interface ISpellBurstPresenter308
     {
         void Burst(char letter, Vector3 point);
+        void Return(char letter, Vector3 from, Vector3 to);
     }
 
     // #308 the presenter every effect handler really talks to (SPEC-SPELL-120-308 section 9, decision of 2026-10-04:
@@ -28,9 +31,9 @@ namespace Oheangbu.App
     //    the waiting calls run in the order they were made. A cast that was withdrawn shows nothing;
     //  - best effort: the handles it gives out are its own numbers. Whether the presenter really showed something is
     //    never visible to a rule (handlers only pass handles back for cues).
-    public sealed class SpellPresenterGuard308 : ISpellPresenter, ISpellBurstPresenter308
+    public sealed class SpellPresenterGuard308 : ISpellPresenter, ISpellBurstPresenter308, ISpellReactionPresenter308
     {
-        enum Call { Begin, Cue, End }
+        enum Call { Begin, Cue, End, React }
         struct Waiting
         {
             public Call Call; public int Id;
@@ -46,6 +49,7 @@ namespace Oheangbu.App
         ISpellPresenter _inner;
         ISpellPresenterProbe _probe;
         ISpellBurstPresenter308 _burst;
+        ISpellReactionPresenter308 _reaction;
         readonly List<Waiting> _waiting = new List<Waiting>();
         readonly Dictionary<int, SpellFxHandle> _shown = new Dictionary<int, SpellFxHandle>();
         readonly Queue<int> _order = new Queue<int>();
@@ -60,6 +64,7 @@ namespace Oheangbu.App
             _inner = inner is SpellPresenterGuard308 ? null : inner;
             _probe = _inner as ISpellPresenterProbe;
             _burst = _inner as ISpellBurstPresenter308;
+            _reaction = _inner as ISpellReactionPresenter308;
         }
 
         // From here on calls wait. Nested holds count.
@@ -80,6 +85,7 @@ namespace Oheangbu.App
                 {
                     case Call.Begin: Show(call.Id, call.Request); break;
                     case Call.Cue: Pass(call.Id, call.Cue, call.Args); break;
+                    case Call.React: PassReaction(call.Args); break;
                     default: Finish(call.Id, call.Immediate); break;
                 }
             }
@@ -128,6 +134,29 @@ namespace Oheangbu.App
         {
             if (_burst == null) return;
             try { _burst.Burst(letter, point); }
+            catch (Exception exception) { Fault(exception); }
+        }
+
+        public void Return(char letter, Vector3 from, Vector3 to)
+        {
+            if (_burst == null) return;
+            try { _burst.Return(letter, from, to); }
+            catch (Exception exception) { Fault(exception); }
+        }
+
+        // #308 D308-132 step 6: a reaction's product look comes out of a cast's dispatch (inside the hold when the wiring holds the
+        // guard): it waits with the cast's own presentation and is dropped with it when the cast is withdrawn.
+        public void React(in SpellFxCueArgs args)
+        {
+            if (_reaction == null) return;
+            if (_holds > 0) { _waiting.Add(new Waiting { Call = Call.React, Args = args }); return; }
+            PassReaction(args);
+        }
+
+        void PassReaction(in SpellFxCueArgs args)
+        {
+            if (_reaction == null) return;
+            try { _reaction.React(args); }
             catch (Exception exception) { Fault(exception); }
         }
 

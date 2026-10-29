@@ -1588,9 +1588,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D57", bad.Count == 0 && letters == 2, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | lift / bank where the field stands up, local, one-shot, gone inside 1 s, no glow, seam called"));
                 }
 
-                // ---- D58 (11.58 / 11.64 / 11.65): the burst seam end to end on a fixture - the live presenter chain
+                // ---- D58 (11.58 / 11.64 / 11.65 / D308-125 적용 6): the burst seam end to end on a fixture - the live presenter chain
                 // (SpellPresenterGuard308 -> SpellDeployPresenter308 -> Vfx120SpellPresenter308) bound to the live set, Burst(letter, far point)
-                // for 상 송 먼 멈 넘 국 뭄: exactly one Spell308_<letter>_Burst lands in the owner's preview scene, made from the profile's
+                // for 상 송 먼 멈 넘 국 뭄 막 공 눗 숭: exactly one Spell308_<letter>_Burst lands in the owner's preview scene, made from the profile's
                 // Burst308Prefab, no fault; nothing stays in the open scene. The Data copy of the set is read for comparison only.
                 {
                     const string liveSet = "Assets/_Project/Art/World/Architecture296/Data/9f55ff4897c35bf408434d2fd4cd5dbc_278c3cdf45b3ab24fb93a8f33e2264e2_9ba170fd23c53dc418707872eb7b2056_SpellVisualSet_120.asset";
@@ -1614,7 +1614,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                             guard.Bind(presenter);
                             var eye = Camera.main;
                             Vector3 far = (eye != null ? eye.transform.position : Vector3.zero) + new Vector3(500f, 0f, 500f);
-                            foreach (char letter in "상송먼멈넘국뭄")
+                            foreach (char letter in "상송먼멈넘국뭄막공눗숭")
                             {
                                 GameObject want = null;
                                 if (set.TryGet(letter, out var visual) && visual.FxPrefab != null)
@@ -1648,7 +1648,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                     if (open.IsValid() && open.rootCount != openRoots) bad.Add("open scene roots " + openRoots + " -> " + open.rootCount);
                     if (open.IsValid() && open.isDirty != openDirty) bad.Add("open scene dirty " + openDirty + " -> " + open.isDirty);
-                    Check("D58", bad.Count == 0 && landed == 7, landed + "/7 landed, open scene dirty " + openDirty + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : "") + " | " + string.Join(", ", notes));
+                    Check("D58", bad.Count == 0 && landed == 11, landed + "/11 landed, open scene dirty " + openDirty + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : "") + " | " + string.Join(", ", notes));
                 }
 
                 // ---- D59 (11.74): the 국 lift / 뭄 bridge the main world points at wear the ink materials on what is seen, and
@@ -1670,6 +1670,152 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (bridge == null) bad.Add("no bridge profile");
                     else if (!Ink(bridge.BlockMaterial)) bad.Add("bridge block " + (bridge.BlockMaterial != null ? bridge.BlockMaterial.name : "null"));
                     Check("D59", bad.Count == 0, bad.Count == 0 ? "국 body+leaf, 뭄 block = InkSolid, no glow, WoodLift kept, foot mark kept" : string.Join("; ", bad));
+                }
+
+                // ---- D60 (D308-125 적용 6): 막 / 공 / 눗 / 숭 draw where they stop a thrown stone - the profile the presenter reads
+                // (막 공 the _308b attack profile, 눗 숭 the catalogue prefab's Vfx120Effect.Profile) carries PF_V308i_fate_<key>, every
+                // system local, one-shot, on awake, gone inside 1 s, no glow; the cover and the domain call the seam at the stop
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles", cat = "Assets/_Project/Art/SpellVFX120";
+                    var bad = new List<string>(); int letters = 0, systems = 0;
+                    foreach (var source in new[] { "CoverEffect308", "DomainShotEffects308" })
+                    {
+                        string path = "Assets/_Project/Scripts/App/" + source + ".cs";
+                        if (!File.Exists(path) || !File.ReadAllText(path).Contains("ISpellBurstPresenter308")) bad.Add(source + " does not call the burst seam");
+                    }
+                    foreach (var (glyph, id, want, attack) in new[] { ("막", "050_B9C9", "PF_V308i_fate_ma", true), ("공", "018_ACF5", "PF_V308i_fate_ga", true),
+                                                                       ("눗", "047_B217", "PF_V308i_fate_na", false), ("숭", "096_C22D", "PF_V308i_fate_sa", false) })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(attack ? v2 + "/" + id + "_308b.asset" : cat + "/Profiles/" + id + ".asset");
+                        if (p == null) { bad.Add(glyph + " " + id + " profile missing"); continue; }
+                        if (!attack)
+                        {
+                            var fx = AssetDatabase.LoadAssetAtPath<GameObject>(cat + "/Prefabs/" + id + ".prefab");
+                            var eff = fx != null ? fx.GetComponent<Oheangbu.App.SpellVFX120.Vfx120Effect>() : null;
+                            if (eff == null || eff.Profile != p) { bad.Add(glyph + " " + id + " catalogue prefab does not read this profile"); continue; }
+                        }
+                        if (p.Burst308Prefab == null || p.Burst308Prefab.name != want) { bad.Add(glyph + " " + (p.Burst308Prefab != null ? p.Burst308Prefab.name : "none") + " not " + want); continue; }
+                        letters++;
+                        foreach (var ps in p.Burst308Prefab.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(want + "/" + ps.name + " not local");
+                            if (main.loop) bad.Add(want + "/" + ps.name + " loops");
+                            if (!main.playOnAwake) bad.Add(want + "/" + ps.name + " not on awake");
+                            float end = main.startLifetime.constantMax + (ps.emission.burstCount > 0 ? ps.emission.GetBurst(0).time : 0f);
+                            if (end > 1f + 1e-3f) bad.Add(want + "/" + ps.name + " ends at " + Deploy308.F(end));
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            foreach (var m in r != null ? r.sharedMaterials : new Material[0])
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                        }
+                    }
+                    Check("D60", bad.Count == 0 && letters == 4, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | rock / cane / tongue / blade where the stone stops, local, one-shot, gone inside 1 s, no glow, seam called"));
+                }
+
+                // ---- D61 (D308-125 적용 6, 숭 Q5): the metal stroke back to the shooter - the reflect handler calls Return(letter, the point
+                // the shot was taken, the shooter's chest) beside its chest burst; 숭's catalogue profile carries PF_V308i_fate_sa_return (a
+                // Vfx308Stroke line drawn inside 3 frames at 60 fps, gone by .35 s, no shadow, no glow). Through the live chain one
+                // Spell308_숭_Return lands in the owner's preview scene laid from the start to the end, a start at the eye is moved out to
+                // EyeClear (.45 m), an end at the eye and a letter without a stroke draw nothing; no fault, nothing stays in the open scene.
+                {
+                    const string liveSet = "Assets/_Project/Art/World/Architecture296/Data/9f55ff4897c35bf408434d2fd4cd5dbc_278c3cdf45b3ab24fb93a8f33e2264e2_9ba170fd23c53dc418707872eb7b2056_SpellVisualSet_120.asset";
+                    const string strokeName = "PF_V308i_fate_sa_return";
+                    var bad = new List<string>(); var notes = new List<string>();
+                    string handler = "Assets/_Project/Scripts/App/DomainShotEffects308.cs";
+                    if (!File.Exists(handler) || !File.ReadAllText(handler).Contains(".Return(order.Letter, order.Origin, chest)")) bad.Add("the reflect handler does not call Return");
+                    var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>("Assets/_Project/Art/SpellVFX120/Profiles/096_C22D.asset");
+                    var stroke = p != null && p.Return308Prefab != null ? p.Return308Prefab.GetComponent<Oheangbu.App.SpellVFX120.Vfx308Stroke>() : null;
+                    if (p == null || p.Return308Prefab == null || p.Return308Prefab.name != strokeName) bad.Add("숭 Return308Prefab " + (p != null && p.Return308Prefab != null ? p.Return308Prefab.name : "none"));
+                    else if (stroke == null) bad.Add(strokeName + " has no Vfx308Stroke");
+                    else
+                    {
+                        if (stroke.DrawSeconds > 3f / 60f + 1e-4f) bad.Add("drawn in " + Deploy308.F(stroke.DrawSeconds) + " s");
+                        if (stroke.LifeSeconds > .35f + 1e-4f) bad.Add("gone at " + Deploy308.F(stroke.LifeSeconds) + " s");
+                        var line = stroke.GetComponent<LineRenderer>();
+                        if (line == null) bad.Add("no LineRenderer");
+                        else
+                        {
+                            if (line.shadowCastingMode != UnityEngine.Rendering.ShadowCastingMode.Off) bad.Add("the stroke casts shadows");
+                            var m = line.sharedMaterial;
+                            if (m == null) bad.Add("the stroke has no material");
+                            else if (m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                        }
+                    }
+                    var set = AssetDatabase.LoadAssetAtPath<SpellVisualSetSO>(liveSet);
+                    var open = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+                    int openRoots = open.IsValid() ? open.rootCount : -1; bool openDirty = open.IsValid() && open.isDirty;
+                    if (set == null) bad.Add("live set missing");
+                    else
+                    {
+                        var preview = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+                        var owner = new GameObject("D61_Owner") { hideFlags = HideFlags.HideAndDontSave };
+                        UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(owner, preview);
+                        try
+                        {
+                            var presenter = new SpellDeployPresenter308();
+                            presenter.Bind(set, owner.transform);
+                            var guard = new SpellPresenterGuard308();
+                            guard.Bind(presenter);
+                            var eye = Camera.main;
+                            Vector3 o = eye != null ? eye.transform.position : Vector3.zero;
+                            List<GameObject> Take(string name)
+                            {
+                                var made = preview.GetRootGameObjects().Where(g => g.name == name).ToList();
+                                foreach (var g in made.ToList()) if (g.GetComponent<LineRenderer>() == null) made.Remove(g);
+                                return made;
+                            }
+                            void Drop(List<GameObject> made) { foreach (var g in made) Object.DestroyImmediate(g); }
+                            Vector3 a = o + new Vector3(500f, 1f, 500f), b = a + new Vector3(8f, 0f, 6f);
+                            guard.Return('숭', a, b);
+                            var lines = Take("Spell308_숭_Return");
+                            if (lines.Count != 1) bad.Add(lines.Count + " strokes for a far line");
+                            else
+                            {
+                                var l = lines[0].GetComponent<LineRenderer>();
+                                if (l.positionCount != 2 || (l.GetPosition(0) - a).magnitude > 1e-3f || (l.GetPosition(1) - b).magnitude > 1e-3f) bad.Add("the far line is not laid from the start to the end");
+                                else notes.Add("far line " + Deploy308.F((b - a).magnitude) + " m");
+                            }
+                            Drop(lines);
+                            if (eye != null)
+                            {
+                                guard.Return('숭', o, o + eye.transform.forward * 11f);
+                                lines = Take("Spell308_숭_Return");
+                                if (lines.Count != 1) bad.Add(lines.Count + " strokes from the eye");
+                                else
+                                {
+                                    float d = (lines[0].GetComponent<LineRenderer>().GetPosition(0) - o).magnitude;
+                                    if (Mathf.Abs(d - .45f) > 1e-3f) bad.Add("a start at the eye moved to " + Deploy308.F(d) + " m"); else notes.Add("start at the eye cut to .45 m");
+                                }
+                                Drop(lines);
+                                guard.Return('숭', a, o + eye.transform.forward * .2f);
+                                lines = Take("Spell308_숭_Return");
+                                if (lines.Count != 0) bad.Add("a stroke ending at the eye drew");
+                                Drop(lines);
+                            }
+                            else notes.Add("no main camera - the eye cut not checked");
+                            guard.Return('상', a, b);
+                            lines = Take("Spell308_상_Return");
+                            if (lines.Count != 0) bad.Add("상 drew a stroke");
+                            Drop(lines);
+                            if (guard.Faults != 0) bad.Add(guard.Faults + " faults");
+                            foreach (var name in new[] { "Spell308_숭_Return", "Spell308_상_Return" })
+                            {
+                                if (!open.IsValid()) continue;
+                                var stray = open.GetRootGameObjects().Where(g => g.name == name).ToList();
+                                if (stray.Count > 0) bad.Add(stray.Count + " " + name + " left in the open scene");
+                                foreach (var g in stray) Object.DestroyImmediate(g);
+                            }
+                        }
+                        finally
+                        {
+                            Object.DestroyImmediate(owner);
+                            UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(preview);
+                        }
+                    }
+                    if (open.IsValid() && open.rootCount != openRoots) bad.Add("open scene roots " + openRoots + " -> " + open.rootCount);
+                    if (open.IsValid() && open.isDirty != openDirty) bad.Add("open scene dirty " + openDirty + " -> " + open.isDirty);
+                    Check("D61", bad.Count == 0, (bad.Count > 0 ? string.Join("; ", bad.Take(8)) + " | " : "") + string.Join(", ", notes));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

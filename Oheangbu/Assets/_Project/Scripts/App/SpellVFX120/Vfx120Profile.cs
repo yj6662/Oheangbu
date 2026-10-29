@@ -132,12 +132,16 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject CompanionShot308Prefab;
         [Tooltip("11.41: sword-form letters - a one-shot particle prefab put down per swing (Hit / Miss cue with a point). Empty = old behaviour.")]
         public GameObject SwordStrike308Prefab;
+        [Tooltip("D308-127 step 2: sword-form letters - the weapon head (GreatBrushWeapon308) put on the great brush the player holds while the form lasts. Empty = old behaviour.")]
+        public GameObject WeaponHead308Prefab;
         [Tooltip("11.56: second-strike letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown from the split point to each derived target. Empty = old behaviour.")]
         public GameObject Derived308Prefab;
         [Tooltip("11.57: lingering-zone letters - the floor the zone leaves (Vfx308ZoneBody, built at 1 m radius), put down at the zone centre (or per heal zone) and kept for the rule's life. Empty = old behaviour.")]
         public GameObject Zone308Prefab;
         [Tooltip("11.58: intercept letters - a one-shot particle prefab put down where an enemy projectile was shot down (Intercept cue, or ISpellBurstPresenter308.Burst). Empty = old behaviour.")]
         public GameObject Burst308Prefab;
+        [Tooltip("D308-125 적용 6 (숭): a Vfx308Stroke line drawn from where a shot was taken to its shooter (ISpellBurstPresenter308.Return). Empty = no stroke.")]
+        public GameObject Return308Prefab;
         [Tooltip("11.61: install letters - the ink seal (Vfx308ZoneBody, built at 1 m) put on the marked enemy at the Anchor cue and kept for the mark's life; Detonate breaks it, Expire / a lost target dries it. Empty = old behaviour.")]
         public GameObject Mark308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]

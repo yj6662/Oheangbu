@@ -99,6 +99,29 @@ namespace Oheangbu.EditorTools.WorldMacro
         static Vector3 V(float[] a) => new Vector3(a[0], a[1], a[2]);
         static Index ReadIndex() => JsonUtility.FromJson<Index>(File.ReadAllText(Path.Combine(DataDir, "index.json")));
         static Layout ReadLayout(string id) => JsonUtility.FromJson<Layout>(File.ReadAllText(Path.Combine(DataDir, id, "layout.json")));
+
+        // One field gate of a layout as Build arms it. Shared with the spell fixture (Spell120Checks308.F125) so the check meets the
+        // gate Build makes: the closed body's one BoxCollider inside the drawn mass, and the gate that switches closed and open.
+        internal readonly struct GateSpec
+        {
+            public readonly string Dungeon, Id, Closed, Open; public readonly SpellFieldGateKind Kind; public readonly Vector3 Pos, Size; public readonly float Yaw;
+            public GateSpec(string dungeon, string id, string closed, string open, SpellFieldGateKind kind, Vector3 pos, Vector3 size, float yaw)
+            { Dungeon = dungeon; Id = id; Closed = closed; Open = open; Kind = kind; Pos = pos; Size = size; Yaw = yaw; }
+            public float Radius => Size.x * .5f + .3f;
+        }
+        static GateSpec Spec(string dungeon, GateRow row) =>
+            new GateSpec(dungeon, row.id, row.closed, row.open, (SpellFieldGateKind)Enum.Parse(typeof(SpellFieldGateKind), row.kind), V(row.pos), V(row.size), row.yaw);
+        // Every gate of every dungeon in the index (files read, never written)
+        internal static List<GateSpec> GateSpecs() => ReadIndex().dungeons.SelectMany(id => ReadLayout(id).gates.Select(row => Spec(id, row))).ToList();
+        internal static bool MeshFile(string dungeon, string mesh) => File.Exists(Path.Combine(DataDir, dungeon, "Meshes", mesh + ".json"));
+        // body = a fresh child of closed (Build makes it with new GameObject, the fixture in its own scene)
+        internal static SpellFieldGate308 Arm(in GateSpec s, GameObject g, GameObject closed, GameObject body, GameObject open)
+        {
+            body.transform.SetPositionAndRotation(s.Pos + Vector3.up * s.Size.y * .5f, Quaternion.Euler(0f, s.Yaw, 0f)); body.AddComponent<BoxCollider>().size = new Vector3(s.Size.x, s.Size.y, s.Size.z * .55f);
+            var gate = g.AddComponent<SpellFieldGate308>();
+            gate.Configure(s.Id, s.Kind, s.Radius, new[] { closed }, open != null ? new[] { open } : Array.Empty<GameObject>());
+            return gate;
+        }
         static void Folder(string path)
         {
             if (AssetDatabase.IsValidFolder(path)) return;
@@ -232,13 +255,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 foreach (var row in lay.gates)
                 {
-                    var g = new GameObject("Gate_" + row.id); g.transform.SetParent(home.transform, false); g.transform.position = V(row.pos);
+                    var spec = Spec(id, row);
+                    var g = new GameObject("Gate_" + row.id); g.transform.SetParent(home.transform, false); g.transform.position = spec.Pos;
                     var closed = Drawn("Closed", meshes[row.closed].mesh, meshes[row.closed].slots, g.transform, cache);
                     var body = new GameObject("Body"); body.transform.SetParent(closed.transform, false);
-                    body.transform.SetPositionAndRotation(V(row.pos) + Vector3.up * row.size[1] * .5f, Quaternion.Euler(0f, row.yaw, 0f)); body.AddComponent<BoxCollider>().size = new Vector3(row.size[0], row.size[1], row.size[2] * .55f);
                     GameObject open = meshes.ContainsKey(row.open) ? Drawn("Open", meshes[row.open].mesh, meshes[row.open].slots, g.transform, cache) : null;
-                    var gate = g.AddComponent<SpellFieldGate308>();
-                    gate.Configure(row.id, (SpellFieldGateKind)Enum.Parse(typeof(SpellFieldGateKind), row.kind), row.size[0] * .5f + .3f, new[] { closed }, open != null ? new[] { open } : Array.Empty<GameObject>());
+                    var gate = Arm(spec, g, closed, body, open);
                     EditorUtility.SetDirty(gate); gates++;
                 }
                 if (!string.IsNullOrEmpty(lay.door.id)) { BuildDoor(lay.door, home.transform, session, cfg, wood, iron, rows); doors++; }

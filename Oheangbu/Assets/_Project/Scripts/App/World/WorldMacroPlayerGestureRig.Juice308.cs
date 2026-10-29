@@ -156,7 +156,7 @@ namespace Oheangbu.App.World
             _juiceDrawing308 = _subscribedDrawing;
             if (_juiceDrawing308 != null)
             {
-                _juiceDrawing308.ModeEntered += OnJuiceModeEntered308;
+                _juiceDrawing308.PresentationEntered += OnJuiceModeEntered308;   // D308-147: before the first StrokeStarted of the presentation
                 _juiceDrawing308.StrokeStarted += OnJuiceStrokeStarted308;
                 _juiceDrawing308.StrokeEnded += OnJuiceStrokeEnded308;
                 _juiceDrawing308.LetterInterrupted += OnJuiceDrawingEnded308;
@@ -171,7 +171,7 @@ namespace Oheangbu.App.World
         {
             if (_juiceDrawing308 != null)
             {
-                _juiceDrawing308.ModeEntered -= OnJuiceModeEntered308;
+                _juiceDrawing308.PresentationEntered -= OnJuiceModeEntered308;
                 _juiceDrawing308.StrokeStarted -= OnJuiceStrokeStarted308;
                 _juiceDrawing308.StrokeEnded -= OnJuiceStrokeEnded308;
                 _juiceDrawing308.LetterInterrupted -= OnJuiceDrawingEnded308;

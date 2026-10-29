@@ -31,8 +31,8 @@ namespace Pure308
                 var row = rows[k]; string open = row.Letter + "-1", peace = row.Letter + "-2";
                 float reach = row.F("gate.reach", 0f), angle = row.F("gate.angle", 0f), delay = row.F("gate.delay", -1f), combat = row.F("combat.radius", -1f);
                 r.Check(open, row.Index == cells[k] && row.Category == SpellCategory.Field && row.Kind == SpellKind.Field && row.Final == finals[k] && row.Element == elements[k] &&
-                    row.Feature == SpellLegacyFeature.None && row.Gate == SpellGateMode.Test && row.BasePower == 0f && string.IsNullOrEmpty(row.Pending),
-                    "a field row on the handler route, behind the TEST unlock of its own final consonant (#308b: world dependent, Gate test), without power", row.Index + " " + row.Kind + " " + row.Final);
+                    row.Feature == SpellLegacyFeature.None && row.Gate == SpellGateMode.Final && row.BasePower == 0f && string.IsNullOrEmpty(row.Pending),
+                    "a field row on the handler route, opened by its own final consonant (D308-125 F125: the main world's dungeon gates are its target, Gate final), without power", row.Index + " " + row.Kind + " " + row.Final);
                 r.Check(open, reach > 0f && angle > 0f && delay >= 0f && combat >= 0f, "its numbers are row data", "reach " + reach + " angle " + angle + " delay " + delay + " combat " + combat);
                 var gate = new ModelGate { Registered = { row.Handler } };
                 bool locked = SpellResolveCore308.Resolve(row.Letter[0], 1f, 1f, row, gate, out _) == SpellResolveStatus.Locked;

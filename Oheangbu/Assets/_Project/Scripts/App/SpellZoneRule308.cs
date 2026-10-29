@@ -7,7 +7,8 @@ using UnityEngine;
 namespace Oheangbu.App
 {
     // Why a zone left the list (the owner turns it into a presentation cue; no rule hangs on it).
-    public enum SpellZoneEnd { None, Expired, Broken, Replaced, Dropped }
+    // Reacted (#308 D308-132): another element's spell consumed it in a five-element reaction.
+    public enum SpellZoneEnd { None, Expired, Broken, Replaced, Dropped, Reacted }
 
     // One world-fixed lingering zone (SPEC-SPELL-120-308 WP-06): a flat circle that lives from From to Until. What happens
     // inside is the owner's business: Value is the one number the owner applies there (a movement scale, a power per step,
@@ -33,6 +34,9 @@ namespace Oheangbu.App
         public long Token;          // the owner's identity for this zone (control owner id, attack id of its steps)
         public int Fx;              // presenter handle id (0 = nothing shown); zones of one cast may share it
         public SpellZoneEnd End;    // set by the runtime when the zone leaves the list
+        public bool Reacted;        // #308 D308-132: consumed by a reaction; stops acting at once like Broken, its owner sweeps it
+        public int Depth;           // #308 D308-132: 0 = laid by a spell, n = the product of n reactions in a row
+        public Vector3 ReactDir;    // #308 D308-132 step 6: the flat way the wave ran that consumed it (presentation only; zero = not told)
     }
 
     // Zone arithmetic (SPEC-SPELL-120-308 WP-06). Flat geometry through AreaGeometry, like every area judgement.
@@ -42,9 +46,9 @@ namespace Oheangbu.App
         // Fraction of one step forgiven when counting steps: the wiring's clock is a float that loses precision over a long session.
         const float StepSlack = 1e-3f;
 
-        public static bool Active(in SpellZone308 zone, float now) => !zone.Broken && now >= zone.From && now < zone.Until;
+        public static bool Active(in SpellZone308 zone, float now) => !zone.Broken && !zone.Reacted && now >= zone.From && now < zone.Until;
 
-        public static bool Ended(in SpellZone308 zone, float now) => zone.Broken || !(now < zone.Until);
+        public static bool Ended(in SpellZone308 zone, float now) => zone.Broken || zone.Reacted || !(now < zone.Until);
 
         public static bool Inside(in SpellZone308 zone, Vector3 position) => AreaGeometry.InCircle(zone.Centre, position, zone.Radius, out _);
 
@@ -65,7 +69,7 @@ namespace Oheangbu.App
         // Seconds of the interval from..to during which the zone was active (a frame that straddles its start or end counts in part).
         public static float ActiveSeconds(in SpellZone308 zone, float from, float to)
         {
-            if (zone.Broken) return 0f;
+            if (zone.Broken || zone.Reacted) return 0f;
             float a = Mathf.Max(from, zone.From), b = Mathf.Min(to, zone.Until);
             return b > a ? b - a : 0f;
         }
@@ -74,7 +78,7 @@ namespace Oheangbu.App
         // life 5 with a step of 0.5 gives exactly ten steps whatever the frame rate. Advances the zone's own counter.
         public static int DueTicks(ref SpellZone308 zone, float now)
         {
-            if (zone.Broken || zone.TickEvery <= 0f || now < zone.From) return 0;
+            if (zone.Broken || zone.Reacted || zone.TickEvery <= 0f || now < zone.From) return 0;
             // past its end the zone has lived its whole life exactly: the last step is never lost to clock rounding
             float span = zone.Life > 0f ? zone.Life : zone.Until - zone.From;
             float lived = now < zone.Until ? Mathf.Min(now - zone.From, span) : span;
@@ -107,7 +111,7 @@ namespace Oheangbu.App
         // An enemy strike that lands at point and reaches reach touches the zone's body (flat distance).
         public static bool Struck(in SpellZone308 zone, Vector3 point, float reach)
         {
-            if (zone.Broken || zone.Body <= 0f || float.IsNaN(reach) || reach < 0f) return false;
+            if (zone.Broken || zone.Reacted || zone.Body <= 0f || float.IsNaN(reach) || reach < 0f) return false;
             return AreaGeometry.InCircle(zone.Centre, point, zone.Body + reach, out _);
         }
 

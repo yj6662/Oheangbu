@@ -1,0 +1,13 @@
+{
+  "schema": "vol2-v3/1",
+  "importer": "pure-v3/1",
+  "sourceHashes": {
+    "numbers": "bbc72344d20e7b96e0fe8f371d2ab854d642c1482509dd3f75f44e8c3910836c",
+    "table": "2491f63253954651a11ef5ed23c59fca28c05f3b53cefd288cc8c4e2fdc87f21",
+    "markdown": "6a6a7c58af1fe2f7915d3a49f0001464577a3cfdb02be42198ffa68de02ab61f",
+    "checker": "9622c6eb4bd44d0ca2cd1ce1aa00753f22766452fbbd713d1ebc7f041b797c13",
+    "sheet": "810b9b1c4d06a521b566863514ed221ab71a92aab8ad5b8bfb51b1ef76ffaf60",
+    "contract": "3271e9a2ee24a36752a6f8c5f5540dcaceceb9521d09a444a846fd4d09353f3e"
+  },
+  "dtoHash": "a8c190859d0e18ee563761743e8be16da7e5b43b672f73d6505f272199ec66d3"
+}

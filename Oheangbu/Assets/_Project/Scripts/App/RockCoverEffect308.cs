@@ -78,6 +78,7 @@ namespace Oheangbu.App
                 bool there = target != null && target.isActiveAndEnabled && target.LifeRevision == rock.Life;
                 Vector3 point = CoverRule308.RockLanding(rock.Point, rock.Guided, there, there ? target.transform.position : rock.Point);
                 var piece = CoverRule308.RockOf(NewToken(ctx.Host, rock.Element), point, rock.Radius, ctx.Now, rock.Stays);
+                piece.Letter = rock.Letter;
                 if (ctx.Fx != null)
                     piece.Fx = ctx.Fx.Begin(new SpellFxRequest
                     {

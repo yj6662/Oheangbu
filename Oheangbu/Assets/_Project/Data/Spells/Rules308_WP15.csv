@@ -3,7 +3,7 @@
 # mod.guardbreak (nang; was mod.pierce like gang): the hit goes past a raised guard; a confirmed hit drops the guard and locks it down for guard.lock seconds (a re-hit only moves the time). No groggy.
 # zone.blind (mong; was zone.haze like nong): haze.radius / haze.life = the cloud left at the middle of the path and how long it stays; an enemy inside loses sight of the player (a field brain searches)
 # and haze.miss of its strikes miss (a brainless enemy or a boss only misses); haze.max = clouds at once.
-# Gate test on mong only (the field enemies that guard and search are content work; D308-13 Q5). nang has no gate: its hit is a plain hit where no enemy guards.
+# No gate on either row. mong left Gate test on D308-125 H125 (2026-10-22): the main world's field enemies run the searching brain (WorldContent_Main EnemyBrain), the field bosses keep the player and only miss. nang has no gate: its hit is a plain hit where no enemy guards.
 글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
 낭,replace,mod.guardbreak,,,,,base,,,,,,,,,,,,guard.lock=4
-몽,replace,zone.blind,,,test,,base,,,,,,,,,,,,haze.radius=2.5;haze.life=6;haze.miss=0.35;haze.max=1
+몽,replace,zone.blind,,,,,base,,,,,,,,,,,,haze.radius=2.5;haze.life=6;haze.miss=0.35;haze.max=1

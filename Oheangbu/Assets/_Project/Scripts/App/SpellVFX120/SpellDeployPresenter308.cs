@@ -12,12 +12,14 @@ namespace Oheangbu.App.SpellVFX120
     // The switch is read per call, so a glyph can be switched while a scene runs; a handle keeps the side it began on.
     // Rules never read anything back: handlers get a handle and pass it back for cues. The wiring calls this class through
     // SpellPresenterGuard308, which isolates every call (a failure here never reaches a rule).
-    public sealed class SpellDeployPresenter308 : ISpellPresenter, ISpellPresenterBinding, ISpellPresenterProbe, ISpellBurstPresenter308
+    public sealed class SpellDeployPresenter308 : ISpellPresenter, ISpellPresenterBinding, ISpellPresenterProbe, ISpellBurstPresenter308, ISpellReactionPresenter308
     {
         // Handles of the interim presenter that may still be alive. A bound of bookkeeping: the oldest is forgotten first.
         private const int FallbackCapacity = 256;
 
         private readonly Vfx120SpellPresenter308 _fallback = new Vfx120SpellPresenter308();
+        // D308-127 step 2: the sword form's weapon head on the brushes, whichever side draws the cast
+        private readonly SpellWeaponHeads308 _weapons = new SpellWeaponHeads308();
         private readonly Dictionary<int, SpellFxHandle> _fallbackHandles = new Dictionary<int, SpellFxHandle>();
         private readonly Queue<int> _fallbackOrder = new Queue<int>();
         private CombatLoopWiring _wiring;
@@ -28,12 +30,20 @@ namespace Oheangbu.App.SpellVFX120
         public int DeployBegun { get; private set; }
         public int FallbackBegun { get; private set; }
         public Vfx120SpellPresenter308 Fallback => _fallback;
+        public SpellWeaponHeads308 Weapons308 => _weapons;
 
         public void Bind(SpellVisualSetSO visuals, Transform owner)
         {
             _visuals = visuals;
             _wiring = owner != null ? owner.GetComponent<CombatLoopWiring>() : null;
             _fallback.Bind(visuals, owner);
+            // D308-127: the buff bands read the buff stores themselves (the EA buffs never pass this presenter)
+            if (Application.isPlaying && _wiring != null && visuals != null && visuals.BuffBands308 != null)
+            {
+                var bands = owner.GetComponent<AuraBrushBands308>();
+                if (bands == null) bands = owner.gameObject.AddComponent<AuraBrushBands308>();
+                bands.Bind(new WiringBandSource308(_wiring), visuals.BuffBands308);
+            }
         }
 
         // The stage lives on the layer's director, which the wiring boots after this object was injected: looked up per call.
@@ -63,6 +73,7 @@ namespace Oheangbu.App.SpellVFX120
                 int id = NextId();
                 stage.Begin(id, request);
                 DeployBegun++;
+                _weapons.Begin(id, request, SpellWeaponHeads308.PrefabFor(_visuals, request.Letter));
                 return new SpellFxHandle(id);
             }
             var inner = _fallback.Begin(request);
@@ -71,12 +82,15 @@ namespace Oheangbu.App.SpellVFX120
             while (_fallbackOrder.Count >= FallbackCapacity) _fallbackHandles.Remove(_fallbackOrder.Dequeue());
             _fallbackHandles[key] = inner; _fallbackOrder.Enqueue(key);
             FallbackBegun++;
+            _weapons.Begin(key, request, SpellWeaponHeads308.PrefabFor(_visuals, request.Letter));
             return new SpellFxHandle(key);
         }
 
         public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args)
         {
             if (!handle.Shown) return;
+            if (_weapons.Bow(handle.Id, cue, args)) return;   // debate 16: the bow's draw and arrow are the weapon's own
+            if (cue == SpellFxCue.Hit || cue == SpellFxCue.Miss) _weapons.Strike(handle.Id, args.At, args.Finish);   // D308-127: the weapon swings (presentation)
             if (_fallbackHandles.TryGetValue(handle.Id, out var inner)) { _fallback.Cue(inner, cue, args); return; }
             var stage = Stage;
             if (stage != null) stage.Cue(handle.Id, cue, args);
@@ -85,6 +99,7 @@ namespace Oheangbu.App.SpellVFX120
         public void End(SpellFxHandle handle, bool immediate = false)
         {
             if (!handle.Shown) return;
+            _weapons.End(handle.Id);
             if (_fallbackHandles.TryGetValue(handle.Id, out var inner))
             {
                 _fallbackHandles.Remove(handle.Id);
@@ -97,11 +112,16 @@ namespace Oheangbu.App.SpellVFX120
 
         // 11.58: a handle-less burst is drawn by the interim presenter (the deploy layer has no burst form).
         public void Burst(char letter, Vector3 point) => _fallback.Burst(letter, point);
+        public void Return(char letter, Vector3 from, Vector3 to) => _fallback.Return(letter, from, to);
+
+        // D308-132 step 6: a handle-less reaction look is drawn by the interim presenter (the deploy layer has no reaction form).
+        public void React(in SpellFxCueArgs args) => _fallback.React(args);
 
         // Death, rest, scene leave: both sides let go of everything.
         public void EndAll()
         {
             _fallbackHandles.Clear(); _fallbackOrder.Clear();
+            _weapons.EndAll();
             _fallback.EndAll();
             var director = _wiring != null ? _wiring.DeployDirector308 : null;
             var stage = director != null ? director.Present : null;

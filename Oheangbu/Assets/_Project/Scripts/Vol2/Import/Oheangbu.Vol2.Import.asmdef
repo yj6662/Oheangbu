@@ -1,0 +1,16 @@
+{
+  "name": "Oheangbu.Vol2.Import",
+  "rootNamespace": "Oheangbu.Vol2.Import",
+  "references": [
+    "Oheangbu.Vol2.Rules"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

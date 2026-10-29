@@ -67,6 +67,7 @@ namespace Oheangbu.App.World
             trail.emitting = false;
             brushRenderers = rig.WorldTip.root != null ? BrushRenderers(rig.WorldTip) : null;
             Apply(1f);
+            VfxAfterFog308.Route(anchor);   // 2026-10-26 fog fix: the ribbon (alpha-blended, no depth) draws after the realm fog, not under the fog of what is behind it
             return true;
         }
 
@@ -118,7 +119,9 @@ namespace Oheangbu.App.World
             bool nearNow = (tip - rig.WorldTip.position).sqrMagnitude > .0004f;
             if (view == null) view = Camera.main;
             // 2026-10-13 (user): in the draw mode the afterimage covered the picture - none there, and what was left is cleared
-            bool shown = nearNow ? false
+            // D308-127 (debate 13): while a weapon head is on, the bristles are hidden and the head draws its own afterimage
+            bool weapon = rig.WorldBrushRoot308 != null && rig.WorldBrushRoot308.GetComponentInChildren<GreatBrushWeapon308>() != null;
+            bool shown = nearNow || weapon ? false
                 : BrushShown() && (view == null || (view.transform.position - tip).sqrMagnitude > Profile.HideWithinCamera * Profile.HideWithinCamera);
             float dt = Time.deltaTime;
             if (has && (nearNow != near || (tip - previous).sqrMagnitude > Profile.ClearJump * Profile.ClearJump)) { trail.Clear(); has = false; }   // no streak between the two brushes

@@ -50,7 +50,7 @@ namespace Oheangbu.Combat
         public void SetRenderOffset308(float nodDegrees, float rollDegrees, float fovDegrees)
         {
             bool any = nodDegrees != 0f || rollDegrees != 0f || fovDegrees != 0f;
-            if (any && _drawing) { RenderOffsetRefusedDrawing308++; nodDegrees = rollDegrees = fovDegrees = 0f; any = false; }
+            if (any && (_drawing || _drawInput308)) { RenderOffsetRefusedDrawing308++; nodDegrees = rollDegrees = fovDegrees = 0f; any = false; }
             Vector3 was308 = _renderOffset308;
             _renderOffset308 = new Vector3(nodDegrees, rollDegrees, fovDegrees);
             if (_cam == null && _camera != null) _cam = _camera.GetComponent<Camera>();   // an instance whose Awake has not run (edit-mode preview)
@@ -105,7 +105,7 @@ namespace Oheangbu.Combat
             if (_renderApplied308) RestoreRender308(true);
             Vector3 o = _renderOffset308;
             if (o.x == 0f && o.y == 0f && o.z == 0f) return;
-            if (_drawing) { RenderOffsetRefusedDrawing308++; return; }
+            if (_drawing || _drawInput308) { RenderOffsetRefusedDrawing308++; return; }
             _renderSavedRotation308 = _camera.localRotation; _renderSavedFov308 = _cam.fieldOfView;
             if (o.x != 0f || o.y != 0f) _camera.localRotation = _renderSavedRotation308 * Quaternion.Euler(o.x, 0f, o.y);
             if (o.z != 0f && !_cam.orthographic) _cam.fieldOfView = _renderSavedFov308 + o.z;

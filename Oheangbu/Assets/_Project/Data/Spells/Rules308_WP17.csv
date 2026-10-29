@@ -2,7 +2,8 @@
 # (u + a final that is not the initial's pair) are the 결계 (Domain) category: combat zones that rule a spot. Gate 0, damage 0 (only sung's reflection,
 # as retribution), groggy 0, emission 0, one standing domain per player. Effects = the canonical CSV rows.
 # Every row has its handler (WP-17 2/2, 2026-10-21): the numbers below are the canonical CSV rows; a value the CSV does not give is this sheet's (TEST).
-# A row whose world target does not exist yet has Gate test (the count of test rows is the ledger metric): 묵 (no dashing enemy), 숨 (no enemy pushes or pulls the player), 운 (no enemy sets a lasting status on the player).
+# A row whose world target does not exist yet has Gate test (the count of test rows is the ledger metric): none left (0).
+# Lifted on a world consumer (D308-125 적용 5 Q5: an armed main-world enemy, a real-wiring fixture, a Play line): 운 (적로's ember scorch), 묵 (적로 불승냥이 charge, M125), 숨 (the same charge pushes the player 1.8 m, D308-129, P129).
 글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
 군,new,domain.push,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=0.5;domain.margin=0.5;domain.push.speed=12
 굼,new,domain.wall,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=8;domain.boss.hold=1
@@ -12,15 +13,15 @@
 눔,new,domain.swordhold,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=8
 눗,new,domain.burnshot,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.cap=4
 눙,new,domain.aimlock,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=0;domain.boss=0.5;domain.aim.radius=1
-묵,new,domain.ground,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=0;domain.boss=0.7
+묵,new,domain.ground,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=0;domain.boss=0.7
 문,new,domain.shell,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=0.8;domain.ward.scale=0;domain.elemental=0
 뭇,new,domain.hush,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=8
 뭉,new,domain.pull,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.pull.speed=1;domain.pull.budget=2;domain.pull.core=0.8
 숙,new,domain.cage,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=4;domain.boss=0.7
 순,new,domain.unguard,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6
-숨,new,domain.anchor,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6
+숨,new,domain.anchor,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6
 숭,new,domain.reflectshot,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.cap=3;domain.reflect=0.5
 욱,new,domain.slowtell,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=1.3;domain.boss=1.15
-운,new,domain.ward.status,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6
+운,new,domain.ward.status,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6
 움,new,domain.regen,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=10;domain.scale=2
 웃,new,domain.slowturn,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=0.5;domain.boss=0.75;domain.turn.instant=360

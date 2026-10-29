@@ -73,8 +73,10 @@ namespace Oheangbu.App
                 if (zone.Fx == 0 || fx == null || Zones.HoldsFx(Id, zone.Fx) || ToldAlready(i, zone.Fx)) continue;
                 var handle = new SpellFxHandle(zone.Fx);
                 if (zone.End == SpellZoneEnd.Replaced || zone.End == SpellZoneEnd.Dropped) { fx.End(handle, true); continue; }
-                fx.Cue(handle, zone.End == SpellZoneEnd.Broken ? SpellFxCue.Break : SpellFxCue.Expire,
-                    new SpellFxCueArgs { Point = zone.Centre, At = zone.Until, Value = zone.Radius });
+                // #308 D308-132 step 6: a zone a reaction consumed does not burst: its floor reacts (it pales out, folding along the
+                // way the wave ran) and the product's own look is the reaction handler's call (ISpellReactionPresenter308)
+                fx.Cue(handle, zone.End == SpellZoneEnd.Reacted ? SpellFxCue.React : zone.End == SpellZoneEnd.Broken ? SpellFxCue.Break : SpellFxCue.Expire,
+                    new SpellFxCueArgs { Point = zone.Centre, At = zone.Until, Value = zone.Radius, Direction = zone.ReactDir });
             }
             _removed.Clear();
         }

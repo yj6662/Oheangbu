@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- S5-a: Rules plus Import compiled alone as netstandard2.1 and C# 9 (what Unity compiles for noEngineReferences assemblies). -->
+  <PropertyGroup><TargetFramework>netstandard2.1</TargetFramework><LangVersion>9.0</LangVersion><Nullable>disable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems><TreatWarningsAsErrors>true</TreatWarningsAsErrors><NuGetAudit>false</NuGetAudit></PropertyGroup>
+  <ItemGroup><Compile Include="../../../../../Oheangbu/Assets/_Project/Scripts/Vol2/Rules/*.cs;../../../../../Oheangbu/Assets/_Project/Scripts/Vol2/Import/*.cs" /></ItemGroup>
+</Project>

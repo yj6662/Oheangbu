@@ -17,7 +17,7 @@ namespace Oheangbu.App
         public const string HandlerId = "path.cover";
         static readonly SpellParamSpec[] Specs = Array.Empty<SpellParamSpec>();
 
-        struct Wave { public PathFront308 Front; public long Token; }
+        struct Wave { public PathFront308 Front; public long Token; public char Letter; }
         readonly List<Wave> _waves = new List<Wave>();
 
         public override string Id => HandlerId;
@@ -33,8 +33,8 @@ namespace Oheangbu.App
             var front = new PathFront308(area.Point, area.Direction, area.Radius, area.Length, area.Speed, ctx.Now + area.Delay, false);
             if (!front.Valid) return true;
             long token = NewToken(host, ctx.Cast.Element);
-            _waves.Add(new Wave { Front = front, Token = token });
-            Add(CoverRule308.WallOf(front, token, ctx.Now), 0, ctx.Fx);
+            _waves.Add(new Wave { Front = front, Token = token, Letter = ctx.Cast.Letter });
+            Add(WallOf(_waves[_waves.Count - 1], ctx.Now), 0, ctx.Fx);
             return true;
         }
 
@@ -45,8 +45,15 @@ namespace Oheangbu.App
             {
                 var piece = PieceAt(i);
                 for (int w = 0; w < _waves.Count; w++)
-                    if (_waves[w].Token == piece.Token) { SetPiece(i, CoverRule308.WallOf(_waves[w].Front, piece.Token, ctx.Now)); break; }
+                    if (_waves[w].Token == piece.Token) { SetPiece(i, WallOf(_waves[w], ctx.Now)); break; }
             }
+        }
+
+        static SpellCover308 WallOf(in Wave wave, float now)
+        {
+            var wall = CoverRule308.WallOf(wave.Front, wave.Token, now);
+            wall.Letter = wave.Letter;
+            return wall;
         }
 
         protected override void OnRetired(in SpellCover308 piece)

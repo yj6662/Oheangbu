@@ -25,8 +25,8 @@ namespace Pure308
                 "their parameters are in the sheet (guard.lock; haze.radius, haze.life, haze.miss, haze.max)", lockSeconds + " / " + radius + " " + life + " " + miss + " " + max);
             r.Check("W15", c.RowAt(42).Handler == "zone.haze" && c.RowAt(29).Handler != breaker.Handler && c.RowAt(65).Handler != blind.Handler,
                 "the pairs keep their own act: the steam haze stays zone.haze, the neighbours do not take the new handlers");
-            r.Check("W15", breaker.Gate != SpellGateMode.Test && blind.Gate == SpellGateMode.Test,
-                "the guard break is open (a plain hit where no enemy guards); the blinding cloud is TEST-unlock only until the searching field enemies exist", breaker.Gate + " / " + blind.Gate);
+            r.Check("W15", breaker.Gate != SpellGateMode.Test && blind.Gate == SpellGateMode.Final,
+                "the guard break is open (a plain hit where no enemy guards); the blinding cloud is Gate final since the main world's field brains search (H125)", breaker.Gate + " / " + blind.Gate);
             r.Check("W15", breaker.BasePower == c.RowAt(25).BasePower && breaker.ProjectileSpeedMul == c.RowAt(25).ProjectileSpeedMul && breaker.Kind == SpellKind.AttackSingle,
                 "the guard break is its base glyph's single shot (same power, same speed)");
             r.Check("W15", blind.AreaShape == c.RowAt(61).AreaShape && blind.AreaLength == c.RowAt(61).AreaLength && blind.BasePower == c.RowAt(61).BasePower,

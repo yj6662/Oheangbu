@@ -64,7 +64,7 @@ namespace Oheangbu.App.World
         /// <summary>The great brush presentation is running (profile, layer and a bound great brush).</summary>
         public bool Active { get; private set; }
         /// <summary>The Animator's pose is the arms' pose: true whenever the great brush is active and the draw mode is off.</summary>
-        public bool OwnsArms => Active && !(_drawing != null && _drawing.InDrawMode);
+        public bool OwnsArms => Active && !(_drawing != null && _drawing.InDrawPresentation);   // D308-147: the draw PRESENTATION (a riposte candidate has none yet)
         /// <summary>0..1: how much the left hand holds the shaft now (the state's curve, eased, times the layer's weight).</summary>
         public float LeftHandOnShaft => Active ? _left * _upper * (1f - Mathf.SmoothStep(0f, 1f, BackBlend)) : 0f;
         /// <summary>0 = shoulder carry, 1 = combat stance (eased over the transition).</summary>
@@ -157,9 +157,9 @@ namespace Oheangbu.App.World
         {
             if (_subscribedDrawing != _drawing)
             {
-                if (_subscribedDrawing != null) { _subscribedDrawing.ModeEntered -= OnModeEntered; _subscribedDrawing.ModeExited -= OnModeExited; }
+                if (_subscribedDrawing != null) { _subscribedDrawing.PresentationEntered -= OnModeEntered; _subscribedDrawing.PresentationExited -= OnModeExited; }
                 _subscribedDrawing = _drawing;
-                if (_drawing != null) { _drawing.ModeEntered += OnModeEntered; _drawing.ModeExited += OnModeExited; }
+                if (_drawing != null) { _drawing.PresentationEntered += OnModeEntered; _drawing.PresentationExited += OnModeExited; }
             }
             var walker = _rig.Walker308;
             CombatLoopWiring wiring = walker != null ? walker.Wiring : null;   // may be wired after this component woke: looked at every frame
@@ -183,7 +183,7 @@ namespace Oheangbu.App.World
 
         private void Unsubscribe()
         {
-            if (_subscribedDrawing != null) { _subscribedDrawing.ModeEntered -= OnModeEntered; _subscribedDrawing.ModeExited -= OnModeExited; }
+            if (_subscribedDrawing != null) { _subscribedDrawing.PresentationEntered -= OnModeEntered; _subscribedDrawing.PresentationExited -= OnModeExited; }
             _subscribedDrawing = null;
             if (!ReferenceEquals(_subscribedWiring, null))
             {
@@ -206,6 +206,8 @@ namespace Oheangbu.App.World
         // ---------------------------------------------------------------- events (all of them only note a time or start a state)
 
         private void Touch() { _lastCombatAt = Time.time; }
+        // D308-147: the draw PRESENTATION starts / ends (the press of an ordinary draw, the first stroke of a riposte candidate): a candidate that
+        // is released without a stroke never cuts a swing and never shows the upper body again
         private void OnModeEntered() { Touch(); if (Active) Cut(); }
         private void OnDamaged(float amount) { Touch(); }
         // The draw mode ends and the world body is shown again on this very frame: the brush layer is there at once, not faded in
@@ -223,6 +225,7 @@ namespace Oheangbu.App.World
         // Raised inside the letter's dispatch (a gameplay event): fenced, so a fault here can never cut the cast short.
         private void OnSwingBegan(SpellCast cast, string state, float apexTime, float lockUntil)
         {
+            ShowOnly = false;
             try
             {
                 Touch();
@@ -248,6 +251,46 @@ namespace Oheangbu.App.World
             catch (System.Exception e) { Debug.LogException(e, this); }
         }
 
+        // D308-127 (TEST, debate 13): a weapon-form strike shows a swing. Presentation only - called by the weapon head presenter
+        // on the strike's Hit / Miss cue; the rule judged the strike on the click and never reads this. The clip starts toApex
+        // seconds before its apex and runs at its own speed (the wind-up is not shown: the afterimage is the head's path after
+        // the contact, and pressing the wind-up into two frames would draw it as one long streak).
+        /// <summary>D308-150 V8 (보여 주기 휘두르기): the body's swing for a vol.2 spell cast - the same motion as <see cref="PlayStrike308"/>, but marked
+        /// <see cref="ShowOnly"/> so the vol.2 swing driver (Vol2RigSwingSource) does not open a hit window for it: the real left-click swing alone hits.</summary>
+        public bool PlayShow308(string state, float toApex, float lockSeconds)
+        {
+            bool ok = PlayStrike308(state, toApex, lockSeconds);
+            ShowOnly = ok;
+            return ok;
+        }
+
+        /// <summary>D308-150 V8: the motion playing now was started by <see cref="PlayShow308"/> (a presentation-only swing; never a hit). Cleared by any other swing.</summary>
+        public bool ShowOnly { get; private set; }
+
+        public bool PlayStrike308(string state, float toApex, float lockSeconds)
+        {
+            ShowOnly = false;
+            try
+            {
+                Touch();
+                _swingFrame = Time.frameCount;
+                if (!Active || Profile == null) return false;
+                int index = Playable(state);
+                if (index < 0) return false;
+                EnterStance();
+                ShowUpperNow();
+                _swinging = true; _holding = false; Swings++;
+                float now = Time.time; var shown = Profile.States[index];
+                // apex time = now: StepSwing then runs the clip from _clipStart at its own speed
+                _swingReleasedAt = now; _swingApexAt = now; _swingLockUntil = now + Mathf.Max(0f, lockSeconds);
+                _clipStart = Mathf.Max(0f, shown.ClipApexSeconds - Mathf.Max(0f, toApex)); _aimOn = false;
+                Show(index, Profile.SwingFadeIn, true);
+                SetTime(_timeHash, _hasTime, shown.ClipSeconds > 0f ? Mathf.Clamp01(_clipStart / shown.ClipSeconds) : 0f);
+                return true;
+            }
+            catch (System.Exception e) { Debug.LogException(e, this); return false; }
+        }
+
         private int Playable(string state)
         {
             if (string.IsNullOrEmpty(state)) return -1;
@@ -262,7 +305,7 @@ namespace Oheangbu.App.World
         {
             _aimWeight = 0f;
             if (!_aimOn || !_swinging || !Active || Animator == null || !Animator.isHuman || _motor == null || _subscribedWiring == null) return;
-            if (_drawing != null && _drawing.InDrawMode) return;
+            if (_drawing != null && _drawing.InDrawPresentation) return;
             var swing = _subscribedWiring.SwingProfile308;
             if (swing == null || !swing.Position.Enabled) return;
             var rule = swing.Position;
@@ -308,7 +351,7 @@ namespace Oheangbu.App.World
             }
             Active = true;
             float now = Time.time, dt = Time.deltaTime;
-            bool drawing = _drawing != null && _drawing.InDrawMode;
+            bool drawing = _drawing != null && _drawing.InDrawPresentation;
             bool dodging = _motor.IsDodging;
             bool dodgeStarted = dodging && !_wasDodging; _wasDodging = dodging;
             bool locked = _lockOn != null && _lockOn.IsLocked;

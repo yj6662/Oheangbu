@@ -9,7 +9,7 @@ namespace Oheangbu.App
     // is inside and ends it the frame the player leaves. The wiring asks the readers at its seams.
     //   regen   natural ink regeneration x value (above 1); the "no regen while drawing" rule stays     (움)
     //   drain   the sword form spends no ink                                                          (눔)
-    //   anchor  the player cannot be pushed or pulled (no such force exists yet: the reader waits)     (숨)
+    //   anchor  the player cannot be pushed or pulled (read by CombatLoopWiring.Shove308, D308-129)    (숨)
     //   ward    no lasting enemy status sticks to the player (no such status exists yet: the reader waits) (운)
     // Nothing here heals, deals damage or changes HP. Plain C#, no clock of its own: the offline runner executes this file.
     public sealed class PlayerDomainState308

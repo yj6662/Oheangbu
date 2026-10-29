@@ -100,7 +100,7 @@ namespace Oheangbu.App.World
             {SaveError=error;Show(error);return false;}
             Progress=accepted;lastSuccessfulSnapshot=JsonUtility.ToJson(accepted);SaveError=null;
             MumBridges?.ResetForWorldBoundary();
-            ResetCombat();vitals.Restore();ink.Restore();
+            ResetCombat();vitals.Restore();ink.Restore();Walker.Wiring?.NotifyVol2Rest();   // S5-b slice 8: the rest event of the 걱 budget (inert unless a vol.2 defence kit is bound)
             if(doorway)restPresentation.BeginCommittedRest(feet,proposal.ledger.yaw);
             if(!IconPresentation)Show(CheckpointDisplayName+"에서 숨을 고른다.\n체력과 먹을 회복했다.");
             InteractionResolved?.Invoke(PrologueInteractionKind.Rest,point.Position);return true;

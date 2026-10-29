@@ -114,8 +114,38 @@ namespace Oheangbu.App
             return new SpellCast(cast.Letter, cast.Kind, cast.Element, draft.Power, cast.Area, draft.SpeedMul, cast.HoldScale, cast.Brush, cast.Brush01);
         }
 
+        // ---- #308 D308-132: the dispatch hooks (a reaction needs where the cast went, and a legacy cast plans after its accept) ----
+        private readonly List<CastPlan> _dispatchPlans308 = new List<CastPlan>();
+        private bool _accepted308;
+
+        private void BeginDispatch308()
+        {
+            _dispatchPlans308.Clear(); _accepted308 = false;
+            // first in line, so a presentation listener that throws in a legacy body cannot keep the plan from it; a handler's
+            // Plan* mutes the listeners and tells them right after: this one included
+            CastPlanned -= CapturePlan308;
+            var others = CastPlanned;
+            CastPlanned = CapturePlan308;
+            if (others != null) CastPlanned += others;
+        }
+
+        private void CapturePlan308(CastPlan plan) { if (plan != null) _dispatchPlans308.Add(plan); }
+
+        private void EndDispatch308(SpellCast cast, SpellRow row, SpellAttackWindow308 attacks)
+        {
+            CastPlanned -= CapturePlan308;
+            try
+            {
+                // a withdrawn or refused cast was never accepted: nothing of it reacts
+                if (_accepted308 && _spells308 != null)
+                    _spells308.OnCastDispatched(new SpellCastContext(cast, row, Time.time, this, Fx308, attacks: attacks), _dispatchPlans308);
+            }
+            finally { _dispatchPlans308.Clear(); _accepted308 = false; }
+        }
+
         private void AcceptCast308(SpellCast cast, Vector3 origin, Vector3 forward)
         {
+            _accepted308 = true;
             CastAccepted?.Invoke(cast, origin, forward);
             _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308, attacks: _attacks308));
         }
@@ -126,6 +156,7 @@ namespace Oheangbu.App
         // The 36 legacy glyphs keep AcceptCast308 above, raised exactly as before #308.
         private void AcceptJudged308(SpellCast cast, Vector3 origin, Vector3 forward)
         {
+            _accepted308 = true;
             var listeners = CastAccepted;
             if (listeners != null)
                 foreach (Action<SpellCast, Vector3, Vector3> listener in listeners.GetInvocationList())

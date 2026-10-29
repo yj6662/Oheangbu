@@ -374,11 +374,21 @@ def main():
             'the wiring hands every handler cast the first-stage handler of its body (PrimaryShotRule308)')
     # a. an enemy / world dependent row behind a final the main game grants stays TEST-only
     granted = {u['final'] for u in table['unlocks'] if u['granted']}
-    world = [x for x in table['rows'] if x['handler'] and x['feature'] == 'None' and x['final'] in granted and plan[x['letter']]['묶음'] in ('WP-12', 'WP-13')]
+    # the plan sheet predates WP-17: its domain rows with no world target yet (D308-121) are named here, and a row the world
+    # now consumes leaves the set (D308-125 적용 5: the 적로 ember patch consumes 온 purge and 운 status ward; 적용 3: the
+    # 적로 불승냥이 charge consumes 묵's ground circle; F125: the main world's 16 dungeon gates consume the WP-12 field rows 눈 숫 웅;
+    # R125: the main world's stone-throwers (MineRangedNeutral308) consume the WP-13 cover and intercept rows 공 막 상 송;
+    # N125: the main world's own strikes, the goat arcs, the old melee bodies and the stone-throwers, consume the WP-13 haze 농;
+    # S125: the main world's guarding field enemies (WorldContent_Main GuardBrains) consume the WP-13 thrust 삿;
+    # H125: the main world's searching field brains (WorldContent_Main EnemyBrain) consume the cloud 몽, a WP-13 row of the plan sheet;
+    # D308-129: the 적로 불승냥이 charge's push consumes 숨's anchor, the last waiting domain). An empty world is valid: then no row may be Test.
+    waiting, consumed = set(), {'온', '운', '묵', '눈', '숫', '웅', '공', '막', '상', '송', '농', '삿', '몽', '숨'}
+    world = [x for x in table['rows'] if x['handler'] and x['feature'] == 'None' and x['final'] in granted and x['letter'] not in consumed and
+             (plan[x['letter']]['묶음'] in ('WP-12', 'WP-13') or x['letter'] in waiting)]
     r.note('testOnlyRows', [x['letter'] for x in table['rows'] if x['gate'] == 'Test'])
-    r.check('fix', world and all(x['gate'] == 'Test' for x in world) and all(x in world for x in table['rows'] if x['gate'] == 'Test') and
+    r.check('fix', all(x['gate'] == 'Test' for x in world) and all(x in world for x in table['rows'] if x['gate'] == 'Test') and
             'SpellUnlockPolicy308.RuleFor(row, rule)' in wiring,
-            'every enemy / world dependent row (plan packages WP-12, WP-13) behind a main-game final is Gate test, nothing else is, and the wiring judges a row by its own rule',
+            'every enemy / world dependent row (plan packages WP-12, WP-13, the waiting WP-17 domains) behind a main-game final is Gate test, nothing else is, and the wiring judges a row by its own rule',
             ' '.join(x['letter'] + ':' + x['gate'] for x in world))
     # c. one refund on the handler route, behind the unscheduling; handlers only ever see the guarded presenter
     withdraw = method_body(wiring, 'Withdraw')

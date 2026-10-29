@@ -150,6 +150,23 @@ namespace Oheangbu.App.World
         public string BindingError { get; private set; }
         public Transform EffectTip => _effectTip;
         public Transform WorldTip => _worldTipSocket;
+        // D308-125 5 (c): the ember scorch follows whichever right hand is on screen (read only, presentation)
+        public Transform NearHand308 => _near != null ? _near.Hand : null;
+        public Transform WorldHand308 => _world != null ? _world.Hand : null;
+        public int NearLayer308 { get { foreach (var r in _nearRenderers) if (r != null) return r.gameObject.layer; return -1; } }
+        // D308-127 step 2: the two brushes the weapon head goes on (read only, presentation)
+        public Transform WorldBrushRoot308 => _worldBrushRoot;
+        public Transform NearBrushRoot308 => _nearBrushRoot;
+        // D308-127 debate 16: the world body's arms and root for the bow's pose (HornBow308 writes them after this rig, order > 1000;
+        // the animator and SaveAnimatedPose rewrite them every frame, so nothing it writes is fed back). false = not bound.
+        public bool WorldArms308(out Transform root, out Transform rightUpper, out Transform rightForearm, out Transform rightHand,
+            out Transform leftUpper, out Transform leftForearm, out Transform leftHand)
+        {
+            var b = _world;
+            root = b?.Root; rightUpper = b?.Upper; rightForearm = b?.Forearm; rightHand = b?.Hand;
+            leftUpper = b?.LeftUpper; leftForearm = b?.LeftForearm; leftHand = b?.LeftHand;
+            return b != null && b.Valid && leftUpper != null && leftForearm != null && leftHand != null;
+        }
 
         public void Configure(WorldMacroPlayerGestureProfile profile, Animator animator,
             PlayerMotor motor, CharacterController controller, DrawingInputController drawing,
@@ -441,7 +458,7 @@ namespace Oheangbu.App.World
                 JuiceSuspend308();   // #308: no camera reaction is left running under a pause
                 // UI cancellation has already happened in the input owner. Retain the sampled
                 // skeletal pose, but do not leave a cancelled close-up arm over the menu.
-                if (_drawing == null || !_drawing.InDrawMode)
+                if (_drawing == null || !_drawing.InDrawPresentation)
                 {
                     EndCast();
                     SetNearVisible(false);
@@ -458,7 +475,7 @@ namespace Oheangbu.App.World
 
         private void EvaluateGesturePose(float dt)
         {
-            bool drawing = JuiceInput308Drawing(_drawing != null && _drawing.InDrawMode);   // #308 preview seam: the live input unless Juice308Build feeds it
+            bool drawing = JuiceInput308Drawing(_drawing != null && _drawing.InDrawPresentation);   // #308 preview seam: the live input unless Juice308Build feeds it (D308-147: the draw presentation - the arm pose waits for a riposte candidate's first stroke)
             if (drawing) EndCast();   // a new draw mode supersedes the follow-through
             bool casting = _castActive;
             bool stroking = drawing && JuiceInput308Stroking();

@@ -1,0 +1,32 @@
+{
+  "name": "Oheangbu.Vol2.Editor",
+  "rootNamespace": "Oheangbu.EditorTools.Vol2",
+  "references": [
+    "Oheangbu.Vol2.Rules",
+    "Oheangbu.Vol2.Import",
+    "Oheangbu.Vol2.Data",
+    "Oheangbu.Core",
+    "Oheangbu.Data",
+    "Oheangbu.Spellcraft",
+    "Oheangbu.Combat",
+    "Oheangbu.App",
+    "Oheangbu.Drawing",
+    "Oheangbu.BrushRender",
+    "Oheangbu.Presentation",
+    "Oheangbu.EditorTools.WorldMacro",
+    "VContainer",
+    "UniTask",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

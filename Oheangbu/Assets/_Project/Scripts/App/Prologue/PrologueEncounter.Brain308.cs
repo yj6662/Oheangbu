@@ -141,19 +141,26 @@ namespace Oheangbu.App.Prologue
                 transform.rotation = Quaternion.Euler(0f, searchYaw + Mathf.Sin((Time.time - searchArrivedAt) / Brain.SearchLookPeriodSeconds * Mathf.PI * 2f) * Brain.SearchLookDegrees, 0f);
         }
 
+        // Whether the actor senses the player this frame. Unaware: a cone ahead, plus anything close by. Aware: all around, as before.
+        // #308 WP-15 (몽): standing in a blinding ink cloud it sees nothing — the chase falls back to the last known place, then
+        // searches. A boss (EnemyVitals.IsBoss: the field bosses run this brain too) keeps the player; its strikes still miss
+        // (canonical text, D308-125 H125).
+        bool Sensed308(float distance, float facing, bool sight, float now)
+        {
+            var b = Brain;
+            bool sensed = Current == Behaviour.Patrol
+                ? sight && (distance < b.ProximityRadius || distance < DetectionRange && facing <= b.VisionHalfAngleDegrees)
+                : distance < DetectionRange && sight;
+            return sensed && (vitals.IsBoss || !vitals.Modifiers.Veil.Blinded(now));
+        }
+
         void TickBrain308(float distance)
         {
             float now = Time.time; var b = Brain; var pack = Pack308();
             attacks.TurnDegreesPerSecond = b.TurnDegreesPerSecond;
             Vector3 to = Vector3.ProjectOnPlane(Player.position - transform.position, Vector3.up);
             float facing = to.sqrMagnitude < .0001f ? 0f : Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, Vector3.up), to);
-            bool sight = attacks.HasLineOfSight();
-            // unaware: a cone ahead, plus anything close by. Aware: all around, as before.
-            bool sensed = Current == Behaviour.Patrol
-                ? sight && (distance < b.ProximityRadius || distance < DetectionRange && facing <= b.VisionHalfAngleDegrees)
-                : distance < DetectionRange && sight;
-            // #308 WP-15 (몽): standing in a blinding ink cloud it sees nothing — the chase falls back to the last known place
-            sensed &= !vitals.Modifiers.Veil.Blinded(now);
+            bool sensed = Sensed308(distance, facing, attacks.HasLineOfSight(), now);
             if (sensed) { lastSeen = now; lastKnown = Player.position; }
 
             if (Current == Behaviour.Patrol && (sensed || alertPending && now >= alertAt))

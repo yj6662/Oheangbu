@@ -36,7 +36,7 @@ STAGE = ROOT / 'Tools/Unity/Stage308_spell'
 STAGE_SHEETS = STAGE / '_ProjectAssets/Data/Spells'
 LIVE_SHEETS = ROOT / 'Oheangbu/Assets/_Project/Data/Spells'
 OUT = ROOT / 'Art/SpellVFX120/Spell120_308'
-EXPECTED_CSV_SHA = '61c72adbe6eec3e8a09404fdc3a7ddf23c5642b98c46e90921ca82fba7833fd3'  # raw file bytes (D308-121, 2026-10-21: the 20 blanks are 결계 rows, TEST; before: D308-115 ea5a52ea, D308-113 117a2689)
+EXPECTED_CSV_SHA = '9c135ee8d49e1c42f2f47937a08b13f0d447f31f1d091ededff8bb0d0ee822de'  # raw file bytes (D308-127, 2026-10-21: the five forms are weapons, those rows TEST; before: D308-121 61c72adb, D308-115 ea5a52ea, D308-113 117a2689)
 
 CANONICAL_HEADER = '글자,초성,속성,중성,프레임,종성,분류,효과,상태,비고'
 RULE_COLUMNS = ['글자', 'Mode', 'Handler', 'Pending', 'Kind', 'Gate', 'Feature', 'Inherit', 'BasePower', 'SpeedMul', 'AreaShape',
