@@ -1,4 +1,4 @@
-"""D308-153 route K for 우: the Kling AI video (ai_video/u_kling_1.mp4, animated from the concept uks_1) matted into RGBA frames for the game.
+﻿"""D308-153 route K for 우: the Kling AI video (ai_video/u_kling_1.mp4, animated from the concept uks_1) matted into RGBA frames for the game.
 Alpha = the painted waves, ink strokes and foam only; the red ground, the beige sky, the caster (robe, hair, arm, brush) and the bear are removed.
 Method (per frame, 1280x720, 30 fps):
   1. decode with ffmpeg (fps 30, lanczos 1280x720).
@@ -170,6 +170,26 @@ def finish(rgb, m):
     return out, a
 
 
+# the bear's hole (2026-10-29 user: "곰 있던 자리가 살짝 비어보이는 문제"): the bear stood inside the back-right of the ring, so keying it out leaves a gap
+# the game's own enemy never fills (it stands elsewhere). The gap is filled with the same frame's wave band shifted in from the left (BEAR_DX px), drawn
+# BEHIND the frame's own waves inside a soft zone round the bear - the donor animates with the clip, so the patch rises and sinks with the ring.
+BEAR_DX = int(os.environ.get('U_K_BEAR_DX', '230'))
+BEAR_FILL = ellipse(1015, 275, 185, 160, soft=0.07)
+
+
+def fill_bear(rgb, a):
+    d_rgb = np.zeros_like(rgb); d_a = np.zeros_like(a)
+    d_rgb[:, BEAR_DX:] = rgb[:, :-BEAR_DX]; d_a[:, BEAR_DX:] = a[:, :-BEAR_DX]
+    # no ink in the patch: a copied brush stroke would be cut off at the zone's edge (the frame's own strokes stay in front)
+    dm = d_rgb.max(2); dn = (dm - d_rgb.min(2)) / np.maximum(dm, 1e-4)
+    d_ink = ndi.binary_dilation((dm < 0.22) & (dn < 0.45), structure=disk(2))
+    d_a = d_a * BEAR_FILL * ~d_ink
+    na = a + d_a * (1 - a)
+    nrgb = (rgb * a[..., None] + d_rgb * (d_a * (1 - a))[..., None]) / np.maximum(na, 1e-4)[..., None]
+    nrgb = np.where((na > 1e-4)[..., None], nrgb, rgb)
+    return nrgb, na
+
+
 def encode(rgb, a):
     return Image.fromarray(np.dstack([np.clip(rgb * 255 + 0.5, 0, 255), np.clip(a * 255 + 0.5, 0, 255)]).astype(np.uint8), 'RGBA')
 
@@ -211,6 +231,7 @@ def main():
     for k in range(count):
         rgb, m = results[k]
         out, a = finish(rgb, m)
+        out, a = fill_bear(out, a)
         if k > live:
             a = a * (1.0 - (k - live) / float(TAIL_FADE))        # the last frames fade out (the last written one is 0) so the card never pops off
         encode(out, a).save(FRAMES + r'\f_%04d.png' % k)
@@ -240,6 +261,7 @@ def test(ids, name='matte_test.jpg'):
     for j, k in enumerate(ids):
         rgb, m = process(k + 1, plate)
         out, a = finish(rgb, m)
+        out, a = fill_bear(out, a)
         f = encode(out, a)
         bg = Image.new('RGB', (W, H), (255, 0, 255)); bg.paste(f, (0, 0), f)
         img.paste(bg.resize((cw, ch), Image.LANCZOS), ((j % cols) * cw, (j // cols) * ch))

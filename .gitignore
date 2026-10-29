@@ -132,3 +132,6 @@ Oheangbu/.claude/skills/unity-rql/
 Tools/Blender/GreatBrush308/*.pre_*
 # 블렌더가 작업 폴더에 남기는 웨이블릿 잡음 캐시(25 MB)
 waveletNoiseTile.bin
+
+# AgentBoard (model status board, local tool, 2026-10-29 user: gitignore)
+Tools/AgentBoard/
