@@ -5,8 +5,9 @@ Shader "Oheangbu/SpellFx/HexGround"
 {
     Properties
     {
-        _Line ("Foot line colour (HDR)", Color) = (1.6, 1.48, 1.2, 1)
-        _Glow ("Outer seep colour / alpha", Color) = (0.08, 0.07, 0.07, 0.35)
+        _Line ("Foot line heart colour (HDR)", Color) = (0.95, 0.88, 0.72, 1)
+        _LineInk ("Foot line side colour (ink-toned cream)", Color) = (0.42, 0.39, 0.34, 1)
+        _Glow ("Outer seep colour / alpha", Color) = (0.06, 0.05, 0.05, 0.5)
         _Foot ("Foot position across the band (0..1)", Range(0, 1)) = 0.8
         _LineW ("Foot line width (band units)", Range(0.002, 0.1)) = 0.016
         _Age ("Age (s)", Float) = 0
@@ -24,7 +25,7 @@ Shader "Oheangbu/SpellFx/HexGround"
             #pragma fragment Frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             CBUFFER_START(UnityPerMaterial)
-                half4 _Line, _Glow;
+                half4 _Line, _Glow, _LineInk;
                 float _Foot, _LineW, _Age, _Fade;
             CBUFFER_END
             struct A { float4 pos : POSITION; float2 uv : TEXCOORD0; };
@@ -43,10 +44,13 @@ Shader "Oheangbu/SpellFx/HexGround"
                 float fw = max(fwidth(x), 1e-4);
                 float w = max(_LineW, fw * 0.6);
                 float line_ = smoothstep(w + fw, w * 0.3, abs(x - _Foot));
-                float glow = pow(saturate(1 - (x - _Foot) / 0.14), 2.0) * step(_Foot, x) * _Glow.a;   // round 11 (Fable r10: an inner plate): the ink seeps OUTWARD from the foot only
+                float glow = pow(saturate(1 - (x - _Foot - w) / 0.1), 1.5) * step(_Foot + w * 0.5, x) * _Glow.a;   // round 12: a seep at least as wide as the line, visibly outward   // round 11 (Fable r10: an inner plate): the ink seeps OUTWARD from the foot only
                 float ink = 0.6 + 0.55 * VNoise(i.posWS.xz * 6.0);
                 float a = saturate(line_ * ink + glow * ink) * on;
-                float3 col = lerp(_Glow.rgb, _Line.rgb, saturate(line_ / max(line_ + glow, 1e-3)));
+                // round 12 (Fable r11: a pure white tube unlike the dome's lines): the dome's line language - a cream heart, ink-toned sides, 0.6 the brightness
+                float heart = smoothstep(w * 0.6, w * 0.1, abs(x - _Foot));
+                float3 lineCol = lerp(_LineInk.rgb, _Line.rgb, saturate(heart * 0.8 + ink * 0.3));
+                float3 col = lerp(_Glow.rgb, lineCol, saturate(line_ / max(line_ + glow, 1e-3)));
                 return half4(col, a);
             }
             ENDHLSL

@@ -10,7 +10,7 @@ Shader "Oheangbu/SpellFx/HexDome"
     Properties
     {
         _Patterns ("Pattern atlas 4 x 2 (white line on black)", 2D) = "black" {}
-        _Glass ("Glass tint (rgb) / alpha", Color) = (0.20, 0.32, 0.50, 0.15)
+        _Glass ("Glass tint (rgb) / alpha", Color) = (0.18, 0.31, 0.58, 0.15)
         _Rim ("Fresnel rim colour / alpha", Color) = (0.55, 0.72, 0.95, 0.08)
         _Line ("Cell border colour (HDR)", Color) = (1.3, 1.2, 0.98, 1)
         _Pattern ("Pattern line colour / alpha", Color) = (0.96, 0.95, 0.9, 0.9)
@@ -19,12 +19,12 @@ Shader "Oheangbu/SpellFx/HexDome"
         _Halo ("Border halo colour (ink bleed)", Color) = (0.06, 0.06, 0.08, 1)
         _LineInk ("Line side colour (ink-toned cream)", Color) = (0.42, 0.39, 0.34, 1)
         _HitCol ("Hit ripple colour (HDR)", Color) = (1.9, 1.75, 1.35, 1)
-        _HaloA ("Border halo alpha", Range(0, 1)) = 0.2
+        _HaloA ("Border halo alpha", Range(0, 1)) = 0.36
         _CorePxMin ("Core width min (render px)", Float) = 0.2
         _CorePxMax ("Core width max (render px)", Float) = 0.34
-        _HaloPx ("Halo width (render px)", Float) = 6
+        _HaloPx ("Halo width (render px)", Float) = 12
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
-        _PatternScale ("Pattern size in the cell", Range(0.5, 1.5)) = 0.74
+        _PatternScale ("Pattern size in the cell", Range(0.4, 1.5)) = 0.64
         _Age ("Age (s)", Float) = 0
         _Fade ("Fade 0..1", Range(0, 1)) = 0
         _RiseTime ("Ground-to-top reveal (s)", Float) = 0.45
@@ -109,9 +109,9 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float life = saturate(1 - _HitAge / 0.55) * smoothstep(maxR, maxR * 0.7, dist);
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
                 float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
-                float k1 = smoothstep(-0.025, 0.0, s1) * exp(-max(s1, 0) / 0.07), k2 = smoothstep(-0.02, 0.0, s2) * exp(-max(s2, 0) / 0.05);
-                float dry = smoothstep(0.32, 0.62, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 4.0, dist * 6.0)));     // round 11: dry-brush breaks round the ring
-                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.4 + 0.8 * dry);
+                float k1 = smoothstep(-0.025, 0.0, s1) * exp(-max(s1, 0) / 0.04), k2 = smoothstep(-0.02, 0.0, s2) * exp(-max(s2, 0) / 0.03);
+                float dry = smoothstep(0.42, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 2.2, dist * 3.0)));     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
+                ripple = (k1 + 0.7 * k2 * step(0.12, _HitAge)) * life * (0.08 + 0.92 * dry);
                 touch = saturate(1 - dist / 0.9) * exp(-_HitAge * 5.0) * 0.6;
                 ripple += smoothstep(0.35, 0.0, dist) * saturate(1 - _HitAge / 0.1) * 1.5;      // the contact flash (6 frames)
             }
@@ -123,7 +123,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             // round 7 (Fable r6: the hairline broke into dots on cells facing the camera - under a pixel): never thinner than ~1.5 px on screen
             float fw = max(fwidth(edge), 1e-4);
             float coreW = clamp(_EdgeW, fw * _CorePxMin, fw * _CorePxMax);     // the core is held between ~1.2 and 2 px on screen whatever the cell size (r7 bigger cells made it a neon bar)
-            coreW *= lerp(0.65, 1.5, VNoise(float2(i.posWS.x - i.posWS.y, i.posWS.z + i.posWS.y) * 3.0));     // round 10: the brush line thickens and thins
+            coreW *= lerp(0.55, 1.75, VNoise(float2(i.posWS.x - i.posWS.y, i.posWS.z + i.posWS.y) * 2.2));     // round 10 / 12: the brush line thickens and thins (wider swing)
             float border = smoothstep(1 - coreW - fw * 0.75, 1 - coreW + fw * 0.25, edge);
             float2 q = (i.uv0 - 0.5) / _PatternScale;                     // -0.5..0.5 inside the pattern's square
             float inCircle = smoothstep(0.5, 0.47, length(q));            // the pattern is clipped to a circle: never a square in a hexagon
