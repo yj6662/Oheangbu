@@ -24,8 +24,8 @@ Shader "Oheangbu/SpellFx/HexDome"
         _CorePxMin ("Core width min (render px)", Float) = 0.2
         _CorePxMax ("Core width max (render px)", Float) = 0.34
         _HaloPx ("Halo width (render px)", Float) = 12
-        _SeamPx ("Seam light width (fwidth units - one is several screen px here)", Float) = 2.2
-        _SeamA ("Seam light alpha", Range(0, 1)) = 0.4
+        _SeamPx ("Seam light width (fwidth units - one is several screen px here)", Float) = 3
+        _SeamA ("Seam light alpha", Range(0, 1)) = 0.5
         _CoreA ("Border core alpha", Range(0, 1)) = 0.8
         _PatternScale ("Pattern size in the cell", Range(0.4, 1.5)) = 0.64
         _Age ("Age (s)", Float) = 0
@@ -107,12 +107,13 @@ Shader "Oheangbu/SpellFx/HexDome"
                 float domeR = length(float3(UNITY_MATRIX_M[0].x, UNITY_MATRIX_M[1].x, UNITY_MATRIX_M[2].x));
                 float2 dh = _HitPos.xz - c.xz;
                 float3 contact = float3(c.x, c.y + 0.45, c.z) + float3(normalize(dh + 1e-4).x, 0, normalize(dh + 1e-4).y) * domeR * 0.93;
+                if (_HitCell.w > 0.5) contact = _HitCell.xyz;                 // round 19: the ring grows from the struck cell's own centre (it was hung on a corner)
                 float dist = distance(i.posWS, contact);
-                float maxR = domeR * 0.45;
+                float maxR = 1.1;
                 // round 7 (Fable r6: the hit looked like one more random bloom): its own shape - two concentric rings running out from the struck side, warm, ~0.5 s
                 float life = saturate(1 - _HitAge / 0.55) * smoothstep(maxR, maxR * 0.7, dist);
                 // round 9 (Fable r8: a soft gaussian band read as a lens smear): an ink profile - a hard inner edge, soft only outward
-                float s1 = dist - _HitAge * 3.2, s2 = dist - (_HitAge - 0.12) * 3.2;
+                float s1 = dist - _HitAge * 6.5, s2 = dist - (_HitAge - 0.12) * 6.5;
                 float wv = lerp(0.6, 2.4, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 3.0, 1.7)));     // round 16: the stroke's width breathes (a brush, not a wire)
                 float k1 = smoothstep(-0.015 * wv, 0.0, s1) * exp(-max(s1, 0) / (0.012 * wv)), k2 = smoothstep(-0.012 * wv, 0.0, s2) * exp(-max(s2, 0) / (0.01 * wv));
                 float dry = smoothstep(0.5, 0.56, VNoise(float2(atan2(i.posWS.y - contact.y, i.posWS.x - contact.x + i.posWS.z - contact.z) * 5.0, 0.37)));     // round 15: breaks by ANGLE only - there from the first frame (Fable r14: only late)     // round 11 / 12: dry-brush breaks round the ring (3 - 5 clear gaps)
@@ -184,7 +185,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             float accentK = cellHit * saturate(1 - max(_HitAge - 0.05, 0) / 0.2) * step(0, _HitAge);
             float3 patCol = lerp(_Pattern.rgb * (boost + flash * _BloomBoost * lineK), _Accent.rgb * 1.6, accentK);      // round 17: the struck cell blooms in the one accent colour first
             col = lerp(col, patCol, saturate(pa / max(a + pa, 1e-3)));     // round 9: the far wall's flash is capped like its lines
-            col += _Accent.rgb * cellHit * exp(-_HitAge * 10.0) * 0.35 * step(0, _HitAge) * fill;     // the struck glass glows a moment
+            col += _Accent.rgb * cellHit * exp(-_HitAge * 10.0) * 0.1 * step(0, _HitAge) * fill;     // the struck glass glows a moment (faint: no panel)
             a = a + pa * (1 - a);
             // round 5 (Fable r4: flat opaque white wires): a thin bright core inside a soft halo
             float lineFade = 1 - saturate(_Fade * 1.6);                         // round 7: the grid goes before the glass (no bare wire left)
@@ -193,8 +194,11 @@ Shader "Oheangbu/SpellFx/HexDome"
             float ba = border * outline * (0.85 + 0.15 * flick) * borderK * _CoreA * lineFade * saturate(ink + 0.15);
             ba = max(ba, border * outline * saturate(seamFlash));
             // round 17b (Fable r17: HDR never reached the frame - the lab look tone-maps it): the glow is DRAWN - a soft accent band inside the struck cell's six seams
-            float glowBand = smoothstep(0.55, 1.0, edge) * cellHit * exp(-_HitAge * 9.0) * step(0, _HitAge);
-            col = lerp(col, _Accent.rgb, saturate(glowBand * 0.85)); a = max(a, glowBand * 0.75 * outline);
+            // round 19 (Fable r18: a flat colour panel - a selection highlight): a band inside the seams only, white at the seam, the accent fading toward the centre
+            float hitLive = cellHit * exp(-_HitAge * 9.0) * step(0, _HitAge);
+            float band = smoothstep(0.72, 0.97, edge);
+            float3 bandCol = lerp(_Accent.rgb, float3(1.6, 1.62, 1.66), smoothstep(0.88, 0.99, edge));
+            col = lerp(col, bandCol, saturate(band * hitLive * 0.9)); a = max(a, band * hitLive * 0.6 * outline);
             float heart = smoothstep(1 - coreW * 0.55, 1 - coreW * 0.1, edge);                 // round 11 (Fable r10: a pure white glowing wire): only the line's heart glows,
             float3 lineCol = lerp(_LineInk.rgb, _Line.rgb * boost * 1.4, saturate(heart * 0.95 + ink * 0.35));   //   its sides are ink-toned cream, varying with the ink density
             col = lerp(col, lineCol + _Accent.rgb * seamFlash, saturate(ba / max(a, 1e-3)));     // round 17 (the user: "이런 이펙트 순간에는 발광도 넣어"): the struck seams glow in the accent
