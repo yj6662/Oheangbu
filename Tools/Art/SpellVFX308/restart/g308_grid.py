@@ -19,7 +19,8 @@ CW, CH = 640, 360
 def main():
     name, letters = sys.argv[1], sys.argv[2:8]
     led = json.loads((REPO / 'Tools/Art/SpellVFX308/spell_catalog_status.json').read_text(encoding='utf-8'))
-    frames = [sorted((SHOTS / f'{g}_A').glob('f_*.jpg')) for g in letters]
+    # a cell may name its variant ("고_F", the ㅗ membrane test): that shot folder, and no ledger score (the ledger scores variant A)
+    frames = [sorted((SHOTS / (g if '_' in g else f'{g}_A')).glob('f_*.jpg')) for g in letters]
     n = max(len(f) for f in frames)
     TMP.mkdir(parents=True, exist_ok=True)
     for old in TMP.glob('g_*.jpg'):
@@ -32,7 +33,7 @@ def main():
                 continue
             im = Image.open(fs[min(k, len(fs) - 1)]).convert('RGB').resize((CW, CH))
             d = ImageDraw.Draw(im)
-            sc = led.get(g, {}).get('score')
+            sc = None if '_' in g else led.get(g, {}).get('score')
             label = g + (f'  {sc}' if sc is not None else '')
             d.rectangle((0, 0, 14 + int(d.textlength(label, font=FONT)), 38), fill=(0, 0, 0)); d.text((7, 3), label, font=FONT, fill=(255, 220, 0))
             sheet.paste(im, ((i % cols) * CW, (i // cols) * CH))
