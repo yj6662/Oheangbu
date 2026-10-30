@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """A frame batch at a glance (2026-10-30, the user's answer: "틀 하나(6자)마다 영상 보내고 계속"): up to 6 glyphs' lab shots as one 3 x 2 grid mp4
 (640 x 360 cells, the glyph and its score labelled) and a still sheet of the same grid at the bite.
   python Tools/Art/SpellVFX308/restart/g308_grid.py <out name> <글자> [<글자> ...]
@@ -17,7 +17,7 @@ CW, CH = 640, 360
 
 
 def main():
-    name, letters = sys.argv[1], sys.argv[2:8]
+    name, letters = sys.argv[1], sys.argv[2:11]
     led = json.loads((REPO / 'Tools/Art/SpellVFX308/spell_catalog_status.json').read_text(encoding='utf-8'))
     # a cell may name its variant ("고_F", the ㅗ membrane test): that shot folder, and no ledger score (the ledger scores variant A)
     frames = [sorted((SHOTS / (g if '_' in g else f'{g}_A')).glob('f_*.jpg')) for g in letters]

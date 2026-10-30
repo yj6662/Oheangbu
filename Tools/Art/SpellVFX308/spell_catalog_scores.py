@@ -47,6 +47,19 @@ def main():
         status = '대리 통과' if last >= 90 else ('최대 회차 소진' if rs[-1][0] >= 6 else '회차 진행 중')
         e['judge'] = f'대리 판정(Fable) · {len(rs)}회차 {trail} · {status}'
         e.setdefault('decision', 'D308-153')
+    # D308-161 (2026-10-31): the hexagon membrane is the defence look only - the five wards (their own H rounds) and the five bare-ㅓ parries.
+    # Every other glyph's f_ rounds were a trial that is kept as variant F but is not the glyph's look: noted, not scored.
+    DEFENCE = set('거너머서어')
+    for g, rs in list(membrane.items()):
+        if g in DEFENCE:
+            continue
+        rs.sort()
+        e = led.setdefault(g, {})
+        e['variant'] = 'A'
+        e['note'] = f'육각 막 시험(F) {len(rs)}회차 마지막 {int(round(rs[-1][1]))} — D308-161로 방어 전용이 되어 보관, 새 룩 = 먹 붓획 + 몸 물성(구현 전)'
+        if e.get('decision') == 'D308-157':
+            e['decision'] = 'D308-161'
+        del membrane[g]
     for g, rs in membrane.items():
         rs.sort()
         e = led.setdefault(g, {})
