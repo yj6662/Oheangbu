@@ -68,6 +68,7 @@ namespace Oheangbu.App.SpellFx
         readonly List<Vector3> _v = new List<Vector3>(), _n = new List<Vector3>(), _c = new List<Vector3>();
         readonly List<Vector2> _uv0 = new List<Vector2>(), _uv1 = new List<Vector2>(), _uv2 = new List<Vector2>();
         readonly List<int> _t = new List<int>();
+        readonly List<Color32> _col = new List<Color32>();         // round 2: the vertex colour stream (alpha = a per-cell alpha); uploaded only when VertexAlpha is on
         Color _lineBase, _patBase, _glassBase;
         readonly Color _rim;
 
@@ -129,13 +130,14 @@ namespace Oheangbu.App.SpellFx
 
         // ------------------------------------------------------------ mesh
 
-        public void Begin() { _v.Clear(); _n.Clear(); _c.Clear(); _uv0.Clear(); _uv1.Clear(); _uv2.Clear(); _t.Clear(); }
+        public void Begin() { _v.Clear(); _n.Clear(); _c.Clear(); _uv0.Clear(); _uv1.Clear(); _uv2.Clear(); _t.Clear(); _col.Clear(); }
 
         public void Flush()
         {
             _mesh.Clear();
             _mesh.SetVertices(_v); _mesh.SetNormals(_n);
             _mesh.SetUVs(0, _uv0); _mesh.SetUVs(1, _uv1); _mesh.SetUVs(2, _uv2); _mesh.SetUVs(3, _c);
+            if (VertexAlpha) _mesh.SetColors(_col);
             _mesh.SetTriangles(_t, 0);
             _mesh.RecalculateBounds();
         }
@@ -145,16 +147,23 @@ namespace Oheangbu.App.SpellFx
         /// same bloom period, half a period out - so a pattern is lit in one of them most of the time (the shader blooms each pattern only sporadically).</summary>
         public void EmitCell(Vector3 ctr, Vector3[] cs, float hash, int pat, float d01, Vector3 faceN, Vector3 shadeN, Vector3 ctrPlan, bool dbl = true)
         {
+            EmitCellA(ctr, cs, hash, pat, d01, faceN, shadeN, ctrPlan, dbl, 1f, null);
+        }
+
+        /// <summary>Round 2: the same cell with a per-vertex alpha (the shader's _VertexAlpha: a cell that burns away from its lower edge, fades, is cut): <paramref name="aCentre"/> at the centre vertex,
+        /// <paramref name="aCorners"/> (6 values or null = all 1) at the corners. The stream is only uploaded while <see cref="VertexAlpha"/> is on.</summary>
+        public void EmitCellA(Vector3 ctr, Vector3[] cs, float hash, int pat, float d01, Vector3 faceN, Vector3 shadeN, Vector3 ctrPlan, bool dbl, float aCentre, float[] aCorners)
+        {
             Vector3 sn = Frame.NormalLocal(shadeN), cl = Frame.ToLocal(ctrPlan);
             bool flip = Vector3.Dot(Vector3.Cross(cs[1] - ctr, cs[0] - ctr), faceN) < 0f;
             for (int layer = 0; layer < (dbl ? 2 : 1); layer++)
             {
                 float h = layer == 0 ? hash : hash + SpellFxHexKit.HashStep;
                 int b = _v.Count;
-                _v.Add(Frame.ToLocal(ctr)); _n.Add(sn); _uv0.Add(new Vector2(0.5f, 0.5f)); _uv1.Add(new Vector2(h, 0f)); _uv2.Add(new Vector2(pat, d01)); _c.Add(cl);
+                _v.Add(Frame.ToLocal(ctr)); _n.Add(sn); _uv0.Add(new Vector2(0.5f, 0.5f)); _uv1.Add(new Vector2(h, 0f)); _uv2.Add(new Vector2(pat, d01)); _c.Add(cl); _col.Add(Alpha8(aCentre));
                 for (int k = 0; k < 6; k++)
                 {
-                    _v.Add(Frame.ToLocal(cs[k])); _n.Add(sn); _uv0.Add(SpellFxHexKit.Uv6[k]); _uv1.Add(new Vector2(h, 1f)); _uv2.Add(new Vector2(pat, d01)); _c.Add(cl);
+                    _v.Add(Frame.ToLocal(cs[k])); _n.Add(sn); _uv0.Add(SpellFxHexKit.Uv6[k]); _uv1.Add(new Vector2(h, 1f)); _uv2.Add(new Vector2(pat, d01)); _c.Add(cl); _col.Add(Alpha8(aCorners != null ? aCorners[k] : 1f));
                 }
                 for (int k = 0; k < 6; k++)
                 {
@@ -162,6 +171,37 @@ namespace Oheangbu.App.SpellFx
                     if (!flip) { _t.Add(b); _t.Add(q); _t.Add(p); } else { _t.Add(b); _t.Add(p); _t.Add(q); }
                 }
             }
+        }
+
+        static Color32 Alpha8(float a) => new Color32(255, 255, 255, (byte)Mathf.RoundToInt(Mathf.Clamp01(a) * 255f));
+
+        /// <summary>Round 2: on = the mesh carries a colour stream whose alpha the shader multiplies in per vertex (the material's _VertexAlpha = 1). Every emit method of this layer fills the stream (alpha 1
+        /// unless asked), so switching it on never needs a part to change how it emits. Off (the default) = nothing is uploaded, nothing is read: the layer is exactly as before.</summary>
+        public bool VertexAlpha
+        {
+            get => _vertexAlpha;
+            set { _vertexAlpha = value; if (Mat.HasProperty("_VertexAlpha")) Mat.SetFloat("_VertexAlpha", value ? 1f : 0f); }
+        }
+        bool _vertexAlpha;
+
+        /// <summary>Round 2: sets a material float when the shader has it (the base-ring strength, the fill floor ...); a no-op otherwise.</summary>
+        public void SetFloatIfAny(string property, float value) { if (Mat.HasProperty(property)) Mat.SetFloat(property, value); }
+
+        /// <summary>Round 2: the shader's four extra struck-cell slots (_HitCells[4] with w = 1 when in use, _HitAges, a negative age = idle).</summary>
+        public void SetHitSlots(Vector4[] cells, Vector4 ages)
+        {
+            // (no HasProperty guard: the array and the age vector live outside the shader's Properties block, like the dome's _ImpPos, so HasProperty is false for them; on a shader without the slots this sets nothing that is read)
+            Mat.SetVectorArray("_HitCells", cells);
+            Mat.SetVector("_HitAges", ages);
+        }
+
+        /// <summary>Round 2: the breath at a chosen rate and depth, times an extra brightness on the seam and the pattern (1 = none; a flash of the whole sheet at once). <see cref="Breathe(float)"/> is 2 Hz, +- 10 %.</summary>
+        public void Breathe(float a, float hz, float amp, float boost = 1f)
+        {
+            float k = 1f + amp * Mathf.Sin(a * Mathf.PI * 2f * hz), kb = k * boost;
+            Mat.SetColor(LineId, new Color(_lineBase.r * kb, _lineBase.g * kb, _lineBase.b * kb, _lineBase.a));
+            Mat.SetColor(PatternId, new Color(_patBase.r * kb, _patBase.g * kb, _patBase.b * kb, _patBase.a));
+            if (Mat.HasProperty(GlassId)) Mat.SetColor(GlassId, new Color(_glassBase.r, _glassBase.g, _glassBase.b, Mathf.Clamp01(_glassBase.a * k)));
         }
 
         /// <summary>The ribbon: a strip along <paramref name="pts"/> (plan x, z) with the outward direction <paramref name="nrm"/> at each point, <paramref name="w"/> wide, lying on the ground
@@ -182,8 +222,14 @@ namespace Oheangbu.App.SpellFx
         /// <paramref name="faceN"/> = the side that should draw as the front (default up: a strip on the ground; a standing thread passes the camera's side).</summary>
         public void QuadVerts(Vector3 a0, Vector3 b0, Vector3 a1, Vector3 b1, Vector3 shadeLocal, float reach, bool ink, Vector3? faceN = null)
         {
+            QuadVertsA(a0, b0, a1, b1, shadeLocal, reach, ink, faceN, 1f);
+        }
+
+        /// <summary>Round 2: <see cref="QuadVerts"/> with a vertex alpha (for a strip that fades with a cell; only read while <see cref="VertexAlpha"/> is on).</summary>
+        public void QuadVertsA(Vector3 a0, Vector3 b0, Vector3 a1, Vector3 b1, Vector3 shadeLocal, float reach, bool ink, Vector3? faceN, float alpha)
+        {
             int b = _v.Count;
-            Vert(a0, shadeLocal, reach, ink); Vert(b0, shadeLocal, reach, ink); Vert(a1, shadeLocal, reach, ink); Vert(b1, shadeLocal, reach, ink);
+            Vert(a0, shadeLocal, reach, ink, alpha); Vert(b0, shadeLocal, reach, ink, alpha); Vert(a1, shadeLocal, reach, ink, alpha); Vert(b1, shadeLocal, reach, ink, alpha);
             bool up = Vector3.Dot(Vector3.Cross(b0 - a0, a1 - a0), faceN ?? Vector3.up) > 0f;          // the triangle (a0, b0, a1) faces the front side when its cross product points that way
             if (up) { _t.Add(b); _t.Add(b + 1); _t.Add(b + 2); _t.Add(b + 1); _t.Add(b + 3); _t.Add(b + 2); }
             else { _t.Add(b); _t.Add(b + 2); _t.Add(b + 1); _t.Add(b + 1); _t.Add(b + 2); _t.Add(b + 3); }
@@ -196,8 +242,9 @@ namespace Oheangbu.App.SpellFx
             return new Vector3(q.x, heightAt(p), q.y);
         }
 
-        void Vert(Vector3 plan, Vector3 shadeLocal, float reach, bool ink)
+        void Vert(Vector3 plan, Vector3 shadeLocal, float reach, bool ink, float alpha = 1f)
         {
+            _col.Add(Alpha8(alpha));
             _v.Add(Frame.ToLocal(plan)); _n.Add(shadeLocal);
             _uv0.Add(ink ? new Vector2(0f, 0f) : new Vector2(0.5f, 0.5f));          // uv0 in a corner: the pattern's circle clip is 0 there - plain glass
             _uv1.Add(ink ? new Vector2(0.3f, 0f) : new Vector2(0.3f, 1f));
@@ -266,6 +313,9 @@ namespace Oheangbu.App.SpellFx
         public Vector3 From, To; public float T0, T1, Rc, Arc, Hash; public bool Sampled, TipInk, Quick;
         /// <summary>It stays standing facing the camera all the way (a cell that is to float, or to stand, where it lands): no tipping flat.</summary>
         public bool Standing;
+        /// <summary>Round 2: the radius at the start of the flight as a fraction of <see cref="Rc"/> (it fills out to 1 over the first third of the flight). 0.8 = what it always was; a small value makes a cell that
+        /// is not big in front of the lens when it leaves the hand (the shoulder camera is close to the brush tip).</summary>
+        public float StartScale = 0.8f;
     }
 
     /// <summary>The cast's cells as one drawn thing: a frame, a main layer (the sheet itself), an air layer (brush-thrown cells and the Once preview, with a clock of its own), the ground, the
@@ -410,6 +460,58 @@ namespace Oheangbu.App.SpellFx
             Main.EmitCell(ctr, cs, hash, pat, d01, wind, ShadeFor(faceN, ctr), ctr);
         }
 
+        /// <summary>Round 2: <see cref="EmitStanding"/> with a corner turn and a per-corner alpha. <paramref name="cornerRot"/> turns the hexagon's corners in its own plane (0 = flat top and bottom, corners
+        /// left and right; pi / 2 = a pointy top - with rx &lt; rv a blade). <paramref name="alphaOfHeight"/> (null = 1) gives the vertex alpha from a corner's height as a 0..1 fraction of the cell
+        /// (0 = its lowest corner .. 1 = its highest; the centre takes 0.5): a fire cell that burns away from its lower edge, a cell that fades. The corners are left in <c>Main.Cs</c> (plan space).</summary>
+        public void EmitStandingEx(Vector3 ctr, Vector2 dir, float rx, float rv, float lean, float cornerRot, float hash, int pat, float d01, Func<float, float> alphaOfHeight)
+        {
+            float cl = Mathf.Cos(lean), sl = Mathf.Sin(lean);
+            Vector3 n3 = new Vector3(dir.x, 0f, dir.y), u = new Vector3(dir.y, 0f, -dir.x), vp = Vector3.up * cl + n3 * sl;
+            var cs = Main.Cs;
+            for (int k = 0; k < 6; k++)
+            {
+                float c = cornerRot == 0f ? SpellFxHexKit.Cos6[k] : Mathf.Cos(k * Mathf.PI / 3f + cornerRot), s = cornerRot == 0f ? SpellFxHexKit.Sin6[k] : Mathf.Sin(k * Mathf.PI / 3f + cornerRot);
+                cs[k] = ctr + u * (c * rx) + vp * (s * rv);
+            }
+            Vector3 faceN = n3 * cl - Vector3.up * sl;
+            Vector3 camDir = new Vector3(ToCamPlan.x, 0.15f, ToCamPlan.y);
+            Vector3 wind = Vector3.Dot(faceN, camDir) >= 0f ? faceN : -faceN;
+            float aC = 1f; float[] aK = null;
+            if (alphaOfHeight != null)
+            {
+                float yb = float.MaxValue, yt = float.MinValue;
+                for (int k = 0; k < 6; k++) { yb = Mathf.Min(yb, cs[k].y); yt = Mathf.Max(yt, cs[k].y); }
+                aK = _alphaScratch;
+                for (int k = 0; k < 6; k++) aK[k] = alphaOfHeight(yt - yb < 1e-5f ? 0.5f : Mathf.Clamp01((cs[k].y - yb) / (yt - yb)));
+                aC = alphaOfHeight(0.5f);
+            }
+            Main.EmitCellA(ctr, cs, hash, pat, d01, wind, ShadeFor(faceN, ctr), ctr, true, aC, aK);
+        }
+
+        readonly float[] _alphaScratch = new float[6];
+
+        /// <summary>The camera in plan space (a point 6 m toward the camera side of the caster when there is no camera).</summary>
+        public Vector3 CamPlan => _cam != null ? Frame.ToPlan(_cam.transform.position) : new Vector3(ToCamPlan.x * 6f, 2f, ToCamPlan.y * 6f);
+
+        /// <summary>Round 2: a thin ribbon along a polyline (plan space) that always faces the camera - an ink thread (a seed's hanging line), a short strand of root: each segment is a quad whose width
+        /// runs across the view, <paramref name="passes"/> times over (the shader has no black: dark glass is drawn two or three times for body). <paramref name="ink"/> = plain dark glass; false = the seam's
+        /// cream. <paramref name="alpha"/> is the vertex alpha (read only while the layer's <see cref="HexLayer.VertexAlpha"/> is on).</summary>
+        public void EmitStrand(IList<Vector3> pts, float width, int passes, bool ink = true, float alpha = 1f)
+        {
+            if (pts == null || pts.Count < 2) return;
+            Vector3 cam = CamPlan, sh = Frame.NormalLocal(Tilt);
+            for (int i = 0; i + 1 < pts.Count; i++)
+            {
+                Vector3 d = pts[i + 1] - pts[i], mid = (pts[i] + pts[i + 1]) * 0.5f, v = cam - mid;
+                Vector3 side = Vector3.Cross(d, v);
+                if (side.sqrMagnitude < 1e-8f) side = Vector3.Cross(d, Vector3.up);
+                if (side.sqrMagnitude < 1e-8f) continue;
+                side = side.normalized * (width * 0.5f);
+                Vector3 front = v.normalized;
+                for (int p = 0; p < passes; p++) Main.QuadVertsA(pts[i] - side, pts[i] + side, pts[i + 1] - side, pts[i + 1] + side, sh, 1f, ink, front, alpha);
+            }
+        }
+
         /// <summary>The throw's first frame: the tip where it is NOW becomes this flight's start, and a small ink spit leaves there.</summary>
         public void SampleFlight(HexFlight f)
         {
@@ -426,7 +528,7 @@ namespace Oheangbu.App.SpellFx
             float u = Mathf.Clamp01((a - f.T0) / Mathf.Max(f.T1 - f.T0, 1e-3f));
             float ue = f.Quick ? 1f - (1f - u) * (1f - u) : SpellFxHexKit.Smooth(u);
             Vector3 p = Vector3.Lerp(f.From, f.To, ue) + Vector3.up * (f.Arc * Mathf.Sin(Mathf.PI * u));
-            float rc = f.Rc * (0.8f + 0.2f * SpellFxHexKit.Smooth(u * 3f));
+            float rc = f.Rc * (f.StartScale + (1f - f.StartScale) * SpellFxHexKit.Smooth(u * 3f));
             float tilt = f.Standing ? 1f : 1f - SpellFxHexKit.Smooth(Mathf.Clamp01(u * (f.Quick ? 2.6f : 1.15f)));          // 1 = standing facing the camera, 0 = flat
             EmitPose(p, rc, tilt, f.Hash);
         }
@@ -450,14 +552,18 @@ namespace Oheangbu.App.SpellFx
     /// <see cref="End"/> = the body's own burst as a piece breaks up at the end (none for wood); <see cref="Plates"/> = torn plates (가른다).</summary>
     public sealed class HexInkQueue
     {
-        enum Kind { Spit, End, Plates }
-        struct Item { public float At; public Vector3 Point, Normal; public Kind K; public SpellFxBurstBody Body; public Color Edge; }
+        enum Kind { Spit, End, Plates, CellEnd, Drip }
+        struct Item { public float At; public Vector3 Point, Normal; public Kind K; public SpellFxBurstBody Body; public Color Edge; public float Size; }
         readonly List<Item> _q = new List<Item>();
 
         void Add(Item e) { int k = 0; while (k < _q.Count && _q[k].At <= e.At) k++; _q.Insert(k, e); }
         public void Spit(float at, Vector3 point, Vector3 normal) { Add(new Item { At = at, Point = point, Normal = normal, K = Kind.Spit }); }
         public void End(float at, Vector3 point, Vector3 normal, SpellFxBurstBody body) { if (body == SpellFxBurstBody.Wood) return; Add(new Item { At = at, Point = point, Normal = normal, K = Kind.End, Body = body }); }
         public void Plates(float at, Vector3 point, Vector3 normal, Color edge) { Add(new Item { At = at, Point = point, Normal = normal, K = Kind.Plates, Edge = edge }); }
+        /// <summary>Round 2: the ink and the burst of ONE cell's end in its body's own way (<see cref="HexBodyEnd.Begin"/>: wood 2 - 3 small ink drops, fire embers rising, earth plate chips, metal shards, water running down).</summary>
+        public void CellEnd(float at, Vector3 centre, Vector3 normal, float size, SpellFxBurstBody body) { Add(new Item { At = at, Point = centre, Normal = normal, K = Kind.CellEnd, Body = body, Size = size }); }
+        /// <summary>Round 2: a single small drop of ink where a thread meets the ground (<see cref="SpellFxHexKit.Drip"/>).</summary>
+        public void Drip(float at, Vector3 point) { Add(new Item { At = at, Point = point, Normal = Vector3.up, K = Kind.Drip }); }
 
         public void Drain(float a)
         {
@@ -468,9 +574,60 @@ namespace Oheangbu.App.SpellFx
                 {
                     case Kind.Spit: SpellFxHexKit.Spit(e.Point, e.Normal); break;
                     case Kind.End: SpellFxLabShot.InkBurst(e.Point, e.Normal, e.Body); break;
+                    case Kind.CellEnd: HexBodyEnd.Begin(e.Body, e.Point, e.Normal, e.Size); break;
+                    case Kind.Drip: SpellFxHexKit.Drip(e.Point); break;
                     default: SpellFxLabShot.InkBurst(e.Point, e.Normal, SpellFxBurstBody.Armour, e.Edge); break;
                 }
             }
+        }
+    }
+
+    /// <summary>Round 2: the shader's FOUR extra struck-cell slots (_HitCells[4] / _HitAges, "the strongest wins") driven as a queue: each scheduled flash takes the next slot round-robin and holds it for
+    /// its own life (a reaction 0.15 s; a cell's end a few frames), then frees it - so up to four cells answer at once and no later flash cuts an earlier one short (the single legacy slot does:
+    /// the 6-frame white flash that ended in a hard cut). The legacy slot is not used. A flash may ask for a hit-stop: <see cref="TakeStop"/> says one fired since the last call (the part freezes
+    /// its own look clock for two frames; nothing of a rule).</summary>
+    public sealed class HexFlashSlots
+    {
+        struct Flash { public float At, Life; public bool Stop; public Func<Vector3> Plan; }
+        struct Live { public Func<Vector3> Plan; public float At, Life; }
+        readonly List<Flash> _q = new List<Flash>();
+        readonly Live[] _live = new Live[4];
+        readonly Vector4[] _cells = new Vector4[4];
+        int _next;
+        bool _stop;
+
+        /// <summary>A flash at look time <paramref name="at"/> on the cell whose centre (plan) is <paramref name="plan"/> now; it holds a slot for <paramref name="life"/> seconds.</summary>
+        public void Schedule(Func<Vector3> plan, float at, float life = 0.15f, bool stop = false)
+        {
+            var fl = new Flash { At = at, Life = life, Stop = stop, Plan = plan };
+            int k = 0; while (k < _q.Count && _q[k].At <= at) k++;
+            _q.Insert(k, fl);
+        }
+
+        public bool TakeStop() { bool s = _stop; _stop = false; return s; }
+
+        public void Drive(HexSheet sheet, float a)
+        {
+            while (_q.Count > 0 && _q[0].At <= a)
+            {
+                var f = _q[0]; _q.RemoveAt(0);
+                _live[_next] = new Live { Plan = f.Plan, At = f.At, Life = f.Life };
+                _next = (_next + 1) & 3;
+                if (f.Stop) _stop = true;
+            }
+            var ages = new Vector4(-1f, -1f, -1f, -1f);
+            for (int i = 0; i < 4; i++)
+            {
+                float age = a - _live[i].At;
+                if (_live[i].Plan != null && age <= _live[i].Life)
+                {
+                    Vector3 w = sheet.WorldOf(_live[i].Plan());
+                    _cells[i] = new Vector4(w.x, w.y, w.z, 1f);
+                    ages[i] = Mathf.Max(age, 0f);
+                }
+                else { _cells[i] = new Vector4(0f, -1000f, 0f, 0f); _live[i].Plan = null; }
+            }
+            sheet.Main.SetHitSlots(_cells, ages);
         }
     }
 
@@ -764,5 +921,33 @@ namespace Oheangbu.App.SpellFx
 
         /// <summary>The small ink spit of the brush, a throw, a landing, a contact, a breaking line: always plain ink, small, whatever the body (the body's own burst is only for the end).</summary>
         public static void Spit(Vector3 point, Vector3 normal) { SpellFxLabShot.InkBurst(point, normal, SpellFxBurstBody.Water, null, SpitScale); }
+
+        /// <summary>Round 2: a single drop of ink (about a third of a spit): where a hanging thread meets the ground.</summary>
+        public static void Drip(Vector3 point) { SpellFxLabShot.InkBurst(point, Vector3.up, SpellFxBurstBody.Water, null, 0.12f); }
+
+        /// <summary>Round 2: like <see cref="PickHash"/> but only from the hashes whose bloom period is the LONGEST (h3 in 0.3 .. 0.4: 1.23 - 1.34 s). A cell is drawn as two layers half a period apart, so
+        /// a cell's pattern pulses at 2 / period: 1.5 - 1.6 Hz here, 2.1 Hz with the short periods the fan picks (a block of many cells averages that out; a lone small cell flickers).</summary>
+        public static float PickHashSlow(System.Random rng, float phase)
+        {
+            var near = new List<float>();
+            float best = float.MaxValue, bh = 0.1f;
+            foreach (var t in HashTable)
+            {
+                float h3 = Frac(t.x * 13.7f + 0.11f);
+                if (h3 < 0.3f) continue;
+                float d = Mathf.Abs(t.y - phase); d = Mathf.Min(d, 1f - d);
+                if (d < best) { best = d; bh = t.x; }
+                if (d < 0.05f) near.Add(t.x);
+            }
+            return near.Count > 0 ? near[rng.Next(near.Count)] : bh;
+        }
+
+        /// <summary>Round 2: a pattern slot from <see cref="PatChoices"/> other than <paramref name="exclude"/> (-1 = none): the wood atlas' slot 2 is the lotus, whose fill is a solid pale plate at a small
+        /// cell (judged as "a white opaque plate").</summary>
+        public static int PickPat(System.Random rng, int exclude)
+        {
+            for (int tries = 0; tries < 12; tries++) { int p = PatChoices[rng.Next(PatChoices.Length)]; if (p != exclude) return p; }
+            return PatChoices[0] == exclude ? PatChoices[1] : PatChoices[0];
+        }
     }
 }

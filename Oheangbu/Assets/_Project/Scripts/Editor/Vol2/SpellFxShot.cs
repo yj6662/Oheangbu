@@ -18,13 +18,19 @@ namespace Oheangbu.EditorTools.Vol2
 {
     /// <summary>D308-153 (SPEC-SPELL-FX-RESTART-308 section 4): the new one-cast capture of the restart plumbing. Queue (editor idle, then Play):
     ///   python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.SpellFxShotCommands Run "shot:play"       the spell lab in Play with a Vol2 scope (no lab run)
-    ///   ... "shot:run:&lt;letter&gt;:&lt;variant[,variant..]&gt;[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1][:shots=N (look-only lab shots flying in, 0 - 8)]"
+    ///   ... "shot:run:&lt;letter&gt;:&lt;variant[,variant..]&gt;[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1][:shots=N (look-only lab shots flying in, 0 - 8)]
+    ///       [:extra=N (0 - 4 more bodies)][:view=shoulder|side][:fake=1][:walk=&lt;start s&gt;[,&lt;m/s&gt;][,toward|away|left|right|&lt;deg&gt;][,&lt;max m&gt;]]"
     ///   ... "shot:status"      ... "shot:stop"
     /// A shot = the real letter raised on the real channel in the lab, seen through a copy of the main camera at the shoulder pose (pivot 1.7 m above the caster, local offset
     /// (0.7, 0.55, -2.8), FOV 60), Time.captureFramerate = 60 (one game frame = 1/60 s). Frames go to Art/SpellVFX308/Restart/shots/&lt;letter&gt;_&lt;variant&gt;/f_00000.jpg
-    /// (1280x720) + index.csv (frame,clockUs,ageSec,launchAgeSec,hits,players,note; ages on the SCOPE clock, from the commit / from the launch) + summary.txt. A comma list of
+    /// (1280x720) + index.csv (frame,clockUs,ageSec,launchAgeSec,hits,players,note; ages on the SCOPE clock, from the commit / from the launch; then the body columns
+    /// contacts,bearX,bearY,bearZ,bearAlong,bearRight,bearDist,bearWalked,bearPose,bearsAlongRight - see BearCols) + summary.txt. A comma list of
     /// variants is shot one after the other in the same Play. Afterwards everything is put back and Play is left (stay=1 keeps it). Never opens a dialog, never saves a scene,
-    /// never calls the old Vol2VfxCapture.</summary>
+    /// never calls the old Vol2VfxCapture.
+    /// walk= (2026-10-30, PLAN-308-MEMBRANE section 5.5, lane F): the lab bodies stand still (brain, agent and every game script are off); with walk= every body walks from
+    /// the cast age &lt;start s&gt; (the ageSec column, scope clock from the commit) - toward the caster by default, 1.2 m/s, at most 3 m, never closer than 1 m to the caster -
+    /// by moving its transform (what the rules read: Vol2EnemyTarget.Position / Previous, refreshed every Coordinator.Tick). Lab only, no rule is touched. The prefab's own
+    /// EnemyRigMotion298 is switched on for such a job (Idle, then Walk by the travel speed; Run above its threshold) - without it the body would slide.</summary>
     public static class SpellFxShotCommands
     {
         public static string Run(string command)
@@ -37,7 +43,7 @@ namespace Oheangbu.EditorTools.Vol2
                 if (c == "status") return SpellFxShot.Status();
                 if (c == "stop") return SpellFxShot.Stop("stop command");
                 if (c.StartsWith("run:", StringComparison.Ordinal)) return SpellFxShot.Enqueue(c.Substring(4));
-                return "REFUSED shot: play | run:<letter>:<variant[,variant]>[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1] | status | stop";
+                return "REFUSED shot: play | run:<letter>:<variant[,variant]>[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1][:extra=N][:view=side][:fake=1][:walk=<start s>[,<m/s>][,toward|away|left|right|<deg>][,<max m>]] | status | stop";
             }
             catch (Exception e) { return "REFUSED shot:" + c + ": " + e.GetType().Name + " " + e.Message; }
         }
@@ -60,7 +66,24 @@ namespace Oheangbu.EditorTools.Vol2
             public int Frames = 180, Shots, Extra; public bool Fake;
             public string Back = "red";
             public bool MainLook, Swing, Stay;
+            // walk= (lane F): the bodies walk from cast age WalkAt (s) at WalkSpeed (m/s) along WalkDir, at most WalkMax metres each
+            public bool Walk; public float WalkAt, WalkSpeed = WalkSpeedDefault, WalkMax = WalkMaxDefault, WalkDeg; public WalkDir Dir = WalkDir.Toward;
             public string Name => Letter + "_" + Variant;
+            /// <summary>One copy per variant (a field added above is carried along without touching Enqueue).</summary>
+            public Job ForVariant(string variant) { var c = (Job)MemberwiseClone(); c.Variant = variant; return c; }
+        }
+
+        enum WalkDir { Toward, Away, Left, Right, Degrees }
+
+        // walk= constants: the default speed, the hard cap of one walk, and how close to the caster a walking body may come (centre to centre, flat)
+        const float WalkSpeedDefault = 1.2f, WalkMaxDefault = 3f, WalkStopNear = 1.0f;
+
+        /// <summary>One lab body and (when walk= is on) its walk. Start and WalkedVec let the summary tell what the script moved from what the rules moved (the earth push).</summary>
+        sealed class Walker
+        {
+            public GameObject Go; public EnemyVitals Vitals; public Oheangbu.App.World.EnemyRigMotion298 Rig;
+            public Vector3 Start, WalkedVec, Dir;
+            public float Walked; public bool Began, Done;
         }
 
         enum St { Idle, WaitScope, Next, Setup, Settle, Record, Teardown }
@@ -88,6 +111,13 @@ namespace Oheangbu.EditorTools.Vol2
         static Oheangbu.App.World.LookDriver308 _lookDriver; static Oheangbu.Data.World.LookProfile308 _lookSaved; static bool _lookSwapped;
         static Vol2CastLog _beganLog; static Action<Vol2CastLog> _onBegan; static Action<Vol2CastDecision> _onDecided; static Vol2CastDecision _decision;
         static int _spawnedBefore; static long _launchUs;
+        // the bodies of the current job (always filled, walk= or not: the index.csv body columns also show the earth push), and the cast frame they are measured in
+        static readonly List<Walker> Walkers = new List<Walker>();
+        static Vector3 _origin, _fwd = Vector3.forward, _right = Vector3.right;
+        static long _fakeStartUs;
+        static double _firstContactAge, _firstPaidAge; static float _firstContactDist, _firstPaidDist; static string _firstContactNote = "";
+        static int _notesSeen;
+        static readonly List<string> NoteLog = new List<string>(), PoseOrder = new List<string>();
 
         public static string OutRoot => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/SpellVFX308/Restart/shots"));
 
@@ -142,12 +172,13 @@ namespace Oheangbu.EditorTools.Vol2
                     case "view": if (v != "side" && v != "shoulder") return "REFUSED shot:run: view=" + v + " (shoulder | side)"; proto.Side3 = v == "side" ? 7f : 0f; break;
                     case "fake": proto.Fake = v == "1"; break;                    case "extra": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Extra) || proto.Extra < 0 || proto.Extra > 4) return "REFUSED shot:run: extra=" + v + " (0 - 4)"; break;
                     case "shots": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Shots) || proto.Shots < 0 || proto.Shots > 8) return "REFUSED shot:run: shots=" + v + " (0 - 8)"; break;
+                    case "walk": { string bad = ParseWalk(v, proto); if (bad != null) return "REFUSED shot:run: walk=" + v + " (" + bad + ")"; break; }
                     default: return "REFUSED shot:run: unknown option " + k;
                 }
             }
             Queue.Clear(); Finished.Clear(); Problems.Clear(); SavedVariants.Clear();
             foreach (string variant in t[1].Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).Distinct())
-                Queue.Enqueue(new Job { Letter = proto.Letter, Variant = variant, Ahead = proto.Ahead, Side = proto.Side, Pitch = proto.Pitch, Frames = proto.Frames, Back = proto.Back, MainLook = proto.MainLook, Swing = proto.Swing, Stay = proto.Stay, Shots = proto.Shots, Extra = proto.Extra, Side3 = proto.Side3, Fake = proto.Fake });
+                Queue.Enqueue(proto.ForVariant(variant));
             _total = Queue.Count; _done = 0; _stay = proto.Stay;
             _runId = DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv);
             Directory.CreateDirectory(OutRoot);
@@ -156,7 +187,32 @@ namespace Oheangbu.EditorTools.Vol2
             EditorApplication.update += Tick;
             EditorApplication.playModeStateChanged += OnPlayMode;
             AssemblyReloadEvents.beforeAssemblyReload += OnReload;
-            return "queued " + _total + " shot(s) " + proto.Letter + ":" + t[1] + " | " + OutRoot;
+            return "queued " + _total + " shot(s) " + proto.Letter + ":" + t[1] + (proto.Walk ? " | walk from age " + proto.WalkAt.ToString("0.##", Inv) + " s at " + proto.WalkSpeed.ToString("0.##", Inv) + " m/s " + proto.Dir + (proto.Dir == WalkDir.Degrees ? " " + proto.WalkDeg.ToString("0.#", Inv) : "") + " max " + proto.WalkMax.ToString("0.##", Inv) + " m" : "") + " | " + OutRoot;
+        }
+
+        /// <summary>walk=&lt;start s&gt;[,&lt;m/s 0.1 - 4&gt;][,toward|away|left|right|&lt;degrees&gt;][,&lt;max metres 0.1 - 3&gt;]. Returns null when fine, else what is wrong.
+        /// toward / away: along the line to / from the caster (each body its own); left / right: the caster's own sides; a number: a heading in degrees from the caster's forward
+        /// (0 = along the cast, 90 = to the caster's right, 180 = back toward the caster for a body that stands ahead). Empty slots keep their default.</summary>
+        static string ParseWalk(string v, Job job)
+        {
+            var w = v.Split(',');
+            if (w.Length > 4) return "at most four values";
+            if (!float.TryParse(w[0].Trim(), NumberStyles.Float, Inv, out float at) || at < 0f || at > 120f) return "start second 0 - 120";
+            float speed = WalkSpeedDefault, max = WalkMaxDefault, deg = 0f; var dir = WalkDir.Toward;
+            if (w.Length > 1 && w[1].Trim().Length > 0 && (!float.TryParse(w[1].Trim(), NumberStyles.Float, Inv, out speed) || speed < 0.1f || speed > 4f)) return "speed 0.1 - 4 m/s";
+            if (w.Length > 2 && w[2].Trim().Length > 0)
+            {
+                string d = w[2].Trim().ToLowerInvariant();
+                if (d == "toward" || d == "in") dir = WalkDir.Toward;
+                else if (d == "away" || d == "out") dir = WalkDir.Away;
+                else if (d == "left") dir = WalkDir.Left;
+                else if (d == "right") dir = WalkDir.Right;
+                else if (float.TryParse(d, NumberStyles.Float, Inv, out deg)) dir = WalkDir.Degrees;
+                else return "direction toward | away | left | right | degrees";
+            }
+            if (w.Length > 3 && w[3].Trim().Length > 0 && (!float.TryParse(w[3].Trim(), NumberStyles.Float, Inv, out max) || max < 0.1f || max > WalkMaxDefault)) return "max distance 0.1 - 3 m";
+            job.Walk = true; job.WalkAt = at; job.WalkSpeed = speed; job.Dir = dir; job.WalkDeg = deg; job.WalkMax = max;
+            return null;
         }
 
         public static string Status()
@@ -249,6 +305,9 @@ namespace Oheangbu.EditorTools.Vol2
             if (posts != null && posts.activeSelf) { posts.SetActive(false); Hidden.Add(posts); }
             Vector3 origin = _shapes.Caster.Position, fwd = FlatUnit(_shapes.Caster.AimDirection);
             Vector3 right = Vector3.Cross(Vector3.up, fwd);
+            _origin = origin; _fwd = fwd; _right = right;
+            Walkers.Clear(); NoteLog.Clear(); PoseOrder.Clear(); _notesSeen = 0;
+            _firstContactAge = _firstPaidAge = -1.0; _firstContactDist = _firstPaidDist = 0f; _firstContactNote = "";
             // the real ground look (the realm's own soil material on a flat quad) and a real enemy prefab as the body; never saved into a scene, destroyed at teardown
             if (j.Back != "none")
             {
@@ -297,6 +356,8 @@ namespace Oheangbu.EditorTools.Vol2
             }
             reg.AddExtra(vitals);
             Dummies.Add(go);
+            // the body is also a Walker: its start is kept for the index.csv body columns / summary; walk= switches the prefab's rig on so the walk is not a slide
+            Walkers.Add(new Walker { Go = go, Vitals = vitals, Start = go.transform.position, Rig = j.Walk && enemyPrefab != null ? EnableRig(go, e == 0) : null });
             }
             Physics.SyncTransforms();
             // look=main: the main world's look profile on the lab's LookDriver308 for this run (runtime only, put back at teardown)
@@ -311,7 +372,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (Directory.Exists(_folder)) foreach (var f in Directory.GetFiles(_folder)) File.Delete(f);
             Directory.CreateDirectory(_folder);
             _index = new StreamWriter(Path.Combine(_folder, "index.csv"), false, new UTF8Encoding(false));
-            _index.WriteLine("frame,clockUs,ageSec,launchAgeSec,hits,players,note");
+            _index.WriteLine("frame,clockUs,ageSec,launchAgeSec,hits,players,note," + BearHeader);
             _frames = 0; _hits = 0; _beganLog = null; _decision = null; _launchUs = 0;
             _guardUntil = EditorApplication.timeSinceStartup + 60.0 + j.Frames * 0.5;
             _settle = 5; _st = St.Settle;          // the previous shot's last frames die out before the letter
@@ -362,6 +423,7 @@ namespace Oheangbu.EditorTools.Vol2
             var prefab = cat != null ? cat.Find(j.Letter, j.Variant) : null;
             if (prefab == null) return false;
             long now = _coord.Services.Clock.NowUs;
+            _fakeStartUs = now;
             _fakeOrigin = _shapes.Caster.Position; _fakeFwd = FlatUnit(_shapes.Caster.AimDirection);
             var cast = new SpellFxCast { CastId = -7, Letter = j.Letter, Variant = j.Variant, Origin = _fakeOrigin, Forward = _fakeFwd, Right = Vector3.Cross(Vector3.up, _fakeFwd), StartUs = now, LaunchUs = now + 300000, Clock = _coord.Services.Clock };
             _fakeGo = Object.Instantiate(prefab);
@@ -380,20 +442,177 @@ namespace Oheangbu.EditorTools.Vol2
             if (_fakePlayer != null)
             {
                 _fakePlayer.Tick(now);
+                StepWalkers((now - _fakeStartUs) / 1000000.0);
                 Shoot(_fakeOrigin, Quaternion.LookRotation(_fakeFwd, Vector3.up).eulerAngles.y, j.Pitch, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"));
-                _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), "0", ((now - _launchUs) / 1000000.0).ToString("0.0000", Inv), "0", "1", "FAKE"));
+                _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), "0", ((now - _launchUs) / 1000000.0).ToString("0.0000", Inv), "0", "1", "FAKE") + "," + string.Join(",", BearCols()));
                 _frames++;
                 if (_frames >= j.Frames || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
                 return;
             }
             var player = _director.PlayerOf(_beganLog.Cast.Value);
             double age = (now - _beganLog.StartUs) / 1000000.0, launchAge = (now - _launchUs) / 1000000.0;
+            StepWalkers(age);      // the bodies move first: this frame's picture, the rules' next Coordinator.Tick and the row below all see the new place
             _hits = _beganLog.Contacts.Count(c => c.BudgetAccepted);
+            WatchRules(age);
             string note = player != null ? "fx " + player.name : "no fx";
             Shoot(_beganLog.Spec.Origin, Quaternion.LookRotation(_beganLog.Spec.Forward, Vector3.up).eulerAngles.y, j.Pitch, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"));
-            _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), age.ToString("0.0000", Inv), launchAge.ToString("0.0000", Inv), _hits.ToString(Inv), _director.ActiveCount.ToString(Inv), note.Replace(',', ';')));
+            _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), age.ToString("0.0000", Inv), launchAge.ToString("0.0000", Inv), _hits.ToString(Inv), _director.ActiveCount.ToString(Inv), note.Replace(',', ';')) + "," + string.Join(",", BearCols()));
             _frames++;
             if (_frames >= j.Frames || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------------------------------------
+        // the bodies: walk= and the index.csv body columns
+        // ------------------------------------------------------------------------------------------------------------------------------------------------
+
+        const string BearHeader = "contacts,bearX,bearY,bearZ,bearAlong,bearRight,bearDist,bearWalked,bearPose,bearsAlongRight";
+
+        static string F(float v) => v.ToString("0.000", Inv);
+        static Vector3 Flat(Vector3 v) { v.y = 0f; return v; }
+
+        /// <summary>The prefab's own EnemyRigMotion298 on for a walk= job (Setup switched every game script off): Idle while the body stands, Walk by the travel speed
+        /// (the rig reads the transform's travel per LateUpdate), Run above its threshold. Null with a note when the body has none / it is not filled in: then it slides.</summary>
+        static Oheangbu.App.World.EnemyRigMotion298 EnableRig(GameObject go, bool report)
+        {
+            try
+            {
+                var rig = go.GetComponentInChildren<Oheangbu.App.World.EnemyRigMotion298>(true);
+                if (rig == null) { if (report) Problems.Add("NOTE walk=: the body has no EnemyRigMotion298 - it slides without a walk animation"); return null; }
+                if (!rig.IsConfigured) { if (report) Problems.Add("NOTE walk=: its EnemyRigMotion298 is not filled in (a clip or reference missing) - it slides without a walk animation"); return null; }
+                rig.enabled = true;
+                return rig;
+            }
+            catch (Exception e) { if (report) Problems.Add("NOTE walk=: switching the rig on failed (" + e.GetType().Name + " " + e.Message + ") - it slides"); return null; }
+        }
+
+        static Vector3 WalkHeading(Job j, Vector3 pos)
+        {
+            Vector3 toCaster = Flat(_origin - pos);
+            bool have = toCaster.sqrMagnitude > 1e-6f;
+            switch (j.Dir)
+            {
+                case WalkDir.Toward: return have ? toCaster.normalized : Vector3.zero;
+                case WalkDir.Away: return have ? -toCaster.normalized : Vector3.zero;
+                case WalkDir.Left: return -_right;
+                case WalkDir.Right: return _right;
+                default: return Quaternion.AngleAxis(j.WalkDeg, Vector3.up) * _fwd;
+            }
+        }
+
+        /// <summary>walk=: from cast age WalkAt every body walks by moving its root transform a little each game frame (added to whatever else moved it - the earth push is the
+        /// same kind of transform step - never set from a stored path). The rules read exactly this transform (Vol2EnemyTarget.Position / Previous on every Coordinator.Tick).
+        /// Stops at the job's max distance, when the next step would end closer than WalkStopNear to the caster, or when the body dies. The heading is fixed when its walk begins.</summary>
+        static void StepWalkers(double age)
+        {
+            var j = _job;
+            if (j != null && j.Walk && age >= j.WalkAt)
+            {
+                float dt = Time.deltaTime; if (!(dt > 0f) || dt > 0.1f) dt = 1f / 60f;
+                bool moved = false;
+                foreach (var w in Walkers)
+                {
+                    if (w.Go == null || w.Done) continue;
+                    if (w.Vitals != null && !w.Vitals.IsAlive) { w.Done = true; continue; }
+                    Transform tr = w.Go.transform;
+                    Vector3 pos = tr.position;
+                    if (!w.Began)
+                    {
+                        w.Began = true;
+                        w.Dir = WalkHeading(j, pos);
+                        if (w.Dir.sqrMagnitude < 1e-6f) { w.Done = true; continue; }
+                    }
+                    float step = Mathf.Min(j.WalkSpeed * dt, j.WalkMax - w.Walked);
+                    if (step <= 1e-5f) { w.Done = true; continue; }
+                    Vector3 next = pos + w.Dir * step;
+                    float dNow = Flat(pos - _origin).magnitude, dNext = Flat(next - _origin).magnitude;
+                    if (dNext < WalkStopNear && dNext < dNow) { w.Done = true; continue; }
+                    tr.position = next;
+                    tr.rotation = Quaternion.RotateTowards(tr.rotation, Quaternion.LookRotation(w.Dir, Vector3.up), 540f * dt);
+                    w.Walked += step; w.WalkedVec += w.Dir * step; moved = true;
+                    if (w.Walked >= j.WalkMax - 1e-4f) w.Done = true;
+                }
+                if (moved) Physics.SyncTransforms();      // colliders follow now (the hold-cell surface code and any physics query read them)
+            }
+            var w0 = Walkers.Count > 0 ? Walkers[0] : null;
+            if (w0 != null && w0.Rig != null && w0.Rig.enabled) { string p = w0.Rig.CurrentPose; if (!string.IsNullOrEmpty(p) && !PoseOrder.Contains(p)) PoseOrder.Add(p); }
+        }
+
+        /// <summary>What the rules did, as the first body saw it: the cast age and the first body's distance to the caster at the first contact (any, then the first paid one), and every
+        /// new line of the cast's Notes (Activate / ActivateRefused ... with the age) - the numbers that say the rules judged the walk.</summary>
+        static void WatchRules(double age)
+        {
+            var log = _beganLog;
+            if (log == null) return;
+            float dist0 = Walkers.Count > 0 && Walkers[0].Go != null ? Flat(Walkers[0].Go.transform.position - _origin).magnitude : 0f;
+            if (_firstContactAge < 0.0 && log.Contacts.Count > 0)
+            {
+                var c = log.Contacts[0];
+                _firstContactAge = age; _firstContactDist = dist0;
+                _firstContactNote = c.Kind + (c.BudgetAccepted ? " paid" : " refused " + c.BudgetReason) + " target " + c.TargetName;
+            }
+            if (_firstPaidAge < 0.0 && _hits > 0) { _firstPaidAge = age; _firstPaidDist = dist0; }
+            for (; _notesSeen < log.Notes.Count; _notesSeen++)
+            {
+                if (NoteLog.Count >= 12) continue;
+                string n = log.Notes[_notesSeen] ?? "";
+                NoteLog.Add(age.ToString("0.00", Inv) + " s " + (n.Length > 80 ? n.Substring(0, 80) : n));
+            }
+        }
+
+        /// <summary>The index.csv columns after "note": contacts (all of the cast log), the first body's world position and its place in the cast frame (along = metres ahead of the
+        /// caster, right = metres to the caster's right, dist = flat metres from the caster), bearWalked (metres the script walked it: the earth push is NOT in it, so
+        /// bearAlong minus the start minus the walk = the push), bearPose (rig pose, "-" without one), and every body as along|right joined by ';' (the first one first).</summary>
+        static string[] BearCols()
+        {
+            var c = new string[10];
+            c[0] = (_beganLog != null ? _beganLog.Contacts.Count : 0).ToString(Inv);
+            var w = Walkers.Count > 0 ? Walkers[0] : null;
+            if (w == null || w.Go == null) { for (int i = 1; i < c.Length; i++) c[i] = ""; return c; }
+            Vector3 p = w.Go.transform.position, d = Flat(p - _origin);
+            c[1] = F(p.x); c[2] = F(p.y); c[3] = F(p.z);
+            c[4] = F(Vector3.Dot(d, _fwd)); c[5] = F(Vector3.Dot(d, _right)); c[6] = F(d.magnitude); c[7] = F(w.Walked);
+            c[8] = w.Rig != null && w.Rig.enabled && !string.IsNullOrEmpty(w.Rig.CurrentPose) ? w.Rig.CurrentPose : "-";
+            var all = new StringBuilder();
+            for (int i = 0; i < Walkers.Count; i++)
+            {
+                if (i > 0) all.Append(';');
+                var o = Walkers[i];
+                if (o.Go == null) { all.Append("gone"); continue; }
+                Vector3 q = Flat(o.Go.transform.position - _origin);
+                all.Append(F(Vector3.Dot(q, _fwd))).Append('|').Append(F(Vector3.Dot(q, _right)));
+            }
+            c[9] = all.ToString();
+            return c;
+        }
+
+        /// <summary>The tail of summary.txt: where every body started and ended in the cast frame (along/right), how far the script walked it and how far something else moved it
+        /// ("other" = the earth push), the rig poses seen, and the rules' answer (first contact, first paid hit, the cast's Notes with ages).</summary>
+        static string BearSummary()
+        {
+            var j = _job;
+            if (j == null || Walkers.Count == 0) return "";
+            var sb = new StringBuilder(" | bodies " + Walkers.Count + " (along/right m from the caster):");
+            for (int i = 0; i < Walkers.Count; i++)
+            {
+                var w = Walkers[i];
+                if (w.Go == null) { sb.Append(" [" + i + " gone]"); continue; }
+                Vector3 s = Flat(w.Start - _origin), e = Flat(w.Go.transform.position - _origin);
+                Vector3 other = Flat((w.Go.transform.position - w.Start) - w.WalkedVec);
+                sb.Append(" [" + i + " " + F(Vector3.Dot(s, _fwd)) + "/" + F(Vector3.Dot(s, _right)) + " -> " + F(Vector3.Dot(e, _fwd)) + "/" + F(Vector3.Dot(e, _right))
+                    + " dist " + F(e.magnitude) + " walked " + F(w.Walked) + " other " + F(other.magnitude) + "]");
+            }
+            if (j.Walk)
+                sb.Append(" | walk age>=" + j.WalkAt.ToString("0.##", Inv) + " s " + j.WalkSpeed.ToString("0.##", Inv) + " m/s " + j.Dir + (j.Dir == WalkDir.Degrees ? " " + j.WalkDeg.ToString("0.#", Inv) : "") + " max " + j.WalkMax.ToString("0.##", Inv) + " m"
+                    + " | rig " + (Walkers[0].Rig != null ? "EnemyRigMotion298 poses " + string.Join(">", PoseOrder) : "none (slides)"));
+            if (_beganLog != null)
+            {
+                sb.Append(" | rules: ");
+                if (_firstContactAge >= 0.0) sb.Append("first contact age " + _firstContactAge.ToString("0.00", Inv) + " s with body 0 at " + F(_firstContactDist) + " m (" + _firstContactNote + ")");
+                else sb.Append("NO contact in the shot");
+                if (_firstPaidAge >= 0.0) sb.Append("; first paid hit age " + _firstPaidAge.ToString("0.00", Inv) + " s, body 0 at " + F(_firstPaidDist) + " m");
+                if (NoteLog.Count > 0) sb.Append("; notes [" + string.Join(" | ", NoteLog) + "]");
+            }
+            return sb.ToString();
         }
 
         static void Teardown()
@@ -406,6 +625,7 @@ namespace Oheangbu.EditorTools.Vol2
             string summary = j.Name + " | frames " + _frames + (_beganLog != null ? " | cast " + _beganLog.Status + " contacts " + _beganLog.Contacts.Count + " paid " + _beganLog.PaidContacts + " materials " + _beganLog.Materials.Count : " | NO CAST")
                 + " | director spawned " + _director.Spawned + " skipped " + _director.Skipped + " retired " + _director.Retired + " hits " + _director.HitsRelayed + " | " + _director.LastNote
                 + (player != null ? " | player begin " + player.BeginCount + " launch " + player.LaunchCount + " ticks " + player.TickCount + " hit " + player.HitCount + " material " + player.MaterialCount + " reaction " + player.ReactionCount + " end " + player.EndCount : " | player gone");
+            summary += BearSummary();
             Finished.Add(summary);
             try { File.WriteAllText(Path.Combine(_folder, "summary.txt"), summary, new UTF8Encoding(false)); } catch (Exception) { }
             RestoreStage();
@@ -436,7 +656,7 @@ namespace Oheangbu.EditorTools.Vol2
                 }
             }
             catch (Exception) { }
-            Dummies.Clear();
+            Dummies.Clear(); Walkers.Clear();
             foreach (var s in LabShots) if (s != null) Object.DestroyImmediate(s);
             LabShots.Clear();
             _stagedScope = false;

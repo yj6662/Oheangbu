@@ -5,6 +5,7 @@
 // Round 2 (Fable r1 51/100): pale sky-glass instead of the muddy tint, white line patterns clipped to a circle in the cell, the far side's lines faint (no double outline),
 // a clean height wipe (up from the ground, gone from the top down), nothing below the ground, a bright base ring, the cells round the struck body flash.
 // Two passes: back faces (SRPDefaultUnlit, first) then front faces (UniversalForward). Transparent queue, no depth write, no depth passes (route P r2). May glow (D308-150 V11).
+// 2026-10-30 (lane E, PLAN-308 4.2): four knobs for the standing-cell glyphs, every default = the dome as it was - _BaseRingK 1, _HitCells[4] / _HitAges (4 extra struck-cell slots, legacy slot untouched), vertex alpha via _VertexAlpha 0, _SilMin 0.25.
 Shader "Oheangbu/SpellFx/HexDome"
 {
     Properties
@@ -43,6 +44,9 @@ Shader "Oheangbu/SpellFx/HexDome"
         _FacingPattern ("Near wall facing the camera: pattern strength", Range(0, 1)) = 0.1
         _FacingBorder ("Near wall facing the camera: border strength", Range(0, 1)) = 0.15
         _BackGlass ("Far side: glass strength", Range(0, 1)) = 0.3
+        _BaseRingK ("Base ring (the foot light) strength: 1 = the dome, 0 = none", Range(0, 1)) = 1
+        _SilMin ("Fill floor face-on: sil = lerp(this, 1, rim term)", Range(0, 1)) = 0.25
+        _VertexAlpha ("Use the mesh's vertex colour alpha as a per-cell alpha: 0 = ignore, 1 = multiply", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -55,7 +59,7 @@ Shader "Oheangbu/SpellFx/HexDome"
         CBUFFER_START(UnityPerMaterial)
             float4 _Patterns_ST;
             half4 _Glass, _Rim, _Line, _Pattern, _BaseRing, _Halo, _HitCol, _LineInk, _Accent, _ImpCol;
-            float _SeamPx, _SeamA, _HaloA, _CoreA, _CorePxMin, _CorePxMax, _HaloPx, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost;
+            float _SeamPx, _SeamA, _HaloA, _CoreA, _CorePxMin, _CorePxMax, _HaloPx, _EdgeW, _PatternScale, _Age, _Fade, _RiseTime, _HitAge, _BackLine, _BackGlass, _PatternFrom, _FacingFrom, _FacingPattern, _FacingBorder, _BloomSpread, _BloomBoost, _BaseRingK, _SilMin, _VertexAlpha;
             float4 _HitPos, _HitCell;
         CBUFFER_END
 
@@ -63,6 +67,10 @@ Shader "Oheangbu/SpellFx/HexDome"
         // SetVectorArray, so they live outside the per-material buffer.
         float4 _ImpPos[4];
         float4 _ImpAge;
+        // 2026-10-30 (lane E): four more struck-cell slots beside _HitCell / _HitAge - the cell's world centre (w = 1 when set) and seconds since its hit. Set like _ImpPos / _ImpAge
+        // (SetVectorArray + SetVector). A slot is live only when w > 0.5 and its age >= 0: an unset array reads 0, which must never look like "hit just now".
+        float4 _HitCells[4];
+        float4 _HitAges;
 
         float Hash21(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
         float VNoise(float2 p)
@@ -71,8 +79,8 @@ Shader "Oheangbu/SpellFx/HexDome"
             return lerp(lerp(Hash21(i), Hash21(i + float2(1, 0)), f.x), lerp(Hash21(i + float2(0, 1)), Hash21(i + float2(1, 1)), f.x), f.y);
         }
 
-        struct Attributes { float4 pos : POSITION; float3 nrm : NORMAL; float2 uv0 : TEXCOORD0; float2 uv1 : TEXCOORD1; float2 uv2 : TEXCOORD2; float3 ctr : TEXCOORD3; };
-        struct Varyings { float4 pos : SV_POSITION; float3 nrmWS : TEXCOORD0; float3 posWS : TEXCOORD1; float2 uv0 : TEXCOORD2; float2 uv1 : TEXCOORD3; float2 uv2 : TEXCOORD4; float yOS : TEXCOORD5; float3 ctrWS : TEXCOORD6; };
+        struct Attributes { float4 pos : POSITION; float3 nrm : NORMAL; float2 uv0 : TEXCOORD0; float2 uv1 : TEXCOORD1; float2 uv2 : TEXCOORD2; float3 ctr : TEXCOORD3; float4 col : COLOR; };
+        struct Varyings { float4 pos : SV_POSITION; float3 nrmWS : TEXCOORD0; float3 posWS : TEXCOORD1; float2 uv0 : TEXCOORD2; float2 uv1 : TEXCOORD3; float2 uv2 : TEXCOORD4; float yOS : TEXCOORD5; float3 ctrWS : TEXCOORD6; float vA : TEXCOORD7; };
 
         Varyings Vert(Attributes i)
         {
@@ -81,6 +89,9 @@ Shader "Oheangbu/SpellFx/HexDome"
             o.pos = TransformWorldToHClip(o.posWS);
             o.nrmWS = TransformObjectToWorldNormal(i.nrm);
             o.uv0 = i.uv0; o.uv1 = i.uv1; o.uv2 = i.uv2; o.yOS = i.pos.y; o.ctrWS = TransformObjectToWorld(i.ctr);
+            // 2026-10-30 (lane E): a per-cell alpha from the mesh's vertex colour, ONLY when the material asks (_VertexAlpha = 1): the dome mesh carries no colour stream and what a missing
+            //      stream reads as is a driver / platform detail, so the default (0) never touches it - the result is exactly 1.
+            o.vA = lerp(1.0, i.col.a, _VertexAlpha);
             return o;
         }
 
@@ -138,6 +149,30 @@ Shader "Oheangbu/SpellFx/HexDome"
                 quietNear = smoothstep(2.4, 1.6, dCell) * (1 - cellHit) * saturate(1 - _HitAge / 0.6);     // the neighbours do not bloom for 0.6 s (the struck cell reads alone)
                 speck = smoothstep(0.32, 0.12, dist) * saturate(1 - _HitAge / 0.12) * smoothstep(0.74, 0.8, VNoise(i.posWS.xy * 16.0 + i.posWS.z * 11.0));     // round 15: 2 - 4 clear ink dots, not a smear     // round 13 / 14: a short INK speck at the contact (dark, not a light)
             }
+            // ---- 2026-10-30 (lane E): four more struck-cell slots. Each answers exactly as the legacy slot's cell does (same formulas, its own age) and the strongest wins (max); only the cell-local
+            //      terms are repeated - the ripple, touch and speck stay on the legacy slot (_HitPos). All four idle (w < 0.5 or age < 0) -> every X term below is 0 and nothing above or below changes. ----
+            float cellHitX = 0, seamFlashX = 0, spillX = 0, quietX = 0, hitBloomX = 0, hitFlashX = 0, accentX = 0, memFlashX = 0, hitLiveX = 0, effectX = 0, coreX = 0;
+            [unroll] for (int hs = 0; hs < 4; hs++)
+            {
+                float ha = _HitAges[hs];
+                float4 hc = _HitCells[hs];
+                if (ha < 0 || hc.w < 0.5) continue;
+                float hDist = distance(i.ctrWS, hc.xyz);
+                float hk = step(hDist, 0.05);
+                cellHitX = max(cellHitX, hk);
+                seamFlashX = max(seamFlashX, hk * exp(-ha * 18.0) * 5.0);
+                spillX = max(spillX, exp(-max(distance(i.posWS, hc.xyz) - 0.45, 0) / 0.3) * exp(-ha * 22.0));
+                quietX = max(quietX, smoothstep(2.4, 1.6, hDist) * saturate(1 - ha / 0.6));
+                hitBloomX = max(hitBloomX, hk * smoothstep(0.03, 0.07, ha) * (1 - saturate((ha - 0.45) / 0.35)));
+                hitFlashX = max(hitFlashX, hk * exp(-max(ha - 0.03, 0) * 4.0) * step(0.03, ha) * 1.6);
+                accentX = max(accentX, hk * saturate(1 - max(ha - 0.05, 0) / 0.2));
+                memFlashX = max(memFlashX, hk * exp(-ha * 11.0) * lerp(0.45, 1.0, edge));
+                hitLiveX = max(hitLiveX, hk * exp(-ha * 9.0) * (1 + 0.8 * saturate(1 - ha / 0.05)));
+                effectX = max(effectX, hk * exp(-ha * 4.0));
+                coreX = max(coreX, hk * exp(-ha * 14.0) * smoothstep(0.6, 0.0, edge));
+            }
+            seamFlash = max(seamFlash, seamFlashX); spill = max(spill, spillX);
+            quietNear = max(quietNear, quietX * (1 - cellHitX));        // the extra struck cells themselves are not quieted by their own neighbourhood
             float boost = 1 + touch * 1.0;
             // ---- layers ----
             float3 n = normalize(i.nrmWS) * side;
@@ -159,7 +194,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             line_ *= smoothstep(_PatternFrom, _PatternFrom + 0.2, height);        // hx_1: the low ring of cells is plain glass (the caster inside stays clear), patterns from the shoulder up
 
             float front_ = outline * (1 - outline) * 4 * (1 - gone);                   // round 7: the rising front glows (no bare-wire moment while the glass comes)
-            float sil = lerp(0.25, 1, pow(1 - saturate(abs(dot(n, v))), 1.5));    // round 7: almost clear face-on (no flat blue sheet over the caster), tinted toward the silhouette
+            float sil = lerp(_SilMin, 1, pow(1 - saturate(abs(dot(n, v))), 1.5));    // 2026-10-30: the floor 0.25 is the material's _SilMin now (default 0.25)     // round 7: almost clear face-on (no flat blue sheet over the caster), tinted toward the silhouette
             float3 col = _Glass.rgb * (1 + touch * 2.5); float a = _Glass.a * fill * glassK * sil + front_ * 0.18 * glassK;     // round 11: the struck glass brightens, never a darker disc
             float rimK = front ? 1 : 0.3;                                        // round 6: the far side's rim stays faint (it read as a hazy band across the caster)
             col = lerp(col, _Rim.rgb, fres * rimK); a = max(a, _Rim.a * fres * fill * glassK * rimK);
@@ -180,8 +215,8 @@ Shader "Oheangbu/SpellFx/HexDome"
             float behind = (tb > 0 && tb < 1) ? smoothstep(0.55, 0.95, length(camP + ray * tb - bodyP)) : 1;
             float noNew = (1 - saturate(_Fade * 2.5)) * smoothstep(0.2, 0.35, abs(dot(n, v)));    // round 8: no bloom where the two walls overlap near the silhouette                             // no fresh bloom while the dome goes
             bloomVis *= noNew * behind * (1 - quietNear); flash *= noNew * behind * (1 - quietNear);
-            float hitBloom = cellHit * smoothstep(0.03, 0.07, _HitAge) * (1 - saturate((_HitAge - 0.45) / 0.35));
-            bloomVis = max(bloomVis, hitBloom); flash = max(flash, cellHit * exp(-max(_HitAge - 0.03, 0) * 4.0) * step(0.03, _HitAge) * 1.6);
+            float hitBloom = max(cellHit * smoothstep(0.03, 0.07, _HitAge) * (1 - saturate((_HitAge - 0.45) / 0.35)), hitBloomX);
+            bloomVis = max(bloomVis, hitBloom); flash = max(flash, max(cellHit * exp(-max(_HitAge - 0.03, 0) * 4.0) * step(0.03, _HitAge) * 1.6, hitFlashX));
             // round 9 (Fable r8: clean white gradients - a CG glass shell): ink density - lines and patterns carry a world-space ink grain
             // round 10 (Fable r9: the grain did not read at 1280): stronger density swings, and the line width breathes with it
             float inkLo = VNoise(float2(i.posWS.x + i.posWS.y * 0.7, i.posWS.z - i.posWS.y * 0.5) * 4.0);
@@ -191,11 +226,11 @@ Shader "Oheangbu/SpellFx/HexDome"
             float pa = _Pattern.a * line_ * fill * flick * bloomK * bloomVis;
             pa = saturate(pa + line_ * fill * flash * 0.5 * lineK);
             pa *= saturate(ink);
-            float accentK = cellHit * saturate(1 - max(_HitAge - 0.05, 0) / 0.2) * step(0, _HitAge);
+            float accentK = max(cellHit * saturate(1 - max(_HitAge - 0.05, 0) / 0.2) * step(0, _HitAge), accentX);
             float3 patCol = lerp(_Pattern.rgb * (boost + flash * _BloomBoost * lineK), _Accent.rgb * 1.6, accentK);      // round 17: the struck cell blooms in the one accent colour first
             col = lerp(col, patCol, saturate(pa / max(a + pa, 1e-3)));     // round 9: the far wall's flash is capped like its lines
             // round 21 (Fable r20: the hit read as an outline, not light): the struck cell's whole membrane flashes - pale light, brighter toward its seams, 6 frames
-            float memFlash = cellHit * exp(-_HitAge * 11.0) * step(0, _HitAge) * lerp(0.45, 1.0, edge);
+            float memFlash = max(cellHit * exp(-_HitAge * 11.0) * step(0, _HitAge) * lerp(0.45, 1.0, edge), memFlashX);
             col = lerp(col, float3(1.35, 1.45, 1.5), saturate(memFlash * 0.7)); a = max(a, memFlash * 0.42 * fill);
 
             a = a + pa * (1 - a);
@@ -207,7 +242,7 @@ Shader "Oheangbu/SpellFx/HexDome"
             ba = max(ba, border * outline * saturate(seamFlash));
             // round 17b (Fable r17: HDR never reached the frame - the lab look tone-maps it): the glow is DRAWN - a soft accent band inside the struck cell's six seams
             // round 19 (Fable r18: a flat colour panel - a selection highlight): a band inside the seams only, white at the seam, the accent fading toward the centre
-            float hitLive = cellHit * exp(-_HitAge * 9.0) * step(0, _HitAge) * (1 + 0.8 * saturate(1 - _HitAge / 0.05));     // round 20: a stronger first 3 frames
+            float hitLive = max(cellHit * exp(-_HitAge * 9.0) * step(0, _HitAge) * (1 + 0.8 * saturate(1 - _HitAge / 0.05)), hitLiveX);     // round 20: a stronger first 3 frames
             float band = smoothstep(0.72, 0.97, edge);
             float3 bandCol = lerp(_Accent.rgb, float3(1.6, 1.62, 1.66), smoothstep(0.88, 0.99, edge));
             col = lerp(col, bandCol, saturate(band * hitLive * 0.9)); a = max(a, band * hitLive * 0.6 * outline);
@@ -218,12 +253,12 @@ Shader "Oheangbu/SpellFx/HexDome"
             float seam = smoothstep(1 - fw * _SeamPx, 1 - coreW * 0.4, edge) * _SeamA * outline * borderK * lineFade;
             col = lerp(col, _Line.rgb, saturate(seam / max(a + seam, 1e-3) * 0.6)); a = a + seam * (1 - a);
             // round 20 (Fable r19: no halo round the seam - a wire cage, not glass): a faint, wider, neutral light (not cream: r13's frost)
-            float effectNow = saturate(max(bloomVis, cellHit * exp(-_HitAge * 4.0) * step(0, _HitAge)));       // round 21: the light halo only at effect moments (a bloom, the struck cell) - the resting seams keep their ink edge
+            float effectNow = saturate(max(bloomVis, max(cellHit * exp(-_HitAge * 4.0) * step(0, _HitAge), effectX)));       // round 21: the light halo only at effect moments (a bloom, the struck cell) - the resting seams keep their ink edge
             float glowH = smoothstep(1 - fw * 8.0, 1 - fw * 3.0, edge) * 0.16 * outline * borderK * lineFade * effectNow;
             col = lerp(col, float3(0.85, 0.88, 0.93), saturate(glowH / max(a + glowH, 1e-3) * 0.5)); a = a + glowH * (1 - a);
             a = max(a, saturate(ba));
             // ---- the base ring: a bright line where the dome meets the ground ----
-            float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3));
+            float ring = exp(-i.yOS / 0.03) * outline * (front ? 1 : 0.25) * (1 - saturate(_Fade * 3)) * _BaseRingK;     // 2026-10-30: x _BaseRingK (default 1)
             col = lerp(col, _BaseRing.rgb, saturate(ring)); a = max(a, saturate(ring));
             float rip = saturate(ripple) * outline;
             // round 17b (Fable r17: the dark body sank into the glass, only broken glowing bits drifted): one continuous glowing ring, ~8 frames
@@ -258,10 +293,10 @@ Shader "Oheangbu/SpellFx/HexDome"
                 col = lerp(col, _Accent.rgb, saturate(ringA * 0.8)); a = max(a, ringA * 0.6 * outline);
             }
             // round 22 / 23 (Fable r22: the spill was cut by the seams drawn after it, the core darker than a seam): core and spill drawn LAST, over the seams, brighter than them
-            float core = cellHit * exp(-_HitAge * 14.0) * step(0, _HitAge) * smoothstep(0.6, 0.0, edge);
+            float core = max(cellHit * exp(-_HitAge * 14.0) * step(0, _HitAge) * smoothstep(0.6, 0.0, edge), coreX);
             col = lerp(col, float3(3.2, 3.25, 3.3), saturate(core)); a = max(a, core * 0.75 * fill);
             col = lerp(col, float3(2.4, 2.5, 2.6), saturate(spill * 0.7)); a = a + spill * 0.4 * fill * (1 - a);
-            a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade));        // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
+            a = saturate(a * (1 + touch * 0.5)) * (1 - smoothstep(0.3, 0.62, _Fade)) * i.vA;        // 2026-10-30: x the cell's own vertex alpha (1 unless _VertexAlpha is on)     // round 10: the glass ends with the lines (no shell left alone - Fable r9)        // round 5: the wipe plus an overall fade (no comb of edges left on the ground)
             return half4(col, a);
         }
         ENDHLSL
