@@ -1021,8 +1021,11 @@ namespace Oheangbu.App.SpellFx
             if (_ended) return;
             _ended = true;
             if (burstBody == SpellFxBurstBody.Wood) return;
-            int n = 0, step = Mathf.Max(1, _strands.Count / 4);
-            for (int i = 0; i < _strands.Count && n < 4; i += step)
+            // r2 sample (Fable): fire's four fountains read as fireworks - two; earth "가라앉으며 둘레 땅이 판으로 들림" (the CSV) - no clods falling,
+            // ground plates in the body's colour heave up round the strand's foot instead
+            int max = burstBody == SpellFxBurstBody.Fire ? 2 : 4;
+            int n = 0, step = Mathf.Max(1, _strands.Count / max);
+            for (int i = 0; i < _strands.Count && n < max; i += step)
             {
                 var s = _strands[i];
                 if (s.Flat || s.Head - s.Tail < 0.05f || s.Fade < 0.2f) continue;
@@ -1032,7 +1035,8 @@ namespace Oheangbu.App.SpellFx
                     : burstBody == SpellFxBurstBody.Metal ? outward
                     : burstBody == SpellFxBurstBody.Water ? Vector3.down
                     : (Vector3.up + outward).normalized;
-                SpellFxLabShot.InkBurst(p, dir, burstBody);
+                if (burstBody == SpellFxBurstBody.Earth) SpellFxLabShot.InkBurst(new Vector3(p.x, (_hit ? _feet.y : _origin.y) + 0.05f, p.z), Vector3.up, SpellFxBurstBody.Armour, PlateEdge());
+                else SpellFxLabShot.InkBurst(p, dir, burstBody);
                 n++;
             }
         }
