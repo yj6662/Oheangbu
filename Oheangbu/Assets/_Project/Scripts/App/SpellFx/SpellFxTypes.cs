@@ -49,6 +49,8 @@ namespace Oheangbu.App.SpellFx
 
         /// <summary>Seconds since the launch at <paramref name="nowUs"/> (negative before it).</summary>
         public float AgeAt(long nowUs) => (float)((nowUs - LaunchUs) / 1000000.0);
+        /// <summary>Seconds from the commit to the launch (the 한 번 fan / path leaves at the swing's apex, about 0.53 s later; 0 for every other cast).</summary>
+        public float LaunchDelaySeconds => Mathf.Max(0f, (float)((LaunchUs - StartUs) / 1000000.0));
         public float Age => Clock != null ? AgeAt(Clock.NowUs) : 0f;
         public string Id => Letter + "/" + Variant + "#" + CastId;
 
@@ -126,5 +128,13 @@ namespace Oheangbu.App.SpellFx
         /// <summary>D308-156: the cast's ward stopped a melee hit on the caster; <paramref name="point"/> is the ward's wall toward the nearest enemy, chest high.</summary>
         void OnBlock(SpellFxCast cast, Vector3 point) { }
         void OnEnd(SpellFxCast cast, SpellFxEndReason reason) { }
+    }
+
+    /// <summary>OPTIONAL, for a part that draws something BEFORE the launch (2026-10-30, D308-158 1: the brush-tip ink of a 한 번 cast, whose shape leaves at the swing's apex). The player calls it on
+    /// every director step from the commit until the launch (never after it); <see cref="ISpellFxPart.OnLaunch"/> follows. Nothing here may touch a rule.</summary>
+    public interface ISpellFxPreLaunch
+    {
+        /// <param name="secondsToLaunch">seconds left until the launch on the scope clock (&gt; 0); <see cref="SpellFxCast.LaunchDelaySeconds"/> - this = seconds since the commit.</param>
+        void OnPreLaunch(SpellFxCast cast, float secondsToLaunch);
     }
 }

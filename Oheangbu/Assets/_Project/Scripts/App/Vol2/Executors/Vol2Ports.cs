@@ -85,8 +85,11 @@ namespace Oheangbu.App
         /// <summary>Push: the flat unit direction away from the caster and the distance.</summary>
         public readonly Vector3 Direction;
         public readonly float Meters;
-        public Vol2BodyEffectRequest(Vol2BodyActionKind kind, CastId cast, AttackId attack, IVol2Target target, long nowUs, long durationUs, float magnitude, Vector3 direction, float meters)
-        { Kind = kind; Cast = cast; Attack = attack; Target = target; NowUs = nowUs; DurationUs = durationUs; Magnitude = magnitude; Direction = direction; Meters = meters; }
+        /// <summary>D308-158 Push only: true = the earth shove of a contact (slows down along its length: fast first, soft at the end; a second shove on a body that is still being shoved is
+        /// not stacked). false = a steady move (the return executor's drag, which has its own distance and boss rule).</summary>
+        public readonly bool Shove;
+        public Vol2BodyEffectRequest(Vol2BodyActionKind kind, CastId cast, AttackId attack, IVol2Target target, long nowUs, long durationUs, float magnitude, Vector3 direction, float meters, bool shove = false)
+        { Kind = kind; Cast = cast; Attack = attack; Target = target; NowUs = nowUs; DurationUs = durationUs; Magnitude = magnitude; Direction = direction; Meters = meters; Shove = shove; }
     }
 
     /// <summary>What the body does to the target's behaviour (slow, push). Burn, wet and cut are bookkeeping the coordinator owns (a damage tick,
@@ -178,7 +181,7 @@ namespace Oheangbu.App
     public sealed class Vol2TempStatusSink : IVol2StatusSink
     {
         const long OwnerBase = 0x5600000000L;     // a vol.2 owner key, apart from the old effects' keys
-        sealed class Push { public Vol2EnemyTarget Target; public Vector3 Direction; public float Remaining, Speed; }
+        sealed class Push { public Vol2EnemyTarget Target; public Vector3 Direction; public float Remaining, Speed; public bool Shove; public float Total, Length, Elapsed; }
         readonly List<Push> _pushes = new List<Push>();
         public int PushesStarted { get; private set; }
 
@@ -193,7 +196,13 @@ namespace Oheangbu.App
                     return "bind x" + r.Magnitude.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + " " + Vol2Time.ToSecondsF(r.DurationUs).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "s";
                 case Vol2BodyActionKind.Push:
                     float seconds = Mathf.Max(0.05f, Vol2Time.ToSecondsF(r.DurationUs));
-                    _pushes.Add(new Push { Target = enemy, Direction = r.Direction, Remaining = r.Meters, Speed = r.Meters / seconds });
+                    if (r.Shove)
+                    {
+                        // D308-158: no stacking while the body is still being shoved (a second cast does not walk it away); the push is only a position change - no control state, no groggy
+                        for (int i = 0; i < _pushes.Count; i++) if (_pushes[i].Shove && _pushes[i].Target == enemy) return "push skipped (already moving)";
+                        _pushes.Add(new Push { Target = enemy, Direction = r.Direction, Remaining = r.Meters, Shove = true, Total = r.Meters, Length = Mathf.Max(0.05f, Vol2Time.ToSecondsF(r.DurationUs)) });
+                    }
+                    else _pushes.Add(new Push { Target = enemy, Direction = r.Direction, Remaining = r.Meters, Speed = r.Meters / seconds });
                     PushesStarted++;
                     return "push " + r.Meters.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "m";
                 default:
@@ -208,7 +217,15 @@ namespace Oheangbu.App
                 var p = _pushes[i];
                 var v = p.Target.Vitals;
                 if (v == null || !v.IsAlive || p.Remaining <= 0f) { _pushes.RemoveAt(i); continue; }
-                float step = Mathf.Min(p.Remaining, p.Speed * dt);
+                float step;
+                if (p.Shove)
+                {
+                    // ease-out: distance(u) = Total x (1 - (1 - u)^2) - the first frames carry most of it, the end is soft (u = elapsed / length, the last step lands exactly on Total)
+                    float u0 = Mathf.Clamp01(p.Elapsed / p.Length); p.Elapsed += dt; float u1 = Mathf.Clamp01(p.Elapsed / p.Length);
+                    step = Mathf.Min(p.Remaining, p.Total * ((1f - (1f - u1) * (1f - u1)) - (1f - (1f - u0) * (1f - u0))));
+                    if (u1 >= 1f) step = p.Remaining;
+                }
+                else step = Mathf.Min(p.Remaining, p.Speed * dt);
                 p.Remaining -= step;
                 Vector3 delta = p.Direction * step;
                 var cc = v.GetComponentInChildren<CharacterController>();

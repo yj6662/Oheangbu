@@ -18,6 +18,7 @@ namespace Oheangbu.App.SpellFx
         [SerializeField, Min(0f)] float tailSeconds = 0.5f;
 
         ISpellFxPart[] _parts;
+        ISpellFxPreLaunch[] _pre;
         bool _ended;
 
         public SpellFxCast Cast { get; private set; }
@@ -47,12 +48,27 @@ namespace Oheangbu.App.SpellFx
             if (Cast == null) return;
             if (!Launched)
             {
-                if (nowUs < Cast.LaunchUs) return;
+                if (nowUs < Cast.LaunchUs) { PreLaunch(nowUs); return; }
                 Launch();
             }
             float age = Cast.AgeAt(nowUs);
             TickCount++;
             Each(p => p.OnTick(Cast, age));
+        }
+
+        /// <summary>The commit-to-launch stretch (a 한 번 fan / path waits for the swing's apex): the parts that asked for it (<see cref="ISpellFxPreLaunch"/>) are told how long is left.</summary>
+        void PreLaunch(long nowUs)
+        {
+            Gather();
+            if (_pre.Length == 0 || _ended) return;
+            float left = (float)((Cast.LaunchUs - nowUs) / 1000000.0);
+            for (int i = 0; i < _pre.Length; i++)
+            {
+                var part = _pre[i];
+                if (part == null || (part is UnityEngine.Object o && o == null)) continue;
+                try { part.OnPreLaunch(Cast, left); }
+                catch (Exception e) { Debug.LogException(e); }
+            }
         }
 
         void Launch()
@@ -125,6 +141,7 @@ namespace Oheangbu.App.SpellFx
         void Gather()
         {
             if (_parts == null) _parts = GetComponentsInChildren<ISpellFxPart>(true);
+            if (_pre == null) _pre = GetComponentsInChildren<ISpellFxPreLaunch>(true);
         }
 
         void Each(Action<ISpellFxPart> call)

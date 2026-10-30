@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Oheangbu.Vol2.Rules;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace Oheangbu.App
 
     /// <summary>TEMPORARY EXCEPTIONS of slice 3 (Exit Blocking): numbers the executors need that NumbersV3 does not have. None is balance of
     /// a spell effect; each is a technical stand-in to be replaced by a data key (or removed) before the vol.2 runtime leaves the lab.
-    /// TE-S3-1 PathSpeed, TE-S3-2 BrushReach / SwingRadius, TE-S3-3 DotTickUs, TE-S3-4 PushMeters / PushSeconds, TE-S3-5 ChestHeight.</summary>
+    /// TE-S3-1 PathSpeed, TE-S3-2 BrushReach / SwingRadius, TE-S3-3 DotTickUs, TE-S3-4 PushMeters / PushSeconds / Push* (D308-158), TE-S3-5 ChestHeight.</summary>
     public sealed class Vol2ShapeTuning
     {
         /// <summary>TE-S3-1: how fast the narrow path travels (m/s). The data has only the path length (12 m); 36 m/s covers it in 1/3 s.</summary>
@@ -22,9 +22,41 @@ namespace Oheangbu.App
         public float SwingRadius = 0.45f;
         /// <summary>TE-S3-3: tick interval of a lasting damage (microseconds). The data has the burn total (body.fire.utility) and length (body.fire.duration), not the cadence.</summary>
         public long DotTickUs = 500000;
-        /// <summary>TE-S3-4: the earth push (밀침). The data has its value (body.earth.utility) but no distance.</summary>
-        public float PushMeters = 1.0f;
+        /// <summary>TE-S3-4: the earth push (밀침). The data has its value (body.earth.utility) but no distance. D308-158 (SPEC-VOL2-EARTH-PUSH-308, TEST): the user chose a REAL push of
+        /// 0.2 - 0.3 m, so the default is 0.25 m over 0.12 s (it was 1.0 m / 0.25 s while it only had to be seen). <see cref="ApplyNumbers"/> reads the numbers rows first.</summary>
+        public float PushMeters = 1.0f;      // D308-158 correction: the push already existed at 1.0 m - the user chose "a real push", not a shorter one
         public float PushSeconds = 0.25f;
+        /// <summary>D308-158: the share of <see cref="PushMeters"/> a boss gets (EnemyVitals.IsBoss via the coordinator's BossTest). 0 = a boss is not moved (the 군 sentence: "보스는 밀리지 않음").</summary>
+        public float PushBossFactor = 0f;
+        /// <summary>D308-158: a body whose flat radius is at or above this (m) is "large" and gets <see cref="PushLargeFactor"/> of the distance. The enemy data has no mass, so the body's own radius stands in.</summary>
+        public float PushLargeRadius = 1.0f;
+        public float PushLargeFactor = 0.5f;
+        /// <summary>D308-158 guard (Vol2PushGuard): the ground is probed every PushProbeStep (m) along the push; a step that finds no ground within +/- PushStepHeight of the last one, or a
+        /// slope steeper than PushSlopeNormalY (the normal's up part), ends the push there. A wall ray at PushWallHeight above the feet ends it in front of the wall.</summary>
+        public float PushProbeStep = 0.125f, PushStepHeight = 0.35f, PushSlopeNormalY = 0.5f, PushWallHeight = 0.5f;
+
+        /// <summary>The numbers keys that override the TE defaults above when the loaded numbers have the row (a data change then needs no code change; the NumbersV3 contract is frozen with
+        /// the E0 golden, so there are no such rows today - the same arrangement as the ward life, TE-W1). Used by the coordinator once, at its construction.</summary>
+        public const string PushMetersKey = "body.earth.pushMeters", PushSecondsKey = "body.earth.pushSeconds", PushBossFactorKey = "body.earth.pushBossFactor",
+            PushLargeRadiusKey = "body.earth.pushLargeRadius", PushLargeFactorKey = "body.earth.pushLargeFactor";
+
+        public void ApplyNumbers(NumbersV3Dto numbers)
+        {
+            if (numbers == null) return;
+            foreach (var row in numbers.Rows)
+            {
+                if (!row.Value.HasValue) continue;
+                float v = (float)row.Value.Value;
+                switch (row.Key)
+                {
+                    case PushMetersKey: PushMeters = Math.Max(0f, v); break;
+                    case PushSecondsKey: if (v > 0f) PushSeconds = v; break;
+                    case PushBossFactorKey: PushBossFactor = Math.Max(0f, v); break;
+                    case PushLargeRadiusKey: if (v > 0f) PushLargeRadius = v; break;
+                    case PushLargeFactorKey: PushLargeFactor = Math.Max(0f, v); break;
+                }
+            }
+        }
         /// <summary>TE-S3-5: height above the caster's feet of the path's wall check ray.</summary>
         public float ChestHeight = 1.1f;
         /// <summary>TE-S3-6 (D308-150 V9, TEST switch - the user decides on return): launch a 한 번 path / fan at the swing's apex instead of at the commit, like the old route

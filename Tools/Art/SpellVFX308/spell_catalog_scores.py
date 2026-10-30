@@ -14,13 +14,22 @@ TOTAL = re.compile(r'\*\*합계\*\*\s*\|\s*\*\*100\*\*\s*\|\s*\*\*([\d.]+)\*\*')
 
 def main():
     led = json.loads(LEDGER.read_text(encoding='utf-8')) if LEDGER.exists() else {}
-    rounds = {}
-    for d in JUDGE.glob('g_*_r*'):
-        m = re.fullmatch(r'g_(.+)_r(\d+)', d.name)
+    rounds, membrane = {}, {}
+    # D308-157: judge/f_<글자>_r<n> are the membrane-grammar rounds (variant F, the game default once a frame passes its gate) - kept apart from the vine (g_) rounds
+    for d in list(JUDGE.glob('g_*_r*')) + list(JUDGE.glob('f_*_r*')):
+        m = re.fullmatch(r'([gf])_(.+)_r(\d+)', d.name)
         v = d / 'verdict.md'
         if not m or not v.exists():
             continue
-        g = '가' if m[1] == 'ga' else m[1]
+        g = '가' if m[2] == 'ga' else m[2]
+        if m[1] == 'f':
+            t = TOTAL.search(v.read_text(encoding='utf-8', errors='replace'))
+            if t:
+                row = v.read_text(encoding='utf-8', errors='replace')[t.start():]
+                nums = re.findall(r'\*\*([\d.]+)\*\*', row[:row.find('\n')])[1:]
+                membrane.setdefault(g, []).append((int(m[3]), float(nums[-1] if nums else t[1])))
+            continue
+        m = (None, m[2], m[3])
         text = v.read_text(encoding='utf-8', errors='replace')
         t = TOTAL.search(text)
         if t:
@@ -38,6 +47,18 @@ def main():
         status = '대리 통과' if last >= 90 else ('최대 회차 소진' if rs[-1][0] >= 6 else '회차 진행 중')
         e['judge'] = f'대리 판정(Fable) · {len(rs)}회차 {trail} · {status}'
         e.setdefault('decision', 'D308-153')
+    for g, rs in membrane.items():
+        rs.sort()
+        e = led.setdefault(g, {})
+        vine = rounds.get(g)
+        last = rs[-1][1]
+        e['variant'] = 'F'
+        e['score'] = int(round(last))
+        trail = ' → '.join(str(int(round(s))) for _, s in rs)
+        status = '대리 통과' if last >= 90 else ('최대 회차 소진' if rs[-1][0] >= 6 else '회차 진행 중')
+        e['judge'] = f'대리 판정(Fable) · 막 문법 F {len(rs)}회차 {trail} · {status}' + (f' (덩굴 A 마지막 {int(round(vine[-1][1]))})' if vine else '')
+        e['decision'] = 'D308-157'
+        e['note'] = '막 문법(F, ㅜ 막과 같은 육각 셀)이 게임 기본 — 덩굴 프리팹 G_는 되돌리기용으로 보관'
     LEDGER.write_text(json.dumps(led, ensure_ascii=False, indent=1), encoding='utf-8')
     print('scored', len(rounds), 'glyphs:', ', '.join(f'{g} {led[g]["score"]}' for g in sorted(rounds)))
 

@@ -147,6 +147,7 @@ namespace Oheangbu.App
         readonly Dictionary<Body, Vol2BodyProfile> _profiles = new Dictionary<Body, Vol2BodyProfile>();
         readonly List<Vol2CastRun> _active = new List<Vol2CastRun>();
         readonly List<Dot> _dots = new List<Dot>();
+        readonly Vol2PushGuard _pushGuard = new Vol2PushGuard();      // D308-158: cuts an earth push at a wall / an edge
         readonly Dictionary<long, Vol2CastLog> _logs = new Dictionary<long, Vol2CastLog>();
         readonly Queue<long> _logOrder = new Queue<long>();
         IReadOnlyList<IVol2Target> _targets = new List<IVol2Target>();
@@ -200,6 +201,7 @@ namespace Oheangbu.App
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _caster = caster ?? throw new ArgumentNullException(nameof(caster));
             _wall = wall; Damage = damage; Status = status; Ink = ink; _tuning = tuning ?? new Vol2ShapeTuning(); _swings = swings ?? new Vol2SwingSignal();
+            _tuning.ApplyNumbers(_numbers);          // D308-158: the earth push numbers, when the numbers have rows for them (none today: the TE defaults stand)
             _verbs = verbs ?? Vol2VerbRegistry.CreateDefault();
             _materials = materials ?? new Vol2MaterialRegistry(_clock, services.Ids);
             _verbTuning = verbTuning ?? new Vol2VerbTuning();
@@ -452,7 +454,7 @@ namespace Oheangbu.App
             if (!_services.Commands.TryBegin(new CommandKey(_services.Ids.ScopeId, CommandRuleKind.Status, attack.Value, 0))) { rec.DuplicateCommands++; return; }
             var p = a.Body;
             Vector3 dir = Vol2ShapeGeometry.FlatUnit(t.Position - a.Log.Spec.Origin);
-            long duration = p.DurationUs; float magnitude = 1f, meters = 0f;
+            long duration = p.DurationUs; float magnitude = 1f, meters = 0f; bool shove = false;
             string note;
             var inv = System.Globalization.CultureInfo.InvariantCulture;
             switch (p.Action)
@@ -468,13 +470,27 @@ namespace Oheangbu.App
                         note = "burn " + p.BurnTotal.ToString(inv) + "u/" + ticks + " ticks"; break;
                     }
                 case Vol2BodyActionKind.Push:
-                    meters = _tuning.PushMeters; duration = Vol2Time.FromSeconds(_tuning.PushSeconds); note = "push " + meters.ToString("0.##", inv) + "m"; break;
+                    {
+                        // D308-158 (SPEC-VOL2-EARTH-PUSH-308): a REAL shove of the body away from the cast origin, once per (cast, body) - FirstBody and the Status command key above. A boss is
+                        // moved by PushBossFactor (0 = not at all), a large body (flat radius >= PushLargeRadius) by PushLargeFactor; the distance is then cut at a wall / an edge (Vol2PushGuard).
+                        bool boss = BossTest != null && BossTest(t);
+                        float factor = boss ? _tuning.PushBossFactor : t.Radius >= _tuning.PushLargeRadius ? _tuning.PushLargeFactor : 1f;
+                        string why = boss ? " (boss)" : factor < 1f ? " (large)" : "";
+                        meters = Mathf.Max(0f, _tuning.PushMeters * factor); shove = true;
+                        if (meters > 0f)
+                        {
+                            meters = _pushGuard.Clamp(t.Position, dir, meters, t.Radius, _tuning, _caster.Anchor, out string cut);
+                            if (cut.Length > 0) why += " (" + cut + ")";
+                        }
+                        duration = Vol2Time.FromSeconds(_tuning.PushSeconds); note = "push " + meters.ToString("0.##", inv) + "m" + why; break;
+                    }
                 case Vol2BodyActionKind.Wet:
                     Wet.MarkWet(t, now + p.DurationUs); note = "wet " + Vol2Time.ToSecondsF(p.DurationUs).ToString("0.##", inv) + "s"; break;
                 default:
                     note = "cut" + (rec.StatusFactor != 1m ? " wet x" + rec.StatusFactor.ToString(inv) : ""); break;
             }
-            string sinkNote = Status != null ? Status.Apply(new Vol2BodyEffectRequest(p.Action, a.Cast, attack, t, now, duration, magnitude, dir, meters)) : "NoStatusSink";
+            string sinkNote = p.Action == Vol2BodyActionKind.Push && meters <= 0f ? "no move"       // an immune or walled-in body: nothing for the sink to move
+                : Status != null ? Status.Apply(new Vol2BodyEffectRequest(p.Action, a.Cast, attack, t, now, duration, magnitude, dir, meters, shove)) : "NoStatusSink";
             rec.BodyEffect = note + (sinkNote.Length > 0 && sinkNote != note ? " [" + sinkNote + "]" : "");
         }
 

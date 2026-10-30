@@ -100,15 +100,19 @@ namespace Oheangbu.App.SpellFx
         public static void InkBurst(Vector3 point, Vector3 normal) => InkBurst(point, normal, SpellFxBurstBody.Water);
 
         /// <param name="edge">Optional rim tint for the bits (Fable 낫 r1: the fire body's armour plates stayed jade - the caller passes its own body colour).</param>
-        public static void InkBurst(Vector3 point, Vector3 normal, SpellFxBurstBody body, Color? edge = null)
+        /// <param name="scale">2026-10-30 (the hex sheets' small ink spit): x the count of drops / cloud puffs and x sqrt the size; 1 = the burst as it always was (every older caller).</param>
+        public static void InkBurst(Vector3 point, Vector3 normal, SpellFxBurstBody body, Color? edge = null, float scale = 1f)
         {
             if (!Application.isPlaying) return;           // particles need Play; an edit-mode fixture only counts the call
             var go = new GameObject("SpellFxInkBurst");
             go.transform.position = point;
             int layer = VfxAfterFog308.Layer; if (layer >= 0) go.layer = layer;
-            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up, body, edge);
+            Burst(go.transform, point, normal.sqrMagnitude > 1e-6f ? normal.normalized : Vector3.up, body, edge, scale);
             Destroy(go, 2.2f);
         }
+
+        /// <summary>The soft ink-blot material the bursts use (a ragged round drop), for a part that makes ink particles of its own.</summary>
+        public static Material InkBlotMaterial() => InkMaterial();
 
         /// <summary>The look of one body's burst: the thrown bits and the cloud they leave.</summary>
         struct BurstLook
@@ -135,10 +139,16 @@ namespace Oheangbu.App.SpellFx
             }
         }
 
-        static void Burst(Transform parent, Vector3 point, Vector3 normal, SpellFxBurstBody body, Color? edge = null)
+        static void Burst(Transform parent, Vector3 point, Vector3 normal, SpellFxBurstBody body, Color? edge = null, float scale = 1f)
         {
             var look = LookOf(body);
             if (edge.HasValue) { var e = edge.Value; e.a = 1f; look.B = e; }
+            if (scale != 1f)
+            {
+                float sz = Mathf.Sqrt(scale);
+                look.Count = Mathf.Max(1, Mathf.RoundToInt(look.Count * scale)); look.CloudCount = Mathf.Max(1, Mathf.RoundToInt(look.CloudCount * scale));
+                look.Size *= sz; look.CloudSize *= sz;
+            }
             var mat = body == SpellFxBurstBody.Armour ? PlateMaterial() : InkMaterial();
             // drops: thrown back off the membrane and sideways, falling
             var drops = MakeSystem(parent, "InkDrops", point, mat);
