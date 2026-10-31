@@ -135,3 +135,6 @@ waveletNoiseTile.bin
 
 # AgentBoard (model status board, local tool, 2026-10-29 user: gitignore)
 Tools/AgentBoard/
+
+# claude-code-game-studios agents' project memory (local)
+.claude/agent-memory/

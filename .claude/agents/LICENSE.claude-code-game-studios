@@ -1,3 +1,32 @@
+출처 (Provenance)
+=================
+이 폴더의 에이전트 정의 일부, 그리고 `.claude/skills/`의 balance-check · playtest-report · bug-report는
+Claude Code Game Studios에서 가져와 오행부 프로젝트에 맞게 고친 것이다.
+
+- 저장소: https://github.com/donchitos/claude-code-game-studios
+- 커밋: 05ad7c8a5b8aa2aa86bbd3439ae7cf7295cac418 (2026-10-19)
+- 저작권자: Donchitos / 라이선스: MIT (아래 원문, 변경 없음)
+- 1차 복사: 2026-10-26 (technical-artist, unity-shader-specialist)
+- 2차 복사: 2026-10-31 (아래 목록)
+
+수정 내용: 각 파일 머리에 "오행부 프로젝트 적용 메모" 블록 추가, 에이전트 tools에 PowerShell 추가
+(Bash가 있는 에이전트만), 일부 frontmatter `skills:` 항목 정리, 스킬은 셸 전처리 줄과 Bash 허용 항목 제거.
+본문 원문은 그대로다.
+
+설치 목록 — 에이전트 26개
+  technical-artist, unity-shader-specialist (2026-10-26)
+  creative-director, technical-director, game-designer, lead-programmer, art-director,
+  audio-director, narrative-director, qa-lead, gameplay-programmer, engine-programmer,
+  ai-programmer, sound-designer, level-designer, systems-designer, economy-designer,
+  world-builder, writer, ux-designer, ui-programmer, performance-analyst, qa-tester,
+  tools-programmer, unity-specialist, unity-ui-specialist (2026-10-31)
+설치 목록 — 스킬 3개 (`.claude/skills/`)
+  balance-check, playtest-report, bug-report (2026-10-31)
+
+--------------------------------------------------------------------------------
+아래는 원문 LICENSE 전체이다.
+--------------------------------------------------------------------------------
+
 MIT License
 
 Copyright (c) 2026 Donchitos

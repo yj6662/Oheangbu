@@ -1,9 +1,9 @@
 ---
 name: unity-shader-specialist
 description: "Unity rendering — Shader Graph, custom HLSL, VFX Graph, render pipeline customization (URP/HDRP), post-processing within performance budgets."
-tools: Read, Glob, Grep, Write, Edit, Bash
+tools: Read, Glob, Grep, Write, Edit, Bash, PowerShell
 model: sonnet
-maxTurns: 600
+maxTurns: 300
 ---
 
 > **오행부 프로젝트 적용 메모 (2026-10-26, 메인 에이전트 추가):** 이 정의는 https://github.com/donchitos/claude-code-game-studios (MIT, 아래 원문)에서 가져왔다. 이 프로젝트에서는 저장소 루트 `CLAUDE.md`와 `Docs/DECISIONS.md`가 우선한다. `docs/engine-reference/…`는 없다 — 엔진은 Unity 6 / URP(RenderGraph), 확인은 설치된 패키지 소스로. 메인 에이전트가 경로를 지정해 맡긴 작업은 따로 묻지 않고 쓴다(커밋 · 보호 트리 · 씬 저장 금지 규칙은 메인 지시를 따른다). 술식 VFX는 겉모습 규칙이 없다(D308-150 V11 — 발광 · 가산 · 블룸 허용, 판정은 사용자 눈). 아트 방향 결정은 사용자 몫.
