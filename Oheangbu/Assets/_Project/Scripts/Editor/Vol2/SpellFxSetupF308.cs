@@ -16,6 +16,9 @@ namespace Oheangbu.EditorTools.Vol2
     /// for water - with the standing-cell tuning (TuneStanding) laid over it, the body's colours kept; the lying-cell M_F_Fan_*.mat the ring setup reuses are left alone), one prefab per glyph Restart/G/F_&lt;letter&gt;.prefab (SpellFxPlayer + SpellFxHexFanPart, the body's burst),
     /// and merges the catalogue: for these 30 glyphs variant F AND variant A both point at the F prefab (A is the variant the game plays by default, so the ㅗ glyphs now play the membrane;
     /// the vine prefabs Restart/G/G_&lt;letter&gt;.prefab stay on disk - point A back at them to undo). Every other glyph's entries are untouched.
+    /// Which template each glyph gets is the glyph table's (<see cref="SpellFxHexGlyphs308"/>, PLAN-308 2.0), not the final consonant: 곡 (the wood peak 남긴다) = the thicket, the plain 남긴다 of the other
+    /// four bodies (녹 목 속 옥) = the pile (<see cref="SpellFxHexFanPart.HexFanBite.Residue"/>), the rest by verb. The parts' DEFAULT values are serialised into the prefabs here: after a change of a default in the
+    /// part (the wall's start distance, the home cell's radius ...) run setup:f again.
     /// Needs setup:h to have run (it makes the ward materials). Re-running setup:g would point A of these 30 back at the vine.
     /// Queue: python Tools/Unity/playtest_polish.py Oheangbu.EditorTools.Vol2.SpellFxSetupF308Commands Run "setup:f"
     /// No dialogs. Saves only what it writes.</summary>
@@ -36,20 +39,32 @@ namespace Oheangbu.EditorTools.Vol2
             catch (Exception e) { return "EXCEPTION " + e.GetType().Name + " " + e.Message; }
         }
 
-        sealed class Verb { public SpellFxHexFanPart.HexFanBite Bite; public int Jong; public float PlaySeconds; }
+        sealed class Verb { public int Jong; }
 
-        // 종성 없음 ㄱ ㄴ ㅁ ㅅ ㅇ (Hangul jongseong indices 0 1 4 16 19 21) -> the verb: 한 번 · 남긴다 · 번진다 · 심는다 · 가른다 · 돌아온다
-        // 2026-10-30 (air rewrite, D308-159): the play lengths follow the part's own lives - 곡 plates break 3.5 - 4.5 s, 곤's road stays 3 s after the last hop (~4.6 s), 곰's eggs burst 7.8 - 8.8 s,
-        // 곳's crack goes 3.0 - 3.8 s, 공 is over by ~2.6 s.
+        // 종성 없음 ㄱ ㄴ ㅁ ㅅ ㅇ (Hangul jongseong indices 0 1 4 16 19 21): 한 번 · 남긴다 · 번진다 · 심는다 · 가른다 · 돌아온다. WHICH template a glyph is drawn with is NOT read off the final consonant any
+        // more: it is the glyph table's (SpellFxHexGlyphs308.Of(letter).TemplateId, PLAN-308 2.0) - the verb's general template, but for the one wood peak 남긴다 (곡 = fan.thicket); the other
+        // four bodies' plain 남긴다 (녹 목 속 옥 = fan.leave) used to be dressed with 곡's forest because the old table was keyed by the wood glyph of the same final consonant.
         static readonly Verb[] Verbs =
         {
-            new Verb { Jong = 0,  Bite = SpellFxHexFanPart.HexFanBite.Sweep,     PlaySeconds = 4f },
-            new Verb { Jong = 1,  Bite = SpellFxHexFanPart.HexFanBite.Thicket,   PlaySeconds = 5f },
-            new Verb { Jong = 4,  Bite = SpellFxHexFanPart.HexFanBite.FanSpread, PlaySeconds = 5.5f },
-            new Verb { Jong = 16, Bite = SpellFxHexFanPart.HexFanBite.FanSeed,   PlaySeconds = 9.5f },
-            new Verb { Jong = 19, Bite = SpellFxHexFanPart.HexFanBite.FanCut,    PlaySeconds = 4.5f },
-            new Verb { Jong = 21, Bite = SpellFxHexFanPart.HexFanBite.FanReturn, PlaySeconds = 4f },
+            new Verb { Jong = 0 }, new Verb { Jong = 1 }, new Verb { Jong = 4 }, new Verb { Jong = 16 }, new Verb { Jong = 19 }, new Verb { Jong = 21 },
         };
+
+        /// <summary>The part's bite and the director's play length for a table template id. The play lengths follow the part's own lives (the CSV's 10 s materials: 곡 stands 10 s and breaks one plate at a time to
+        /// ~10.2 s, 녹 stands 10 s; 곤's road stays 3 s after the last hop (~4.6 s), 곰's eggs burst at 7.8 - 8.8 s or all go within 0.4 s of the trap working, 곳's crack goes 3.0 - 3.8 s, 공 is over by ~2.6 s).</summary>
+        static bool BiteOf(string template, out SpellFxHexFanPart.HexFanBite bite, out float playSeconds)
+        {
+            switch (template)
+            {
+                case "fan.once":    bite = SpellFxHexFanPart.HexFanBite.Sweep;     playSeconds = 4f;    return true;
+                case "fan.thicket": bite = SpellFxHexFanPart.HexFanBite.Thicket;   playSeconds = 11f;   return true;
+                case "fan.leave":   bite = SpellFxHexFanPart.HexFanBite.Residue;   playSeconds = 11f;   return true;
+                case "fan.spread":  bite = SpellFxHexFanPart.HexFanBite.FanSpread; playSeconds = 5.5f;  return true;
+                case "fan.seed":    bite = SpellFxHexFanPart.HexFanBite.FanSeed;   playSeconds = 9.5f;  return true;
+                case "fan.cut":     bite = SpellFxHexFanPart.HexFanBite.FanCut;    playSeconds = 4.5f;  return true;
+                case "fan.return":  bite = SpellFxHexFanPart.HexFanBite.FanReturn; playSeconds = 4f;    return true;
+                default:            bite = SpellFxHexFanPart.HexFanBite.Sweep;     playSeconds = 4f;    return false;
+            }
+        }
 
         const int Jung_O = 8;      // ㅗ
 
@@ -91,28 +106,34 @@ namespace Oheangbu.EditorTools.Vol2
 
             // ---- prefabs: 5 bodies x 6 verbs ----
             var built = new Dictionary<string, GameObject>();
+            var templates = new List<string>();
             foreach (var b in Bodies)
                 foreach (var v in Verbs)
                 {
                     string letter = LetterOf(b.Cho, v.Jong);
+                    // the glyph table (PLAN-308 2.0) says which template this letter is: the same final consonant is a different template for 곡 (the wood peak) than for 녹 목 속 옥
+                    var row = SpellFxHexGlyphs308.Of(letter[0]);
+                    if (row == null || row.Frame != HexGlyphFrame.Fan) return "REFUSED setup:f: " + letter + " is not a ㅗ (fan) glyph of SpellFxHexGlyphs308";
+                    if (!BiteOf(row.TemplateId, out var bite, out float playSeconds)) return "REFUSED setup:f: " + letter + " has template '" + row.TemplateId + "', which the fan part does not make";
+                    templates.Add(letter + "=" + row.TemplateId);
                     var go = new GameObject("F_" + letter);
                     try
                     {
                         var player = go.AddComponent<SpellFxPlayer>();
                         var pso = new SerializedObject(player);
-                        pso.FindProperty("playSeconds").floatValue = v.PlaySeconds; pso.FindProperty("tailSeconds").floatValue = 0.5f;
+                        pso.FindProperty("playSeconds").floatValue = playSeconds; pso.FindProperty("tailSeconds").floatValue = 0.5f;
                         pso.ApplyModifiedPropertiesWithoutUndo();
                         var part = go.AddComponent<SpellFxHexFanPart>();
                         var so = new SerializedObject(part);
                         so.FindProperty("material").objectReferenceValue = mats[b.Key];
-                        so.FindProperty("bite").enumValueIndex = (int)v.Bite;
+                        so.FindProperty("bite").enumValueIndex = (int)bite;
                         so.FindProperty("burstBody").enumValueIndex = (int)b.Burst;      // the ink spits: the body's own (목 = none, the leaves are the look)
                         so.ApplyModifiedPropertiesWithoutUndo();
                         built[letter] = PrefabUtility.SaveAsPrefabAsset(go, GDir + "/F_" + letter + ".prefab");
                     }
                     finally { UnityEngine.Object.DestroyImmediate(go); }
                 }
-            log.Append("prefabs ").Append(built.Count).Append(" (").Append(string.Join("", built.Keys)).Append("); ");
+            log.Append("prefabs ").Append(built.Count).Append(" (").Append(string.Join("", built.Keys)).Append("); templates ").Append(string.Join(" ", templates)).Append("; ");
 
             // ---- catalogue: MERGE - for these glyphs only, variants F and A are dropped and re-added, both pointing at the F prefab ----
             var cat = AssetDatabase.LoadAssetAtPath<SpellFxCatalog>(SpellFxCatalog.AssetPath);
@@ -199,7 +220,7 @@ namespace Oheangbu.EditorTools.Vol2
         /// <summary>The wood sheet's tuning (the r2 values) on a copy of the ward material. Widths, bleed and pattern settings are the same for every body; the colours keep the body's own:
         /// wood has the exact r2 colours (ink-green fill, cream seam and pattern, jade bleed); the others take the ward's seam, side and pattern colours as they are, a fill that is the ward's
         /// glass darkened by the factor wood's was darkened by (x0.42), and a bleed that is the ward's accent dimmed (x0.26).</summary>
-        static void Tune(Material mat, Material ward, bool wood)
+        internal static void Tune(Material mat, Material ward, bool wood)
         {
             mat.SetFloat("_PatternFrom", 0f);          // the dome keeps its low ring plain; here uv2.y is the distance, patterns from the first cell
             mat.SetFloat("_FacingPattern", 0.85f);     // a floor seen from above is "facing" at a steep view: do not fade its patterns / seams
