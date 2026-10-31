@@ -30,7 +30,11 @@ namespace Oheangbu.EditorTools.Vol2
     /// walk= (2026-10-30, PLAN-308-MEMBRANE section 5.5, lane F): the lab bodies stand still (brain, agent and every game script are off); with walk= every body walks from
     /// the cast age &lt;start s&gt; (the ageSec column, scope clock from the commit) - toward the caster by default, 1.2 m/s, at most 3 m, never closer than 1 m to the caster -
     /// by moving its transform (what the rules read: Vol2EnemyTarget.Position / Previous, refreshed every Coordinator.Tick). Lab only, no rule is touched. The prefab's own
-    /// EnemyRigMotion298 is switched on for such a job (Idle, then Walk by the travel speed; Run above its threshold) - without it the body would slide.</summary>
+    /// EnemyRigMotion298 is switched on for such a job (Idle, then Walk by the travel speed; Run above its threshold) - without it the body would slide.
+    /// Trigger options (2026-10-31, the trigger lane, code in SpellFxShot.Triggers.cs - read its summary for the details): the scenes the lab never made happen, all on the cast-age clock of walk=,
+    /// all through the game's own doors, no rule touched: [:shots=&lt;start s&gt;[,&lt;count&gt;,&lt;gap s&gt;,&lt;dir&gt;[,&lt;m/s&gt;]] (a ',' or a '.' selects the timed form; a bare integer is the old count)]
+    /// [:shotrule=0|1|auto] [:hitme=&lt;s&gt;[,&lt;HP&gt;]] [:recast=&lt;s&gt;[,&lt;letter&gt;[,&lt;variant&gt;]]] [:swinghit=&lt;s&gt;[,script|real]] [:prop=&lt;ahead&gt;,&lt;side&gt;[,&lt;radius&gt;][/...]].
+    /// What reached the rules is in the index.csv note column and at the end of summary.txt ("triggers:").</summary>
     public static class SpellFxShotCommands
     {
         public static string Run(string command)
@@ -43,13 +47,13 @@ namespace Oheangbu.EditorTools.Vol2
                 if (c == "status") return SpellFxShot.Status();
                 if (c == "stop") return SpellFxShot.Stop("stop command");
                 if (c.StartsWith("run:", StringComparison.Ordinal)) return SpellFxShot.Enqueue(c.Substring(4));
-                return "REFUSED shot: play | run:<letter>:<variant[,variant]>[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1][:extra=N][:view=side][:fake=1][:walk=<start s>[,<m/s>][,toward|away|left|right|<deg>][,<max m>]] | status | stop";
+                return "REFUSED shot: play | run:<letter>:<variant[,variant]>[:ahead=4.6][:side=0][:frames=180][:back=red|green|none][:look=main][:pitch=15][:swing=1][:stay=1][:extra=N][:view=side][:fake=1][:walk=<start s>[,<m/s>][,toward|away|left|right|<deg>][,<max m>]][:shots=<start s>[,<count>,<gap s>,<dir>[,<m/s>]]][:shotrule=0|1|auto][:hitme=<s>[,<HP>]][:recast=<s>[,<letter>[,<variant>]]][:swinghit=<s>[,script|real]][:prop=<ahead>,<side>[,<radius>][/...]] | status | stop";
             }
             catch (Exception e) { return "REFUSED shot:" + c + ": " + e.GetType().Name + " " + e.Message; }
         }
     }
 
-    public static class SpellFxShot
+    public static partial class SpellFxShot
     {
         static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
         const int VideoW = 1280, VideoH = 720;
@@ -68,6 +72,8 @@ namespace Oheangbu.EditorTools.Vol2
             public bool MainLook, Swing, Stay;
             // walk= (lane F): the bodies walk from cast age WalkAt (s) at WalkSpeed (m/s) along WalkDir, at most WalkMax metres each
             public bool Walk; public float WalkAt, WalkSpeed = WalkSpeedDefault, WalkMax = WalkMaxDefault, WalkDeg; public WalkDir Dir = WalkDir.Toward;
+            // trigger lane (2026-10-31, SpellFxShot.Triggers.cs): shots= hitme= recast= swinghit= prop= (read-only after the parse, so the variant copies may share it)
+            public TrigSpec Trig = new TrigSpec();
             public string Name => Letter + "_" + Variant;
             /// <summary>One copy per variant (a field added above is carried along without touching Enqueue).</summary>
             public Job ForVariant(string variant) { var c = (Job)MemberwiseClone(); c.Variant = variant; return c; }
@@ -171,9 +177,15 @@ namespace Oheangbu.EditorTools.Vol2
                     case "stay": proto.Stay = v == "1"; break;
                     case "view": if (v != "side" && v != "shoulder") return "REFUSED shot:run: view=" + v + " (shoulder | side)"; proto.Side3 = v == "side" ? 7f : 0f; break;
                     case "fake": proto.Fake = v == "1"; break;                    case "extra": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Extra) || proto.Extra < 0 || proto.Extra > 4) return "REFUSED shot:run: extra=" + v + " (0 - 4)"; break;
-                    case "shots": if (!int.TryParse(v, NumberStyles.Integer, Inv, out proto.Shots) || proto.Shots < 0 || proto.Shots > 8) return "REFUSED shot:run: shots=" + v + " (0 - 8)"; break;
                     case "walk": { string bad = ParseWalk(v, proto); if (bad != null) return "REFUSED shot:run: walk=" + v + " (" + bad + ")"; break; }
-                    default: return "REFUSED shot:run: unknown option " + k;
+                    default:
+                        {
+                            // trigger lane (SpellFxShot.Triggers.cs): shots= (old count or timed form) shotrule= hitme= recast= swinghit= prop=
+                            string bad = ParseTrigger(k, v, proto);
+                            if (bad == "") return "REFUSED shot:run: unknown option " + k;
+                            if (bad != null) return "REFUSED shot:run: " + k + "=" + v + " (" + bad + ")";
+                            break;
+                        }
                 }
             }
             Queue.Clear(); Finished.Clear(); Problems.Clear(); SavedVariants.Clear();
@@ -187,7 +199,7 @@ namespace Oheangbu.EditorTools.Vol2
             EditorApplication.update += Tick;
             EditorApplication.playModeStateChanged += OnPlayMode;
             AssemblyReloadEvents.beforeAssemblyReload += OnReload;
-            return "queued " + _total + " shot(s) " + proto.Letter + ":" + t[1] + (proto.Walk ? " | walk from age " + proto.WalkAt.ToString("0.##", Inv) + " s at " + proto.WalkSpeed.ToString("0.##", Inv) + " m/s " + proto.Dir + (proto.Dir == WalkDir.Degrees ? " " + proto.WalkDeg.ToString("0.#", Inv) : "") + " max " + proto.WalkMax.ToString("0.##", Inv) + " m" : "") + " | " + OutRoot;
+            return "queued " + _total + " shot(s) " + proto.Letter + ":" + t[1] + (proto.Walk ? " | walk from age " + proto.WalkAt.ToString("0.##", Inv) + " s at " + proto.WalkSpeed.ToString("0.##", Inv) + " m/s " + proto.Dir + (proto.Dir == WalkDir.Degrees ? " " + proto.WalkDeg.ToString("0.#", Inv) : "") + " max " + proto.WalkMax.ToString("0.##", Inv) + " m" : "") + TrigDescribe(proto) + " | " + OutRoot;
         }
 
         /// <summary>walk=&lt;start s&gt;[,&lt;m/s 0.1 - 4&gt;][,toward|away|left|right|&lt;degrees&gt;][,&lt;max metres 0.1 - 3&gt;]. Returns null when fine, else what is wrong.
@@ -306,7 +318,7 @@ namespace Oheangbu.EditorTools.Vol2
             Vector3 origin = _shapes.Caster.Position, fwd = FlatUnit(_shapes.Caster.AimDirection);
             Vector3 right = Vector3.Cross(Vector3.up, fwd);
             _origin = origin; _fwd = fwd; _right = right;
-            Walkers.Clear(); NoteLog.Clear(); PoseOrder.Clear(); _notesSeen = 0;
+            Walkers.Clear(); NoteLog.Clear(); PoseOrder.Clear(); _notesSeen = 0; TrigSetup();
             _firstContactAge = _firstPaidAge = -1.0; _firstContactDist = _firstPaidDist = 0f; _firstContactNote = "";
             // the real ground look (the realm's own soil material on a flat quad) and a real enemy prefab as the body; never saved into a scene, destroyed at teardown
             if (j.Back != "none")
@@ -385,6 +397,7 @@ namespace Oheangbu.EditorTools.Vol2
             _wiring.Vol2Defence?.ResetForRow();
             if (!SavedVariants.ContainsKey(j.Letter)) SavedVariants[j.Letter] = SpellFxSwitch.Get(j.Letter);
             SpellFxSwitch.Set(j.Letter, j.Variant);
+            TrigBeforeCast(j);          // prop= (a standing material for 가른다 to cut) is in the registry before the letter is raised
             _spawnedBefore = _director.Spawned;
             _coord.CastBegan += _onBegan = l => { if (_beganLog == null) _beganLog = l; };
             _coord.Services.Route.Adapter.Decided += _onDecided = d => _decision = d;
@@ -430,6 +443,7 @@ namespace Oheangbu.EditorTools.Vol2
             _fakePlayer = _fakeGo.GetComponent<SpellFxPlayer>();
             if (_fakePlayer == null) { Object.Destroy(_fakeGo); _fakeGo = null; return false; }
             _fakePlayer.Begin(cast);
+            _fakeCast = cast;           // hitme= ends it the way the director ends a real cast (EndUs, then OnEnd Done)
             _launchUs = cast.LaunchUs;
             Problems.Add(j.Name + ": FAKE - the rules started no cast; the prefab is driven alone (look only)");
             return true;
@@ -442,9 +456,11 @@ namespace Oheangbu.EditorTools.Vol2
             if (_fakePlayer != null)
             {
                 _fakePlayer.Tick(now);
-                StepWalkers((now - _fakeStartUs) / 1000000.0);
+                double fakeAge = (now - _fakeStartUs) / 1000000.0;
+                StepWalkers(fakeAge);
+                TrigStep(j, fakeAge, now);          // shots= and hitme= work with no rule (hitme ends the fake prefab); recast= / swinghit= need a real cast
                 Shoot(_fakeOrigin, Quaternion.LookRotation(_fakeFwd, Vector3.up).eulerAngles.y, j.Pitch, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"));
-                _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), "0", ((now - _launchUs) / 1000000.0).ToString("0.0000", Inv), "0", "1", "FAKE") + "," + string.Join(",", BearCols()));
+                _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), "0", ((now - _launchUs) / 1000000.0).ToString("0.0000", Inv), "0", "1", ("FAKE" + (_tTok.Length > 0 ? " | " + _tTok : "")).Replace(',', ';')) + "," + string.Join(",", BearCols()));
                 _frames++;
                 if (_frames >= j.Frames || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
                 return;
@@ -452,9 +468,11 @@ namespace Oheangbu.EditorTools.Vol2
             var player = _director.PlayerOf(_beganLog.Cast.Value);
             double age = (now - _beganLog.StartUs) / 1000000.0, launchAge = (now - _launchUs) / 1000000.0;
             StepWalkers(age);      // the bodies move first: this frame's picture, the rules' next Coordinator.Tick and the row below all see the new place
+            TrigStep(j, age, now); // then the trigger options (shots= hitme= recast= swinghit= prop=): they act on the bodies where they stand now
             _hits = _beganLog.Contacts.Count(c => c.BudgetAccepted);
             WatchRules(age);
             string note = player != null ? "fx " + player.name : "no fx";
+            if (_tTok.Length > 0) note += " | " + _tTok;
             Shoot(_beganLog.Spec.Origin, Quaternion.LookRotation(_beganLog.Spec.Forward, Vector3.up).eulerAngles.y, j.Pitch, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"));
             _index.WriteLine(string.Join(",", _frames.ToString(Inv), now.ToString(Inv), age.ToString("0.0000", Inv), launchAge.ToString("0.0000", Inv), _hits.ToString(Inv), _director.ActiveCount.ToString(Inv), note.Replace(',', ';')) + "," + string.Join(",", BearCols()));
             _frames++;
@@ -553,7 +571,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (_firstPaidAge < 0.0 && _hits > 0) { _firstPaidAge = age; _firstPaidDist = dist0; }
             for (; _notesSeen < log.Notes.Count; _notesSeen++)
             {
-                if (NoteLog.Count >= 12) continue;
+                if (NoteLog.Count >= 24) continue;
                 string n = log.Notes[_notesSeen] ?? "";
                 NoteLog.Add(age.ToString("0.00", Inv) + " s " + (n.Length > 80 ? n.Substring(0, 80) : n));
             }
@@ -626,6 +644,7 @@ namespace Oheangbu.EditorTools.Vol2
                 + " | director spawned " + _director.Spawned + " skipped " + _director.Skipped + " retired " + _director.Retired + " hits " + _director.HitsRelayed + " | " + _director.LastNote
                 + (player != null ? " | player begin " + player.BeginCount + " launch " + player.LaunchCount + " ticks " + player.TickCount + " hit " + player.HitCount + " material " + player.MaterialCount + " reaction " + player.ReactionCount + " end " + player.EndCount : " | player gone");
             summary += BearSummary();
+            summary += TriggerSummary();
             Finished.Add(summary);
             try { File.WriteAllText(Path.Combine(_folder, "summary.txt"), summary, new UTF8Encoding(false)); } catch (Exception) { }
             RestoreStage();
@@ -643,6 +662,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             catch (Exception) { }
             _onBegan = null; _onDecided = null;
+            try { TrigRestore(); } catch (Exception) { }          // the player's HP, the swing driver's source, the rule-twin shots, the props' stones and their event hooks
             try
             {
                 if (_stagedScope)

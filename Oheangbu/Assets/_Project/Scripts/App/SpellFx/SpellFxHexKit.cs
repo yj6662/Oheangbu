@@ -11,6 +11,15 @@ namespace Oheangbu.App.SpellFx
     // discards y < 0, so every piece of geometry must sit at an object-space y well above 0: see <see cref="HexFrame"/>.
     //
     // Plan coordinates everywhere: x right of the caster, y up from the cast origin, z ahead (the aim).
+    //
+    // 2026-10-31 (lane K, the four membrane frames' COMMON defects, Fable judgements f_고_r3 / f_국_r2 / f_거_r1 / f_가_r1; public signatures unchanged, behaviour changed on purpose):
+    //  F5  white plate flash      -> the layer sets the shader's _FlashWhite 0 (seams flash in the body's accent, fill and pattern stay); Breathe(boost) goes toward the accent, not white.
+    //  N1  hold cells not read    -> HexHolds.Add = a cluster on the camera's hemisphere (+- 40 deg, chest / shoulder, lead 0.25 m + 0.2 m), 3 cm off the real surface, the plane turned 36 deg to the lens; Step() carries them with the body.
+    //  F7  sawtooth breath        -> the layer sets _BloomSteady 1 (the pattern is held, never empty in the trough); Breathe is one sine, 1.5 Hz +- 12 %.
+    //  P1  start ink on the caster-> Spit = 4 - 6 dots of 3 - 6 cm, 0.25 s, no cloud (SpellFxLabShot.Drops); the tip's goes away from the camera.
+    //  P3  no ink at the end      -> HexInkQueue.End / CellEnd = HexBodyEnd.EndCell for every body (2 - 4 dots; wood threads; fire ash flakes); wood no longer shrinks.
+    //  P2  big cells near the hand-> a flight from the tip is capped 0.08 -> 0.2 m over 1.5 m (HexSheet.FlightCap), the Once preview is two 0.06 - 0.08 m cells + 6 - 8 motes, a flight's shading |n.v| is held 0.55 - 0.75.
+    //  helpers for the frames     -> HexSheet.EmitInkTail / EmitInkRibbon (plain ink #101010), HexFlight.Linear (a straight bullet), HexHolds.Surface / TurnToCamera / Step, HexSheet.EdgeOnCut, HexBodyEnd.EndDelay.
 
     /// <summary>Plan -> object space of one renderer. <see cref="Lying"/> is the fan's sheet (the object is laid on its side so the shader's reveal runs ahead: object y = metres ahead / sy,
     /// object z = down); <see cref="UprightSunk"/> is a world-aligned object whose origin is <c>sink</c> metres BELOW the cast origin, so every vertex has object y >= sink (the shader's base
@@ -70,7 +79,11 @@ namespace Oheangbu.App.SpellFx
         readonly List<int> _t = new List<int>();
         readonly List<Color32> _col = new List<Color32>();         // round 2: the vertex colour stream (alpha = a per-cell alpha); uploaded only when VertexAlpha is on
         Color _lineBase, _patBase, _glassBase;
-        readonly Color _rim;
+        readonly Color _rim, _accent;
+
+        /// <summary>2026-10-31 (lane K): the breath of every membrane cell while it stands - a sine, 1.5 Hz, +- 12 % on the seam, the pattern and the fill (was 2 Hz +- 10 % PLUS the shader's sporadic bloom, which swung a cell
+        /// 68 - 140 % and emptied the pattern in the trough: the layer now holds the shader's bloom steady, see the constructor).</summary>
+        public const float BreathHz = 1.5f, BreathAmp = 0.12f;
 
         public HexLayer(Transform parent, string name, Material source, HexFrame frame, float riseTime)
         {
@@ -92,6 +105,14 @@ namespace Oheangbu.App.SpellFx
             _patBase = Mat.HasProperty(PatternId) ? Mat.GetColor(PatternId) : Color.white;
             _glassBase = Mat.HasProperty(GlassId) ? Mat.GetColor(GlassId) : Color.clear;
             _rim = Mat.HasProperty("_Rim") ? Mat.GetColor("_Rim") : new Color(0.2f, 0.42f, 0.32f, 1f);
+            _accent = Mat.HasProperty("_Accent") ? Mat.GetColor("_Accent") : new Color(0.6f, 1.35f, 1.5f, 1f);
+            // 2026-10-31 (lane K): a HexLayer is ALWAYS a membrane spell (the 우 H ward draws its own dome mesh and never builds one), so the shader's membrane knobs are set here, on this material INSTANCE only:
+            //  _FlashWhite 0   a struck / ending cell flashes its SEAMS in the body's accent for 2 - 3 frames + a 0.15 s decay; no pale plate, no white core, no grey glow round the contact (F5)
+            //  _BloomSteady 1  the sporadic pattern bloom (5-frame rise, 25-frame settle, empty between) and the shimmer are off: the pattern stays and the 1.5 Hz sine below is the only pulse (the sawtooth)
+            //  _BloomBoost 1   a pattern's hit flash is not x 5 HDR
+            //  _VertexInk 1    a vertex whose colour r is 0 is plain ink #101010 (EmitInkRibbon); the stream is always uploaded (VertexAlpha on) so a missing stream is never read
+            SetFloatIfAny("_FlashWhite", 0f); SetFloatIfAny("_BloomSteady", 1f); SetFloatIfAny("_BloomBoost", 1f); SetFloatIfAny("_VertexInk", 1f);
+            VertexAlpha = true;
             Go.SetActive(false);
         }
 
@@ -105,14 +126,9 @@ namespace Oheangbu.App.SpellFx
 
         public void SetClock(float age, float fade) { Mat.SetFloat(AgeId, age); Mat.SetFloat(FadeId, fade); }
 
-        /// <summary>The breath while it stands: 2 Hz, +- 10 % on the seam, the pattern and the fill.</summary>
-        public void Breathe(float a)
-        {
-            float k = 1f + 0.1f * Mathf.Sin(a * Mathf.PI * 2f * 2f);
-            Mat.SetColor(LineId, new Color(_lineBase.r * k, _lineBase.g * k, _lineBase.b * k, _lineBase.a));
-            Mat.SetColor(PatternId, new Color(_patBase.r * k, _patBase.g * k, _patBase.b * k, _patBase.a));
-            if (Mat.HasProperty(GlassId)) Mat.SetColor(GlassId, new Color(_glassBase.r, _glassBase.g, _glassBase.b, Mathf.Clamp01(_glassBase.a * k)));
-        }
+        /// <summary>The breath while it stands: <see cref="BreathHz"/> (1.5 Hz), +- <see cref="BreathAmp"/> (12 %) on the seam, the pattern and the fill (it was 2 Hz +- 10 %; the Fable judgements of the four membrane
+        /// frames asked for a sine of +- 10 - 15 % at 1.5 Hz with the pattern still there in the trough).</summary>
+        public void Breathe(float a) { Breathe(a, BreathHz, BreathAmp, 1f); }
 
         public void SetHit(Vector3 world, float hitAge)
         {
@@ -124,6 +140,18 @@ namespace Oheangbu.App.SpellFx
         public void ClearHit() { Mat.SetFloat(HitAgeId, -1f); }
 
         public Color LineColor => _lineBase;
+
+        /// <summary>The body's one accent colour (the material's _Accent: what a struck cell's seams flash in).</summary>
+        public Color AccentColor => new Color(Mathf.Min(1f, _accent.r), Mathf.Min(1f, _accent.g), Mathf.Min(1f, _accent.b), 1f);
+
+        /// <summary>2026-10-31 (lane K): on = a face seen edge-on (its geometric |n.v| under 0.2 - 0.3) has alpha 0 in the shader: no 1 - 2 px solid line of a cell standing along the view (N1 / P6). Off by default (a wall's
+        /// side cells stand along the view on purpose); a part opts in.</summary>
+        public bool EdgeOnCut
+        {
+            get => _edgeOnCut;
+            set { _edgeOnCut = value; SetFloatIfAny("_EdgeOnCut", value ? 1f : 0f); }
+        }
+        bool _edgeOnCut;
 
         /// <summary>The body's own edge colour (the material's _Rim: wood jade, fire orange, earth ochre, metal silver, water blue; every body's _Line is the same cream): what torn plates are tinted with.</summary>
         public Color RimColor => new Color(Mathf.Min(1f, _rim.r), Mathf.Min(1f, _rim.g), Mathf.Min(1f, _rim.b), 1f);
@@ -195,12 +223,22 @@ namespace Oheangbu.App.SpellFx
             Mat.SetVector("_HitAges", ages);
         }
 
-        /// <summary>Round 2: the breath at a chosen rate and depth, times an extra brightness on the seam and the pattern (1 = none; a flash of the whole sheet at once). <see cref="Breathe(float)"/> is 2 Hz, +- 10 %.</summary>
+        /// <summary>Round 2: the breath at a chosen rate and depth, times an extra brightness on the seam and the pattern (1 = none; a flash of the whole sheet at once). <see cref="Breathe(float)"/> is 1.5 Hz, +- 12 %.
+        /// 2026-10-31: a <paramref name="boost"/> above 1 no longer multiplies the cream seam and the pattern up to white (x 2.4 HDR): the colours go toward the body's accent (<c>_Accent</c>) instead, fully at boost 2.4,
+        /// so "every cell flashes at once" is a seam / pattern flash in the one accent, the fill untouched.</summary>
         public void Breathe(float a, float hz, float amp, float boost = 1f)
         {
-            float k = 1f + amp * Mathf.Sin(a * Mathf.PI * 2f * hz), kb = k * boost;
-            Mat.SetColor(LineId, new Color(_lineBase.r * kb, _lineBase.g * kb, _lineBase.b * kb, _lineBase.a));
-            Mat.SetColor(PatternId, new Color(_patBase.r * kb, _patBase.g * kb, _patBase.b * kb, _patBase.a));
+            float k = 1f + amp * Mathf.Sin(a * Mathf.PI * 2f * hz);
+            Color line = new Color(_lineBase.r * k, _lineBase.g * k, _lineBase.b * k, _lineBase.a), pat = new Color(_patBase.r * k, _patBase.g * k, _patBase.b * k, _patBase.a);
+            if (boost > 1.001f)
+            {
+                float t = Mathf.Clamp01((boost - 1f) / 1.4f), hot = (1f + (boost - 1f) * 0.6f) * k;
+                Color acc = new Color(_accent.r * hot, _accent.g * hot, _accent.b * hot, 1f);
+                line = new Color(Mathf.Lerp(line.r, acc.r, t), Mathf.Lerp(line.g, acc.g, t), Mathf.Lerp(line.b, acc.b, t), _lineBase.a);
+                pat = new Color(Mathf.Lerp(pat.r, acc.r, t), Mathf.Lerp(pat.g, acc.g, t), Mathf.Lerp(pat.b, acc.b, t), _patBase.a);
+            }
+            Mat.SetColor(LineId, line);
+            Mat.SetColor(PatternId, pat);
             if (Mat.HasProperty(GlassId)) Mat.SetColor(GlassId, new Color(_glassBase.r, _glassBase.g, _glassBase.b, Mathf.Clamp01(_glassBase.a * k)));
         }
 
@@ -233,6 +271,24 @@ namespace Oheangbu.App.SpellFx
             bool up = Vector3.Dot(Vector3.Cross(b0 - a0, a1 - a0), faceN ?? Vector3.up) > 0f;          // the triangle (a0, b0, a1) faces the front side when its cross product points that way
             if (up) { _t.Add(b); _t.Add(b + 1); _t.Add(b + 2); _t.Add(b + 1); _t.Add(b + 3); _t.Add(b + 2); }
             else { _t.Add(b); _t.Add(b + 2); _t.Add(b + 1); _t.Add(b + 1); _t.Add(b + 2); _t.Add(b + 3); }
+        }
+
+        /// <summary>2026-10-31 (lane K): a quad of PLAIN INK (#101010 - the shader's _VertexInk, vertex colour r = 0; the glass tint of <see cref="QuadVerts"/>'s <c>ink</c> flag is a dark green-grey, not ink), alpha
+        /// <paramref name="alphaStart"/> at the (a0, b0) end to <paramref name="alphaEnd"/> at the (a1, b1) end. Plan space; <paramref name="faceN"/> = the side that draws as the front (the camera's).</summary>
+        public void QuadInk(Vector3 a0, Vector3 b0, Vector3 a1, Vector3 b1, Vector3 shadeLocal, Vector3 faceN, float alphaStart, float alphaEnd)
+        {
+            int b = _v.Count;
+            VertInk(a0, shadeLocal, alphaStart); VertInk(b0, shadeLocal, alphaStart); VertInk(a1, shadeLocal, alphaEnd); VertInk(b1, shadeLocal, alphaEnd);
+            bool up = Vector3.Dot(Vector3.Cross(b0 - a0, a1 - a0), faceN) > 0f;
+            if (up) { _t.Add(b); _t.Add(b + 1); _t.Add(b + 2); _t.Add(b + 1); _t.Add(b + 3); _t.Add(b + 2); }
+            else { _t.Add(b); _t.Add(b + 2); _t.Add(b + 1); _t.Add(b + 1); _t.Add(b + 2); _t.Add(b + 3); }
+        }
+
+        void VertInk(Vector3 plan, Vector3 shadeLocal, float alpha)
+        {
+            _col.Add(new Color32(0, 0, 0, (byte)Mathf.RoundToInt(Mathf.Clamp01(alpha) * 255f)));
+            Vector3 l = Frame.ToLocal(plan);
+            _v.Add(l); _n.Add(shadeLocal); _uv0.Add(new Vector2(0f, 0f)); _uv1.Add(new Vector2(0.3f, 0f)); _uv2.Add(new Vector2(SpellFxHexKit.PatChoices[0], 0.5f)); _c.Add(l);
         }
 
         /// <summary>Plan point <paramref name="p"/> pushed <paramref name="off"/> along <paramref name="nrm"/>, lying on the ground.</summary>
@@ -296,6 +352,9 @@ namespace Oheangbu.App.SpellFx
         public float Rx, Rv;                // horizontal / vertical corner radius at full size
         public float Start, Grow = 0.2f, LeaveAt = float.MaxValue;
         public float Hash, D01; public int Pat; public bool Sprout;
+        /// <summary>2026-10-31 (lane K): a hold cell remembers the body it sits on and where both were at the hit, so <see cref="HexHolds.Step"/> can carry it with the body (the earth push moves a struck body 1 m: a cell left
+        /// where it was hangs in the air). Null for a cell that is not a hold. A part that moves its hold cells itself (the fan's HoldGroup, the path's Held) does not call Step.</summary>
+        public Transform Follow; public Vector3 FollowW0, CtrW0;
     }
 
     /// <summary>The struck body as the hold needs it: its axis and height range in plan coordinates (x right, y up from the origin, z ahead), its radius, and the colliders to ray.</summary>
@@ -304,6 +363,8 @@ namespace Oheangbu.App.SpellFx
         public Vector2 Feet, Centre;
         public float Ground, Y0, Y1, Radius;
         public Collider[] Cols;
+        /// <summary>2026-10-31: the struck body's transform (null for a synthetic body) and whether it is a bust (under ~1 m tall: a head and shoulders - its cells go on the cheeks and brow, not on a chest).</summary>
+        public Transform Tr; public bool Bust;
     }
 
     /// <summary>A cell thrown from the brush tip (or sucked into a cell that is made there): drawn on the air layer. <see cref="Quick"/> = no standing at the tip: it leaves at once (ease-out) and lies
@@ -316,6 +377,11 @@ namespace Oheangbu.App.SpellFx
         /// <summary>Round 2: the radius at the start of the flight as a fraction of <see cref="Rc"/> (it fills out to 1 over the first third of the flight). 0.8 = what it always was; a small value makes a cell that
         /// is not big in front of the lens when it leaves the hand (the shoulder camera is close to the brush tip).</summary>
         public float StartScale = 0.8f;
+        /// <summary>2026-10-31 (lane K, the ㅏ shot): a straight, constant-speed flight - no ease, no arc (a bullet, not a throw); it stands facing the camera all the way. <c>Arc</c> is ignored.</summary>
+        public bool Linear;
+        /// <summary>Set by <see cref="HexSheet.SampleFlight"/>: the flight leaves the BRUSH TIP, so near the hand its cell is small (0.08 m at the tip, 0.2 m at 1.5 m, then up to <see cref="Rc"/> by 3 m) - the shoulder
+        /// camera is 0.5 m from the hand and a 0.2 m cell there is bigger than the caster's head (P2). A flight with its own <see cref="From"/> (a cell handed on) is not capped.</summary>
+        public bool FromTip;
     }
 
     /// <summary>The cast's cells as one drawn thing: a frame, a main layer (the sheet itself), an air layer (brush-thrown cells and the Once preview, with a clock of its own), the ground, the
@@ -359,6 +425,30 @@ namespace Oheangbu.App.SpellFx
             Main = new HexLayer(parent, name, material, Frame, mainRise);
             // the air layer: a world-aligned object 1 m below the caster (object y >= 1: no base ring term, nothing discarded) with a material of its own and _RiseTime 0 (the shader's own reveal is a plain 0.16 s fade-in)
             Air = new HexLayer(parent, name + "Air", material, HexFrame.UprightSunk(Frame.Origin, Frame.Right, Frame.Fwd, 1f), 0f);
+            TipPlan = SampleTipPlan();
+        }
+
+        /// <summary>2026-10-31 (ink stroke lane, D308-161/162): a sheet with NO layers - only the frame, the ground, the camera lean and the brush tip - for a part that draws with its own
+        /// renderer but wants <see cref="HexHolds"/> (BodyOf / Surface / TurnToCamera), <see cref="SampleTipPlan"/>, <see cref="CamPlan"/> and <see cref="AwayFromCamera"/>. <see cref="Main"/> and
+        /// <see cref="Air"/> are null: never call Destroy / SetActive / Begin / Flush / WorldOf / the emit methods, nor <see cref="HexFlashSlots.Drive"/> / <see cref="HexFlashQueue.Drive"/>, on it.
+        /// No GameObject and no material is made.</summary>
+        public static HexSheet Probe(SpellFxCast cast, HexFrame frame, bool followGround) => new HexSheet(cast, frame, followGround);
+
+        HexSheet(SpellFxCast cast, HexFrame frame, bool followGround)
+        {
+            Cast = cast;
+            Frame = frame;
+            var cam = Camera.main;
+            _cam = cam;
+            Vector3 toCam = cam != null ? cam.transform.position - Frame.Origin : -Frame.Fwd; toCam.y = 0f;
+            if (toCam.sqrMagnitude < 1e-4f) toCam = -Frame.Fwd;
+            toCam.Normalize();
+            Vector2 tc = new Vector2(Vector3.Dot(toCam, Frame.Right), Vector3.Dot(toCam, Frame.Fwd));
+            ToCamPlan = tc;
+            Tilt = new Vector3(tc.x * 0.35f, 0.937f, tc.y * 0.35f).normalized;
+            FaceCam = new Vector3(tc.x, 0.15f, tc.y);
+            Ground = new HexGround(Frame, followGround);
+            Main = null; Air = null;
             TipPlan = SampleTipPlan();
         }
 
@@ -429,14 +519,14 @@ namespace Oheangbu.App.SpellFx
         /// lerp(1, 0.5, facing)), and a cell face-on to the shoulder camera has |n.v| ~ 0.9+ - a fill of ~0.1 (the F1 wire cage). So the shading normal is the geometric one turned about the view
         /// vector until |n.v| lies in 0.5 .. 0.75 (a normal already there is kept), whichever way the cell faces; the geometry is not touched. <paramref name="faceN"/> = the cell's geometric normal
         /// (plan space), <paramref name="ctrPlan"/> = its centre. (The fan's own plates keep the sheet-wide <see cref="Tilt"/>.)</summary>
-        public Vector3 ShadeFor(Vector3 faceN, Vector3 ctrPlan)
+        public Vector3 ShadeFor(Vector3 faceN, Vector3 ctrPlan, float lo = 0.5f, float hi = 0.75f)
         {
             Vector3 v = _cam != null ? Frame.ToPlan(_cam.transform.position) - ctrPlan : new Vector3(ToCamPlan.x, 0.3f, ToCamPlan.y);
             if (v.sqrMagnitude < 1e-6f) return Tilt;
             v.Normalize();
             Vector3 g = faceN.normalized;
             float d = Vector3.Dot(g, v), ad = Mathf.Abs(d);
-            float c = Mathf.Clamp(ad, 0.5f, 0.75f);
+            float c = Mathf.Clamp(ad, lo, hi);
             if (Mathf.Abs(c - ad) < 1e-4f) return g;
             Vector3 perp = g - d * v;
             if (perp.sqrMagnitude < 1e-6f) perp = Vector3.Cross(v, Vector3.up);
@@ -515,10 +605,33 @@ namespace Oheangbu.App.SpellFx
         /// <summary>The throw's first frame: the tip where it is NOW becomes this flight's start, and a small ink spit leaves there.</summary>
         public void SampleFlight(HexFlight f)
         {
-            f.Sampled = true;
+            f.Sampled = true; f.FromTip = true;
             f.From = SampleTipPlan();
             TipPlan = f.From;
-            if (f.TipInk) SpellFxHexKit.Spit(PlanW(f.From), (Frame.Fwd * 0.6f + Vector3.up).normalized);
+            if (f.TipInk) SpellFxHexKit.Spit(PlanW(f.From), AwayFromCamera());
+        }
+
+        /// <summary>Unit world direction away from the camera (horizontal, a little up): the brush tip's front hemisphere - the camera stands behind the caster, so ink thrown this way never lands on the caster.</summary>
+        public Vector3 AwayFromCamera()
+        {
+            Vector3 d = Frame.Right * -ToCamPlan.x + Frame.Fwd * -ToCamPlan.y;
+            if (d.sqrMagnitude < 1e-4f) d = Frame.Fwd;
+            return (d.normalized + Vector3.up * 0.2f).normalized;
+        }
+
+        /// <summary>The radius cap of a flight that leaves the brush tip, at <paramref name="dist"/> metres from it: 0.08 m at the tip -> 0.2 m at 1.5 m (linear, the Fable asks), then on to <paramref name="rc"/> (the cell it
+        /// lands as) by 3 m so nothing pops on landing; and never more than 0.05 m per metre of camera distance below 2 m (a cell passing behind the caster 1.7 - 2.3 m from the lens was 75 - 85 px: P8), easing back to
+        /// the full size by 5 m.</summary>
+        /// <summary>For a cell a part draws ITSELF (not through <see cref="EmitFlight"/>) that leaves the brush tip - the path's chain, the attach's brush cells: its radius <paramref name="rc"/> capped by
+        /// <see cref="FlightCap"/> for its distance from <paramref name="from"/> (the tip it left, plan) and from the camera. Pure; plan coordinates.</summary>
+        public float CapNearTip(Vector3 planPos, Vector3 from, float rc) => Mathf.Min(rc, FlightCap(Vector3.Distance(from, planPos), rc, Vector3.Distance(CamPlan, planPos)));
+
+        public static float FlightCap(float dist, float rc, float camDist)
+        {
+            float near = Mathf.Min(0.2f, rc);
+            float cap = dist < 1.5f ? Mathf.Lerp(0.08f, near, dist / 1.5f) : Mathf.Lerp(near, rc, Mathf.Clamp01((dist - 1.5f) / 1.5f));
+            float camCap = Mathf.Lerp(0.05f * camDist, rc, SpellFxHexKit.Smooth((camDist - 2f) / 3f));
+            return Mathf.Min(cap, camCap);
         }
 
         /// <summary>A thrown cell in flight (one layer, on the air layer): from the brush tip along a low arc to its place. It leaves the hand standing, facing the camera, and tips flat as it lands.
@@ -526,10 +639,11 @@ namespace Oheangbu.App.SpellFx
         public void EmitFlight(HexFlight f, float a)
         {
             float u = Mathf.Clamp01((a - f.T0) / Mathf.Max(f.T1 - f.T0, 1e-3f));
-            float ue = f.Quick ? 1f - (1f - u) * (1f - u) : SpellFxHexKit.Smooth(u);
-            Vector3 p = Vector3.Lerp(f.From, f.To, ue) + Vector3.up * (f.Arc * Mathf.Sin(Mathf.PI * u));
+            float ue = f.Linear ? u : f.Quick ? 1f - (1f - u) * (1f - u) : SpellFxHexKit.Smooth(u);
+            Vector3 p = Vector3.Lerp(f.From, f.To, ue) + (f.Linear ? Vector3.zero : Vector3.up * (f.Arc * Mathf.Sin(Mathf.PI * u)));
             float rc = f.Rc * (f.StartScale + (1f - f.StartScale) * SpellFxHexKit.Smooth(u * 3f));
-            float tilt = f.Standing ? 1f : 1f - SpellFxHexKit.Smooth(Mathf.Clamp01(u * (f.Quick ? 2.6f : 1.15f)));          // 1 = standing facing the camera, 0 = flat
+            if (f.FromTip) rc = Mathf.Min(rc, FlightCap(Vector3.Distance(f.From, p), f.Rc, Vector3.Distance(CamPlan, p)));          // 2026-10-31: small near the hand
+            float tilt = f.Linear || f.Standing ? 1f : 1f - SpellFxHexKit.Smooth(Mathf.Clamp01(u * (f.Quick ? 2.6f : 1.15f)));          // 1 = standing facing the camera, 0 = flat
             EmitPose(p, rc, tilt, f.Hash);
         }
 
@@ -544,12 +658,57 @@ namespace Oheangbu.App.SpellFx
                 cs[k] = p + Vector3.Lerp(flat, stand, tilt);
             }
             Vector3 faceN = Vector3.Lerp(Vector3.up, new Vector3(ToCamPlan.x, 0f, ToCamPlan.y), tilt);
-            Air.EmitCell(p, cs, hash, SpellFxHexKit.PatChoices[0], 0.5f, faceN, Tilt, p, false);
+            // 2026-10-31 (lane K, P2): a per-cell shading normal with |n.v| held to 0.55 - 0.75 (the sheet-wide Tilt is only right at one view angle; a flat or apex cell fell to |n.v| ~0.2 = the pale full-sil milky fill)
+            Air.EmitCell(p, cs, hash, SpellFxHexKit.PatChoices[0], 0.5f, faceN, ShadeFor(faceN, p, 0.55f, 0.75f), p, false);
         }
+
+        /// <summary>2026-10-31 (lane K): a thin ribbon of plain ink (#101010) along a polyline (plan space, head first), always facing the camera: the tail of a shot. <paramref name="widthPx"/> = the head's width in
+        /// screen pixels (2 - 3 is a thread; the width is worked out from the camera's distance so it stays that many pixels), tapering to 35 % at the far end; <paramref name="fade"/> 0..1 multiplies the alpha,
+        /// which also runs 1 -> 0.3 along the ribbon. It draws on the sheet's air layer (<paramref name="onAir"/>) or the main one.</summary>
+        public void EmitInkRibbon(IList<Vector3> pts, float widthPx, float fade, bool onAir = true)
+        {
+            if (pts == null || pts.Count < 2 || fade <= 0.01f) return;
+            HexLayer layer = onAir ? Air : Main;
+            Vector3 cam = CamPlan, sh = layer.Frame.NormalLocal(Tilt);
+            float tanHalf = _cam != null ? Mathf.Tan(_cam.fieldOfView * 0.5f * Mathf.Deg2Rad) : 0.4f, pxH = _cam != null && _cam.pixelHeight > 0 ? _cam.pixelHeight : 720f;
+            int n = pts.Count - 1;
+            for (int i = 0; i < n; i++)
+            {
+                Vector3 d = pts[i + 1] - pts[i], mid = (pts[i] + pts[i + 1]) * 0.5f, v = cam - mid;
+                Vector3 side = Vector3.Cross(d, v);
+                if (side.sqrMagnitude < 1e-10f) side = Vector3.Cross(d, Vector3.up);
+                if (side.sqrMagnitude < 1e-10f) continue;
+                side.Normalize();
+                float dist = Mathf.Max(0.3f, v.magnitude), pxToM = 2f * dist * tanHalf / pxH;
+                float w0 = widthPx * pxToM * Mathf.Lerp(1f, 0.35f, (float)i / n) * 0.5f, w1 = widthPx * pxToM * Mathf.Lerp(1f, 0.35f, (float)(i + 1) / n) * 0.5f;
+                float al0 = fade * Mathf.Lerp(1f, 0.3f, (float)i / n), al1 = fade * Mathf.Lerp(1f, 0.3f, (float)(i + 1) / n);
+                layer.QuadInk(pts[i] - side * w0, pts[i] + side * w0, pts[i + 1] - side * w1, pts[i + 1] + side * w1, sh, v.normalized, al0, al1);
+            }
+        }
+
+        readonly List<Vector3> _tailPts = new List<Vector3>(8);
+
+        /// <summary>2026-10-31 (lane K): the ink tail of a shot - a ribbon from the last cell's centre <paramref name="head"/> straight back along <paramref name="back"/> (unit, plan space; the way it came from) for
+        /// <paramref name="length"/> metres (0.8). Call it every tick while the shot flies; when it has landed keep calling it with <see cref="TailFade"/> (it goes out in 0.3 s). <paramref name="widthPx"/> 2.5.</summary>
+        public void EmitInkTail(Vector3 head, Vector3 back, float length = 0.8f, float fade = 1f, float widthPx = 2.5f, bool onAir = true)
+        {
+            if (back.sqrMagnitude < 1e-8f || fade <= 0.01f) return;
+            back.Normalize();
+            _tailPts.Clear();
+            for (int i = 0; i <= 6; i++) _tailPts.Add(head + back * (length * i / 6f));
+            EmitInkRibbon(_tailPts, widthPx, fade, onAir);
+        }
+
+        /// <summary>The tail's fade <paramref name="since"/> seconds after the shot landed: 1 -> 0 over <paramref name="life"/> (0.3 s).</summary>
+        public static float TailFade(float since, float life = 0.3f) => 1f - SpellFxHexKit.Smooth(since / Mathf.Max(life, 0.05f));
+
+        /// <summary>2026-10-31: both layers' edge-on alpha cut (see <see cref="HexLayer.EdgeOnCut"/>).</summary>
+        public bool EdgeOnCut { set { Main.EdgeOnCut = value; Air.EdgeOnCut = value; } }
     }
 
     /// <summary>Queue of ink spits in time order. <see cref="Spit"/> = the small ink of the brush, a throw, a landing, a contact, a line breaking (always the same, whatever the body);
-    /// <see cref="End"/> = the body's own burst as a piece breaks up at the end (none for wood); <see cref="Plates"/> = torn plates (가른다).</summary>
+    /// <see cref="End"/> = a cell's end as ink (<see cref="HexBodyEnd.EndCell"/>, every body including wood; 2026-10-31); <see cref="Plates"/> = torn plates (가른다).
+    /// <see cref="Spit"/> is now 4 - 6 dots of 3 - 6 cm that live 0.25 s (<see cref="SpellFxHexKit.Spit"/>), not an ink burst with clouds.</summary>
     public sealed class HexInkQueue
     {
         enum Kind { Spit, End, Plates, CellEnd, Drip }
@@ -558,7 +717,10 @@ namespace Oheangbu.App.SpellFx
 
         void Add(Item e) { int k = 0; while (k < _q.Count && _q[k].At <= e.At) k++; _q.Insert(k, e); }
         public void Spit(float at, Vector3 point, Vector3 normal) { Add(new Item { At = at, Point = point, Normal = normal, K = Kind.Spit }); }
-        public void End(float at, Vector3 point, Vector3 normal, SpellFxBurstBody body) { if (body == SpellFxBurstBody.Wood) return; Add(new Item { At = at, Point = point, Normal = normal, K = Kind.End, Body = body }); }
+        /// <summary>A cell's end at <paramref name="point"/> (its centre): from 2026-10-31 this is <see cref="HexBodyEnd.EndCell"/> for EVERY body, wood included (it used to return for wood, and to throw the body's full
+        /// <see cref="SpellFxLabShot.InkBurst"/> for the others - clouds and plates far bigger than a 0.2 m cell): 2 - 4 ink dots in the cell's face, and the body's own small ending (wood: 2 - 3 ink threads out past the
+        /// cell's edge). <paramref name="cellRadius"/> = the cell's circumradius (the ink scales with it).</summary>
+        public void End(float at, Vector3 point, Vector3 normal, SpellFxBurstBody body, float cellRadius = 0.2f) { Add(new Item { At = at, Point = point, Normal = normal, K = Kind.End, Body = body, Size = cellRadius }); }
         public void Plates(float at, Vector3 point, Vector3 normal, Color edge) { Add(new Item { At = at, Point = point, Normal = normal, K = Kind.Plates, Edge = edge }); }
         /// <summary>Round 2: the ink and the burst of ONE cell's end in its body's own way (<see cref="HexBodyEnd.Begin"/>: wood 2 - 3 small ink drops, fire embers rising, earth plate chips, metal shards, water running down).</summary>
         public void CellEnd(float at, Vector3 centre, Vector3 normal, float size, SpellFxBurstBody body) { Add(new Item { At = at, Point = centre, Normal = normal, K = Kind.CellEnd, Body = body, Size = size }); }
@@ -573,8 +735,8 @@ namespace Oheangbu.App.SpellFx
                 switch (e.K)
                 {
                     case Kind.Spit: SpellFxHexKit.Spit(e.Point, e.Normal); break;
-                    case Kind.End: SpellFxLabShot.InkBurst(e.Point, e.Normal, e.Body); break;
-                    case Kind.CellEnd: HexBodyEnd.Begin(e.Body, e.Point, e.Normal, e.Size); break;
+                    case Kind.End: HexBodyEnd.EndCell(e.Body, e.Point, e.Normal, e.Size); break;
+                    case Kind.CellEnd: HexBodyEnd.EndCell(e.Body, e.Point, e.Normal, e.Size); break;
                     case Kind.Drip: SpellFxHexKit.Drip(e.Point); break;
                     default: SpellFxLabShot.InkBurst(e.Point, e.Normal, SpellFxBurstBody.Armour, e.Edge); break;
                 }
@@ -668,11 +830,21 @@ namespace Oheangbu.App.SpellFx
     /// <summary>Hold cells on a struck body: the body's real surface by a ray per cell against its colliders.</summary>
     public static class HexHolds
     {
-        // the hold cells, round the body from the side that faces the caster: never within 62 deg of it (that side is the face the camera sees), and at 46 - 70 % of the body's height
-        // (each at its own height, so they never read as one ring)
-        static readonly float[] HoldAng = { 62f, -62f, 95f, -95f, 130f };
-        static readonly float[] HoldFrac = { 0.50f, 0.62f, 0.70f, 0.46f, 0.58f };
-        public static int MaxCells => HoldAng.Length;
+        // 2026-10-31 (lane K, N1 / F4 / P5 / P6 - "the hold cells are not read"): the hold is a CLUSTER ON THE HEMISPHERE THE CAMERA SEES. The old table put the cells 62 - 130 deg round from the caster's side (the camera's
+        // side kept clear), so they stood on the body's flanks, edge-on to a camera behind the caster: a 1 - 2 px solid line (or, on a bust, a crown over the head). Now (degrees from the line body -> camera, + = toward the
+        // camera's right; fractions of the body's height from its feet):
+        //   - within +- 36 deg (the chest and the shoulders); the face centre (|az| < 14 deg at the top of the body) stays clear; five slots, the first is the lead (0.25 m), the rest 0.2 m; the first FOUR were
+        //     searched (scratchpad hold_search36.py) for the widest spacing in that band on a 0.42 - 0.6 m radius, 1.2 - 1.5 m tall body: 0.29 - 0.37 m between neighbours = the spec's ~0.3 m, which is a few cm
+        //     LESS than two hexagons need to just touch (0.35 - 0.45 m): the cells overlap by the edge, a honeycomb patch, they do not sit apart. The fifth (only the ring's 군 asks for five) overlaps more (0.67 - 0.73 of touching);
+        //   - heights 46 - 70 % (chest to shoulder; a bust, under ~1 m tall: 60 - 78 %, cheeks and brow - UNMEASURED);
+        //   - each cell stands 3 cm out of the body's real surface (a ray per cell), turned up to 36 deg toward the camera (the cell's plane, not only its shading).
+        static readonly float[] HoldAz = { 32f, -34f, 7f, -30f, 36f };
+        static readonly float[] HoldFrac = { 0.68f, 0.46f, 0.48f, 0.70f, 0.46f };
+        static readonly float[] BustAz = { 28f, -30f, 40f, -42f, 14f };
+        static readonly float[] BustFrac = { 0.72f, 0.68f, 0.64f, 0.60f, 0.78f };
+        public static int MaxCells => HoldAz.Length;
+        /// <summary>How far a hold cell's plane is turned from the body's surface normal toward the camera (deg): 36 of at most 40 and at least 30 - it faces the lens when the surface already does.</summary>
+        public const float TurnToCameraDeg = 36f;
 
         public static float PlateG(HexPlate p, float a, float leaveLen)
         {
@@ -696,7 +868,7 @@ namespace Oheangbu.App.SpellFx
         /// height range [Y0, Y1] and the radius; the colliders themselves are kept for the per-cell rays. Without one (a synthetic body) or with absurd bounds: the estimate from the contact.</summary>
         public static HexBody Build(HexSheet s, SpellFxHit hit, Vector2 feet, float gy, float R, float H)
         {
-            var h = new HexBody { Feet = feet, Centre = feet, Ground = gy, Y0 = gy, Y1 = gy + H, Radius = R * 0.85f };
+            var h = new HexBody { Feet = feet, Centre = feet, Ground = gy, Y0 = gy, Y1 = gy + H, Radius = R * 0.85f, Tr = hit.Target, Bust = H < 1.05f };
             if (hit.Target == null) return h;
             var list = new List<Collider>();
             Bounds b = default; bool have = false;
@@ -727,6 +899,7 @@ namespace Oheangbu.App.SpellFx
             h.Y0 = b.min.y - s.Frame.Origin.y; h.Y1 = b.max.y - s.Frame.Origin.y;
             h.Radius = Mathf.Clamp(rad, 0.2f, 1.5f);
             h.Cols = list.ToArray();
+            h.Bust = (h.Y1 - h.Y0) < 1.05f;
             return h;
         }
 
@@ -760,28 +933,80 @@ namespace Oheangbu.App.SpellFx
         /// feeds the uv height (distance / reach).</summary>
         public static HexPlate Add(HexSheet s, System.Random rng, List<HexPlate> into, HexBody h, float t0, int n, float leaveAt, float reach)
         {
-            Vector2 toC = h.Centre.sqrMagnitude > 1e-4f ? -h.Centre.normalized : -Vector2.up;
-            float baseAng = Mathf.Atan2(toC.y, toC.x), rc = Mathf.Clamp(0.22f * h.Radius + 0.08f, 0.12f, 0.24f);
             float d01 = Mathf.Clamp(h.Centre.magnitude / reach, 0.3f, 1f);
-            float sag = Mathf.Min(0.08f, h.Radius - Mathf.Sqrt(Mathf.Max(0f, h.Radius * h.Radius - rc * rc)));
             HexPlate front = null;
-            for (int k = 0; k < n && k < HoldAng.Length; k++)
+            for (int k = 0; k < n && k < HoldAz.Length; k++)
             {
-                float ang = baseAng + HoldAng[k] * Mathf.Deg2Rad;
-                var dir = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
-                float y = h.Y0 + HoldFrac[k] * (h.Y1 - h.Y0);
-                Vector2 outDir = dir, pt = h.Centre + dir * (h.Radius + 0.03f);
-                if (SurfaceAt(s, h, dir, y, out Vector3 sp, out Vector2 sn)) { outDir = sn; pt = new Vector2(sp.x, sp.z) + sn * (0.03f + sag); y = sp.y; }
+                float rc = RadiusOf(h, k);
+                // the camera hemisphere (see HoldAz): the point on the body's surface at that azimuth / height, and the cell's plane turned toward the lens
+                Surface(s, h, h.Bust ? BustAz[k] : HoldAz[k], h.Bust ? BustFrac[k] : HoldFrac[k], out Vector3 ctr, out Vector2 outDir);
                 var p = new HexPlate
                 {
-                    Ctr = new Vector3(pt.x, y, pt.y), Dir = outDir, Rx = rc, Rv = rc,
+                    Ctr = ctr, Dir = TurnToCamera(s, ctr, outDir), Rx = rc, Rv = rc,
                     Start = t0 + 0.05f + 0.045f * k, Grow = 0.2f, LeaveAt = leaveAt + 0.02f * k, Hash = SpellFxHexKit.PickHash(rng, SpellFxHexKit.Rand(rng)), D01 = d01,
                     Pat = SpellFxHexKit.PatChoices[(k + rng.Next(SpellFxHexKit.PatChoices.Length)) % SpellFxHexKit.PatChoices.Length],
+                    Follow = h.Tr, FollowW0 = h.Tr != null ? h.Tr.position : default, CtrW0 = ctr,
                 };
                 into.Add(p);
                 if (front == null) front = p;
             }
             return front;
+        }
+
+        /// <summary>A hold cell's circumradius: the lead (slot 0) 0.25 m, the others 0.2 m - never smaller (a synthetic body's radius is 0.85 x the hit's, so a 0.5 m body measures 0.43) - and up to 20 % bigger on a body
+        /// wider than 0.5 m (x 1 .. 1.2 of radius / 0.5).</summary>
+        public static float RadiusOf(HexBody h, int slot)
+        {
+            float k = Mathf.Clamp(h.Radius / 0.5f, 1f, 1.2f);
+            return (slot == 0 ? 0.25f : 0.2f) * k;
+        }
+
+        /// <summary>2026-10-31 (lane K, "표면 붙임"): the point ON the body's surface <paramref name="azDeg"/> degrees round from the line body -> camera (+ = the camera's right) at <paramref name="frac"/> of the body's
+        /// height, 3 cm out (exactly: the old extra "sag" offset of a flat cell on a round body, up to 8 cm, floated the cell off the body), and the outward horizontal normal there (plan x, z). The ray is the body's own
+        /// colliders' (a synthetic body, or a miss: its estimated cylinder). Plan coordinates. Any part can use it to put a cell on a body. Returns whether a collider was hit.</summary>
+        public static bool Surface(HexSheet s, HexBody h, float azDeg, float frac, out Vector3 centre, out Vector2 outDir)
+        {
+            Vector3 cp = s.CamPlan;
+            Vector2 toCam = new Vector2(cp.x - h.Centre.x, cp.z - h.Centre.y);
+            toCam = toCam.sqrMagnitude > 1e-4f ? toCam.normalized : (s.ToCamPlan.sqrMagnitude > 1e-4f ? s.ToCamPlan.normalized : -Vector2.up);
+            // + azimuth = to the camera's right: the camera looks along -toCam, so its right is toCam turned +90 deg (counter-clockwise in the (x, z) plan plane): ang = bearing(toCam) + az
+            float ang = Mathf.Atan2(toCam.y, toCam.x) + azDeg * Mathf.Deg2Rad;
+            var dir = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
+            float y = h.Y0 + frac * (h.Y1 - h.Y0);
+            outDir = dir; Vector2 pt = h.Centre + dir * (h.Radius + 0.03f);
+            bool hit = SurfaceAt(s, h, dir, y, out Vector3 sp, out Vector2 sn);
+            if (hit) { outDir = sn; pt = new Vector2(sp.x, sp.z) + sn * 0.03f; y = sp.y; }
+            centre = new Vector3(pt.x, y, pt.y);
+            return hit;
+        }
+
+        /// <summary>The cell's facing: the surface normal <paramref name="outDir"/> turned <see cref="TurnToCameraDeg"/> (36 deg) toward the direction from the cell to the camera - or all the way when it is already within
+        /// that - so the cell's PLANE (not only its shading) faces the lens; never turned past the camera line.</summary>
+        public static Vector2 TurnToCamera(HexSheet s, Vector3 centrePlan, Vector2 outDir)
+        {
+            Vector3 cp = s.CamPlan;
+            Vector2 v = new Vector2(cp.x - centrePlan.x, cp.z - centrePlan.z);
+            if (v.sqrMagnitude < 1e-4f) return outDir;
+            v.Normalize();
+            float d = Vector2.SignedAngle(outDir, v);                       // degrees from the surface normal to the camera direction (counter-clockwise +)
+            float turn = Mathf.Sign(d) * Mathf.Min(Mathf.Abs(d), TurnToCameraDeg);
+            float r = turn * Mathf.Deg2Rad, c = Mathf.Cos(r), sn = Mathf.Sin(r);
+            return new Vector2(outDir.x * c - outDir.y * sn, outDir.x * sn + outDir.y * c).normalized;
+        }
+
+        /// <summary>2026-10-31: carry the hold cells with the body they sit on (the earth push moves a struck body ~1 m): each plate that has a <see cref="HexPlate.Follow"/> is put at its place at the hit plus the body's
+        /// move since. Call it every tick BEFORE the cells are emitted and before a flash asks a cell's centre. NOT for a part that moves its cells itself (the fan's HoldGroup, the path's Held add the move on their own -
+        /// calling this as well would move them twice).</summary>
+        public static void Step(HexSheet s, IList<HexPlate> plates)
+        {
+            if (plates == null) return;
+            for (int i = 0; i < plates.Count; i++)
+            {
+                var p = plates[i];
+                if (p == null || p.Follow == null) continue;
+                Vector3 d = s.Frame.ToPlan(p.Follow.position) - s.Frame.ToPlan(p.FollowW0);
+                p.Ctr = p.CtrW0 + d;
+            }
         }
 
         /// <summary>World point and normal a spit at a plate's face uses (the face's own direction, 4 cm out).</summary>
@@ -807,12 +1032,19 @@ namespace Oheangbu.App.SpellFx
             Vector3 tip = sheet.SampleTipPlan();
             sheet.TipPlan = tip;
             float grow = SpellFxHexKit.Smooth(p);
-            // a point first, then a cell that fills out; at p = 1 it is exactly the first flight's starting cell
-            if (grow > 0.02f) sheet.EmitPose(tip, finalRc * (0.12f + 0.88f * grow), 1f, hash);
-            Suck(sheet, parent, tip, p);
+            // 2026-10-31 (lane K, P2 / the ㅏ + ㅗ preview): TWO SMALL CELLS (0.06 -> 0.08 m, the tip's flight cap) and ink motes drawn in - the old one cell of finalRc (0.2 m and more, the "휘장" that grew past the
+            // caster's head and floated up) is gone; <paramref name="finalRc"/> is not used any more. At p = 1 the first cell is exactly what the first flight starts as (HexSheet.FlightCap 0.08 m at the tip, same hash).
+            float rc = Mathf.Lerp(0.06f, 0.08f, grow);
+            if (grow > 0.02f)
+            {
+                sheet.EmitPose(tip, rc * (0.4f + 0.6f * grow), 1f, hash);
+                Vector3 across = new Vector3(sheet.ToCamPlan.y, 0f, -sheet.ToCamPlan.x);
+                sheet.EmitPose(tip + across * (1.5f * rc) + Vector3.up * (0.866f * rc), rc * 0.85f * (0.4f + 0.6f * grow), 1f, SpellFxHexKit.Frac(hash + 0.31f));       // the honeycomb neighbour: 1.5 r over, 0.87 r up
+            }
+            Suck(sheet, parent, tip, p, delay);
         }
 
-        void Suck(HexSheet sheet, Transform parent, Vector3 tipPlan, float p)
+        void Suck(HexSheet sheet, Transform parent, Vector3 tipPlan, float p, float delay)
         {
             if (!Application.isPlaying) return;
             if (_ps == null)
@@ -824,14 +1056,14 @@ namespace Oheangbu.App.SpellFx
                 _ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                 var main = _ps.main; main.loop = true; main.playOnAwake = false; main.simulationSpace = ParticleSystemSimulationSpace.World;
                 main.startLifetime = 0.22f; main.startSpeed = 0f;
-                main.startSize = new ParticleSystem.MinMaxCurve(0.025f, 0.06f);
+                main.startSize = 0.02f;                                      // 2026-10-31: dots of 2 cm (were 2.5 - 6 cm)
                 main.startColor = new Color(0.03f, 0.03f, 0.035f, 0.9f);
-                main.maxParticles = 64;
-                var shape = _ps.shape; shape.shapeType = ParticleSystemShapeType.Sphere; shape.radius = 0.42f; shape.radiusThickness = 0f;
+                main.maxParticles = 32;
+                var shape = _ps.shape; shape.shapeType = ParticleSystemShapeType.Sphere; shape.radius = 0.15f; shape.radiusThickness = 0f;      // drawn in from 15 cm (was 42 cm)
                 var em = _ps.emission; em.rateOverTime = 0f;
                 var vel = _ps.velocityOverLifetime; vel.enabled = true; vel.space = ParticleSystemSimulationSpace.Local;
                 vel.x = new ParticleSystem.MinMaxCurve(0f); vel.y = new ParticleSystem.MinMaxCurve(0f); vel.z = new ParticleSystem.MinMaxCurve(0f);
-                vel.radial = new ParticleSystem.MinMaxCurve(-1.9f);       // 0.42 m in 0.22 s
+                vel.radial = new ParticleSystem.MinMaxCurve(-0.68f);       // 0.15 m in 0.22 s
                 var sol = _ps.sizeOverLifetime; sol.enabled = true; sol.size = new ParticleSystem.MinMaxCurve(1f, new AnimationCurve(new Keyframe(0f, 0.5f), new Keyframe(0.3f, 1f), new Keyframe(1f, 0.25f)));
                 var col = _ps.colorOverLifetime; col.enabled = true;
                 var g = new Gradient(); g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) }, new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.25f), new GradientAlphaKey(1f, 1f) });
@@ -839,7 +1071,7 @@ namespace Oheangbu.App.SpellFx
                 var r = _go.GetComponent<ParticleSystemRenderer>(); r.sharedMaterial = SpellFxLabShot.InkBlotMaterial(); r.renderMode = ParticleSystemRenderMode.Billboard;
             }
             _go.transform.position = sheet.PlanW(tipPlan);
-            var e = _ps.emission; e.rateOverTime = 70f * p;
+            var e = _ps.emission; e.rateOverTime = Mathf.Clamp(14f / Mathf.Max(delay, 0.15f), 20f, 90f) * p;      // ramps with p: about 7 dots over the whole preview (6 - 8), whatever the swing's length
             if (!_ps.isPlaying) _ps.Play();
             _live = true;
         }
@@ -920,10 +1152,26 @@ namespace Oheangbu.App.SpellFx
         }
 
         /// <summary>The small ink spit of the brush, a throw, a landing, a contact, a breaking line: always plain ink, small, whatever the body (the body's own burst is only for the end).</summary>
-        public static void Spit(Vector3 point, Vector3 normal) { SpellFxLabShot.InkBurst(point, normal, SpellFxBurstBody.Water, null, SpitScale); }
+        public static void Spit(Vector3 point, Vector3 normal)
+        {
+            // 2026-10-31 (lane K, P1 / P3): 4 - 6 DOTS of 3 - 6 cm that live 0.25 s and fly out in a cone round <normal> (the tip's front hemisphere; a hit's camera side) - no cloud. The old spit was
+            // InkBurst(Water, 0.35): 14 drops and two ink-cloud puffs of 0.2 - 0.4 m that drifted and fell for a second: the lumps on the caster's shoulder, back and the ground.
+            int n = 4 + Mathf.FloorToInt(Frac(point.x * 37.1f + point.y * 17.3f + point.z * 91.7f) * 3f) % 3;
+            Vector3 dir = normal;
+            if (normal.y > 0.9f)
+            {
+                // a straight-up spit (a part passes Vector3.up for the brush tip, a landing, a rise) leans away from the camera: the camera stands behind the caster, so the dots never go back onto the shoulder
+                var cam = Camera.main;
+                if (cam != null) { Vector3 away = point - cam.transform.position; away.y = 0f; if (away.sqrMagnitude > 1e-4f) dir = (normal + away.normalized * 0.7f).normalized; }
+            }
+            SpellFxLabShot.Drops(point, dir, n, 0.03f, 0.06f, 0.5f, 1.3f, 0.25f, 0.5f, InkA, InkB, 40f, 0.015f, false, 0f, 0.4f);
+        }
 
-        /// <summary>Round 2: a single drop of ink (about a third of a spit): where a hanging thread meets the ground.</summary>
-        public static void Drip(Vector3 point) { SpellFxLabShot.InkBurst(point, Vector3.up, SpellFxBurstBody.Water, null, 0.12f); }
+        /// <summary>Plain dark ink for the small dots (the Water burst's two colours).</summary>
+        public static readonly Color InkA = new Color(0.03f, 0.03f, 0.035f, 0.95f), InkB = new Color(0.12f, 0.1f, 0.1f, 0.9f);
+
+        /// <summary>Round 2: a single drop of ink (about a third of a spit): where a hanging thread meets the ground. 2026-10-31: three dots of 2 - 4 cm, no cloud.</summary>
+        public static void Drip(Vector3 point) { SpellFxLabShot.Drops(point, Vector3.up, 3, 0.02f, 0.04f, 0.3f, 0.8f, 0.3f, 1.2f, InkA, InkB, 30f, 0.01f, false, 0f, 0.4f); }
 
         /// <summary>Round 2: like <see cref="PickHash"/> but only from the hashes whose bloom period is the LONGEST (h3 in 0.3 .. 0.4: 1.23 - 1.34 s). A cell is drawn as two layers half a period apart, so
         /// a cell's pattern pulses at 2 / period: 1.5 - 1.6 Hz here, 2.1 Hz with the short periods the fan picks (a block of many cells averages that out; a lone small cell flickers).</summary>
